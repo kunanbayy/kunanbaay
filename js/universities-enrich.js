@@ -115,6 +115,27 @@ window.UNIVERSITIES_ENRICH = {
 window.getEnrichedUniversities = function() {
   if (!window.UNIVERSITIES_SEED) return [];
   return window.UNIVERSITIES_SEED.map(u => {
+    if (u.data_source === 'kazakhstan_universities_data.json') {
+      return Object.assign({}, u, {
+        city: u.city || '—',
+        short_name: u.short_name || u.name_kz.substring(0, 6),
+        university_type: u.university_type || '—',
+        category: u.category || '—',
+        official_website: u.official_website || null,
+        logo_url: u.logo_url || null,
+        logo_source_url: u.logo_source_url || null,
+        description: u.description || null,
+        grant: Array.isArray(u.specialties) && u.specialties.length > 0,
+        dorm: Boolean(u.dormitory),
+        specialtiesCount: Array.isArray(u.specialties) ? u.specialties.length : 0,
+        specialties: u.specialties || [],
+        tuition: 'Кейін толтырылады',
+        minScore: Array.isArray(u.specialties) && u.specialties.length
+          ? Math.min(...u.specialties.map(s => Number(s.thresholdScore) || 50))
+          : 50,
+        color: '#1E3A5F'
+      });
+    }
     const e = window.UNIVERSITIES_ENRICH[u.id] || {};
     return Object.assign({}, u, {
       city:            e.city            || u.city            || '—',

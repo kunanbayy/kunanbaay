@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ЖОО мамандықтары — Shyraq Education</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    :root {
+      --sg-sidebar-bg: #0B1E33;
+      --sg-sidebar-w: 380px;
+      --sg-item-hover: rgba(242,184,75,.08);
+      --sg-item-active: rgba(242,184,75,.13);
+      --sg-border: rgba(255,255,255,.09);
+      --sg-paper: #F7F5F0;
+    }
+
+    /* ── SHELL ── */
+    .sg-shell {
+      display: grid;
+      grid-template-columns: var(--sg-sidebar-w) 1fr;
+      min-height: calc(100vh - 68px);
+      margin-top: 68px;
+    }
+
+    /* ── LEFT SIDEBAR ── */
+    .sg-sidebar {
+      background: var(--sg-sidebar-bg);
+      display: flex;
+      flex-direction: column;
+      position: sticky;
+      top: 68px;
+      height: calc(100vh - 68px);
+      overflow: hidden;
+    }
+
+    .sg-sidebar-head {
+      padding: 24px 20px 16px;
+      border-bottom: 1px solid var(--sg-border);
+      flex: 0 0 auto;
+    }
+
+    .sg-sidebar-title {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -.2px;
+      margin: 0 0 2px;
+    }
+
+    .sg-sidebar-sub {
+      font-size: 12px;
+      color: rgba(255,255,255,.38);
+      margin: 0 0 14px;
+    }
+
+    /* search */
+    .sg-search-wrap {
+      position: relative;
+      margin-bottom: 12px;
+    }
+    .sg-search-wrap svg {
+      position: absolute;
+      left: 11px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 15px;
+      height: 15px;
+      color: rgba(255,255,255,.35);
+      pointer-events: none;
+    }
+    #sgSearch {
+      width: 100%;
+      padding: 9px 12px 9px 34px;
+      background: rgba(255,255,255,.07);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 10px;
+      color: #fff;
+      font-size: 13px;
+      font-family: 'Golos Text', sans-serif;
+      outline: none;
+      transition: border-color .15s;
+    }
+    #sgSearch::placeholder { color: rgba(255,255,255,.3); }
+    #sgSearch:focus { border-color: var(--gold); }
+
+    /* subject pills */
+    .sg-sub-row {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .sg-sub-btn {
+      font-size: 11px;
+      font-family: 'Golos Text', sans-serif;
+      font-weight: 500;
+      padding: 4px 10px;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,.15);
+      color: rgba(255,255,255,.55);
+      background: transparent;
+      cursor: pointer;
+      transition: all .15s;
+      white-space: nowrap;
+    }
+    .sg-sub-btn:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+    .sg-sub-btn.active {
+      background: var(--gold);
+      border-color: var(--gold);
+      color: #0B1E33;
+    }
+
+    /* list */
+    .sg-list-wrap {
+      flex: 1;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255,255,255,.12) transparent;
+    }
+    .sg-list-wrap::-webkit-scrollbar { width: 4px; }
+    .sg-list-wrap::-webkit-scrollbar-track { background: transparent; }
+    .sg-list-wrap::-webkit-scrollbar-thumb { background: rgba(255,255,255,.12); border-radius: 2px; }
+
+    .sg-list { list-style: none; padding: 6px 0 20px; margin: 0; }
+
+    .sg-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 20px;
+      cursor: pointer;
+      border-left: 3px solid transparent;
+      transition: background .12s, border-color .12s;
+    }
+    .sg-item:hover { background: var(--sg-item-hover); }
+    .sg-item.active {
+      background: var(--sg-item-active);
+      border-left-color: var(--gold);
+    }
+
+    .sg-item-code {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      background: rgba(242,184,75,.18);
+      color: var(--gold);
+      border-radius: 5px;
+      padding: 3px 7px;
+      flex: 0 0 auto;
+      margin-top: 1px;
+    }
+    .sg-item.active .sg-item-code {
+      background: var(--gold);
+      color: #0B1E33;
+    }
+
+    .sg-item-body { flex: 1; min-width: 0; }
+    .sg-item-name {
+      font-size: 13px;
+      font-weight: 500;
+      color: rgba(255,255,255,.88);
+      line-height: 1.35;
+      margin-bottom: 3px;
+    }
+    .sg-item-subs {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+    .sg-item-sub-tag {
+      font-size: 10px;
+      color: rgba(255,255,255,.35);
+      background: rgba(255,255,255,.06);
+      border-radius: 3px;
+      padding: 1px 5px;
+    }
+
+    .sg-empty-list {
+      text-align: center;
+      padding: 40px 20px;
+      color: rgba(255,255,255,.3);
+      font-size: 13px;
+    }
+
+    /* ── RIGHT DETAIL ── */
+    .sg-detail {
+      background: var(--sg-paper);
+      overflow-y: auto;
+      height: calc(100vh - 68px);
+      position: sticky;
+      top: 68px;
+    }
+
+    .sg-placeholder {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      color: rgba(11,30,51,.3);
+    }
+    .sg-placeholder-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      background: rgba(11,30,51,.07);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .sg-placeholder-icon svg {
+      width: 28px;
+      height: 28px;
+      opacity: .5;
+    }
+    .sg-placeholder p {
+      font-size: 14px;
+      margin: 0;
+    }
+
+    /* detail content */
+    .sg-detail-inner { padding: 36px 40px 60px; max-width: 720px; }
+
+    .sg-detail-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 32px;
+      padding-bottom: 28px;
+      border-bottom: 2px solid rgba(11,30,51,.1);
+    }
+    .sg-detail-code-badge {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 13px;
+      font-weight: 800;
+      background: var(--navy);
+      color: var(--gold);
+      border-radius: 10px;
+      padding: 8px 14px;
+      flex: 0 0 auto;
+      letter-spacing: .5px;
+    }
+    .sg-detail-heading { flex: 1; }
+    .sg-detail-name {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--ink);
+      line-height: 1.3;
+      margin: 0 0 8px;
+    }
+    .sg-detail-sub-list {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .sg-detail-sub-chip {
+      font-size: 12px;
+      font-weight: 500;
+      padding: 4px 10px;
+      border-radius: 20px;
+      background: rgba(30,58,95,.08);
+      color: var(--navy);
+    }
+
+    /* accordion */
+    .sg-accordion { margin-bottom: 12px; }
+    .sg-acc-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      background: #fff;
+      border-radius: 14px;
+      cursor: pointer;
+      border: 1.5px solid rgba(11,30,51,.08);
+      transition: border-color .15s, box-shadow .15s;
+      user-select: none;
+    }
+    .sg-acc-header:hover {
+      border-color: rgba(30,58,95,.2);
+      box-shadow: 0 2px 10px rgba(11,30,51,.06);
+    }
+    .sg-accordion.open .sg-acc-header {
+      border-color: var(--gold);
+      border-radius: 14px 14px 0 0;
+      border-bottom-color: transparent;
+    }
+    .sg-acc-title {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--ink);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .sg-acc-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      background: rgba(30,58,95,.07);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .sg-acc-icon svg {
+      width: 16px;
+      height: 16px;
+      color: var(--navy);
+    }
+    .sg-accordion.open .sg-acc-icon {
+      background: var(--gold);
+    }
+    .sg-accordion.open .sg-acc-icon svg { color: #fff; }
+    .sg-acc-chevron {
+      width: 20px;
+      height: 20px;
+      transition: transform .2s;
+      color: rgba(11,30,51,.35);
+      flex: 0 0 auto;
+    }
+    .sg-accordion.open .sg-acc-chevron { transform: rotate(180deg); }
+
+    .sg-acc-body {
+      display: none;
+      background: #fff;
+      border: 1.5px solid var(--gold);
+      border-top: none;
+      border-radius: 0 0 14px 14px;
+      padding: 20px;
+    }
+    .sg-accordion.open .sg-acc-body { display: block; }
+
+    /* grant count table */
+    .sg-grant-years {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .sg-grant-row {
+      display: grid;
+      grid-template-columns: 48px 1fr 80px;
+      align-items: center;
+      gap: 12px;
+    }
+    .sg-grant-year {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--navy);
+    }
+    .sg-grant-bar-wrap {
+      background: rgba(11,30,51,.06);
+      border-radius: 4px;
+      height: 8px;
+      overflow: hidden;
+    }
+    @keyframes barGrow {
+      from { transform: scaleX(0); }
+      to   { transform: scaleX(1); }
+    }
+    .sg-grant-bar {
+      height: 100%;
+      background: var(--gold);
+      border-radius: 4px;
+      transform-origin: left center;
+      animation: barGrow .5s ease forwards;
+    }
+    .sg-grant-count {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--ink);
+      text-align: right;
+    }
+
+    /* score table */
+    .sg-score-section { margin-bottom: 16px; }
+    .sg-score-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: rgba(11,30,51,.4);
+      margin-bottom: 10px;
+    }
+    .sg-score-table { width: 100%; border-collapse: collapse; }
+    .sg-score-table th {
+      text-align: left;
+      font-size: 11px;
+      font-weight: 600;
+      color: rgba(11,30,51,.4);
+      padding: 6px 10px;
+      border-bottom: 1px solid rgba(11,30,51,.08);
+    }
+    .sg-score-table td {
+      padding: 9px 10px;
+      font-size: 13px;
+      border-bottom: 1px solid rgba(11,30,51,.05);
+    }
+    .sg-score-table tr:last-child td { border-bottom: none; }
+    .sg-year-badge {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--navy);
+    }
+    .sg-score-max {
+      font-weight: 700;
+      color: #1A7A4A;
+    }
+    .sg-score-min {
+      font-weight: 700;
+      color: var(--navy);
+    }
+    .sg-score-divider {
+      border: none;
+      border-top: 1px solid rgba(11,30,51,.08);
+      margin: 14px 0;
+    }
+
+    /* uni list */
+    .sg-uni-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+    .sg-uni-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      background: rgba(11,30,51,.04);
+      border-radius: 10px;
+      font-size: 13px;
+      color: var(--ink);
+    }
+    .sg-uni-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--gold);
+      flex: 0 0 auto;
+    }
+    .sg-uni-section-title {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: rgba(11,30,51,.4);
+      margin: 14px 0 8px;
+    }
+    .sg-uni-section-title:first-child { margin-top: 0; }
+
+    .sg-no-data {
+      text-align: center;
+      padding: 20px;
+      color: rgba(11,30,51,.3);
+      font-size: 13px;
+    }
+    .sg-ped-uni {
+      margin-bottom: 14px;
+      border: 1px solid rgba(11,30,51,.07);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .sg-ped-uni-name {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 12px;
+      background: rgba(30,58,95,.04);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--navy);
+      border-bottom: 1px solid rgba(11,30,51,.07);
+    }
+    .sg-ped-uni .sg-score-table { margin: 0; }
+    .sg-ped-uni .sg-score-table td,
+    .sg-ped-uni .sg-score-table th { padding: 7px 12px; }
+
+    /* ── MOBILE ── */
+    @media (max-width: 840px) {
+      .sg-shell {
+        grid-template-columns: 1fr;
+        min-height: auto;
+      }
+      .sg-sidebar {
+        position: static;
+        height: auto;
+        max-height: 50vh;
+      }
+      .sg-detail {
+        position: static;
+        height: auto;
+        min-height: 400px;
+      }
+      .sg-detail-inner { padding: 24px 20px 40px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-icon">🔆</div>
+      Shyraq
+    </a>
+    <div class="nav-links">
+      <a href="index.html" class="nav-link">Басты бет</a>
+      <a href="specialties.html" class="nav-link">Мамандықтар</a>
+      <a href="specialties-grants.html" class="nav-link active">ЖОО мамандықтары</a>
+      <a href="universities.html" class="nav-link">Университеттер</a>
+      <a href="grant.html" class="nav-link">Грант</a>
+      <a href="pricing.html" class="nav-link">Тарифтер</a>
+    </div>
+    <div class="nav-actions">
+      <a href="dashboard.html" class="btn btn-primary btn-sm">Кабинет</a>
+      <button class="nav-mobile-btn">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <line x1="3" y1="12" x2="21" y2="12"/>
+          <line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<div class="sg-shell">
+  <!-- LEFT SIDEBAR -->
+  <aside class="sg-sidebar">
+    <div class="sg-sidebar-head">
+      <h1 class="sg-sidebar-title">ЖОО мамандықтары</h1>
+      <p class="sg-sidebar-sub" id="sgCount">130 БББТ мамандық</p>
+
+      <div class="sg-search-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+        </svg>
+        <input type="text" id="sgSearch" placeholder="Атауы немесе коды..." oninput="renderList()" />
+      </div>
+
+      <div class="sg-sub-row" id="sgSubRow">
+        <button class="sg-sub-btn active" data-sub="" onclick="filterSub(this)">Барлығы</button>
+        <button class="sg-sub-btn" data-sub="Математика" onclick="filterSub(this)">Математика</button>
+        <button class="sg-sub-btn" data-sub="Биология" onclick="filterSub(this)">Биология</button>
+        <button class="sg-sub-btn" data-sub="Химия" onclick="filterSub(this)">Химия</button>
+        <button class="sg-sub-btn" data-sub="Тарих" onclick="filterSub(this)">Тарих</button>
+        <button class="sg-sub-btn" data-sub="Шығармашылық" onclick="filterSub(this)">Шығармашылық</button>
+        <button class="sg-sub-btn" data-sub="Ағылшын" onclick="filterSub(this)">Ағылшын</button>
+        <button class="sg-sub-btn" data-sub="Физика" onclick="filterSub(this)">Физика</button>
+      </div>
+    </div>
+
+    <div class="sg-list-wrap">
+      <ul class="sg-list" id="sgList"></ul>
+    </div>
+  </aside>
+
+  <!-- RIGHT DETAIL -->
+  <main class="sg-detail" id="sgDetail">
+    <div class="sg-placeholder">
+      <div class="sg-placeholder-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/>
+          <rect x="9" y="3" width="6" height="4" rx="1"/>
+          <path d="M9 12h6M9 16h4"/>
+        </svg>
+      </div>
+      <p>Мамандықты таңдаңыз</p>
+    </div>
+  </main>
+</div>
+
+<script src="js/main.js"></script>
+<script src="js/auth-guard.js"></script>
+<script src="js/specialties-grants-data.js"></script>
+<script>
+  (function () {
+    var DATA = window.SPECIALTIES_GRANTS || [];
+    var currentSub = '';
+    var activeId = null;
+
+    function filterSub(btn) {
+      document.querySelectorAll('.sg-sub-btn').forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      currentSub = btn.dataset.sub || '';
+      renderList();
+    }
+    window.filterSub = filterSub;
+
+    function getFiltered() {
+      var q = (document.getElementById('sgSearch').value || '').toLowerCase().trim();
+      return DATA.filter(function(d) {
+        var matchQ = !q || d.name.toLowerCase().includes(q) || d.code.toLowerCase().includes(q);
+        var matchSub = !currentSub || d.subjects.some(function(s){ return s.includes(currentSub); });
+        return matchQ && matchSub;
+      });
+    }
+
+    function renderList() {
+      var list = getFiltered();
+      var ul = document.getElementById('sgList');
+      var countEl = document.getElementById('sgCount');
+      countEl.textContent = list.length + ' БББТ мамандық';
+
+      if (!list.length) {
+        ul.innerHTML = '<li class="sg-empty-list">Мамандық табылмады</li>';
+        return;
+      }
+
+      ul.innerHTML = list.map(function(d) {
+        var subTags = d.subjects.map(function(s){
+          return '<span class="sg-item-sub-tag">' + s + '</span>';
+        }).join('');
+        return '<li class="sg-item' + (d.id === activeId ? ' active' : '') + '" data-id="' + d.id + '" onclick="selectItem(' + d.id + ')">' +
+          '<span class="sg-item-code">' + d.code + '</span>' +
+          '<div class="sg-item-body">' +
+            '<div class="sg-item-name">' + d.name + '</div>' +
+            (subTags ? '<div class="sg-item-subs">' + subTags + '</div>' : '') +
+          '</div>' +
+        '</li>';
+      }).join('');
+    }
+    window.renderList = renderList;
+
+    function selectItem(id) {
+      activeId = id;
+      document.querySelectorAll('.sg-item').forEach(function(el){
+        el.classList.toggle('active', parseInt(el.dataset.id) === id);
+      });
+      var spec = DATA.find(function(d){ return d.id === id; });
+      if (spec) renderDetail(spec);
+    }
+    window.selectItem = selectItem;
+
+    function renderDetail(spec) {
+      var genValid = (spec.general || []).filter(function(g){ return g.count > 0; });
+      var maxCount = Math.max.apply(null, genValid.map(function(g){ return g.count; }).concat([1]));
+
+      var subChips = (spec.subjects || []).map(function(s){
+        return '<span class="sg-detail-sub-chip">' + s + '</span>';
+      }).join('');
+
+      var grantRows = genValid.slice().reverse().map(function(g) {
+        var pct = Math.round((g.count / maxCount) * 100);
+        return '<div class="sg-grant-row">' +
+          '<span class="sg-grant-year">' + g.year + '</span>' +
+          '<div class="sg-grant-bar-wrap"><div class="sg-grant-bar" style="width:' + pct + '%"></div></div>' +
+          '<span class="sg-grant-count">' + g.count + '</span>' +
+        '</div>';
+      }).join('') || '<p class="sg-no-data">Деректер жоқ</p>';
+
+      var scoreGeneral = (spec.general || []).filter(function(g){ return g.maxPoint > 0; });
+      var scoreRows = scoreGeneral.slice().reverse().map(function(g){
+        return '<tr>' +
+          '<td><span class="sg-year-badge">' + g.year + '</span></td>' +
+          '<td><span class="sg-score-max">' + g.maxPoint + '</span></td>' +
+          '<td><span class="sg-score-min">' + g.minPoint + '</span></td>' +
+        '</tr>';
+      }).join('') || '<tr><td colspan="3" class="sg-no-data">Деректер жоқ</td></tr>';
+
+      var ruralRows = '';
+      var ruralValid = (spec.rural || []).filter(function(g){ return g.maxPoint > 0; });
+      if (ruralValid.length) {
+        ruralRows = '<hr class="sg-score-divider">' +
+          '<div class="sg-score-label">Ауылдық квота</div>' +
+          '<table class="sg-score-table">' +
+          '<thead><tr><th>Жыл</th><th>Жоғары балл</th><th>Төмен балл</th></tr></thead><tbody>' +
+          ruralValid.slice().reverse().map(function(g){
+            return '<tr>' +
+              '<td><span class="sg-year-badge">' + g.year + '</span></td>' +
+              '<td><span class="sg-score-max">' + g.maxPoint + '</span></td>' +
+              '<td><span class="sg-score-min">' + g.minPoint + '</span></td>' +
+            '</tr>';
+          }).join('') + '</tbody></table>';
+      }
+
+      // Pedagogical: show per-uni year data if available
+      var pedSection = '';
+      if (spec.pedagogical_years && spec.pedagogical_years.length) {
+        pedSection = '<div class="sg-uni-section-title">Педагогикалық квота</div>';
+        spec.pedagogical_years.forEach(function(u) {
+          pedSection += '<div class="sg-ped-uni">' +
+            '<div class="sg-ped-uni-name"><span class="sg-uni-dot"></span>' + u.name + '</div>' +
+            '<table class="sg-score-table">' +
+            '<thead><tr><th>Жыл</th><th>Орын</th><th>Жоғары балл</th><th>Төмен балл</th></tr></thead><tbody>' +
+            u.years.map(function(y){
+              return '<tr>' +
+                '<td><span class="sg-year-badge">' + y.year + '</span></td>' +
+                '<td><strong>' + (y.count || '—') + '</strong></td>' +
+                '<td><span class="sg-score-max">' + (y.maxPointGeneral || '—') + '</span></td>' +
+                '<td><span class="sg-score-min">' + (y.minPointGeneral || '—') + '</span></td>' +
+              '</tr>';
+            }).join('') +
+            '</tbody></table></div>';
+        });
+      } else if (spec.pedagogical && spec.pedagogical.length) {
+        pedSection = '<div class="sg-uni-section-title">Педагогикалық квота</div>' +
+          '<ul class="sg-uni-list">' +
+          spec.pedagogical.map(function(u){
+            return '<li class="sg-uni-item"><span class="sg-uni-dot"></span>' + u.name + '</li>';
+          }).join('') + '</ul>';
+      }
+
+      var uniSections = pedSection;
+      function uniBlock(title, arr) {
+        if (!arr || !arr.length) return '';
+        return '<div class="sg-uni-section-title">' + title + '</div>' +
+          '<ul class="sg-uni-list">' +
+          arr.map(function(u){
+            return '<li class="sg-uni-item"><span class="sg-uni-dot"></span>' + u.name + '</li>';
+          }).join('') + '</ul>';
+      }
+      uniSections += uniBlock('Мақсатты орын', spec.target) +
+                     uniBlock('Серпін бағдарламасы', spec.serpin);
+      if (!uniSections) uniSections = '<p class="sg-no-data">Деректер жоқ</p>';
+
+      var html = '<div class="sg-detail-inner">' +
+        '<div class="sg-detail-header">' +
+          '<span class="sg-detail-code-badge">' + spec.code + '</span>' +
+          '<div class="sg-detail-heading">' +
+            '<h2 class="sg-detail-name">' + spec.name + '</h2>' +
+            (subChips ? '<div class="sg-detail-sub-list">' + subChips + '</div>' : '') +
+          '</div>' +
+        '</div>' +
+
+        '<div class="sg-accordion open" id="acc-grants">' +
+          '<div class="sg-acc-header" onclick="toggleAcc(\'acc-grants\')">' +
+            '<span class="sg-acc-title">' +
+              '<span class="sg-acc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></svg></span>' +
+              'Грант саны' +
+            '</span>' +
+            '<svg class="sg-acc-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 9l6 6 6-6"/></svg>' +
+          '</div>' +
+          '<div class="sg-acc-body">' +
+            '<div class="sg-grant-years">' + grantRows + '</div>' +
+          '</div>' +
+        '</div>' +
+
+        '<div class="sg-accordion" id="acc-scores">' +
+          '<div class="sg-acc-header" onclick="toggleAcc(\'acc-scores\')">' +
+            '<span class="sg-acc-title">' +
+              '<span class="sg-acc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20V10M18 20V4M6 20v-4"/></svg></span>' +
+              'Грантқа өту балдары' +
+            '</span>' +
+            '<svg class="sg-acc-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 9l6 6 6-6"/></svg>' +
+          '</div>' +
+          '<div class="sg-acc-body">' +
+            '<div class="sg-score-label">Жалпы конкурс</div>' +
+            '<table class="sg-score-table">' +
+              '<thead><tr><th>Жыл</th><th>Жоғары балл</th><th>Төмен балл</th></tr></thead>' +
+              '<tbody>' + scoreRows + '</tbody>' +
+            '</table>' +
+            ruralRows +
+          '</div>' +
+        '</div>' +
+
+        '<div class="sg-accordion" id="acc-unis">' +
+          '<div class="sg-acc-header" onclick="toggleAcc(\'acc-unis\')">' +
+            '<span class="sg-acc-title">' +
+              '<span class="sg-acc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 14v3M12 14v3M16 14v3"/></svg></span>' +
+              'Университеттер' +
+            '</span>' +
+            '<svg class="sg-acc-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 9l6 6 6-6"/></svg>' +
+          '</div>' +
+          '<div class="sg-acc-body">' + uniSections + '</div>' +
+        '</div>' +
+      '</div>';
+
+      document.getElementById('sgDetail').innerHTML = html;
+    }
+
+    function toggleAcc(id) {
+      document.getElementById(id).classList.toggle('open');
+    }
+    window.toggleAcc = toggleAcc;
+
+    document.addEventListener('DOMContentLoaded', function () {
+      ShyraqGate.guardPage('ЖОО мамандықтарын көру үшін тіркелу керек.');
+      renderList();
+    });
+  })();
+</script>
+</body>
+</html>

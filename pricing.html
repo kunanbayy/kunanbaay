@@ -6,161 +6,168 @@
   <title>Тарифтер — Shyraq Education</title>
   <link rel="stylesheet" href="css/style.css" />
   <style>
-    body { background: #fff; }
-    .pricing-page {
-      position: relative;
-      overflow: hidden;
-      padding: 72px 0 88px;
-      background:
-        radial-gradient(circle at 8% 2%, rgba(242,184,75,.22), transparent 28%),
-        radial-gradient(circle at 92% 8%, rgba(14,165,233,.14), transparent 30%),
-        radial-gradient(circle at 50% 100%, rgba(16,185,129,.08), transparent 34%),
-        linear-gradient(180deg, #fff 0%, #F8FAFC 100%);
+    /* ===== Fillout-style pricing, skinned to Shyraq navy+gold ===== */
+    .px { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
+
+    /* HERO */
+    .fo-hero { text-align: center; padding: 70px 20px 44px; }
+    .fo-hero h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2.6rem, 6vw, 4.4rem);
+      font-weight: 700; line-height: 1.04; letter-spacing: -0.04em; color: var(--ink);
     }
-    .pricing-page::before {
-      content: '';
-      position: absolute;
-      width: 620px;
-      height: 620px;
-      left: -260px;
-      top: 120px;
-      border: 46px solid rgba(30,58,95,.055);
-      border-radius: 50%;
-      pointer-events: none;
+    .fo-hero h1 .hl {
+      background: linear-gradient(100deg, var(--gold-deep), var(--orange));
+      -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
     }
-    .pricing-page::after {
-      content: '';
-      position: absolute;
-      width: 420px;
-      height: 420px;
-      right: -180px;
-      top: 360px;
-      border: 38px solid rgba(242,184,75,.12);
-      border-radius: 50%;
-      pointer-events: none;
+    .fo-hero p { margin: 20px auto 0; max-width: 460px; font-size: 1.06rem; color: var(--text-muted); line-height: 1.55; }
+
+    /* WIDE FREE BANNER */
+    .free-banner-wrap { max-width: 1180px; margin: 0 auto 22px; padding: 0 24px; }
+    .free-banner {
+      border: 1.5px solid var(--border); border-radius: 22px; overflow: hidden;
+      display: flex; align-items: stretch; background: rgba(255,255,255,0.78);
+      backdrop-filter: blur(8px); box-shadow: var(--shadow-sm);
     }
-    .pricing-page .container { position: relative; z-index: 1; }
-    .pricing-hero {
-      max-width: 960px; margin: 0 auto 34px; padding: 0 24px; text-align: center;
+    .free-banner-features { flex: 1; padding: 34px 38px; }
+    .free-banner-features .label { font-size: 0.82rem; color: var(--text-light); font-weight: 600; margin-bottom: 22px; letter-spacing: 0.01em; }
+    .feat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 13px 22px; }
+    .feat { display: flex; align-items: center; gap: 9px; font-size: 0.9rem; color: var(--text); font-weight: 500; }
+    .feat .tick {
+      width: 19px; height: 19px; border-radius: 50%; flex-shrink: 0;
+      background: var(--gold); color: var(--ink); display: inline-flex; align-items: center; justify-content: center;
+      font-size: 0.62rem; font-weight: 900;
     }
-    .pricing-hero .section-tag { background: #fff; border: 1px solid var(--border); box-shadow: var(--shadow-sm); }
-    .pricing-hero h1 {
-      font-size: clamp(2rem, 4vw, 3rem); line-height: 1.05; margin-top: 14px;
+    .free-banner-cta {
+      width: 290px; background: linear-gradient(160deg, #FFFDF7, var(--gold-pale));
+      border-left: 1.5px solid var(--border); padding: 34px 30px;
+      display: flex; flex-direction: column; justify-content: center;
     }
-    .pricing-hero p { max-width: 620px; }
-    .pricing-trust {
-      display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-top: 22px;
+    .free-banner-cta h2 { font-family: var(--font-display); font-size: 1.85rem; font-weight: 700; line-height: 1.08; letter-spacing: -0.03em; color: var(--ink); }
+    .free-banner-cta .price { margin-top: 12px; font-family: var(--font-display); font-size: 2.3rem; font-weight: 700; color: var(--ink); letter-spacing: -0.02em; }
+    .free-banner-cta .price small { font-family: var(--font-body); font-size: 0.95rem; font-weight: 500; color: var(--text-muted); }
+
+    /* EXPLORE */
+    .explore { text-align: center; margin: 22px 0 64px; font-size: 0.96rem; font-weight: 600; color: var(--navy); cursor: pointer; transition: var(--transition); }
+    .explore:hover { color: var(--gold-deep); }
+
+    /* UNIVERSITY LOGOS */
+    .uni-logos { max-width: 1180px; margin: 0 auto 84px; padding: 0 24px; }
+    .uni-logos .cap { text-align: center; font-size: 0.78rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-light); font-weight: 700; margin-bottom: 22px; }
+    .uni-row { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 14px 30px; }
+    .uni-item { font-family: var(--font-display); font-weight: 600; font-size: 0.92rem; letter-spacing: -0.01em; color: var(--navy); opacity: 0.5; transition: var(--transition); }
+    .uni-item:hover { opacity: 1; }
+
+    /* PRICING HEAD */
+    .price-head { text-align: center; padding: 0 20px 8px; }
+    .price-head h2 { font-family: var(--font-display); font-size: clamp(2rem, 4.5vw, 3.2rem); font-weight: 700; letter-spacing: -0.04em; line-height: 1.05; color: var(--ink); }
+    .price-head > p { margin: 16px auto 0; max-width: 520px; font-size: 1rem; color: var(--text-muted); line-height: 1.55; }
+
+    .billing { display: inline-flex; align-items: center; gap: 11px; margin: 30px auto 40px; font-size: 0.9rem; font-weight: 600; color: var(--navy); }
+    .switch { width: 46px; height: 26px; background: var(--border); border-radius: 13px; position: relative; cursor: pointer; transition: var(--transition); flex-shrink: 0; }
+    .switch.on { background: var(--gold); }
+    .switch::after { content: ''; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; background: #fff; border-radius: 50%; box-shadow: 0 1px 4px rgba(11,30,51,0.25); transition: var(--transition); }
+    .switch.on::after { left: 23px; }
+    .save-pill { background: var(--emerald-light); color: #047857; font-weight: 700; font-size: 0.74rem; padding: 3px 9px; border-radius: 999px; }
+
+    /* PRICING CARDS */
+    .price-grid { max-width: 1180px; margin: 0 auto; padding: 0 24px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; align-items: stretch; }
+    .price-card {
+      position: relative; border: 1.5px solid var(--border); border-radius: 20px; padding: 26px 24px;
+      background: rgba(255,255,255,0.82); backdrop-filter: blur(8px); display: flex; flex-direction: column;
+      transition: var(--transition);
     }
-    .pricing-trust span {
-      display: inline-flex; align-items: center; gap: 7px; padding: 8px 14px;
-      border-radius: 999px; background: #fff; border: 1px solid #E2E8F0;
-      color: var(--navy); font-weight: 700; font-size: .82rem;
-      box-shadow: 0 10px 24px rgba(30,58,95,.06);
+    .price-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+    .price-card.featured { border-color: var(--gold); box-shadow: 0 18px 44px -14px rgba(224,153,46,0.45); }
+    .ribbon { position: absolute; top: -11px; left: 24px; background: linear-gradient(170deg, #F7C766, var(--gold)); color: var(--ink); font-size: 0.7rem; font-weight: 800; padding: 4px 12px; border-radius: 999px; box-shadow: var(--shadow-sm); }
+    .pbadge { display: inline-block; padding: 4px 12px; border-radius: 7px; font-size: 0.78rem; font-weight: 800; margin-bottom: 16px; }
+    .b-free { background: var(--cream-dark); color: var(--text-muted); }
+    .b-prem { background: var(--ink); color: var(--gold); }
+    .b-ai { background: var(--navy-pale); color: var(--navy); }
+    .b-report { background: var(--gold); color: var(--ink); }
+
+    .pamt { font-family: var(--font-display); font-size: 2.3rem; font-weight: 700; color: var(--ink); letter-spacing: -0.03em; line-height: 1; }
+    .pamt small { font-family: var(--font-body); font-size: 0.9rem; font-weight: 500; color: var(--text-light); letter-spacing: 0; }
+    .pstrike { font-size: 0.8rem; color: var(--text-light); text-decoration: line-through; margin-top: 6px; min-height: 1em; }
+    .psub { font-size: 0.8rem; color: var(--text-muted); margin: 2px 0 18px; min-height: 1em; }
+
+    .pcta { display: block; width: 100%; padding: 12px; border-radius: 11px; font-size: 0.92rem; font-weight: 700; text-align: center; cursor: pointer; transition: var(--transition); margin-bottom: 20px; border: 1.5px solid transparent; font-family: var(--font-body); }
+    .pcta-outline { background: none; border-color: var(--border); color: var(--ink); }
+    .pcta-outline:hover { border-color: var(--navy); }
+    .pcta-dark { background: linear-gradient(170deg, var(--navy-light), var(--ink)); color: #fff; }
+    .pcta-dark:hover { transform: translateY(-2px); box-shadow: var(--shadow-navy-lg); }
+    .pcta-gold { background: linear-gradient(170deg, #F7C766, var(--gold)); color: var(--ink); border-color: var(--gold-deep); }
+    .pcta-gold:hover { transform: translateY(-2px); box-shadow: var(--glow-gold); }
+
+    .pinc { font-size: 0.76rem; color: var(--text-light); font-weight: 600; margin-bottom: 13px; }
+    .pfeat { display: flex; align-items: flex-start; gap: 9px; font-size: 0.87rem; color: var(--text); margin-bottom: 11px; line-height: 1.4; }
+    .pfeat .pf-ic { width: 18px; height: 18px; flex-shrink: 0; border-radius: 50%; background: var(--gold-pale); color: var(--gold-deep); display: inline-flex; align-items: center; justify-content: center; font-size: 0.6rem; font-weight: 900; margin-top: 1px; }
+    .pfeat.off { color: var(--text-light); }
+    .pfeat.off .pf-ic { background: var(--cream-dark); color: var(--text-light); }
+    .seeall { display: inline-block; margin-top: 6px; font-size: 0.84rem; font-weight: 600; color: var(--navy); }
+    .seeall:hover { color: var(--gold-deep); }
+    .price-card .pcta-foot { margin-top: auto; }
+    .guarantee { font-size: 0.72rem; color: var(--text-light); text-align: center; margin-top: 10px; }
+
+    /* TESTIMONIAL */
+    .testi { max-width: 820px; margin: 90px auto; padding: 0 24px; text-align: center; }
+    .testi .mark { font-family: var(--font-display); font-size: 3rem; color: var(--gold); line-height: 0.5; }
+    .testi blockquote { font-family: var(--font-display); font-size: clamp(1.2rem, 2.4vw, 1.7rem); font-weight: 600; letter-spacing: -0.02em; color: var(--ink); line-height: 1.45; margin-top: 18px; }
+    .testi .who { margin-top: 22px; font-size: 0.9rem; color: var(--text-muted); }
+    .testi .who strong { color: var(--ink); }
+
+    /* ENTERPRISE / SCHOOLS */
+    .ent-wrap { max-width: 760px; margin: 0 auto 90px; padding: 0 24px; }
+    .ent { border: 1.5px solid var(--border); border-radius: 22px; padding: 36px 40px; text-align: center; background: linear-gradient(165deg, rgba(255,255,255,0.9), var(--navy-pale)); }
+    .ent h3 { font-family: var(--font-display); font-size: 1.6rem; font-weight: 700; letter-spacing: -0.03em; color: var(--ink); }
+    .ent > p { margin-top: 8px; font-size: 0.96rem; color: var(--text-muted); }
+    .ent-grid { margin: 26px 0; display: grid; grid-template-columns: 1fr 1fr; gap: 11px 20px; text-align: left; }
+    .ent-feat { display: flex; align-items: center; gap: 9px; font-size: 0.9rem; color: var(--text); }
+    .ent-feat::before { content: '✓'; color: var(--gold-deep); font-weight: 900; font-size: 0.8rem; }
+
+    /* FAQ */
+    .faq { max-width: 740px; margin: 0 auto 90px; padding: 0 24px; }
+    .faq h3 { font-family: var(--font-display); font-size: clamp(1.7rem, 3vw, 2.3rem); font-weight: 700; letter-spacing: -0.03em; text-align: center; color: var(--ink); }
+    .faq > p { text-align: center; font-size: 0.92rem; color: var(--text-muted); margin: 8px 0 32px; }
+    .faq-item { border-top: 1px solid var(--border); }
+    .faq-item:last-child { border-bottom: 1px solid var(--border); }
+    .faq-q { width: 100%; background: none; border: none; text-align: left; padding: 20px 0; display: flex; justify-content: space-between; align-items: center; gap: 16px; font-family: var(--font-body); font-size: 1rem; font-weight: 700; color: var(--ink); cursor: pointer; }
+    .faq-q .sign { font-size: 1.3rem; color: var(--gold-deep); transition: var(--transition); flex-shrink: 0; line-height: 1; }
+    .faq-item.open .sign { transform: rotate(45deg); }
+    .faq-a { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
+    .faq-a p { padding: 0 0 20px; font-size: 0.92rem; color: var(--text-muted); line-height: 1.7; }
+
+    /* CTA FOOTER */
+    .cta-foot { text-align: center; padding: 84px 24px; position: relative; }
+    .cta-foot h2 { font-family: var(--font-display); font-size: clamp(1.9rem, 4vw, 2.8rem); font-weight: 700; letter-spacing: -0.03em; color: var(--ink); }
+    .cta-foot p { margin-top: 12px; font-size: 0.92rem; color: var(--text-muted); }
+    .cta-foot .btn { margin-top: 22px; }
+
+    /* FOOTER */
+    .site-foot { border-top: 1px solid var(--border); padding: 52px 0 28px; }
+    .foot-grid { display: grid; grid-template-columns: 1.4fr repeat(3, 1fr); gap: 32px; margin-bottom: 38px; }
+    .foot-brand .logo { display: flex; align-items: center; gap: 10px; font-family: var(--font-display); font-weight: 700; font-size: 1.15rem; letter-spacing: -0.03em; color: var(--ink); }
+    .foot-brand .logo .mark { width: 34px; height: 34px; border-radius: 10px; background: linear-gradient(150deg, var(--navy-light), var(--ink)); color: var(--gold); display: flex; align-items: center; justify-content: center; box-shadow: 0 0 16px -2px rgba(242,184,75,0.5); }
+    .foot-brand p { margin-top: 12px; font-size: 0.86rem; color: var(--text-muted); max-width: 240px; line-height: 1.6; }
+    .foot-col h4 { font-size: 0.74rem; font-weight: 800; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 13px; }
+    .foot-col a { display: block; font-size: 0.88rem; color: var(--text-muted); margin-bottom: 9px; transition: var(--transition); }
+    .foot-col a:hover { color: var(--ink); }
+    .foot-bottom { border-top: 1px solid var(--border); padding-top: 20px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; font-size: 0.78rem; color: var(--text-light); }
+    .foot-badges { display: flex; gap: 10px; flex-wrap: wrap; }
+    .foot-badge { background: rgba(255,255,255,0.7); border: 1px solid var(--border); padding: 6px 12px; border-radius: 8px; font-size: 0.72rem; color: var(--text-muted); font-weight: 600; }
+
+    @media (max-width: 980px) {
+      .price-grid { grid-template-columns: 1fr 1fr; }
+      .feat-grid { grid-template-columns: 1fr 1fr; }
+      .free-banner { flex-direction: column; }
+      .free-banner-cta { width: 100%; border-left: none; border-top: 1.5px solid var(--border); }
+      .foot-grid { grid-template-columns: 1fr 1fr; }
     }
-    .price-svg { width: 20px; height: 20px; color: currentColor; display: inline-flex; flex-shrink: 0; }
-    .price-svg svg { width: 100%; height: 100%; stroke: currentColor; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
-    .pricing-visuals {
-      display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;
-      margin: 28px auto 0;
-    }
-    .visual-3d {
-      width: 104px; height: 104px; border-radius: 28px;
-      display: grid; place-items: center; position: relative; overflow: hidden;
-      background: rgba(255,255,255,.78);
-      border: 1px solid rgba(226,232,240,.95);
-      box-shadow: 0 20px 40px rgba(30,58,95,.12), inset 0 1px 0 rgba(255,255,255,.95);
-      transform: rotate(-2deg);
-    }
-    .visual-3d:nth-child(2) { transform: translateY(10px) rotate(2deg); }
-    .visual-3d:nth-child(3) { transform: rotate(-1deg); }
-    .visual-3d::before {
-      content: ''; position: absolute; inset: 8px; border-radius: 22px;
-      background: linear-gradient(145deg, rgba(14,165,233,.12), rgba(242,184,75,.12));
-      opacity: .8;
-    }
-    .visual-3d svg { position: relative; width: 74px; height: 74px; filter: drop-shadow(0 12px 16px rgba(30,58,95,.18)); }
-    .pricing-grid { max-width: 1140px; align-items: stretch; gap: 22px; margin-top: 54px; }
-    .pricing-card {
-      border: 1px solid #E2E8F0; border-radius: 30px; padding: 30px;
-      box-shadow: 0 18px 44px rgba(30,58,95,.08); overflow: visible;
-      display: flex; flex-direction: column; min-height: 640px;
-      background:
-        radial-gradient(circle at 90% 0%, rgba(14,165,233,.06), transparent 28%),
-        #fff;
-    }
-    .pricing-card::before {
-      content: ''; position: absolute; inset: 0 0 auto; height: 5px;
-      background: linear-gradient(90deg, #10B981, #0EA5E9);
-      opacity: .75;
-    }
-    .pricing-card:hover { transform: translateY(-5px); box-shadow: 0 24px 54px rgba(30,58,95,.12); }
-    .pricing-card.featured {
-      transform: translateY(-12px);
-      background:
-        radial-gradient(circle at 85% 10%, rgba(242,184,75,.28), transparent 34%),
-        radial-gradient(circle at 12% 0%, rgba(14,165,233,.22), transparent 34%),
-        linear-gradient(145deg, #223D64 0%, #1E3A5F 68%, #2D5491 100%);
-      box-shadow: 0 30px 72px rgba(30,58,95,.24);
-      border-color: var(--gold);
-    }
-    .pricing-card.featured:hover { transform: translateY(-17px); }
-    .pricing-card.featured::before { background: linear-gradient(90deg, var(--gold), #fff3c4); opacity: 1; }
-    .pricing-card.ai-card::before { background: linear-gradient(90deg, #0EA5E9, #8B5CF6); }
-    .pricing-card.free-card::before { background: linear-gradient(90deg, #10B981, #A7F3D0); }
-    .pricing-icon {
-      width: 60px; height: 60px; border-radius: 20px; display: flex; align-items: center; justify-content: center;
-      background: linear-gradient(145deg, #fff, #F1F5F9); border: 1px solid #E2E8F0; margin-bottom: 18px; color: var(--navy);
-      box-shadow: 0 14px 28px rgba(30,58,95,.08), inset 0 1px 0 rgba(255,255,255,.85);
-    }
-    .pricing-icon svg { width: 27px; height: 27px; stroke: currentColor; fill: none; stroke-width: 2.15; stroke-linecap: round; stroke-linejoin: round; }
-    .pricing-card.featured .pricing-icon { background: rgba(255,255,255,.12); border-color: rgba(255,255,255,.18); color: var(--gold); }
-    .pricing-tier { color: var(--navy); }
-    .pricing-card h3 { font-size: 1.1rem; margin-bottom: 2px; }
-    .pricing-amount { letter-spacing: -0.02em; text-shadow: 0 1px 0 rgba(255,255,255,.5); }
-    .pricing-features { gap: 12px; flex: 1; }
-    .pricing-features li { color: #475569; line-height: 1.45; }
-    .pricing-features li::before {
-      width: 20px; height: 20px; border-radius: 50%; background: var(--emerald-light);
-      display: inline-flex; align-items: center; justify-content: center; font-size: .75rem;
-    }
-    .pricing-card.featured .pricing-features li::before { background: rgba(242,184,75,.18); }
-    .pricing-features li.unavail::before { background: #F1F5F9; }
-    .pricing-card > .btn, .pricing-card > button { margin-top: auto; }
-    .report-card {
-      max-width: 760px; margin: 42px auto 0; background: #fff; border: 1px solid #E2E8F0;
-      border-radius: 24px; padding: 30px; display: grid; grid-template-columns: auto 1fr auto;
-      align-items: center; gap: 22px; box-shadow: 0 18px 46px rgba(30,58,95,.08);
-    }
-    .report-icon {
-      width: 72px; height: 72px; border-radius: 22px; background: #FFF7E6;
-      display: flex; align-items: center; justify-content: center; color: #B7791F;
-    }
-    .report-icon svg { width: 36px; height: 36px; stroke: currentColor; fill: none; stroke-width: 2.1; stroke-linecap: round; stroke-linejoin: round; }
-    .compare-panel {
-      background: #fff; border-radius: 24px; border: 1px solid #E2E8F0; overflow: auto;
-      box-shadow: 0 18px 46px rgba(30,58,95,.07);
-    }
-    .faq-item { border-bottom: 1px solid var(--border); }
-    .faq-question {
-      width: 100%; background: none; border: none; text-align: left;
-      padding: 18px 0; display: flex; align-items: center; justify-content: space-between;
-      font-family: var(--font-body); font-size: 0.95rem; font-weight: 600; color: var(--navy);
-      cursor: pointer;
-    }
-    .faq-answer { padding: 0 0 16px; font-size: 0.9rem; color: var(--text-muted); line-height: 1.7; display: none; }
-    .faq-answer.open { display: block; }
-    .compare-table { width: 100%; border-collapse: collapse; }
-    .compare-table th, .compare-table td { padding: 15px 18px; text-align: center; border-bottom: 1px solid var(--border); }
-    .compare-table th:first-child, .compare-table td:first-child { text-align: left; font-size: 0.875rem; }
-    .compare-table th { font-size: 0.82rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); }
-    .compare-table th.highlight { color: var(--navy); background: var(--navy-pale); border-radius: var(--radius) var(--radius) 0 0; }
-    .check { color: var(--emerald); font-weight: 700; }
-    .cross { color: var(--border); }
-    @media (max-width: 1024px) {
-      .pricing-card.featured { transform: none; }
-      .pricing-card.featured:hover { transform: translateY(-5px); }
-      .report-card { grid-template-columns: 1fr; text-align: center; }
-      .report-icon { margin: 0 auto; }
+    @media (max-width: 600px) {
+      .price-grid { grid-template-columns: 1fr; }
+      .feat-grid { grid-template-columns: 1fr; }
+      .ent-grid { grid-template-columns: 1fr; }
+      .foot-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -175,6 +182,7 @@
     <div class="nav-links">
       <a href="index.html" class="nav-link">Басты бет</a>
       <a href="specialties.html" class="nav-link">Мамандықтар</a>
+      
       <a href="universities.html" class="nav-link">Университеттер</a>
       <a href="grant.html" class="nav-link">Грант</a>
       <a href="pricing.html" class="nav-link active">Тарифтер</a>
@@ -189,187 +197,295 @@
   </div>
 </nav>
 
-<div class="pricing-page">
-  <div class="container">
-    <div class="pricing-hero">
-      <div class="section-tag">Тарифтер</div>
-      <h1 class="section-title" style="color:var(--navy)">Өзіңе сәйкес жоспарды таңда</h1>
-      <p class="section-subtitle">Free жоспармен бастап, керек болса Premium-ге өт. Ешқандай міндеттеме жоқ.</p>
-      <div class="pricing-trust">
-        <span><span class="price-svg"><svg viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span>Қауіпсіз төлем</span>
-        <span><span class="price-svg"><svg viewBox="0 0 24 24"><path d="m13 2-8 12h7l-1 8 8-12h-7l1-8z"/></svg></span>Бірден ашылады</span>
-        <span><span class="price-svg"><svg viewBox="0 0 24 24"><path d="M4 10h16"/><path d="M6 10v8"/><path d="M10 10v8"/><path d="M14 10v8"/><path d="M18 10v8"/><path d="M3 20h18"/><path d="M12 4 4 8h16l-8-4z"/></svg></span>104 ЖОО базасы</span>
-      </div>
-      <div class="pricing-visuals" aria-hidden="true">
-        <div class="visual-3d">
-          <svg viewBox="0 0 96 96">
-            <defs>
-              <linearGradient id="targetBlue" x1="20" y1="10" x2="78" y2="86"><stop stop-color="#38BDF8"/><stop offset="1" stop-color="#2563EB"/></linearGradient>
-              <linearGradient id="arrowGold" x1="48" y1="12" x2="80" y2="46"><stop stop-color="#FDE68A"/><stop offset="1" stop-color="#F97316"/></linearGradient>
-            </defs>
-            <circle cx="45" cy="51" r="30" fill="url(#targetBlue)" opacity=".94"/>
-            <circle cx="45" cy="51" r="21" fill="#fff" opacity=".95"/>
-            <circle cx="45" cy="51" r="12" fill="#67E8F9"/>
-            <path d="M51 45 78 18" stroke="url(#arrowGold)" stroke-width="8" stroke-linecap="round"/>
-            <path d="M69 17h12v12" fill="none" stroke="#F2B84B" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </div>
-        <div class="visual-3d">
-          <svg viewBox="0 0 96 96">
-            <defs>
-              <linearGradient id="trophyBlue" x1="18" y1="8" x2="76" y2="86"><stop stop-color="#7DD3FC"/><stop offset=".55" stop-color="#0EA5E9"/><stop offset="1" stop-color="#1D4ED8"/></linearGradient>
-              <linearGradient id="trophyGold" x1="30" y1="8" x2="70" y2="74"><stop stop-color="#FDE68A"/><stop offset="1" stop-color="#F2B84B"/></linearGradient>
-            </defs>
-            <path d="M30 20h36v20c0 12-8 22-18 22S30 52 30 40V20z" fill="url(#trophyBlue)"/>
-            <path d="M30 30H18c1 14 8 21 17 21" fill="none" stroke="#38BDF8" stroke-width="7" stroke-linecap="round"/>
-            <path d="M66 30h12c-1 14-8 21-17 21" fill="none" stroke="#38BDF8" stroke-width="7" stroke-linecap="round"/>
-            <path d="M43 62h10v11H43z" fill="url(#trophyGold)"/>
-            <path d="M31 74h34v9H31z" fill="#2563EB"/>
-            <path d="M42 28l4 8 9 1-6.5 6 1.5 9-8-4.5-8 4.5 1.5-9-6.5-6 9-1 4-8z" fill="#FDE68A"/>
-          </svg>
-        </div>
-        <div class="visual-3d">
-          <svg viewBox="0 0 96 96">
-            <defs>
-              <linearGradient id="bookBlue" x1="18" y1="16" x2="74" y2="82"><stop stop-color="#E0F2FE"/><stop offset=".55" stop-color="#60A5FA"/><stop offset="1" stop-color="#2563EB"/></linearGradient>
-              <linearGradient id="lampGold" x1="40" y1="8" x2="62" y2="46"><stop stop-color="#FFF7AD"/><stop offset="1" stop-color="#F2B84B"/></linearGradient>
-            </defs>
-            <path d="M18 53c12-8 22-8 30 0 8-8 18-8 30 0v24c-12-7-22-7-30 0-8-7-18-7-30 0V53z" fill="url(#bookBlue)"/>
-            <path d="M48 53v24" stroke="#fff" stroke-width="4" opacity=".85"/>
-            <path d="M39 25c0-8 6-14 14-14s14 6 14 14c0 6-4 10-8 13v6H47v-6c-5-3-8-7-8-13z" fill="url(#lampGold)"/>
-            <path d="M46 49h14" stroke="#1E3A5F" stroke-width="4" stroke-linecap="round"/>
-          </svg>
-        </div>
+<!-- HERO -->
+<section class="fo-hero">
+  <h1>Болашағыңды<br><span class="hl">тегін</span> жоспарла</h1>
+  <p>Тіркелуге төлем жоқ. Негізгі мүмкіндіктер мәңгі тегін — кейін қажет болса ғана Premium-ге өт.</p>
+</section>
+
+<!-- WIDE FREE BANNER -->
+<div class="free-banner-wrap">
+  <div class="free-banner">
+    <div class="free-banner-features">
+      <p class="label">Тегін аккаунтпен бірден қол жетімді</p>
+      <div class="feat-grid">
+        <div class="feat"><span class="tick">✓</span> Мамандық тесті</div>
+        <div class="feat"><span class="tick">✓</span> 3 мамандық ұсынысы</div>
+        <div class="feat"><span class="tick">✓</span> Грант калькуляторы</div>
+        <div class="feat"><span class="tick">✓</span> 3 университет карточкасы</div>
+        <div class="feat"><span class="tick">✓</span> ҰБТ пәндерін таңдау</div>
+        <div class="feat"><span class="tick">✓</span> Бейінді пәндер кестесі</div>
+        <div class="feat"><span class="tick">✓</span> Қазақ / орыс тілінде</div>
+        <div class="feat"><span class="tick">✓</span> Мобильге бейімделген</div>
+        <div class="feat"><span class="tick">✓</span> Тіркелу — 1 минут</div>
       </div>
     </div>
-
-    <!-- PRICING CARDS -->
-    <div class="pricing-grid">
-
-      <!-- FREE -->
-      <div class="pricing-card free-card">
-        <div class="pricing-icon"><svg viewBox="0 0 24 24"><path d="M12 21V9"/><path d="M12 9C9 5 6 4 3 5c0 4 2 7 9 7"/><path d="M12 9c3-4 6-5 9-4 0 4-2 7-9 7"/></svg></div>
-        <div class="pricing-tier">Free</div>
-        <h3 style="color:var(--navy)">Тегін</h3>
-        <div class="pricing-price">
-          <div class="pricing-amount">0 ₸</div>
-          <div class="pricing-period">Мәңгілік тегін</div>
-        </div>
-        <ul class="pricing-features">
-          <li>1 мамандық тесті</li>
-          <li>3 мамандық ұсынысы</li>
-          <li>1 грант есептеу</li>
-          <li>3 университет карточкасы</li>
-          <li>Бейінді пәндер</li>
-          <li class="unavail">Толық мамандық анализі</li>
-          <li class="unavail">AI кеңесші</li>
-          <li class="unavail">PDF Career Report</li>
-          <li class="unavail">Жеке дайындық жоспары</li>
-        </ul>
-        <a href="register.html" class="btn btn-outline btn-full" style="justify-content:center">Тегін бастау</a>
-      </div>
-
-      <!-- PREMIUM -->
-      <div class="pricing-card featured">
-        <div class="pricing-badge">Ең танымал</div>
-        <div class="pricing-icon"><svg viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8L19 15z"/></svg></div>
-        <div class="pricing-tier">Premium</div>
-        <h3>Shyraq Premium</h3>
-        <div class="pricing-price">
-          <div class="pricing-amount">990 ₸</div>
-          <div class="pricing-period">айына · Кез келген уақытта тоқтатуға болады</div>
-        </div>
-        <ul class="pricing-features">
-          <li>Шексіз мамандық тесті</li>
-          <li>Барлық 120+ мамандық анализі</li>
-          <li>Барлық 104 университет</li>
-          <li>Шексіз грант есептеу</li>
-          <li>Жеке дайындық жоспары</li>
-          <li>Таңдаулыларға сақтау</li>
-          <li>Хабарландырулар</li>
-          <li class="unavail">AI кеңесші</li>
-          <li class="unavail">PDF Career Report</li>
-        </ul>
-        <button class="btn btn-gold btn-full btn-lg" style="justify-content:center" onclick="handlePremium('premium')">Premium алу — 990 ₸/ай</button>
-        <p style="color:rgba(255,255,255,0.5);font-size:0.78rem;text-align:center;margin-top:10px">30 күндік ақша кері қайтару кепілдігі</p>
-      </div>
-
-      <!-- AI PREMIUM -->
-      <div class="pricing-card ai-card">
-        <div class="pricing-icon"><svg viewBox="0 0 24 24"><rect x="5" y="8" width="14" height="10" rx="3"/><path d="M12 8V5"/><path d="M9 13h.01"/><path d="M15 13h.01"/><path d="M9 18v2"/><path d="M15 18v2"/><path d="M3 12h2"/><path d="M19 12h2"/></svg></div>
-        <div class="pricing-tier">AI Premium</div>
-        <h3 style="color:var(--navy)">AI + Premium</h3>
-        <div class="pricing-price">
-          <div class="pricing-amount">1 990 ₸</div>
-          <div class="pricing-period">айына · Барлық мүмкіндіктер</div>
-        </div>
-        <ul class="pricing-features">
-          <li>Premium-дегі бәрі</li>
-          <li>AI кеңесші (шексіз)</li>
-          <li>PDF Career Report</li>
-          <li>Ата-анаға есеп</li>
-          <li>Жеке оқу жоспары</li>
-          <li>Priority қолдау</li>
-        </ul>
-        <button class="btn btn-primary btn-full btn-lg" style="justify-content:center" onclick="handlePremium('ai')">AI Premium алу</button>
-      </div>
-    </div>
-
-    <!-- ONE-TIME REPORT -->
-    <div class="report-card">
-      <div class="report-icon"><svg viewBox="0 0 24 24"><path d="M5 19V5a2 2 0 0 1 2-2h8l4 4v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2z"/><path d="M14 3v5h5"/><path d="M9 16v-4"/><path d="M12 16V9"/><path d="M15 16v-2"/></svg></div>
-      <div>
-        <div style="display:inline-flex;background:var(--gold);color:var(--navy);padding:5px 14px;border-radius:var(--radius-full);font-size:0.78rem;font-weight:800;margin-bottom:10px">Бір рет төлем</div>
-        <h3 style="color:var(--navy);margin-bottom:6px">Career Report PDF</h3>
-        <p style="color:var(--text-muted);line-height:1.7;font-size:0.9rem">Толық кәсіби анализ, ТОП-10 мамандық, университеттер мен дайындық жоспары — бір PDF-те.</p>
-      </div>
-      <div style="min-width:190px">
-        <div style="font-family:var(--font-display);font-size:2.2rem;font-weight:800;color:var(--navy);line-height:1">1 490 ₸</div>
-        <div style="font-size:0.82rem;color:var(--text-muted);margin:4px 0 14px">бір рет</div>
-        <button class="btn btn-gold btn-full" style="justify-content:center" onclick="handlePremium('report')">PDF алу</button>
-      </div>
-    </div>
-
-    <!-- COMPARISON TABLE -->
-    <div style="margin-top:64px">
-      <h2 style="text-align:center;color:var(--navy);margin-bottom:32px">Толық салыстыру</h2>
-      <div class="compare-panel">
-        <table class="compare-table">
-          <thead>
-            <tr>
-              <th>Мүмкіндік</th>
-              <th>Free</th>
-              <th class="highlight">Premium</th>
-              <th>AI Premium</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr><td>Мамандық тесті</td><td>1 рет</td><td class="check">Шексіз</td><td class="check">Шексіз</td></tr>
-            <tr><td>Мамандық ұсынысы</td><td>3</td><td class="check">120+</td><td class="check">120+</td></tr>
-            <tr><td>Грант есептеу</td><td>1 рет</td><td class="check">Шексіз</td><td class="check">Шексіз</td></tr>
-            <tr><td>Университеттер</td><td>3 ЖОО</td><td class="check">104</td><td class="check">104</td></tr>
-            <tr><td>Жеке дайындық жоспары</td><td class="cross">✕</td><td class="check">✓</td><td class="check">✓</td></tr>
-            <tr><td>Таңдаулыларға сақтау</td><td class="cross">✕</td><td class="check">✓</td><td class="check">✓</td></tr>
-            <tr><td>AI кеңесші</td><td class="cross">✕</td><td class="cross">✕</td><td class="check">✓</td></tr>
-            <tr><td>PDF Career Report</td><td class="cross">✕</td><td class="cross">✕</td><td class="check">✓</td></tr>
-            <tr><td>Ата-анаға есеп</td><td class="cross">✕</td><td class="cross">✕</td><td class="check">✓</td></tr>
-            <tr><td>Баға</td><td><strong>0 ₸</strong></td><td><strong style="color:var(--navy)">990 ₸/ай</strong></td><td><strong>1 990 ₸/ай</strong></td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- FAQ -->
-    <div style="max-width:680px;margin:64px auto 0">
-      <h2 style="text-align:center;color:var(--navy);margin-bottom:32px">Жиі қойылатын сұрақтар</h2>
-      <div id="faqList"></div>
+    <div class="free-banner-cta">
+      <h2>Тегін,<br>мәңгілік</h2>
+      <div class="price">0 ₸ <small>/ ай</small></div>
+      <a class="pcta pcta-gold" href="register.html" style="margin-top:18px">Тегін бастау</a>
     </div>
   </div>
 </div>
 
+<!-- EXPLORE -->
+<p class="explore" onclick="document.getElementById('plans').scrollIntoView({behavior:'smooth'})">Premium мүмкіндіктерді қарау ↓</p>
+
+<!-- UNIVERSITY LOGOS -->
+<div class="uni-logos">
+  <p class="cap">104 университет базасында</p>
+  <div class="uni-row">
+    <span class="uni-item">Назарбаев Университеті</span>
+    <span class="uni-item">ҚазҰУ</span>
+    <span class="uni-item">SDU</span>
+    <span class="uni-item">AITU</span>
+    <span class="uni-item">Сәтбаев Университеті</span>
+    <span class="uni-item">Narxoz</span>
+    <span class="uni-item">KBTU</span>
+    <span class="uni-item">ЕҰУ</span>
+  </div>
+</div>
+
+<!-- PRICING HEAD -->
+<section class="price-head" id="plans">
+  <h2>Бір баға, шексіз мүмкіндік</h2>
+  <p>Тегін бастап, қажетіңе қарай жоғарыла. Ай сайын төле немесе жылдық жоспармен үнемде.</p>
+  <div class="billing">
+    <div class="switch" id="billSwitch" onclick="toggleBilling()"></div>
+    <span>Жылдық төлем</span>
+    <span class="save-pill">20% үнем</span>
+  </div>
+</section>
+
+<!-- PRICING CARDS -->
+<div class="price-grid">
+
+  <!-- FREE -->
+  <div class="price-card">
+    <span class="pbadge b-free">Тегін</span>
+    <div class="pamt">0 ₸ <small>/ ай</small></div>
+    <div class="pstrike">&nbsp;</div>
+    <div class="psub">Мәңгілік тегін</div>
+    <a href="register.html" class="pcta pcta-outline">Тегін бастау</a>
+    <p class="pinc">Кіретіндер:</p>
+    <div class="pfeat"><span class="pf-ic">✓</span> 1 мамандық тесті</div>
+    <div class="pfeat"><span class="pf-ic">✓</span> 3 мамандық ұсынысы</div>
+    <div class="pfeat"><span class="pf-ic">✓</span> 1 грант есептеу</div>
+    <div class="pfeat"><span class="pf-ic">✓</span> 3 университет карточкасы</div>
+    <div class="pfeat"><span class="pf-ic">✓</span> Бейінді пәндер</div>
+    <a href="#full" class="seeall pcta-foot" onclick="document.getElementById('full').scrollIntoView({behavior:'smooth'});return false;">Барлық мүмкіндік →</a>
+  </div>
+
+  <!-- PREMIUM (featured) -->
+  <div class="price-card featured">
+    <span class="ribbon">Ең танымал</span>
+    <span class="pbadge b-prem">Premium</span>
+    <div class="pamt" data-m="990 ₸" data-a="792 ₸">990 ₸ <small>/ ай</small></div>
+    <div class="pstrike" data-a-show="990 ₸/ай">&nbsp;</div>
+    <div class="psub" data-m="Кез келген кезде тоқтат" data-a="9 504 ₸ жылына">Кез келген кезде тоқтат</div>
+    <button class="pcta pcta-gold" onclick="handlePremium('premium')">Premium алу</button>
+    <p class="pinc">Free-дегінің бәрі, әрі:</p>
+    <div class="pfeat"><span class="pf-ic">✓</span> Шексіз мамандық тесті</div>
+    <div class="pfeat"><span class="pf-ic">✓</span> 120+ мамандық анализі</div>
+    <div class="pfeat"><span class="pf-ic">✓</span> Барлық 104 университет</div>
+    <div class="pfeat"><span class="pf-ic">✓</span> Шексіз грант есептеу</div>
+    <div class="pfeat"><span class="pf-ic">✓</span> Жеке дайындық жоспары</div>
+    <div class="pfeat"><span class="pf-ic">✓</span> Таңдаулыларға сақтау</div>
+    <a href="#full" class="seeall pcta-foot" onclick="document.getElementById('full').scrollIntoView({behavior:'smooth'});return false;">Барлық мүмкіндік →</a>
+  </div>
+
+  <!-- AI PREMIUM -->
+  <div class="price-card">
+    <span class="pbadge b-ai">AI Premium</span>
+    <div class="pamt" data-m="1 990 ₸" data-a="1 592 ₸">1 990 ₸ <small>/ ай</small></div>
+    <div class="pstrike" data-a-show="1 990 ₸/ай">&nbsp;</div>
+    <div class="psub" data-m="Барлық мүмкіндіктер" data-a="19 104 ₸ жылына">Барлық мүмкіндіктер</div>
+    <button class="pcta pcta-dark" onclick="handlePremium('ai')">AI Premium алу</button>
+    <p class="pinc">Premium-дегінің бәрі, әрі:</p>
+    <div class="pfeat"><span class="pf-ic">✓</span> AI кеңесші (шексіз)</div>
+    <div class="pfeat"><span class="pf-ic">✓</span> PDF Career Report</div>
+    <div class="pfeat"><span class="pf-ic">✓</span> Ата-анаға есеп</div>
+    <div class="pfeat"><span class="pf-ic">✓</span> Жеке оқу жоспары</div>
+    <div class="pfeat"><span class="pf-ic">✓</span> Priority қолдау</div>
+    <a href="#full" class="seeall pcta-foot" onclick="document.getElementById('full').scrollIntoView({behavior:'smooth'});return false;">Барлық мүмкіндік →</a>
+  </div>
+
+  <!-- CAREER REPORT (one-time) -->
+  <div class="price-card">
+    <span class="pbadge b-report">Бір рет</span>
+    <div class="pamt">1 490 ₸</div>
+    <div class="pstrike">&nbsp;</div>
+    <div class="psub">Бір реттік төлем</div>
+    <button class="pcta pcta-outline" onclick="handlePremium('report')">PDF алу</button>
+    <p class="pinc">Не кіреді:</p>
+    <div class="pfeat"><span class="pf-ic">✓</span> Толық кәсіби анализ</div>
+    <div class="pfeat"><span class="pf-ic">✓</span> ТОП-10 мамандық</div>
+    <div class="pfeat"><span class="pf-ic">✓</span> Сәйкес университеттер</div>
+    <div class="pfeat"><span class="pf-ic">✓</span> Дайындық жоспары</div>
+    <div class="pfeat"><span class="pf-ic">✓</span> 10–15 беттік PDF</div>
+    <span class="seeall pcta-foot" style="color:var(--text-light);cursor:default">Жазылымсыз</span>
+  </div>
+</div>
+
+<!-- TESTIMONIAL -->
+<div class="testi">
+  <div class="mark">“</div>
+  <blockquote>Қай мамандыққа түсерімді білмей жүргем. Shyraq тест нәтижесіне қарап нақты бағыт берді — енді грант мүмкіндігімді де көріп отырмын.</blockquote>
+  <p class="who"><strong>Аружан Б.</strong><br>11-сынып оқушысы, Алматы</p>
+</div>
+
+<!-- SCHOOLS / ENTERPRISE -->
+<div class="ent-wrap">
+  <div class="ent">
+    <h3>Мектептер мен орталықтарға</h3>
+    <p>Сынып немесе оқу орталығы үшін топтық қолжетімділік пен жеке басқару панелі.</p>
+    <div class="ent-grid">
+      <div class="ent-feat">Шексіз оқушы аккаунты</div>
+      <div class="ent-feat">Мұғалімге басқару панелі</div>
+      <div class="ent-feat">Сынып бойынша есептер</div>
+      <div class="ent-feat">Топтық грант болжамы</div>
+      <div class="ent-feat">Жеке брендтеу</div>
+      <div class="ent-feat">Арнайы қолдау</div>
+    </div>
+    <a href="register.html" class="btn btn-primary">Байланысу</a>
+  </div>
+</div>
+
+<!-- FULL COMPARISON -->
+<div class="px" id="full" style="margin-bottom:90px">
+  <h2 style="font-family:var(--font-display);text-align:center;color:var(--ink);letter-spacing:-0.03em;margin-bottom:30px;font-size:clamp(1.6rem,3vw,2.2rem);font-weight:700">Толық салыстыру</h2>
+  <div style="background:rgba(255,255,255,0.82);backdrop-filter:blur(8px);border:1.5px solid var(--border);border-radius:20px;overflow:auto">
+    <table class="compare-table" style="width:100%;border-collapse:collapse">
+      <thead>
+        <tr>
+          <th style="text-align:left;padding:15px 18px;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);border-bottom:1px solid var(--border)">Мүмкіндік</th>
+          <th style="padding:15px 18px;font-size:0.8rem;text-transform:uppercase;color:var(--text-muted);border-bottom:1px solid var(--border)">Free</th>
+          <th style="padding:15px 18px;font-size:0.8rem;text-transform:uppercase;color:var(--ink);background:var(--gold-pale);border-bottom:1px solid var(--border)">Premium</th>
+          <th style="padding:15px 18px;font-size:0.8rem;text-transform:uppercase;color:var(--text-muted);border-bottom:1px solid var(--border)">AI Premium</th>
+        </tr>
+      </thead>
+      <tbody id="cmpBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- FAQ -->
+<div class="faq">
+  <h3>Жиі қойылатын сұрақтар</h3>
+  <p>Жауабын таппадың ба? Бізге жаз.</p>
+  <div id="faqList"></div>
+</div>
+
+<!-- CTA FOOTER -->
+<div class="cta-foot">
+  <h2>Алғашқы қадамды бүгін жаса</h2>
+  <p>Бәрі тегін аккаунттан басталады.</p>
+  <a href="register.html" class="btn btn-gold btn-lg">Тегін бастау →</a>
+</div>
+
+<!-- FOOTER -->
+<footer class="site-foot">
+  <div class="px">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <div class="logo"><span class="mark">☀</span> Shyraq</div>
+        <p>ҰБТ-дан грантсыз қалмаудың жолы — мамандық, университет және грант мүмкіндігі бір жерде.</p>
+      </div>
+      <div class="foot-col">
+        <h4>Платформа</h4>
+        <a href="index.html">Басты бет</a>
+        <a href="specialties.html">Мамандықтар</a>
+        <a href="universities.html">Университеттер</a>
+        <a href="grant.html">Грант калькуляторы</a>
+        <a href="pricing.html">Тарифтер</a>
+      </div>
+      <div class="foot-col">
+        <h4>Аккаунт</h4>
+        <a href="register.html">Тіркелу</a>
+        <a href="login.html">Кіру</a>
+        <a href="dashboard.html">Кабинет</a>
+        <a href="profile.html">Профиль</a>
+      </div>
+      <div class="foot-col">
+        <h4>Қолдау</h4>
+        <a href="#plans">Тарифтер</a>
+        <a href="#full">Салыстыру</a>
+        <a href="#">Көмек орталығы</a>
+        <a href="#">Байланыс</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <div class="foot-badges">
+        <span class="foot-badge">🔒 SSL қорғалған төлем</span>
+        <span class="foot-badge">💳 Kaspi · VISA · Mastercard</span>
+        <span class="foot-badge">🇰🇿 Қазақстан үшін</span>
+      </div>
+      <div>
+        <a href="#" style="color:var(--text-light);margin-right:14px">Құпиялылық</a>
+        <a href="#" style="color:var(--text-light);margin-right:14px">Шарттар</a>
+        <span>© 2026 Shyraq Education</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
 <script src="js/universities-data.js"></script>
 <script src="js/main.js"></script>
 <script>
+/* ── BILLING TOGGLE ── */
+let annual = false;
+function toggleBilling() {
+  annual = !annual;
+  document.getElementById('billSwitch').classList.toggle('on', annual);
+  document.querySelectorAll('.pamt[data-m]').forEach(el => {
+    const v = annual ? el.dataset.a : el.dataset.m;
+    el.innerHTML = v + ' <small>/ ай</small>';
+  });
+  document.querySelectorAll('.pstrike[data-a-show]').forEach(el => {
+    el.textContent = annual ? el.dataset.aShow : ' ';
+  });
+  document.querySelectorAll('.psub[data-m]').forEach(el => {
+    el.textContent = annual ? el.dataset.a : el.dataset.m;
+  });
+}
+
+/* ── COMPARISON TABLE ── */
+const CMP = [
+  ['Мамандық тесті', '1 рет', 'Шексіз', 'Шексіз'],
+  ['Мамандық ұсынысы', '3', '120+', '120+'],
+  ['Грант есептеу', '1 рет', 'Шексіз', 'Шексіз'],
+  ['Университеттер', '3 ЖОО', '104', '104'],
+  ['Жеке дайындық жоспары', false, true, true],
+  ['Таңдаулыларға сақтау', false, true, true],
+  ['AI кеңесші', false, false, true],
+  ['PDF Career Report', false, false, true],
+  ['Ата-анаға есеп', false, false, true],
+  ['Баға', '0 ₸', '990 ₸/ай', '1 990 ₸/ай'],
+];
+(function () {
+  const body = document.getElementById('cmpBody');
+  const cell = (v, hi) => {
+    const td = document.createElement('td');
+    td.style.cssText = 'padding:14px 18px;text-align:center;border-bottom:1px solid var(--border);font-size:0.88rem' + (hi ? ';background:rgba(254,250,240,0.5)' : '');
+    if (v === true) { td.innerHTML = '✓'; td.style.color = 'var(--emerald)'; td.style.fontWeight = '700'; }
+    else if (v === false) { td.innerHTML = '–'; td.style.color = 'var(--text-light)'; }
+    else { td.textContent = v; td.style.fontWeight = '600'; td.style.color = 'var(--ink)'; }
+    return td;
+  };
+  CMP.forEach(row => {
+    const tr = document.createElement('tr');
+    const name = document.createElement('td');
+    name.textContent = row[0];
+    name.style.cssText = 'padding:14px 18px;text-align:left;font-size:0.88rem;color:var(--text);border-bottom:1px solid var(--border)';
+    tr.appendChild(name);
+    tr.appendChild(cell(row[1], false));
+    tr.appendChild(cell(row[2], true));
+    tr.appendChild(cell(row[3], false));
+    body.appendChild(tr);
+  });
+})();
+
+/* ── FAQ ── */
 const FAQS = [
   { q: 'Premium-ді тоқтатуға болады ма?', a: 'Иә, кез келген уақытта тоқтатуға болады. Ешқандай айыппұл жоқ. Тоқтатқаннан кейін ай соңына дейін пайдалана беруге болады.' },
   { q: 'PDF Career Report дегеніміз не?', a: 'PDF Career Report — сенің тест нәтижелеріңе, ҰБТ пәндеріңе және мамандықтарыңа негізделген 10–15 беттік кәсіби анализ. ТОП-10 мамандық, университеттер, дайындық жоспары кіреді.' },
@@ -377,56 +493,35 @@ const FAQS = [
   { q: 'Free жоспар жеткілікті ме?', a: 'Free жоспармен мамандық тестін тапсырып, негізгі нәтижені аласың. Толық анализ, барлық мамандықтар мен университеттер үшін Premium қажет.' },
   { q: 'Төлем қауіпсіз бе?', a: 'Иә, барлық төлемдер SSL шифрлауымен қорғалған. Kaspi Bank, VISA, MasterCard арқылы төлеуге болады.' },
 ];
-
-document.addEventListener('DOMContentLoaded', () => {
-  const faqList = document.getElementById('faqList');
-  FAQS.forEach((faq, i) => {
+(function () {
+  const list = document.getElementById('faqList');
+  FAQS.forEach(faq => {
     const item = document.createElement('div');
     item.className = 'faq-item';
-
-    const btn = document.createElement('button');
-    btn.className = 'faq-question';
-
-    const qText = document.createElement('span');
-    qText.textContent = faq.q;
-
-    const arrow = document.createElement('span');
-    arrow.textContent = '▼';
-    arrow.style.cssText = 'font-size:0.75rem;transition:var(--transition);color:var(--text-muted)';
-
-    btn.appendChild(qText);
-    btn.appendChild(arrow);
-
-    const answer = document.createElement('div');
-    answer.className = 'faq-answer';
-    answer.textContent = faq.a;
-
+    item.innerHTML =
+      '<button class="faq-q"><span>' + faq.q + '</span><span class="sign">+</span></button>' +
+      '<div class="faq-a"><p>' + faq.a + '</p></div>';
+    const btn = item.querySelector('.faq-q');
+    const ans = item.querySelector('.faq-a');
     btn.addEventListener('click', () => {
-      const isOpen = answer.classList.contains('open');
-      document.querySelectorAll('.faq-answer').forEach(a => a.classList.remove('open'));
-      document.querySelectorAll('.faq-question span:last-child').forEach(a => a.style.transform = '');
-      if (!isOpen) {
-        answer.classList.add('open');
-        arrow.style.transform = 'rotate(180deg)';
-      }
+      const open = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(f => { f.classList.remove('open'); f.querySelector('.faq-a').style.maxHeight = null; });
+      if (!open) { item.classList.add('open'); ans.style.maxHeight = ans.scrollHeight + 'px'; }
     });
-
-    item.appendChild(btn);
-    item.appendChild(answer);
-    faqList.appendChild(item);
+    list.appendChild(item);
   });
-});
+})();
 
+/* ── CHECKOUT ── */
 function handlePremium(type) {
-  const user = JSON.parse(localStorage.getItem('shyraq_user'));
-  if (!user) {
-    if (confirm('Тіркелу қажет. Тіркелу бетіне өту?')) {
-      window.location.href = 'register.html';
-    }
-    return;
-  }
-  showToast('Төлем жүйесі жақын арада іске қосылады!');
+  const planMap = { premium: 'premium', ai: 'ai', report: 'career' };
+  const plan = planMap[type] || 'premium';
+  const user = JSON.parse(localStorage.getItem('shyraq_user') || 'null');
+  const email = user ? encodeURIComponent(user.email || '') : '';
+  window.location.href = 'payment.html?plan=' + plan + (email ? '&email=' + email : '');
 }
 </script>
+  <script src="js/icons.js"></script>
+
 </body>
 </html>

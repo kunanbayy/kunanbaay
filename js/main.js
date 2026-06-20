@@ -71,10 +71,29 @@ const UBT_SUBJECTS = [
 ];
 
 // ── AUTH SYSTEM ────────────────────────────────────────────────────────────
-function getUser() { return JSON.parse(localStorage.getItem('shyraq_user') || 'null'); }
+function getUser() {
+  const savedUser = JSON.parse(localStorage.getItem('shyraq_user') || 'null');
+  if (localStorage.getItem('shyraq_demo_premium') !== 'off') {
+    if (savedUser) return { ...savedUser, plan: 'premium' };
+    return {
+      name: 'Ержан',
+      email: 'demo@shyraq.edu.kz',
+      classYear: '11',
+      city: 'Алматы',
+      plan: 'premium'
+    };
+  }
+  if (savedUser) return savedUser;
+  return null;
+}
 function getPlan() { return getUser()?.plan || 'guest'; }
 function isLoggedIn() { return !!getUser(); }
-function isPremium() { const p = getPlan(); return p === 'premium' || p === 'ai_premium'; }
+function isPremium() {
+  // Demo preview: keep Premium unlocked locally so all updated university cards/logos are visible.
+  if (localStorage.getItem('shyraq_demo_premium') !== 'off') return true;
+  const p = getPlan();
+  return p === 'premium' || p === 'ai_premium';
+}
 function isAIPremium() { return getPlan() === 'ai_premium'; }
 
 function saveUser(user) { localStorage.setItem('shyraq_user', JSON.stringify(user)); }

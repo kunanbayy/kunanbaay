@@ -5,13 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ЖОО — Shyraq Education</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Noto+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;600;700;800;900&family=Golos+Text:wght@400;500;600;700;800;900&family=Noto+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
-    body { font-family: 'Manrope','Noto Sans',Arial,sans-serif; background: #ffffff; color: #0F172A; -webkit-font-smoothing: antialiased; }
+    body { font-family: 'Golos Text','Noto Sans',Arial,sans-serif; background: #FFFFFF; color: #0F172A; letter-spacing:-0.005em; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+    body::before { content:''; position:fixed; inset:0; z-index:-2; pointer-events:none;
+      background:
+        radial-gradient(680px 520px at 10% 6%, rgba(96,165,250,0.16), transparent 60%),
+        radial-gradient(620px 560px at 92% 12%, rgba(59,130,246,0.13), transparent 58%),
+        radial-gradient(720px 600px at 82% 90%, rgba(125,211,252,0.16), transparent 62%),
+        radial-gradient(560px 460px at 18% 86%, rgba(96,165,250,0.11), transparent 60%), #FFFFFF; }
+    ::selection { background:#F2B84B; color:#0B1E33; }
+    :focus-visible { outline:2px solid #E0992E; outline-offset:2px; border-radius:4px; }
     a { text-decoration: none; color: inherit; }
-    :root { --navy: #1E3A5F; --orange: #F97316; --gray: #F8FAFC; --gray2: #F1F5F9; --border: #E2E8F0; --muted: #64748B; --fd: 'Manrope','Noto Sans',Arial,sans-serif; }
+    :root { --ink:#0B1E33; --navy: #1E3A5F; --orange: #F97316; --gold:#F2B84B; --gold-deep:#E0992E; --gray: #FFFFFF; --gray2: #F4F6F9; --border: #E6E8EC; --muted: #64748B; --fd: 'Unbounded','Golos Text','Noto Sans',sans-serif; }
+    .ix { width: 1em; height: 1em; display: inline-block; vertical-align: -0.14em; flex-shrink: 0; }
+    .ix-emoji { width: 1.12em; height: 1.12em; vertical-align: -0.18em; }
+    .ix-sm { width: .85em; height: .85em; } .ix-lg { width: 1.5em; height: 1.5em; } .ix-xl { width: 2em; height: 2em; }
     .nav { position: sticky; top: 0; z-index: 100; height: 62px; background: rgba(255,255,255,.95); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); display: flex; align-items: center; }
     .nav-inner { max-width: 1200px; margin: 0 auto; width: 100%; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; }
     .nav-logo { display: flex; align-items: center; gap: 9px; font-family: var(--fd); font-weight: 800; font-size: 1.18rem; color: var(--navy); }
@@ -29,21 +40,18 @@
     .page { max-width: 1100px; margin: 0 auto; padding: 36px 24px 80px; }
     .page-title { font-family: var(--fd); font-size: 2rem; font-weight: 800; color: #0F172A; margin-bottom: 20px; }
     .page-divider { height: 1px; background: var(--border); margin-bottom: 24px; }
-    .filter-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; }
-    .type-tabs { display: flex; border: 2px solid #0F172A; border-radius: 10px; overflow: hidden; }
-    .type-tab { padding: 9px 22px; font-size: 0.875rem; font-weight: 700; cursor: pointer; background: #fff; color: #0F172A; border: none; transition: .15s; font-family: 'Manrope', 'Noto Sans', Arial, sans-serif; }
-    .type-tab.active { background: #0F172A; color: #fff; }
-    .search-wrap { display: flex; align-items: center; gap: 9px; border: 1.5px solid var(--border); border-radius: 10px; padding: 9px 14px; flex: 1; min-width: 180px; background: #fff; transition: .15s; }
-    .search-wrap:focus-within { border-color: var(--navy); }
-    .search-wrap input { flex: 1; border: none; outline: none; font-family: 'Manrope', 'Noto Sans', Arial, sans-serif; font-size: 0.875rem; color: #0F172A; background: transparent; }
+    .filter-row { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
+    .search-wrap { display: flex; align-items: center; gap: 9px; border: 1.5px solid var(--border); border-radius: 10px; padding: 10px 14px; flex: 1; min-width: 0; background: #fff; transition: .15s; }
+    .search-wrap:focus-within { border-color: var(--navy); box-shadow: 0 0 0 3px rgba(30,58,95,.07); }
+    .search-wrap input { flex: 1; border: none; outline: none; font-family: 'Golos Text','Noto Sans',Arial,sans-serif; font-size: 0.875rem; color: #0F172A; background: transparent; }
     .search-wrap input::placeholder { color: #94A3B8; }
-    .city-select-btn { display: flex; align-items: center; gap: 8px; padding: 9px 16px; border: 1.5px solid var(--border); border-radius: 10px; background: #fff; font-size: 0.875rem; font-weight: 600; color: #0F172A; cursor: pointer; transition: .15s; white-space: nowrap; font-family: 'Manrope', 'Noto Sans', Arial, sans-serif; }
-    .city-select-btn:hover { border-color: var(--navy); color: var(--navy); }
-    .city-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
-    .city-pill { display: flex; align-items: center; gap: 6px; padding: 7px 16px; border-radius: 999px; border: 1.5px solid var(--border); font-size: 0.8rem; font-weight: 600; color: #0F172A; background: #fff; cursor: pointer; transition: .15s; font-family: 'Manrope', 'Noto Sans', Arial, sans-serif; }
-    .city-pill:hover { border-color: #94A3B8; }
-    .city-pill.active { background: #0F172A; color: #fff; border-color: #0F172A; }
-    .city-pill .c-dot { width: 8px; height: 8px; background: var(--orange); border-radius: 50%; flex-shrink: 0; }
+    .region-select-wrap { display: flex; align-items: center; border: 1.5px solid var(--border); border-radius: 10px; background: #fff; overflow: hidden; transition: .15s; flex-shrink: 0; }
+    .region-select-wrap:focus-within { border-color: var(--navy); box-shadow: 0 0 0 3px rgba(30,58,95,.07); }
+    .region-select { border: none; outline: none; padding: 10px 12px 10px 14px; font-family: 'Golos Text','Noto Sans',Arial,sans-serif; font-size: 0.875rem; font-weight: 600; color: #0F172A; background: transparent; cursor: pointer; appearance: none; -webkit-appearance: none; min-width: 160px; }
+    .region-chevron { pointer-events: none; padding: 0 10px; color: #94A3B8; display: flex; align-items: center; }
+    .region-clear { border: none; background: none; padding: 0 10px 0 0; cursor: pointer; color: #94A3B8; display: none; align-items: center; font-size: 1rem; line-height: 1; }
+    .region-clear.visible { display: flex; }
+    .region-clear:hover { color: #EF4444; }
     .uni-count { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: #94A3B8; margin-bottom: 16px; }
     .uni-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border-top: 1px solid var(--border); border-left: 1px solid var(--border); }
     .uni-item { display: flex; align-items: center; gap: 14px; padding: 14px 16px; border-bottom: 1px solid var(--border); border-right: 1px solid var(--border); cursor: pointer; transition: .15s; }
@@ -109,6 +117,7 @@
     <div class="nav-links">
       <a href="index.html" class="nav-link">Басты бет</a>
       <a href="specialties.html" class="nav-link">Мамандықтар</a>
+      
       <a href="universities.html" class="nav-link active">Университеттер</a>
       <a href="grant.html" class="nav-link">Грант</a>
       <a href="pricing.html" class="nav-link">Тарифтер</a>
@@ -139,30 +148,20 @@
   </div>
 </div>
 <div class="page">
-  <h1 class="page-title">ЖОО</h1>
+  <h1 class="page-title">Қазақстан университеттері</h1>
   <div class="page-divider"></div>
   <div class="filter-row">
-    <div class="type-tabs">
-      <button class="type-tab active">Қазақстан</button>
-      <button class="type-tab">Басқа елдер</button>
-    </div>
     <div class="search-wrap">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-      <input type="text" placeholder="Аты бойынша іздеу..." id="searchInput" oninput="renderUnis()" />
+      <input type="text" placeholder="Университет атауы, қысқаша атауы немесе қала бойынша іздеу..." id="searchInput" oninput="renderUnis()" onkeydown="if(event.key==='Enter')renderUnis()" />
     </div>
-    <button class="city-select-btn" onclick="openCityModal()">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#F97316" stroke-width="2.5"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
-      Қаланы таңдау
-    </button>
-  </div>
-  <div class="city-pills" id="cityPills">
-    <button class="city-pill active" data-city="all" onclick="filterCity('all',this)">Барлығы</button>
-    <button class="city-pill" data-city="Алматы" onclick="filterCity('Алматы',this)"><span class="c-dot"></span>Алматы</button>
-    <button class="city-pill" data-city="Астана" onclick="filterCity('Астана',this)"><span class="c-dot"></span>Астана</button>
-    <button class="city-pill" data-city="Шымкент" onclick="filterCity('Шымкент',this)"><span class="c-dot"></span>Шымкент</button>
-    <button class="city-pill" data-city="Қарағанды" onclick="filterCity('Қарағанды',this)"><span class="c-dot"></span>Қарағанды</button>
-    <button class="city-pill" data-city="Өскемен" onclick="filterCity('Өскемен',this)"><span class="c-dot"></span>Өскемен</button>
-    <button class="city-pill" data-city="Семей" onclick="filterCity('Семей',this)"><span class="c-dot"></span>Семей</button>
+    <div class="region-select-wrap">
+      <select id="regionSelect" class="region-select" onchange="onRegionChange()">
+        <option value="">Барлық аймақ</option>
+      </select>
+      <span class="region-chevron"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></span>
+      <button class="region-clear" id="regionClear" onclick="clearRegion()" title="Тазалау">×</button>
+    </div>
   </div>
   <div class="uni-count">УНИВЕРСИТЕТ САНЫ: <span id="uniCountLabel">0</span></div>
   <div class="uni-grid" id="uniGrid"></div>
@@ -172,15 +171,6 @@
       <div style="font-family:'Manrope','Noto Sans',Arial,sans-serif;font-weight:800;color:#1E3A5F;font-size:0.95rem;margin-bottom:6px" id="freeGateTitle">Толық тізімді ашу үшін Premium қосыңыз</div>
       <p style="font-size:0.8rem;color:#64748B;margin-bottom:16px;line-height:1.6">Free нұсқада тек 3 ЖОО көрінеді.</p>
       <a href="pricing.html" style="display:inline-flex;align-items:center;gap:7px;background:#F2B84B;color:#1E3A5F;padding:10px 22px;border-radius:999px;font-weight:700;font-size:0.85rem;text-decoration:none;font-family:'Manrope','Noto Sans',Arial,sans-serif">⭐ Premium алу</a>
-    </div>
-  </div>
-</div>
-<div class="modal-overlay" id="cityModal" onclick="if(event.target===this)closeCityModal()">
-  <div class="city-modal">
-    <div class="city-modal-body" id="cityModalBody"></div>
-    <div class="city-modal-footer">
-      <button class="btn-cancel" onclick="closeCityModal()">Болдырмау</button>
-      <button class="btn-save" onclick="saveCitySelection()">Сақтау</button>
     </div>
   </div>
 </div>
@@ -210,9 +200,29 @@ const UNI_DATA = (window.getEnrichedUniversities ? window.getEnrichedUniversitie
     logo: uni.logo_url || null,
     descriptionText: uni.description || 'ENIC Kazakhstan ресми тізімінен қосылды.',
   }));
-const KZ_CITIES = ['Барлық қалалар', 'Алматы қаласы', 'Астана қаласы', 'Шымкент қаласы', 'Ақмола облысы', 'Ақтөбе облысы', 'Алматы облысы', 'Атырау облысы', 'Шығыс Қазақстан облысы', 'Жамбыл облысы', 'Батыс Қазақстан облысы', 'Қарағанды облысы', 'Қостанай облысы', 'Қызылорда облысы', 'Маңғыстау облысы', 'Павлодар облысы', 'Солтүстік Қазақстан облысы', 'Түркістан облысы'];
-let currentCity = 'all';
-let tempCity = 'Барлық қалалар';
+let currentCity = '';
+
+function populateRegionSelect() {
+  const select = document.getElementById('regionSelect');
+  if (!select) return;
+  const previous = select.value;
+  const cities = [...new Set(UNI_DATA.map(u => u.city).filter(Boolean).filter(c => c !== '—'))]
+    .sort((a, b) => a.localeCompare(b, 'kk'));
+  select.replaceChildren();
+  const all = document.createElement('option');
+  all.value = '';
+  all.textContent = 'Барлық аймақ';
+  select.appendChild(all);
+  cities.forEach(city => {
+    const option = document.createElement('option');
+    option.value = city;
+    option.textContent = city;
+    select.appendChild(option);
+  });
+  if (cities.includes(previous)) {
+    select.value = previous;
+  }
+}
 
 function appendUniversityPlaceholder(container, u, compact) {
   const wrap = document.createElement('div');
@@ -244,10 +254,18 @@ function renderUniversityLogo(container, u, compact) {
   }
 }
 
-function filterCity(city, btn) {
-  currentCity = city;
-  document.querySelectorAll('.city-pill').forEach(p => p.classList.remove('active'));
-  btn.classList.add('active');
+function onRegionChange() {
+  currentCity = document.getElementById('regionSelect').value;
+  const clearBtn = document.getElementById('regionClear');
+  if (clearBtn) clearBtn.classList.toggle('visible', !!currentCity);
+  renderUnis();
+}
+
+function clearRegion() {
+  document.getElementById('regionSelect').value = '';
+  currentCity = '';
+  const clearBtn = document.getElementById('regionClear');
+  if (clearBtn) clearBtn.classList.remove('visible');
   renderUnis();
 }
 
@@ -255,8 +273,8 @@ function renderUnis() {
   const search = (document.getElementById('searchInput').value || '').toLowerCase();
   const filtered = UNI_DATA.filter(u => {
     const cityText = u.city || '';
-    const c = currentCity === 'all' || cityText.includes(currentCity);
-    const haystack = [u.name_kz, u.name_ru, u.name_en, u.short_name, u.city, u.official_website].filter(Boolean).join(' ').toLowerCase();
+    const c = !currentCity || cityText === currentCity;
+    const haystack = [u.name_kz, u.name_ru, u.name_en, u.short_name, u.city, u.official_website, u.code, u.category].filter(Boolean).join(' ').toLowerCase();
     const s = !search || haystack.includes(search);
     return c && s;
   });
@@ -296,7 +314,7 @@ function renderUnis() {
   if (!li || ((!pp) && filtered.length > 3)) {
     gate.style.display = '';
     const t = document.getElementById('freeGateTitle');
-    t.textContent = !li ? filtered.length + ' университет табылды. Тіркеліп, толық тізімді ашыңыз.' : filtered.length + ' университет табылды. Free нұсқада тек 3 ЖОО. Premium-де барлығы ашылады.';
+    t.textContent = !li ? filtered.length + ' университет табылды. Тіркеліп, толық тізімді ашыңыз.' : filtered.length + ' университет табылды. Free нұсқада тек 3 ЖОО көрінеді. Premium-де барлығы ашылады.';
   } else {
     gate.style.display = 'none';
   }
@@ -373,58 +391,14 @@ function openDetail(u) {
   body.appendChild(ac);
 }
 
-function openCityModal() {
-  const modal = document.getElementById('cityModal');
-  const body = document.getElementById('cityModalBody');
-  modal.classList.add('open');
-  body.replaceChildren();
-  KZ_CITIES.forEach(city => {
-    const opt = document.createElement('div');
-    opt.className = 'city-option' + (city === tempCity ? ' selected' : '');
-    const nm = document.createElement('div');
-    nm.className = 'city-opt-name';
-    nm.textContent = city;
-    const ch = document.createElement('div');
-    ch.className = 'city-opt-check';
-    ch.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>';
-    opt.appendChild(nm);
-    opt.appendChild(ch);
-    opt.addEventListener('click', () => {
-      document.querySelectorAll('.city-option').forEach(o => o.classList.remove('selected'));
-      opt.classList.add('selected');
-      tempCity = city;
-    });
-    body.appendChild(opt);
-  });
-}
-
-function closeCityModal() {
-  document.getElementById('cityModal').classList.remove('open');
-}
-
-function saveCitySelection() {
-  closeCityModal();
-  if (tempCity === 'Барлық қалалар') {
-    filterCityFromModal('all');
-  } else {
-    const k = tempCity.replace(' қаласы', '').replace(' облысы', '');
-    filterCityFromModal(k);
-  }
-}
-
-function filterCityFromModal(k) {
-  currentCity = k;
-  document.querySelectorAll('.city-pill').forEach(p => p.classList.remove('active'));
-  const m = document.querySelector('.city-pill[data-city="' + k + '"]');
-  if (m) m.classList.add('active');
-  else document.querySelector('.city-pill[data-city="all"]').classList.add('active');
-  renderUnis();
-}
 
 document.addEventListener('DOMContentLoaded', () => {
   ShyraqGate.guardPage('Университеттер тізімін пайдалану үшін тіркелу керек.');
+  populateRegionSelect();
   renderUnis();
 });
 </script>
+  <script src="js/icons.js"></script>
+
 </body>
 </html>
