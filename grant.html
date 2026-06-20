@@ -523,6 +523,8 @@
   function codeName(code, ruName){ return CODE_KK[code] || (ruName||"").replace(/\s*\(.*$/,"").trim() || code; }
 
   function specLabel(name){ return (name||"").replace(/\s*\(.*?\)\s*/g,"").trim(); }
+  function specKK(sp){ return (sp && CODE_KK[baseCode(sp.code)]) || specLabel(sp && sp.name); }
+  function uniName(u){ const n=(u && (u.short_name||u.name_kz))||''; return window.kazifyUni ? window.kazifyUni(n) : n; }
 
   // university dropdown (mode 1)
   (function(){
@@ -635,7 +637,7 @@
       grid.innerHTML='<div style="grid-column:1/-1;text-align:center;color:var(--text-muted);padding:34px;border:1px dashed var(--g-line);border-radius:18px;">Бұл таңдау бойынша мамандық табылмады. Пәндерді немесе қаланы өзгертіп көріңіз.</div>';
     }
     picks.forEach(([plabel,pcls,x],i)=>{
-      const c=chanceFromDiff(x.diff); const nm=x.uni.short_name||x.uni.name_kz;
+      const c=chanceFromDiff(x.diff); const nm=uniName(x.uni);
       let footer='<div class="card-note">'+noteFor(x.diff)+'</div>';
       if(firstClear>=0){
         if(i<firstClear) footer='<div class="cascade-tag cascade-before">Балл жетпейді</div>';
@@ -647,7 +649,7 @@
         <div class="prio ${pcls}">${plabel}</div>
         <div class="uni-logo"><img src="${x.uni.logo_url}" alt="${nm}" onerror="this.parentNode.innerHTML='<i class=\\'fas fa-university\\' style=\\'color:var(--gp);font-size:24px\\'></i>'"></div>
         <div class="uni-nm">${nm}</div>
-        <div class="uni-spec">${specLabel(x.sp.name)}</div>
+        <div class="uni-spec">${specKK(x.sp)}</div>
         <div class="uni-rows">
           <div class="r"><span class="k">Өту шегі (2024)</span><span class="v">${x.sp.thresholdScore} балл</span></div>
           <div class="r"><span class="k">Сіздің балл</span><span class="v">${f.score} балл</span></div>
@@ -664,7 +666,7 @@
       const w=picks[firstClear][2];
       pb.classList.remove('miss');
       document.getElementById('prioT').textContent=`Болжам: сіз ${firstClear+1}-ші таңдау бойынша грантқа ілігесіз`;
-      document.getElementById('prioD').textContent=`${w.uni.short_name||w.uni.name_kz} — «${specLabel(w.sp.name)}». Бұл — балыңыз сенімді жететін ең жоғары приоритетті нұсқа.`;
+      document.getElementById('prioD').textContent=`${uniName(w.uni)} — «${specKK(w.sp)}». Бұл — балыңыз сенімді жететін ең жоғары приоритетті нұсқа.`;
     } else if(picks.length){
       pb.classList.add('miss');
       document.getElementById('prioT').textContent='Таңдалған нұсқаларға балл сәл жетпейді';
@@ -678,7 +680,7 @@
     const remaining=Math.max(0, all.length - picks.length);
     document.getElementById('m1LockSub').textContent=`Тағы ${remaining} сәйкес нұсқа, грант приоритет стратегиясы және AI кеңесі төлемнен кейін ашылады.`;
 
-    const names=picks.slice(0,3).map(p=>p[2].uni.short_name||p[2].uni.name_kz);
+    const names=picks.slice(0,3).map(p=>uniName(p[2].uni));
     let ai='';
     if(picks.length){
       const list=names.length>1?names.slice(0,-1).join(', ')+' және '+names[names.length-1]:names[0];
@@ -764,7 +766,7 @@
       let rows='';
       sorted.forEach(x=>{
         const c=chanceFromDiff(x.diff); const role=roleFor(x.diff); const rs=ROLE_STYLE[role];
-        rows+=`<div class="prow"><span class="pu">${x.uni.short_name||x.uni.name_kz}</span><span class="role" style="background:${rs.bg};color:${rs.c}">${role}</span><span class="thr">Өту шегі: ${x.sp.thresholdScore}</span><span class="pp" style="color:${c.cls==='high'?'var(--g-green)':c.cls==='risk'?'var(--g-orange)':'var(--g-red)'}">${c.pct}%</span></div>`;
+        rows+=`<div class="prow"><span class="pu">${uniName(x.uni)}</span><span class="role" style="background:${rs.bg};color:${rs.c}">${role}</span><span class="thr">Өту шегі: ${x.sp.thresholdScore}</span><span class="pp" style="color:${c.cls==='high'?'var(--g-green)':c.cls==='risk'?'var(--g-orange)':'var(--g-red)'}">${c.pct}%</span></div>`;
       });
       if(!rows) rows='<div class="prow"><span class="pu" style="color:var(--text-muted)">Сәйкес университет табылмады</span></div>';
       blocks.push(`<div class="prog-block"><h4><span class="pcode">${code}</span> ${nm} <span style="margin-left:auto;font-size:.8rem;color:var(--text-muted)">Сіздің балл: ${f.score}</span></h4>${rows}</div>`);
@@ -790,10 +792,10 @@
       ai='Толық AI приоритет стратегиясы Premium пайдаланушыларға қолжетімді. Төлемнен кейін әр мамандық бойынша ең тиімді, қауіпсіз және тәуекел университеттер ашылады.';
     } else if(aiNames.length){
       const top=aiNames[0];
-      const eff=aiNames.map(a=>a.top.uni.short_name||a.top.uni.name_kz).slice(0,2);
+      const eff=aiNames.map(a=>uniName(a.top.uni)).slice(0,2);
       ai=`Сіз таңдаған ${top.code} «${top.nm}» бағыты бойынша ${eff.join(' және ')} университеттері ең тиімді. `;
       const risky=aiNames.find(a=>a.top.diff<0 && a.top.diff>=-8);
-      if(risky) ai+=`${risky.top.uni.short_name||risky.top.uni.name_kz} үшін балл шекарасына өте жақынсыз. `;
+      if(risky) ai+=`${uniName(risky.top.uni)} үшін балл шекарасына өте жақынсыз. `;
       if(firstClear>=0) ai+=`Қауіпсіз стратегия ретінде ${firstClear+1}-ші таңдауды (${cascade[firstClear].code}) жоғары приоритетке қойыңыз.`;
     } else { ai='Мамандықтарды таңдаңыз — AI приоритет стратегиясын дайындайды.'; }
     document.getElementById('aiText2').textContent=ai;

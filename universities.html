@@ -89,7 +89,10 @@
     .d-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
     .d-cell { background: var(--gray); border-radius: 8px; padding: 10px 12px; }
     .d-lbl { font-size: 0.7rem; color: var(--muted); margin-bottom: 3px; }
-    .d-val { font-weight: 700; color: #0F172A; font-size: 0.82rem; }
+    .d-val { font-weight: 700; color: #0F172A; font-size: 0.82rem; overflow-wrap: anywhere; word-break: break-word; }
+    a.d-val { color: var(--navy, #1E3A5F); text-decoration: none; display: inline-flex; align-items: center; gap: 5px; transition: color .15s; }
+    a.d-val:hover { color: var(--gold-deep, #E0992E); text-decoration: underline; }
+    a.d-val::after { content: '↗'; font-size: 0.78rem; opacity: .7; }
     .d-actions { display: flex; gap: 8px; flex-wrap: wrap; }
     .d-btn-o { background: var(--orange); color: #fff; border: none; padding: 10px 18px; border-radius: 8px; font-weight: 700; font-size: 0.82rem; cursor: pointer; font-family: 'Manrope', 'Noto Sans', Arial, sans-serif; }
     .d-btn-n { background: #fff; color: var(--navy); border: 2px solid var(--border); padding: 10px 18px; border-radius: 8px; font-weight: 600; font-size: 0.82rem; cursor: pointer; font-family: 'Manrope', 'Noto Sans', Arial, sans-serif; }
@@ -192,7 +195,7 @@ function makeUniversityShortName(name) {
 const UNI_DATA = (window.getEnrichedUniversities ? window.getEnrichedUniversities() : (window.UNIVERSITIES_SEED || []))
   .map(uni => ({
     ...uni,
-    name: uni.name_kz,
+    name: (window.kazifyUni ? window.kazifyUni(uni.name_kz) : uni.name_kz),
     abbr: uni.short_name || makeUniversityShortName(uni.name_kz),
     cityLabel: uni.city || '—',
     typeLabel: uni.university_type || '—',
@@ -354,19 +357,29 @@ function openDetail(u) {
   desc.textContent = u.descriptionText;
   const dg = document.createElement('div');
   dg.className = 'd-grid';
+  function prettyUrl(u){ try { return u.replace(/^https?:\/\//,'').replace(/\/$/,''); } catch(e){ return u; } }
   [
-    ['Қысқаша атауы', fieldValue(u.short_name || u.abbr)],
-    ['Категория', fieldValue(u.category)],
-    ['Ресми сайт', fieldValue(u.official_website, 'Кейін қосылады')],
-    ['Логотип дереккөзі', fieldValue(u.logo_source_url, 'Кейін қосылады')]
-  ].forEach(([l, v]) => {
+    ['Қысқаша атауы', fieldValue(u.short_name || u.abbr), null],
+    ['Категория', fieldValue(u.category), null],
+    ['Ресми сайт', u.official_website ? prettyUrl(u.official_website) : 'Кейін қосылады', u.official_website || null],
+    ['Логотип дереккөзі', u.logo_source_url ? 'Сілтемені ашу' : 'Кейін қосылады', u.logo_source_url || null]
+  ].forEach(([l, v, url]) => {
     const c = document.createElement('div');
     c.className = 'd-cell';
     const lb = document.createElement('div');
     lb.className = 'd-lbl';
     lb.textContent = l;
-    const vl = document.createElement('div');
-    vl.className = 'd-val';
+    let vl;
+    if (url) {
+      vl = document.createElement('a');
+      vl.className = 'd-val';
+      vl.href = url;
+      vl.target = '_blank';
+      vl.rel = 'noopener noreferrer';
+    } else {
+      vl = document.createElement('div');
+      vl.className = 'd-val';
+    }
     vl.textContent = v;
     c.appendChild(lb);
     c.appendChild(vl);

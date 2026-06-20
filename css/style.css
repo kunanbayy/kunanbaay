@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@500;600;700;800;900&family=Golos+Text:wght@400;500;600;700;800;900&family=Noto+Sans:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@500;600;700;800;900&family=Golos+Text:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans:wght@400;500;600;700;800&display=swap');
 
 /* ===== RESET & BASE ===== */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -80,8 +80,8 @@ input, select, textarea { font-family: var(--font-body); }
   --nav-h: 68px;
   --sidebar-w: 256px;
 
-  --font-display: 'Unbounded', 'Golos Text', 'Noto Sans', sans-serif;
-  --font-body: 'Golos Text', 'Noto Sans', Arial, sans-serif;
+  --font-display: 'Unbounded', 'Golos Text', 'Inter', 'Noto Sans', sans-serif;
+  --font-body: 'Golos Text', 'Inter', 'Noto Sans', Arial, sans-serif;
 
   --transition: 0.22s cubic-bezier(0.4,0,0.2,1);
   --transition-slow: 0.4s cubic-bezier(0.4,0,0.2,1);
@@ -311,9 +311,10 @@ p { color: var(--text-muted); }
   display: flex; align-items: center;
 }
 .nav-inner {
-  display: flex; align-items: center; justify-content: space-between;
+  display: flex; align-items: center; gap: 30px;
   width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 24px;
 }
+.nav-actions { margin-left: auto; }
 .nav-logo {
   display: flex; align-items: center; gap: 11px;
   font-family: var(--font-display); font-weight: 700; font-size: 1.22rem;
@@ -327,12 +328,13 @@ p { color: var(--text-muted); }
   font-size: 1.05rem;
   box-shadow: 0 6px 16px -4px rgba(11,30,51,0.4), 0 0 18px -2px rgba(242,184,75,0.5);
 }
-.nav-links { display: flex; align-items: center; gap: 4px; }
+.nav-links { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
 .nav-link {
   padding: 8px 14px; border-radius: var(--radius-full);
   font-weight: 500; font-size: 0.9rem; color: var(--text-muted);
-  transition: var(--transition);
+  transition: var(--transition); white-space: nowrap;
 }
+.nav-logo { flex-shrink: 0; }
 .nav-link:hover { color: var(--navy); background: var(--navy-pale); }
 .nav-link.active { color: var(--navy); font-weight: 600; background: var(--navy-pale); }
 .nav-actions { display: flex; align-items: center; gap: 10px; }

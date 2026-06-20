@@ -519,9 +519,29 @@
     </div>
     <div class="nav-actions">
       <a href="dashboard.html" class="btn btn-primary btn-sm">Кабинет</a>
+      <button class="nav-mobile-btn" aria-label="Мәзір" onclick="document.querySelector('.mobile-menu').classList.add('open')">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
     </div>
   </div>
 </nav>
+
+<div class="mobile-menu">
+  <div class="mobile-menu-header">
+    <a href="index.html" class="nav-logo"><div class="nav-logo-icon">🔆</div>Shyraq</a>
+    <button aria-label="Жабу" onclick="document.querySelector('.mobile-menu').classList.remove('open')" style="background:none;border:none;font-size:1.6rem;cursor:pointer;color:var(--ink)">✕</button>
+  </div>
+  <div class="mobile-menu-links">
+    <a href="index.html" class="mobile-menu-link">Басты бет</a>
+    <a href="specialties.html" class="mobile-menu-link">Мамандықтар</a>
+    <a href="universities.html" class="mobile-menu-link">Университеттер</a>
+    <a href="grant.html" class="mobile-menu-link">Грант</a>
+    <a href="pricing.html" class="mobile-menu-link">Тарифтер</a>
+  </div>
+  <div class="mobile-menu-actions">
+    <a href="dashboard.html" class="btn btn-primary">Кабинет</a>
+  </div>
+</div>
 
 <div class="sc-wrap">
 
