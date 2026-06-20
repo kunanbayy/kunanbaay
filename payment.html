@@ -409,8 +409,22 @@
     setTimeout(() => {
       this.classList.add('sent');
       this.textContent = '✓ Чек жіберілді';
+      // unlock premium features (grant analyzer full results)
+      try { localStorage.setItem('shyraq_premium', '1'); } catch (e) {}
       document.getElementById('successScreen').classList.add('visible');
       document.getElementById('uploadZone').style.display = 'none';
+      var next = params.get('next');
+      if (next === 'grant') {
+        var back = document.getElementById('successScreen');
+        if (back) {
+          var a = document.createElement('a');
+          a.href = 'grant.html?paid=1';
+          a.className = 'pay-submit';
+          a.style.cssText = 'display:flex;align-items:center;justify-content:center;text-decoration:none;margin-top:14px;';
+          a.textContent = '← Грант талдауын ашу';
+          back.appendChild(a);
+        }
+      }
     }, 1000);
   });
 })();

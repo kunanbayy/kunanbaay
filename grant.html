@@ -125,6 +125,29 @@
     .ai-card p { color: var(--text); font-size: .98rem; line-height: 1.65; }
     .pill-premium { font-size: .68rem; font-weight: 800; background: var(--g-gold-bg); color: var(--g-gold); padding: 4px 10px; border-radius: 999px; text-transform: uppercase; }
 
+    /* priority cascade banner */
+    .prio-banner { display: flex; align-items: center; gap: 14px; background: linear-gradient(135deg, var(--g-green-bg), #fff); border: 1px solid #BBF7D0; border-radius: 18px; padding: 18px 22px; margin-bottom: 18px; }
+    .prio-banner .pb-ic { width: 48px; height: 48px; flex: 0 0 48px; border-radius: 14px; background: var(--g-green); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; }
+    .prio-banner .pb-t { font-weight: 800; color: var(--ink); font-size: 1.05rem; }
+    .prio-banner .pb-d { color: var(--text-muted); font-size: .88rem; margin-top: 2px; }
+    .prio-banner.miss { background: linear-gradient(135deg, var(--g-orange-bg), #fff); border-color: #FED7AA; }
+    .prio-banner.miss .pb-ic { background: var(--g-orange); }
+
+    /* paywall */
+    .paywall { position: relative; }
+    .pw-content.locked { filter: blur(9px); pointer-events: none; user-select: none; }
+    .pw-overlay { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 13px; text-align: center; padding: 24px; background: linear-gradient(180deg, rgba(255,255,255,.5), rgba(255,255,255,.84)); border-radius: 20px; }
+    .pw-overlay.hidden { display: none; }
+    .pw-price { font-family: var(--font-display); font-weight: 800; font-size: 1.6rem; color: var(--gp); }
+    .pw-price small { font-size: .9rem; color: var(--text-muted); font-weight: 600; }
+    .pw-demo { font-size: .78rem; color: var(--text-light); }
+    .pw-demo a { color: var(--gp); font-weight: 700; text-decoration: underline; cursor: pointer; }
+    .cascade-tag { font-size: .72rem; font-weight: 800; padding: 5px 9px; border-radius: 999px; margin-top: 2px; width: 100%; }
+    .cascade-win { background: var(--g-green-bg); color: var(--g-green); }
+    .cascade-before { background: var(--g-red-bg); color: var(--g-red); }
+    .cascade-after { background: #F1F2F7; color: var(--text-muted); }
+    .locked-blur.unlocked { filter: none; pointer-events: auto; user-select: auto; }
+
     /* Mode 2 free count */
     .free-count { margin-top: 24px; text-align: center; background: linear-gradient(135deg, var(--gp-softer), #fff); border: 1px solid var(--gp-soft); border-radius: 22px; padding: 34px 24px; }
     .free-count .fc-num { font-family: var(--font-display); font-weight: 800; font-size: 3rem; color: var(--gp); line-height: 1; }
@@ -340,33 +363,33 @@
       <h2>🤖 Shyraq ұсынған 4 таңдау</h2>
       <a href="universities.html" class="view-all">Барлығын көру <i class="fas fa-arrow-right"></i></a>
     </div>
-    <p class="sec-sub">Стратегия: бір «арман» нұсқа, екі нақты нұсқа және бір қауіпсіз нұсқа.</p>
-    <div class="uni-grid" id="uniGrid"></div>
+    <p class="sec-sub">Стратегия: бір «арман» нұсқа, екі нақты нұсқа және бір қауіпсіз нұсқа. Грант ең жоғары приоритеттегі балыңыз жеткен таңдау бойынша беріледі.</p>
 
-    <div class="ai-card">
-      <div class="ai-ic"><i class="fas fa-robot"></i></div>
-      <div><h3>Shyraq AI кеңесшісі</h3><p id="aiText">—</p></div>
-    </div>
-
-    <div class="sec-title"><h2 id="lockedTitle">🔒 Тағы сәйкес нұсқалар табылды</h2></div>
-    <div class="locked-wrap">
-      <div class="locked-blur">
-        <div class="lk-grid">
-          <div class="lk-box"><div class="t"></div><div class="b"></div></div>
-          <div class="lk-box"><div class="t"></div><div class="b"></div></div>
-          <div class="lk-box"><div class="t"></div><div class="b"></div></div>
+    <div class="paywall">
+      <div class="pw-content" id="m1Content">
+        <div class="prio-banner" id="prioBanner">
+          <div class="pb-ic"><i class="fas fa-trophy"></i></div>
+          <div><div class="pb-t" id="prioT">—</div><div class="pb-d" id="prioD">—</div></div>
         </div>
-        <div class="lk-line" style="width:92%"></div><div class="lk-line" style="width:80%"></div><div class="lk-line" style="width:88%"></div><div class="lk-line" style="width:72%"></div>
+        <div class="uni-grid" id="uniGrid"></div>
+        <div class="ai-card" style="margin-top:18px">
+          <div class="ai-ic"><i class="fas fa-robot"></i></div>
+          <div><h3>Shyraq AI кеңесшісі</h3><p id="aiText">—</p></div>
+        </div>
       </div>
-      <div class="locked-overlay">
+      <div class="pw-overlay" id="m1Overlay">
         <div class="lock-ic"><i class="fas fa-lock"></i></div>
-        <h3 id="lockedHead">Толық аналитиканы ашу</h3>
+        <h3 id="m1LockHead">🔒 4 таңдауыңыз дайын</h3>
+        <p style="color:var(--text-muted);max-width:480px" id="m1LockSub">Төлемнен кейін AI құрастырған 4 таңдауыңыз, грант приоритет стратегиясы және AI кеңесі ашылады.</p>
         <div class="lk-feats">
-          <span class="lk-feat">Барлық университеттер</span><span class="lk-feat">Барлық мамандықтар</span>
-          <span class="lk-feat">Соңғы 3 жыл статистикасы</span><span class="lk-feat">Толық грант ықтималдығы</span>
-          <span class="lk-feat">Серпін мүмкіндіктері</span><span class="lk-feat">Конкурс деңгейі</span>
+          <span class="lk-feat"><i class="fas fa-check"></i>4 таңдау стратегиясы</span>
+          <span class="lk-feat"><i class="fas fa-check"></i>Қай приоритетте ілінесіз</span>
+          <span class="lk-feat"><i class="fas fa-check"></i>Әр ЖОО өту шегі мен ықтималдығы</span>
+          <span class="lk-feat"><i class="fas fa-check"></i>AI кеңесшісі</span>
         </div>
-        <a href="pricing.html" class="btn btn-primary btn-lg" style="background:var(--gp);border-color:var(--gp);margin-top:6px"><i class="fas fa-crown" style="margin-right:8px"></i> Толық аналитиканы ашу</a>
+        <div class="pw-price">499 ₸ <small>/ бір реттік есеп</small></div>
+        <a href="payment.html?plan=once&next=grant" class="btn btn-primary btn-lg" style="background:var(--gp);border-color:var(--gp)"><i class="fas fa-lock-open" style="margin-right:8px"></i> Төлеп ашу</a>
+        <div class="pw-demo">Тек көру үшін: <a id="demoUnlock">демо режимде ашу</a></div>
       </div>
     </div>
   </div>
@@ -382,7 +405,7 @@
     <div class="sec-title"><h2>🔒 Толық университет ұсыныстары дайын</h2></div>
     <div class="locked-wrap">
       <div class="locked-blur" id="progAnalysis"></div>
-      <div class="locked-overlay">
+      <div class="locked-overlay" id="m2Overlay">
         <div class="lock-ic"><i class="fas fa-lock"></i></div>
         <h3>Толық университет ұсыныстарын ашу</h3>
         <div class="lk-feats">
@@ -393,7 +416,9 @@
           <span class="lk-feat"><i class="fas fa-check"></i>Қай университетті қай орынға қою керек</span>
           <span class="lk-feat"><i class="fas fa-check"></i>AI приоритет стратегиясы</span>
         </div>
-        <a href="pricing.html" class="btn btn-primary btn-lg" style="background:var(--gp);border-color:var(--gp);margin-top:6px"><i class="fas fa-crown" style="margin-right:8px"></i> Толық ұсыныстарды ашу</a>
+        <div class="pw-price" style="margin-top:4px">499 ₸ <small>/ бір реттік есеп</small></div>
+        <a href="payment.html?plan=once&next=grant" class="btn btn-primary btn-lg" style="background:var(--gp);border-color:var(--gp)"><i class="fas fa-lock-open" style="margin-right:8px"></i> Төлеп ашу</a>
+        <div class="pw-demo">Тек көру үшін: <a id="demoUnlock2">демо режимде ашу</a></div>
       </div>
     </div>
 
@@ -452,6 +477,23 @@
 <script>
   const SEED = window.UNIVERSITIES_SEED || [];
   const MAIN_CITIES = ["Алматы","Астана","Шымкент"];
+
+  // premium / paywall state (unlocked after payment, demo, or ?premium=1 / ?paid=1)
+  let PREMIUM = false;
+  (function(){
+    const q = new URLSearchParams(location.search);
+    if(q.get('premium')==='1' || q.get('paid')==='1') localStorage.setItem('shyraq_premium','1');
+    PREMIUM = localStorage.getItem('shyraq_premium')==='1';
+  })();
+  function applyLockUI(){
+    const locked = !PREMIUM;
+    const m1c=document.getElementById('m1Content'), m1o=document.getElementById('m1Overlay');
+    if(m1c) m1c.classList.toggle('locked', locked);
+    if(m1o) m1o.classList.toggle('hidden', !locked);
+    const pa=document.getElementById('progAnalysis'), m2o=document.getElementById('m2Overlay');
+    if(pa) pa.classList.toggle('unlocked', !locked);
+    if(m2o) m2o.classList.toggle('hidden', !locked);
+  }
 
   const TOK = {"математика":"math","информатика":"info","физика":"phys","биология":"bio","география":"geo","химия":"chem","ин. язык":"foreign","вс. история":"hist","основы права":"law","рус. язык":"ruslang","рус. литература":"ruslit","каз. язык":"kazlang","каз. литература":"kazlit","творческий экзамен":"creative"};
   function dbTokens(s){ const set=new Set(); (s||"").split(",").forEach(p=>p.split(/[–-]/).forEach(r=>{ const k=r.trim().toLowerCase(); if(TOK[k]) set.add(TOK[k]); })); return set; }
@@ -583,12 +625,23 @@
 
     const all=matchAll(f.score,f.tokens,f.city,f.uniId);
     const picks=pick4(all);
+
+    // priority cascade — grant is secured at the first (highest-priority) choice the score clears
+    let firstClear=-1;
+    picks.forEach((p,i)=>{ if(firstClear<0 && p[2].diff>=0) firstClear=i; });
+
     const grid=document.getElementById('uniGrid'); grid.innerHTML='';
     if(!picks.length){
       grid.innerHTML='<div style="grid-column:1/-1;text-align:center;color:var(--text-muted);padding:34px;border:1px dashed var(--g-line);border-radius:18px;">Бұл таңдау бойынша мамандық табылмады. Пәндерді немесе қаланы өзгертіп көріңіз.</div>';
     }
-    picks.forEach(([plabel,pcls,x])=>{
+    picks.forEach(([plabel,pcls,x],i)=>{
       const c=chanceFromDiff(x.diff); const nm=x.uni.short_name||x.uni.name_kz;
+      let footer='<div class="card-note">'+noteFor(x.diff)+'</div>';
+      if(firstClear>=0){
+        if(i<firstClear) footer='<div class="cascade-tag cascade-before">Балл жетпейді</div>';
+        else if(i===firstClear) footer='<div class="cascade-tag cascade-win">🎉 Ықтимал грант осында</div>';
+        else footer='<div class="cascade-tag cascade-after">Жоғары приоритетте ілінесіз</div>';
+      }
       const div=document.createElement('div'); div.className='uni-card';
       div.innerHTML=`
         <div class="prio ${pcls}">${plabel}</div>
@@ -596,29 +649,48 @@
         <div class="uni-nm">${nm}</div>
         <div class="uni-spec">${specLabel(x.sp.name)}</div>
         <div class="uni-rows">
-          <div class="r"><span class="k">Өту шегі</span><span class="v">${x.sp.thresholdScore} балл</span></div>
+          <div class="r"><span class="k">Өту шегі (2024)</span><span class="v">${x.sp.thresholdScore} балл</span></div>
           <div class="r"><span class="k">Сіздің балл</span><span class="v">${f.score} балл</span></div>
           <div class="r"><span class="k">Қала</span><span class="v">${x.uni.city||'—'}</span></div>
         </div>
         <div class="chance ${c.cls}">${c.emoji} ${c.label} · ${c.pct}%</div>
-        <div class="card-note">${noteFor(x.diff)}</div>`;
+        ${footer}`;
       grid.appendChild(div);
     });
 
+    // priority banner
+    const pb=document.getElementById('prioBanner');
+    if(picks.length && firstClear>=0){
+      const w=picks[firstClear][2];
+      pb.classList.remove('miss');
+      document.getElementById('prioT').textContent=`Болжам: сіз ${firstClear+1}-ші таңдау бойынша грантқа ілігесіз`;
+      document.getElementById('prioD').textContent=`${w.uni.short_name||w.uni.name_kz} — «${specLabel(w.sp.name)}». Бұл — балыңыз сенімді жететін ең жоғары приоритетті нұсқа.`;
+    } else if(picks.length){
+      pb.classList.add('miss');
+      document.getElementById('prioT').textContent='Таңдалған нұсқаларға балл сәл жетпейді';
+      document.getElementById('prioD').textContent='Балл талабы төмен мамандықтарды немесе өңірлік ЖОО-ларды қарастырыңыз.';
+    } else {
+      pb.classList.add('miss');
+      document.getElementById('prioT').textContent='Нұсқа табылмады';
+      document.getElementById('prioD').textContent='Басқа пән тіркесімін таңдап көріңіз.';
+    }
+
     const remaining=Math.max(0, all.length - picks.length);
-    document.getElementById('lockedTitle').textContent=`🔒 Тағы ${remaining} сәйкес нұсқа табылды`;
-    document.getElementById('lockedHead').textContent=`Тағы ${remaining} нұсқаны ашу`;
+    document.getElementById('m1LockSub').textContent=`Тағы ${remaining} сәйкес нұсқа, грант приоритет стратегиясы және AI кеңесі төлемнен кейін ашылады.`;
 
     const names=picks.slice(0,3).map(p=>p[2].uni.short_name||p[2].uni.name_kz);
     let ai='';
     if(picks.length){
       const list=names.length>1?names.slice(0,-1).join(', ')+' және '+names[names.length-1]:names[0];
       ai=`${f.score} балл нәтижесі бойынша сізге ${list} университеттері сәйкес келеді. `;
-      if(band==='high') ai+='Мүмкіндігіңіз жоғары — арман нұсқаңызды бірінші басымдылыққа қойыңыз.';
-      else if(band==='med') ai+=`Грант ықтималдығын арттыру үшін «${f.subjText}» бойынша өңірлік университеттерді де қарастырыңыз.`;
-      else ai+='Балл талабы төмендеу мамандықтар мен өңірлік университеттерді таңдасаңыз, мүмкіндігіңіз артады.';
+      if(firstClear>=0) ai+=`Болжам бойынша грант ${firstClear+1}-ші таңдауыңызда ілінеді — оны жоғары приоритетке қойыңыз. `;
+      if(band==='high') ai+='Мүмкіндігіңіз жоғары.';
+      else if(band==='med') ai+=`Қосымша «${f.subjText}» бойынша өңірлік университеттерді де қарастырыңыз.`;
+      else ai+='Балл талабы төмендеу мамандықтарды таңдасаңыз, мүмкіндігіңіз артады.';
     } else { ai='Бұл пәндер тіркесімі бойынша нұсқа табылмады. Басқа тіркесімді таңдап көріңіз.'; }
     document.getElementById('aiText').textContent=ai;
+
+    applyLockUI();
   }
 
   /* ---------- MODE 2: programs ---------- */
@@ -679,17 +751,16 @@
     const codes=[];
     for(let i=0;i<4;i++){ const v=document.getElementById('prog'+i).value; if(v && codes.indexOf(v)<0) codes.push(v); }
 
-    const allU=new Set(); const blocks=[]; const aiNames=[];
-    codes.forEach(code=>{
+    const allU=new Set(); const blocks=[]; const aiNames=[]; const cascade=[];
+    codes.forEach((code,ci)=>{
       const list=unisForProgram(code, f.score, f.city);
       list.forEach(x=>allU.add(x.uni.id));
-      // order: best fit first
-      const sorted=list.slice().sort((a,b)=>{
-        const ra=roleFor(a.diff), rb=roleFor(b.diff);
-        return chanceFromDiff(b.diff).pct - chanceFromDiff(a.diff).pct;
-      }).slice(0,4);
+      const sorted=list.slice().sort((a,b)=> chanceFromDiff(b.diff).pct - chanceFromDiff(a.diff).pct).slice(0,4);
       const nm = CODE_KK[code] || (list[0]?specLabel(list[0].sp.name):code);
       if(sorted[0]) aiNames.push({code, nm, top:sorted[0]});
+      // easiest grant within this program = lowest threshold available
+      const minThr = list.length ? Math.min.apply(null, list.map(x=>x.sp.thresholdScore)) : null;
+      cascade.push({code, nm, minThr, cleared: minThr!=null && f.score>=minThr});
       let rows='';
       sorted.forEach(x=>{
         const c=chanceFromDiff(x.diff); const role=roleFor(x.diff); const rs=ROLE_STYLE[role];
@@ -699,21 +770,35 @@
       blocks.push(`<div class="prog-block"><h4><span class="pcode">${code}</span> ${nm} <span style="margin-left:auto;font-size:.8rem;color:var(--text-muted)">Сіздің балл: ${f.score}</span></h4>${rows}</div>`);
     });
 
+    // priority cascade banner (prepended inside the paid analysis)
+    let firstClear=-1; cascade.forEach((c,i)=>{ if(firstClear<0 && c.cleared) firstClear=i; });
+    let banner='';
+    if(cascade.length && firstClear>=0){
+      const w=cascade[firstClear];
+      banner=`<div class="prio-banner"><div class="pb-ic"><i class="fas fa-trophy"></i></div><div><div class="pb-t">Болжам: сіз ${firstClear+1}-ші таңдау (${w.code}) бойынша грантқа ілігесіз</div><div class="pb-d">«${w.nm}» — балыңыз осы приоритеттегі ең төмен өту шегінен (${w.minThr}) жоғары. Грант ең жоғары приоритеттегі ілінген таңдау бойынша беріледі.</div></div></div>`;
+    } else if(cascade.length){
+      banner=`<div class="prio-banner miss"><div class="pb-ic"><i class="fas fa-triangle-exclamation"></i></div><div><div class="pb-t">Таңдалған 4 мамандыққа балл сәл жетпейді</div><div class="pb-d">Балл талабы төмен мамандықтарды немесе өңірлік ЖОО-ларды қосып көріңіз.</div></div></div>`;
+    }
+
     document.getElementById('fcNum').textContent=allU.size;
     document.getElementById('fcTxt').textContent=`${codes.length} мамандық бойынша ${allU.size} сәйкес университет табылды`;
-    document.getElementById('progAnalysis').innerHTML=blocks.join('') || '<div style="color:var(--text-muted);text-align:center;padding:20px">Мамандық таңдаңыз.</div>';
+    document.getElementById('progAnalysis').innerHTML=(banner+blocks.join('')) || '<div style="color:var(--text-muted);text-align:center;padding:20px">Мамандық таңдаңыз.</div>';
 
-    // premium AI advice text
+    // AI advice (premium)
     let ai='';
-    if(aiNames.length){
+    if(!PREMIUM){
+      ai='Толық AI приоритет стратегиясы Premium пайдаланушыларға қолжетімді. Төлемнен кейін әр мамандық бойынша ең тиімді, қауіпсіз және тәуекел университеттер ашылады.';
+    } else if(aiNames.length){
       const top=aiNames[0];
       const eff=aiNames.map(a=>a.top.uni.short_name||a.top.uni.name_kz).slice(0,2);
       ai=`Сіз таңдаған ${top.code} «${top.nm}» бағыты бойынша ${eff.join(' және ')} университеттері ең тиімді. `;
       const risky=aiNames.find(a=>a.top.diff<0 && a.top.diff>=-8);
       if(risky) ai+=`${risky.top.uni.short_name||risky.top.uni.name_kz} үшін балл шекарасына өте жақынсыз. `;
-      ai+='Қауіпсіз стратегия ретінде ең жоғары мүмкіндікті университетті бірінші приоритетке қою ұсынылады.';
+      if(firstClear>=0) ai+=`Қауіпсіз стратегия ретінде ${firstClear+1}-ші таңдауды (${cascade[firstClear].code}) жоғары приоритетке қойыңыз.`;
     } else { ai='Мамандықтарды таңдаңыз — AI приоритет стратегиясын дайындайды.'; }
     document.getElementById('aiText2').textContent=ai;
+
+    applyLockUI();
   }
 
   /* ---------- mode switching ---------- */
@@ -743,9 +828,14 @@
   ['citySel','uniSel','quotaSel'].forEach(id=>document.getElementById(id).addEventListener('change', runCurrent));
   ['prog0','prog1','prog2','prog3'].forEach(id=>document.getElementById(id).addEventListener('change', renderMode2));
 
+  function doUnlock(e){ if(e) e.preventDefault(); localStorage.setItem('shyraq_premium','1'); PREMIUM=true; runCurrent(); window.scrollTo({top:0,behavior:'smooth'}); }
+  const d1=document.getElementById('demoUnlock'); if(d1) d1.addEventListener('click', doUnlock);
+  const d2=document.getElementById('demoUnlock2'); if(d2) d2.addEventListener('click', doUnlock);
+
   syncSlider();
   fillProgramSelects();
   renderMode1();
+  applyLockUI();
 </script>
 </body>
 </html>
