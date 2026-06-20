@@ -1,473 +1,499 @@
 <!DOCTYPE html>
 <html lang="kk">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Грант мүмкіндігін тексеру — Shyraq Education</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary-color: #6c5ce7;
-            --primary-active: #5b4cc1;
-            --secondary-color: #f7f6fd;
-            --secondary-active: #efebff;
-            --text-dark: #333;
-            --text-medium: #555;
-            --text-light: #888;
-            --border-color: #eee;
-            --white: #fff;
-            --gauge-low: #ff4d4d;
-            --gauge-risk: #ff8e4a;
-            --gauge-med: #ffc233;
-            --gauge-high: #4dcf8c;
-            --score-bg-high: #f2fde2;
-            --score-text-high: #a3d13b;
-            --score-bg-med: #fff9e6;
-            --score-text-med: #fbc531;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Грант мүмкіндігін талдау — Shyraq Education</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  <style>
+    :root {
+      --gp: #6D5DFC;          /* grant purple */
+      --gp-dark: #5848e0;
+      --gp-soft: #EEEBFF;
+      --gp-softer: #F6F4FF;
+      --g-green: #10B981;  --g-green-bg: #ECFDF5;
+      --g-gold:  #F59E0B;  --g-gold-bg:  #FFFBEB;
+      --g-orange:#F97316;  --g-orange-bg:#FFF7ED;
+      --g-red:   #EF4444;  --g-red-bg:   #FEF2F2;
+      --g-line: #ECECF3;
+    }
 
-        * { box-sizing: border-box; }
+    body { background: #FBFBFE; }
+    body::before, body::after { display: none; }
 
-        body {
-            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--secondary-color);
-            margin: 0;
-            color: var(--text-dark);
-            display: grid;
-            grid-template-columns: 260px 1fr;
-            grid-template-rows: 60px 1fr;
-            height: 100vh;
-            overflow: hidden;
-        }
+    .grant-wrap { max-width: 1180px; margin: 0 auto; padding: 36px 24px 80px; }
 
-        /* --- Header --- */
-        header {
-            grid-column: 1 / -1;
-            background-color: var(--white);
-            display: flex;
-            align-items: center;
-            padding: 0 30px;
-            border-bottom: 1px solid var(--border-color);
-            z-index: 100;
-        }
+    /* ---- Section heading ---- */
+    .gp-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--gp-soft); color: var(--gp);
+      font-weight: 700; font-size: .8rem; padding: 7px 14px; border-radius: 999px;
+    }
+    .gp-h1 { font-family: var(--font-display); color: var(--ink); font-size: clamp(1.8rem,3.5vw,2.6rem); margin: 16px 0 12px; letter-spacing: -.02em; }
+    .gp-sub { color: var(--text-muted); font-size: 1.02rem; max-width: 640px; line-height: 1.6; }
 
-        .logo {
-            display: flex;
-            align-items: center;
-            font-size: 24px;
-            font-weight: 800;
-            color: var(--primary-color);
-            text-decoration: none;
-            margin-right: auto;
-        }
+    /* ---- Card base ---- */
+    .gp-card { background: #fff; border: 1px solid var(--g-line); border-radius: 22px; padding: 28px; box-shadow: 0 8px 30px rgba(20,20,50,.04); }
+    .gp-card h2.card-title { font-size: 1.3rem; color: var(--ink); margin-bottom: 6px; }
+    .gp-card .card-desc { color: var(--text-muted); font-size: .95rem; margin-bottom: 22px; }
 
-        .logo i { margin-right: 12px; font-size: 20px; }
+    /* ---- Form ---- */
+    .form-section { margin-top: 30px; }
+    .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
+    .field { display: flex; flex-direction: column; gap: 8px; }
+    .field.full { grid-column: 1 / -1; }
+    .field label { font-size: .82rem; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: .04em; }
+    .field select, .field input[type="number"] {
+      width: 100%; min-height: 52px; padding: 0 16px; border-radius: 14px;
+      border: 1.5px solid #E2E8F0; background: #fff; font-size: .98rem; font-weight: 600; color: var(--ink);
+      transition: .18s; font-family: var(--font-body); appearance: none;
+    }
+    .field select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236D5DFC' stroke-width='3'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; padding-right: 42px; cursor: pointer; }
+    .field select:focus, .field input:focus { outline: none; border-color: var(--gp); box-shadow: 0 0 0 4px rgba(109,93,252,.12); }
 
-        .main-title { font-size: 20px; font-weight: 700; color: var(--text-dark); }
+    .score-field { background: var(--gp-softer); border: 1.5px solid var(--gp-soft); border-radius: 16px; padding: 18px; }
+    .score-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 14px; }
+    .score-head .lbl { font-size: .82rem; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: .04em; }
+    .score-head .val { font-family: var(--font-display); font-weight: 800; font-size: 2rem; color: var(--gp); }
+    .score-head .val small { font-size: 1rem; color: var(--text-light); font-weight: 600; }
+    .score-slider { -webkit-appearance: none; appearance: none; width: 100%; height: 8px; border-radius: 999px; cursor: pointer;
+      background: linear-gradient(to right, var(--gp) 0%, var(--gp) var(--val,66%), #E2E8F0 var(--val,66%), #E2E8F0 100%); }
+    .score-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 26px; height: 26px; border-radius: 50%; background: #fff; border: 6px solid var(--gp); box-shadow: 0 6px 16px rgba(109,93,252,.4); cursor: pointer; }
+    .score-slider::-moz-range-thumb { width: 26px; height: 26px; border-radius: 50%; background: #fff; border: 6px solid var(--gp); box-shadow: 0 6px 16px rgba(109,93,252,.4); cursor: pointer; }
 
-        /* --- Sidebar --- */
-        aside {
-            grid-row: 2;
-            background-color: var(--white);
-            padding: 20px 0;
-            border-right: 1px solid var(--border-color);
-            display: flex;
-            flex-direction: column;
-            overflow-y: auto;
-        }
+    .btn-calc { margin-top: 22px; width: 100%; min-height: 58px; border: none; border-radius: 16px; background: var(--gp); color: #fff; font-weight: 800; font-size: 1.05rem; font-family: var(--font-body); display: inline-flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 14px 30px rgba(109,93,252,.28); transition: .18s; }
+    .btn-calc:hover { background: var(--gp-dark); transform: translateY(-2px); }
 
-        .nav-link {
-            display: flex;
-            align-items: center;
-            padding: 14px 30px;
-            color: var(--text-medium);
-            text-decoration: none;
-            transition: background-color 0.3s, color 0.3s;
-            font-size: 15px;
-            font-weight: 500;
-        }
+    /* ---- Results ---- */
+    .results { margin-top: 24px; display: grid; grid-template-columns: 1fr 1.15fr; gap: 24px; align-items: start; }
 
-        .nav-link i { width: 25px; text-align: center; margin-right: 15px; color: var(--text-light); font-size: 18px; }
-        .nav-link:hover { background-color: #fafafa; }
-        .nav-link.active { background-color: var(--secondary-active); color: var(--primary-color); font-weight: 700; }
-        .nav-link.active i { color: var(--primary-color); }
+    .res-list { display: flex; flex-direction: column; gap: 4px; margin-top: 18px; }
+    .res-score { font-family: var(--font-display); font-weight: 800; font-size: 3.2rem; color: var(--gp); line-height: 1; margin-bottom: 16px; }
+    .res-score small { font-size: 1.3rem; color: var(--text-light); font-weight: 600; }
+    .res-item { display: flex; align-items: center; gap: 12px; padding: 9px 0; border-bottom: 1px dashed #EEF0F6; font-size: .94rem; }
+    .res-item:last-child { border-bottom: none; }
+    .res-item i { color: var(--gp); width: 20px; text-align: center; }
+    .res-item .k { color: var(--text-muted); }
+    .res-item .v { margin-left: auto; font-weight: 700; color: var(--ink); text-align: right; }
 
-        .light-mode {
-            display: flex;
-            align-items: center;
-            margin-top: auto;
-            margin-bottom: 20px;
-            padding: 0 30px;
-            font-size: 14px;
-            color: var(--text-light);
-            cursor: pointer;
-        }
-        .light-mode i { margin-right: 10px; color: #fbc531; }
-        .light-mode.selected { color: var(--primary-color); font-weight: 600; }
+    /* probability scale */
+    .prob-head { display: flex; align-items: center; gap: 16px; margin-bottom: 4px; }
+    .prob-pct { font-family: var(--font-display); font-weight: 800; font-size: 3.4rem; line-height: 1; color: var(--ink); }
+    .prob-level { font-weight: 800; font-size: 1.1rem; padding: 8px 16px; border-radius: 999px; }
+    .prob-desc { color: var(--text-muted); font-size: .95rem; line-height: 1.6; margin: 16px 0 22px; }
+    .scale-rows { display: flex; flex-direction: column; gap: 14px; }
+    .scale-row { display: grid; grid-template-columns: 78px 1fr 44px; align-items: center; gap: 12px; opacity: .55; transition: .25s; }
+    .scale-row.active { opacity: 1; }
+    .scale-row .sl-name { font-weight: 700; font-size: .9rem; color: var(--ink); }
+    .scale-row .sl-track { height: 12px; border-radius: 999px; background: #F1F2F7; overflow: hidden; }
+    .scale-row .sl-fill { height: 100%; border-radius: 999px; width: 0; transition: width 1s cubic-bezier(.4,0,.2,1); }
+    .scale-row .sl-range { font-size: .72rem; color: var(--text-light); font-weight: 600; text-align: right; }
+    .scale-row.active .sl-name { font-size: .96rem; }
+    .scale-row.active::after { content: '◀'; }
 
-        .user-profile {
-            display: flex;
-            align-items: center;
-            padding: 20px 30px;
-            border-top: 1px solid var(--border-color);
-            cursor: pointer;
-        }
-        .user-initial {
-            background-color: var(--primary-color);
-            color: var(--white);
-            width: 40px; height: 40px;
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-weight: 700; margin-right: 15px; font-size: 16px;
-        }
-        .user-details { display: flex; flex-direction: column; }
-        .user-name { font-weight: 700; font-size: 14px; }
-        .user-email { color: var(--text-light); font-size: 12px; }
+    /* ---- Recommended cards ---- */
+    .sec-title { display: flex; align-items: center; justify-content: space-between; margin: 44px 0 18px; }
+    .sec-title h2 { font-size: 1.45rem; color: var(--ink); }
+    .sec-title .view-all { color: var(--gp); font-weight: 700; font-size: .95rem; display: inline-flex; align-items: center; gap: 6px; }
+    .uni-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+    .uni-card { background: #fff; border: 1px solid var(--g-line); border-radius: 20px; padding: 22px 18px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 12px; transition: .2s; }
+    .uni-card:hover { transform: translateY(-4px); box-shadow: 0 16px 36px rgba(109,93,252,.14); border-color: var(--gp-soft); }
+    .uni-logo { width: 64px; height: 64px; border-radius: 16px; background: #F8FAFC; border: 1px solid #EEF0F6; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .uni-logo img { width: 100%; height: 100%; object-fit: contain; padding: 6px; }
+    .uni-nm { font-weight: 800; font-size: .98rem; color: var(--ink); min-height: 2.4em; display: flex; align-items: center; }
+    .uni-spec { font-size: .82rem; color: var(--text-muted); min-height: 2.2em; }
+    .uni-rows { width: 100%; display: flex; flex-direction: column; gap: 6px; margin-top: 4px; padding-top: 12px; border-top: 1px solid #F1F2F7; }
+    .uni-rows .r { display: flex; justify-content: space-between; font-size: .8rem; }
+    .uni-rows .r .k { color: var(--text-light); }
+    .uni-rows .r .v { font-weight: 700; color: var(--ink); }
+    .chance { margin-top: 6px; width: 100%; padding: 9px; border-radius: 12px; font-weight: 800; font-size: .85rem; }
+    .chance.high { background: var(--g-green-bg); color: var(--g-green); }
+    .chance.med  { background: var(--g-gold-bg);  color: var(--g-gold); }
+    .chance.risk { background: var(--g-orange-bg);color: var(--g-orange); }
+    .chance.low  { background: var(--g-red-bg);   color: var(--g-red); }
 
-        /* --- Main Content --- */
-        main {
-            grid-column: 2;
-            grid-row: 2;
-            padding: 30px;
-            display: flex;
-            flex-direction: column;
-            overflow-y: auto;
-        }
+    /* ---- Locked ---- */
+    .locked-wrap { position: relative; margin-top: 16px; border-radius: 22px; overflow: hidden; border: 1px solid var(--g-line); }
+    .locked-blur { filter: blur(7px); pointer-events: none; user-select: none; padding: 28px; background: #fff; }
+    .lk-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .lk-box { background: #F8FAFC; border-radius: 14px; padding: 18px; }
+    .lk-box .t { height: 12px; width: 60%; background: #E2E8F0; border-radius: 6px; margin-bottom: 12px; }
+    .lk-box .b { height: 28px; width: 40%; background: #D7DBE8; border-radius: 8px; }
+    .lk-line { height: 14px; background: #E9ECF5; border-radius: 7px; margin-top: 12px; }
+    .locked-overlay { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; text-align: center; padding: 24px; background: linear-gradient(180deg, rgba(255,255,255,.5), rgba(255,255,255,.82)); }
+    .lock-ic { width: 64px; height: 64px; border-radius: 50%; background: var(--gp); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; box-shadow: 0 12px 30px rgba(109,93,252,.4); }
+    .locked-overlay h3 { font-size: 1.4rem; color: var(--ink); }
+    .locked-overlay p { color: var(--text-muted); max-width: 460px; }
 
-        .top-tabs {
-            display: flex;
-            border-bottom: 1px solid var(--border-color);
-            margin-bottom: 30px;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-        .tab-link {
-            display: flex; align-items: center;
-            padding: 10px 25px 20px 25px;
-            color: var(--text-medium);
-            text-decoration: none;
-            transition: color 0.3s;
-            position: relative;
-            font-size: 15px;
-            background: none; border: none; cursor: pointer;
-            font-family: inherit;
-        }
-        .tab-link i { margin-right: 10px; color: var(--text-light); }
-        .tab-link.active { color: var(--primary-color); font-weight: 700; }
-        .tab-link.active i { color: var(--primary-color); }
-        .tab-link.active::after {
-            content: '';
-            position: absolute; bottom: -1px; left: 0;
-            width: 100%; height: 4px;
-            background-color: var(--primary-color);
-            border-radius: 4px 4px 0 0;
-        }
+    /* ---- Pricing ---- */
+    .price-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .price-card { background: #fff; border: 1px solid var(--g-line); border-radius: 22px; padding: 28px; display: flex; flex-direction: column; gap: 14px; position: relative; transition: .2s; }
+    .price-card.featured { border-color: var(--gp); box-shadow: 0 18px 44px rgba(109,93,252,.18); }
+    .price-badge { position: absolute; top: -13px; left: 50%; transform: translateX(-50%); background: var(--gp); color: #fff; font-size: .75rem; font-weight: 800; padding: 6px 16px; border-radius: 999px; }
+    .price-name { font-weight: 700; color: var(--text-muted); font-size: .95rem; }
+    .price-amt { font-family: var(--font-display); font-weight: 800; font-size: 2.1rem; color: var(--ink); }
+    .price-amt small { font-size: .9rem; color: var(--text-light); font-weight: 600; }
+    .price-feats { display: flex; flex-direction: column; gap: 10px; margin: 6px 0 8px; }
+    .price-feats li { list-style: none; display: flex; align-items: center; gap: 10px; font-size: .9rem; color: var(--text); }
+    .price-feats i { color: var(--g-green); }
+    .price-btn { margin-top: auto; min-height: 50px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-weight: 800; border: 1.5px solid var(--gp); color: var(--gp); background: #fff; transition: .18s; }
+    .price-btn:hover { background: var(--gp-soft); }
+    .price-btn.solid { background: var(--gp); color: #fff; border-color: var(--gp); }
+    .price-btn.solid:hover { background: var(--gp-dark); }
 
-        /* Dashboard Grid */
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr) 300px;
-            grid-template-rows: auto auto;
-            gap: 25px;
-        }
+    /* ---- Tips ---- */
+    .tips-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+    .tip { display: flex; gap: 14px; background: #fff; border: 1px solid var(--g-line); border-radius: 16px; padding: 18px; }
+    .tip .ic { width: 42px; height: 42px; flex: 0 0 42px; border-radius: 12px; background: var(--gp-soft); color: var(--gp); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
+    .tip .tt { font-weight: 700; color: var(--ink); font-size: .96rem; margin-bottom: 3px; }
+    .tip .td { color: var(--text-muted); font-size: .86rem; line-height: 1.5; }
 
-        .card {
-            background-color: var(--white);
-            border-radius: 16px;
-            border: 1px solid var(--border-color);
-            padding: 30px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.02);
-        }
-
-        /* Card 1: Score & Gauge */
-        .card.score-gauge { grid-column: 1 / 3; display: flex; gap: 30px; }
-        .score-info { flex: 1; display: flex; flex-direction: column; gap: 12px; }
-        .score-title { font-size: 15px; color: var(--text-dark); font-weight: 600; }
-        .score-display { display: flex; align-items: baseline; gap: 5px; margin-bottom: 5px; }
-        .score-value { font-size: 40px; font-weight: 800; color: var(--primary-color); }
-        .score-max { font-size: 20px; color: var(--text-light); }
-        .score-item { display: flex; align-items: center; font-size: 14px; color: var(--text-dark); }
-        .score-item i { color: var(--primary-color); margin-right: 15px; font-size: 16px; width: 20px; text-align: center; }
-        .score-item .label { color: var(--text-light); margin-right: 6px; }
-
-        .gauge-section { flex: 1.3; display: flex; flex-direction: column; align-items: center; position: relative; }
-        .gauge-svg { width: 100%; max-width: 350px; }
-        .gauge-status { font-size: 18px; font-weight: 800; color: var(--gauge-high); margin-top: 15px; }
-        .gauge-desc { font-size: 12px; color: var(--text-light); text-align: center; max-width: 280px; line-height: 1.5; margin-top: 5px; }
-
-        /* Card 2: Keñester */
-        .card.kenester { grid-column: 3; display: flex; flex-direction: column; gap: 15px; }
-        .kenester-title { display: flex; align-items: center; font-size: 15px; font-weight: 700; }
-        .kenester-title i { color: #fbc531; margin-right: 10px; font-size: 16px; }
-        .kenester-list { display: flex; flex-direction: column; gap: 20px; }
-        .kenester-item { display: flex; flex-direction: column; gap: 5px; }
-        .kenester-point { display: flex; align-items: center; font-weight: 700; font-size: 14px; }
-        .kenester-point::before {
-            content: ''; display: block; width: 7px; height: 7px;
-            background-color: var(--primary-color); border-radius: 50%; margin-right: 12px;
-        }
-        .kenester-desc { font-size: 12px; color: var(--text-light); margin-left: 19px; line-height: 1.5; }
-
-        /* Card 3: Universitietter */
-        .card.universities { grid-column: 1 / 3; grid-row: 2; display: flex; flex-direction: column; gap: 20px; }
-        .uni-title { font-size: 15px; font-weight: 700; }
-        .uni-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; }
-        .uni-card {
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 15px;
-            display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px;
-            transition: box-shadow .2s, transform .2s;
-        }
-        .uni-card:hover { box-shadow: 0 10px 24px rgba(108,92,231,.12); transform: translateY(-2px); }
-        .uni-logo { width: 55px; height: 55px; display: flex; align-items: center; justify-content: center; font-size: 26px; }
-        .uni-logo img { max-width: 100%; max-height: 100%; object-fit: contain; }
-        .uni-logo.muit { color: #316698; }
-        .uni-name { font-size: 12px; font-weight: 700; color: var(--text-dark); height: 2.8em; overflow: hidden; line-height: 1.4; display: flex; align-items: center; }
-        .uni-details { display: flex; flex-direction: column; gap: 5px; width: 100%; }
-        .uni-score-row { display: flex; gap: 4px; font-size: 10px; font-weight: 700; justify-content: center; }
-        .uni-score-range { background-color: var(--score-bg-high); color: var(--score-text-high); padding: 3px 6px; border-radius: 4px; }
-        .uni-score-range.med { background-color: var(--score-bg-med); color: var(--score-text-med); }
-        .uni-score-label { background-color: var(--score-bg-high); color: var(--score-text-high); padding: 3px 6px; border-radius: 4px; }
-        .uni-score-label.med { background-color: var(--score-bg-med); color: var(--score-text-med); }
-        .uni-location { font-size: 10px; color: var(--text-light); display: flex; align-items: center; gap: 5px; justify-content: center; }
-        .uni-course { font-size: 10px; color: var(--text-light); font-weight: 500; }
-        .view-all { display: flex; align-items: center; justify-content: center; text-decoration: none; color: var(--primary-color); font-size: 14px; font-weight: 700; margin-top: 10px; }
-        .view-all i { margin-left: 8px; }
-
-        /* Card 4: Premium */
-        .card.premium { grid-column: 3; grid-row: 2; display: flex; flex-direction: column; align-items: center; gap: 15px; text-align: center; }
-        .premium-header { width: 100%; display: flex; justify-content: center; position: relative; }
-        .premium-icon { color: #fbc531; font-size: 26px; }
-        .premium-icon i { animation: crownSwing 4s ease-in-out infinite; display: inline-block; }
-        .premium-tag { position: absolute; right: 0; top: -10px; background-color: var(--secondary-active); color: var(--primary-color); font-size: 10px; font-weight: 800; padding: 3px 6px; border-radius: 4px; }
-        .premium-title { font-size: 14px; font-weight: 700; color: var(--primary-color); }
-        .premium-desc { font-size: 12px; color: var(--text-light); line-height: 1.5; max-width: 240px; }
-        .premium-btn { display: flex; align-items: center; justify-content: center; background-color: var(--primary-color); color: var(--white); border-radius: 10px; padding: 12px; width: 100%; text-decoration: none; font-size: 14px; font-weight: 700; transition: background-color 0.3s; }
-        .premium-btn:hover { background-color: var(--primary-active); }
-        .premium-btn i { margin-right: 10px; font-size: 12px; }
-
-        /* SVG Gauge styling */
-        .gauge-svg .bg-arc { fill: none; stroke: #eee; stroke-width: 20; }
-        .gauge-svg .arc-red { fill: none; stroke: var(--gauge-low); stroke-width: 20; }
-        .gauge-svg .arc-orange { fill: none; stroke: var(--gauge-risk); stroke-width: 20; }
-        .gauge-svg .arc-yellow { fill: none; stroke: var(--gauge-med); stroke-width: 20; }
-        .gauge-svg .arc-green { fill: none; stroke: var(--gauge-high); stroke-width: 20; }
-        .gauge-svg .needle { fill: #333; transform-origin: 150px 150px; transform: rotate(-90deg); transition: transform 1.6s cubic-bezier(.34,1.56,.64,1); }
-        .gauge-svg .needle-center { fill: #333; }
-        .gauge-svg .gauge-label { fill: #333; font-weight: 700; font-size: 13px; }
-        .gauge-svg .gauge-sub-label { fill: #888; font-size: 9px; font-weight: 500; }
-
-        @keyframes crownSwing {
-            0% { transform: rotate(0deg); }
-            10% { transform: rotate(-8deg); }
-            20% { transform: rotate(8deg); }
-            30% { transform: rotate(-8deg); }
-            40%, 100% { transform: rotate(0deg); }
-        }
-
-        /* Responsive */
-        @media (max-width: 1100px) {
-            .dashboard-grid { grid-template-columns: 1fr 1fr; }
-            .card.score-gauge { grid-column: 1 / -1; }
-            .card.kenester { grid-column: 1 / -1; }
-            .card.universities { grid-column: 1 / -1; grid-row: auto; }
-            .card.premium { grid-column: 1 / -1; grid-row: auto; }
-        }
-        @media (max-width: 860px) {
-            body { grid-template-columns: 1fr; grid-template-rows: 60px 1fr; height: auto; overflow: auto; }
-            aside { display: none; }
-            main { grid-column: 1; }
-            .card.score-gauge { flex-direction: column; }
-            .uni-grid { grid-template-columns: repeat(2, 1fr); }
-        }
-        @media (max-width: 520px) {
-            .uni-grid { grid-template-columns: 1fr; }
-            main { padding: 18px; }
-        }
-    </style>
+    @media (max-width: 920px) {
+      .results { grid-template-columns: 1fr; }
+      .uni-grid { grid-template-columns: repeat(2, 1fr); }
+      .price-grid, .lk-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 560px) {
+      .form-grid, .tips-grid, .uni-grid { grid-template-columns: 1fr; }
+      .prob-pct { font-size: 2.6rem; }
+    }
+  </style>
 </head>
 <body>
 
-    <header>
-        <a href="index.html" class="logo">
-            <i class="fas fa-star"></i>
-            <span>shyraq</span>
-        </a>
-        <div class="main-title">Грант мүмкіндігін тексеру</div>
-    </header>
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo"><div class="nav-logo-mark">🔆</div>Shyraq</a>
+    <div class="nav-links">
+      <a href="index.html" class="nav-link">Басты бет</a>
+      <a href="specialties.html" class="nav-link">Мамандықтар</a>
+      <a href="universities.html" class="nav-link">Университеттер</a>
+      <a href="grant.html" class="nav-link active">Грант</a>
+      <a href="pricing.html" class="nav-link">Тарифтер</a>
+    </div>
+    <div class="nav-actions">
+      <a href="dashboard.html" class="btn btn-primary btn-sm">Кабинет</a>
+      <button class="nav-mobile-btn" onclick="document.querySelector('.mobile-menu').classList.add('open')">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+    </div>
+  </div>
+</nav>
 
-    <aside>
-        <a href="index.html" class="nav-link"><i class="fas fa-home"></i> Басты бет</a>
-        <a href="profile.html" class="nav-link"><i class="fas fa-user"></i> Профиль</a>
-        <a href="specialties.html" class="nav-link"><i class="fas fa-heart"></i> Мамандықтар</a>
-        <a href="universities.html" class="nav-link"><i class="fas fa-university"></i> Университеттер</a>
-        <a href="grant.html" class="nav-link active"><i class="fas fa-graduation-cap"></i> Грант</a>
-        <a href="results.html" class="nav-link"><i class="fas fa-calculator"></i> Есептеулер тарихы</a>
-        <a href="profile.html" class="nav-link"><i class="fas fa-bookmark"></i> Таңдаулылар</a>
-        <a href="pricing.html" class="nav-link"><i class="fas fa-lightbulb"></i> Кеңестер</a>
+<div class="mobile-menu">
+  <div class="mm-header">
+    <a href="index.html" class="nav-logo"><div class="nav-logo-mark">🔆</div>Shyraq</a>
+    <button class="modal-close" onclick="document.querySelector('.mobile-menu').classList.remove('open')">×</button>
+  </div>
+  <div class="mm-links">
+    <a href="index.html" class="mm-link">Басты бет</a>
+    <a href="specialties.html" class="mm-link">Мамандықтар</a>
+    <a href="universities.html" class="mm-link">Университеттер</a>
+    <a href="grant.html" class="mm-link">Грант</a>
+    <a href="pricing.html" class="mm-link">Тарифтер</a>
+  </div>
+</div>
 
-        <div class="light-mode selected">
-            <i class="fas fa-sun"></i> Жарық режимі
+<div class="grant-wrap">
+
+  <!-- HERO -->
+  <div class="gp-eyebrow"><i class="fas fa-graduation-cap"></i> Грант калькуляторы</div>
+  <h1 class="gp-h1">Грант мүмкіндігін талда</h1>
+  <p class="gp-sub">ҰБТ балың мен таңдауыңды енгіз де, Қазақстандағы қай университеттер мен мамандықтарға грантқа түсе алатыныңды бірден көр.</p>
+
+  <!-- 1. FORM -->
+  <div class="gp-card form-section">
+    <h2 class="card-title">Грант мүмкіндігін тексер</h2>
+    <p class="card-desc">ҰБТ балыңыз бен таңдауыңызды енгізіп, нәтижеңізді анықтаңыз.</p>
+    <div class="form-grid">
+      <div class="field full">
+        <div class="score-field">
+          <div class="score-head">
+            <span class="lbl">ҰБТ балы</span>
+            <span class="val"><span id="scoreOut">92</span><small>/ 140</small></span>
+          </div>
+          <input type="range" min="0" max="140" value="92" class="score-slider" id="scoreSlider" />
         </div>
+      </div>
+      <div class="field">
+        <label>Таңдау пәндері</label>
+        <select id="subjSel">
+          <option value="Математика – Информатика">Математика + Информатика</option>
+          <option value="Математика – Физика">Математика + Физика</option>
+          <option value="Биология – Химия">Биология + Химия</option>
+          <option value="Биология – География">Биология + География</option>
+          <option value="Математика – География">Математика + География</option>
+          <option value="Ин. язык – Вс. история">Шетел тілі + Дүниежүзі тарихы</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Қала</label>
+        <select id="citySel">
+          <option value="">Қазақстан бойынша</option>
+          <option value="Алматы">Алматы</option>
+          <option value="Астана">Астана</option>
+          <option value="Шымкент">Шымкент</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Университет</label>
+        <select id="uniSel"><option value="">Кез келген университет</option></select>
+      </div>
+      <div class="field">
+        <label>Квота түрі</label>
+        <select id="quotaSel">
+          <option>Квота жоқ</option>
+          <option>Ауыл квотасы</option>
+          <option>Көпбалалы отбасы</option>
+          <option>Мүгедектік квотасы</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn-calc" id="calcBtn"><i class="fas fa-bolt"></i> Грант мүмкіндігін есептеу</button>
+  </div>
 
-        <a href="profile.html" class="user-profile" style="text-decoration:none;color:inherit;">
-            <div class="user-initial">A</div>
-            <div class="user-details">
-                <span class="user-name">Аружан</span>
-                <span class="user-email">aruzhan@mail.com</span>
-            </div>
-            <i class="fas fa-chevron-down" style="margin-left: auto; font-size: 12px; color: var(--text-light);"></i>
-        </a>
-    </aside>
+  <!-- 2 + 3. RESULT + PROBABILITY SCALE -->
+  <div class="results" id="results">
+    <div class="gp-card">
+      <h2 class="card-title">Сіздің нәтижеңіз</h2>
+      <div class="res-score"><span id="resScore">92</span><small>/ 140</small></div>
+      <div class="res-list">
+        <div class="res-item"><i class="fas fa-graduation-cap"></i><span class="k">Грант түрі</span><span class="v">Жалпы мемлекеттік</span></div>
+        <div class="res-item"><i class="fas fa-users"></i><span class="k">Квота түрі</span><span class="v" id="resQuota">Квота жоқ</span></div>
+        <div class="res-item"><i class="fas fa-book"></i><span class="k">Таңдау пәндері</span><span class="v" id="resSubj">Математика + Информатика</span></div>
+        <div class="res-item"><i class="fas fa-map-marker-alt"></i><span class="k">Қала</span><span class="v" id="resCity">Қазақстан бойынша</span></div>
+        <div class="res-item"><i class="fas fa-university"></i><span class="k">Университет</span><span class="v" id="resUni">Кез келген</span></div>
+      </div>
+    </div>
 
-    <main>
-        <div class="top-tabs">
-            <button class="tab-link active" data-tab="check"><i class="fas fa-chart-line"></i> Грант мүмкіндігін тексеру</button>
-            <button class="tab-link" data-tab="types"><i class="fas fa-list-ul"></i> Грант түрлері</button>
-            <button class="tab-link" data-tab="quota"><i class="fas fa-users-cog"></i> Квота түрлері</button>
-            <button class="tab-link" data-tab="result"><i class="fas fa-poll"></i> Нәтиже</button>
+    <div class="gp-card">
+      <div class="prob-head">
+        <div class="prob-pct"><span id="probPct">72</span>%</div>
+        <div class="prob-level" id="probLevel">Орташа мүмкіндік</div>
+      </div>
+      <p class="prob-desc" id="probDesc">Сіздің нәтижеңіз бойынша грантқа түсу мүмкіндігі жақсы. Бірнеше университетке құжат тапсыру ұсынылады.</p>
+      <div class="scale-rows" id="scaleRows">
+        <div class="scale-row" data-band="low"><span class="sl-name">Төмен</span><div class="sl-track"><div class="sl-fill" style="background:var(--g-red)"></div></div><span class="sl-range">0–63</span></div>
+        <div class="scale-row" data-band="risk"><span class="sl-name">Тәуекел</span><div class="sl-track"><div class="sl-fill" style="background:var(--g-orange)"></div></div><span class="sl-range">64–79</span></div>
+        <div class="scale-row" data-band="med"><span class="sl-name">Орташа</span><div class="sl-track"><div class="sl-fill" style="background:var(--g-gold)"></div></div><span class="sl-range">80–101</span></div>
+        <div class="scale-row" data-band="high"><span class="sl-name">Жоғары</span><div class="sl-track"><div class="sl-fill" style="background:var(--g-green)"></div></div><span class="sl-range">102–140</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. RECOMMENDED -->
+  <div class="sec-title">
+    <h2>Ұсынылатын университеттер</h2>
+    <a href="universities.html" class="view-all">Барлығын көру <i class="fas fa-arrow-right"></i></a>
+  </div>
+  <div class="uni-grid" id="uniGrid"></div>
+
+  <!-- 5. LOCKED FULL ANALYSIS -->
+  <div class="sec-title"><h2>Толық талдау</h2></div>
+  <div class="locked-wrap">
+    <div class="locked-blur">
+      <div class="lk-grid">
+        <div class="lk-box"><div class="t"></div><div class="b"></div></div>
+        <div class="lk-box"><div class="t"></div><div class="b"></div></div>
+        <div class="lk-box"><div class="t"></div><div class="b"></div></div>
+      </div>
+      <div class="lk-line" style="width:92%"></div>
+      <div class="lk-line" style="width:80%"></div>
+      <div class="lk-line" style="width:88%"></div>
+      <div class="lk-line" style="width:74%"></div>
+    </div>
+    <div class="locked-overlay">
+      <div class="lock-ic"><i class="fas fa-lock"></i></div>
+      <h3>Толық мүмкіндіктерді ашу</h3>
+      <p>Барлық сәйкес мамандықтар, барлық университеттер, грант ықтималдығы %, соңғы 3 жыл статистикасы, қала және мамандық бойынша сүзгі, конкурс деңгейі.</p>
+      <a href="pricing.html" class="btn btn-primary btn-lg" style="background:var(--gp);border-color:var(--gp)"><i class="fas fa-crown" style="margin-right:8px"></i> Premium арқылы толық нәтижені ашыңыз</a>
+    </div>
+  </div>
+
+  <!-- 6. PRICING -->
+  <div class="sec-title"><h2>Тарифтер</h2></div>
+  <div class="price-grid">
+    <div class="price-card">
+      <div class="price-name">Бір реттік есеп</div>
+      <div class="price-amt">499 ₸</div>
+      <ul class="price-feats">
+        <li><i class="fas fa-check"></i> 1 толық есеп</li>
+        <li><i class="fas fa-check"></i> Толық аналитика</li>
+        <li><i class="fas fa-check"></i> Барлық университеттер</li>
+      </ul>
+      <a href="payment.html" class="price-btn">Сатып алу</a>
+    </div>
+    <div class="price-card featured">
+      <div class="price-badge">Танымал</div>
+      <div class="price-name">Айлық Premium</div>
+      <div class="price-amt">1 990 ₸ <small>/ ай</small></div>
+      <ul class="price-feats">
+        <li><i class="fas fa-check"></i> Шексіз есептеу</li>
+        <li><i class="fas fa-check"></i> Барлық мамандықтар</li>
+        <li><i class="fas fa-check"></i> Барлық университеттер</li>
+        <li><i class="fas fa-check"></i> Жеке ұсыныстар</li>
+        <li><i class="fas fa-check"></i> Грант жаңалықтары</li>
+      </ul>
+      <a href="payment.html" class="price-btn solid">Premium алу</a>
+    </div>
+    <div class="price-card">
+      <div class="price-badge" style="background:var(--g-green)">Ең тиімді</div>
+      <div class="price-name">Жылдық Premium</div>
+      <div class="price-amt">14 990 ₸ <small>/ жыл</small></div>
+      <ul class="price-feats">
+        <li><i class="fas fa-check"></i> Барлық Premium мүмкіндіктер</li>
+        <li><i class="fas fa-check"></i> 2 ай тегін</li>
+      </ul>
+      <a href="payment.html" class="price-btn solid">Premium алу</a>
+    </div>
+  </div>
+
+  <!-- 7. TIPS -->
+  <div class="sec-title"><h2>Кеңестер</h2></div>
+  <div class="tips-grid">
+    <div class="tip"><div class="ic"><i class="fas fa-circle-info"></i></div><div><div class="tt">Квота балл қоспайды</div><div class="td">Таңдалған квота тек грант конкурсында арнайы санат ретінде ескеріледі, балға қосылмайды.</div></div></div>
+    <div class="tip"><div class="ic"><i class="fas fa-layer-group"></i></div><div><div class="tt">Бірнеше университет таңдаңыз</div><div class="td">Қала, университет және мамандықты салыстыру грант мүмкіндігін нақтырақ бағалауға көмектеседі.</div></div></div>
+    <div class="tip"><div class="ic"><i class="fas fa-location-dot"></i></div><div><div class="tt">Өңірлік университеттер</div><div class="td">Астана мен Алматыдан басқа өңірлік ЖОО-ларда конкурс төмен болуы мүмкін.</div></div></div>
+    <div class="tip"><div class="ic"><i class="fas fa-shuffle"></i></div><div><div class="tt">Ұқсас мамандықтар</div><div class="td">Балл жетпеген жағдайда ұқсас мамандықтарды қарастырыңыз — өту шегі төмен болуы мүмкін.</div></div></div>
+  </div>
+
+</div>
+
+<script src="js/universities-data.js"></script>
+<script>
+  const SEED = window.UNIVERSITIES_SEED || [];
+
+  // normalize "Математика – Информатика" -> sorted lowercase key
+  function normSubj(s){ if(!s) return ''; return s.replace(/[–-]/g,'|').split('|').map(x=>x.trim().toLowerCase()).filter(Boolean).sort().join('|'); }
+
+  // populate university dropdown
+  (function(){
+    const sel = document.getElementById('uniSel');
+    const list = SEED.filter(u=>u.short_name||u.name_kz)
+      .map(u=>({id:u.id, nm:(u.short_name||u.name_kz)}))
+      .sort((a,b)=>a.nm.localeCompare(b.nm,'ru'));
+    list.forEach(u=>{ const o=document.createElement('option'); o.value=u.id; o.textContent=u.nm; sel.appendChild(o); });
+  })();
+
+  function chanceFromDiff(diff){
+    const pct = Math.max(3, Math.min(99, Math.round(50 + diff*2.2)));
+    let cls,label;
+    if(pct>=80){cls='high';label='Жоғары';}
+    else if(pct>=55){cls='med';label='Орташа';}
+    else if(pct>=35){cls='risk';label='Тәуекел';}
+    else {cls='low';label='Төмен';}
+    return {pct,cls,label};
+  }
+
+  // overall banded percentage from raw score
+  function scoreToPct(s){
+    const bands=[{lo:0,hi:63,plo:5,phi:34},{lo:64,hi:79,plo:35,phi:54},{lo:80,hi:101,plo:55,phi:84},{lo:102,hi:140,plo:85,phi:99}];
+    const b=bands.find(b=>s>=b.lo&&s<=b.hi)||bands[3];
+    return Math.round(b.plo+(s-b.lo)/(b.hi-b.lo)*(b.phi-b.plo));
+  }
+  function bandOf(s){ if(s>=102)return'high'; if(s>=80)return'med'; if(s>=64)return'risk'; return'low'; }
+  const BAND_TEXT={
+    high:{nm:'Жоғары мүмкіндік',color:'var(--g-green)',bg:'var(--g-green-bg)',desc:'Грантқа түсу мүмкіндігіңіз өте жоғары. Таңдаған университеттеріңізге сеніммен құжат тапсырыңыз.'},
+    med:{nm:'Орташа мүмкіндік',color:'var(--g-gold)',bg:'var(--g-gold-bg)',desc:'Сіздің нәтижеңіз бойынша грантқа түсу мүмкіндігі жақсы. Бірнеше университетке құжат тапсыру ұсынылады.'},
+    risk:{nm:'Тәуекелді мүмкіндік',color:'var(--g-orange)',bg:'var(--g-orange-bg)',desc:'Мүмкіндік бар, бірақ тәуекел жоғары. Өткен жылғы балы төмен ЖОО мен мамандықтарды қарастырыңыз.'},
+    low:{nm:'Төмен мүмкіндік',color:'var(--g-red)',bg:'var(--g-red-bg)',desc:'Грантқа түсу мүмкіндігі төмен. Балл талабы аз мамандықтар мен өңірлік университеттерді қарастырыңыз.'}
+  };
+
+  function recommend(score, subjKey, city, uniId){
+    const out=[];
+    SEED.forEach(u=>{
+      if(city && u.city!==city) return;
+      if(uniId && String(u.id)!==String(uniId)) return;
+      (u.specialties||[]).forEach(sp=>{
+        if(sp.thresholdScore==null) return;
+        if(subjKey && normSubj(sp.subjects)!==subjKey) return;
+        out.push({uni:u, sp:sp, diff:score-sp.thresholdScore});
+      });
+    });
+    // recommend universities whose threshold sits close to the student's score:
+    // 2 reachable "safe" picks just below the score, 2 nearby "reach" picks just above.
+    const safe  = out.filter(x=>x.diff>=0).sort((a,b)=>a.diff-b.diff);  // closest below
+    const reach = out.filter(x=>x.diff<0).sort((a,b)=>b.diff-a.diff);   // smallest miss
+    const ordered = [...safe.slice(0,2), ...reach.slice(0,2), ...safe.slice(2), ...reach.slice(2)];
+    const seen = new Set(); const picked = [];
+    for(const x of ordered){ if(seen.has(x.uni.id)) continue; seen.add(x.uni.id); picked.push(x); if(picked.length>=4) break; }
+    return {picked: picked, total: out.length, unis: new Set(out.map(x=>x.uni.id)).size};
+  }
+
+  function shortSpec(name){ return (name||'').replace(/\s*\(.*?\)\s*/g,'').trim(); }
+
+  function render(){
+    const score = +document.getElementById('scoreSlider').value;
+    const subjRaw = document.getElementById('subjSel').value;
+    const subjText = document.getElementById('subjSel').selectedOptions[0].textContent;
+    const subjKey = normSubj(subjRaw);
+    const city = document.getElementById('citySel').value;
+    const cityText = document.getElementById('citySel').selectedOptions[0].textContent;
+    const uniId = document.getElementById('uniSel').value;
+    const uniText = document.getElementById('uniSel').selectedOptions[0].textContent;
+    const quota = document.getElementById('quotaSel').value;
+
+    // result info
+    document.getElementById('resScore').textContent = score;
+    document.getElementById('resQuota').textContent = quota;
+    document.getElementById('resSubj').textContent = subjText;
+    document.getElementById('resCity').textContent = cityText;
+    document.getElementById('resUni').textContent = uniText;
+
+    // probability headline
+    const pct = scoreToPct(score);
+    const band = bandOf(score);
+    const bt = BAND_TEXT[band];
+    document.getElementById('probPct').textContent = pct;
+    const lv = document.getElementById('probLevel');
+    lv.textContent = bt.nm; lv.style.color = bt.color; lv.style.background = bt.bg;
+    document.getElementById('probDesc').textContent = bt.desc;
+
+    // scale rows: fill levels, highlight active band
+    const fills = {low:25, risk:50, med:75, high:100};
+    document.querySelectorAll('.scale-row').forEach(row=>{
+      const b = row.dataset.band;
+      row.classList.toggle('active', b===band);
+      row.querySelector('.sl-fill').style.width = (b===band ? Math.max(30,(pct))+'%' : fills[b]+'%');
+    });
+
+    // recommended
+    const {picked,total,unis} = recommend(score, subjKey, city, uniId);
+    const grid = document.getElementById('uniGrid');
+    grid.innerHTML = '';
+    if(!picked.length){
+      grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--text-muted);padding:30px;">Бұл таңдау бойынша мамандық табылмады. Пәндерді немесе қаланы өзгертіп көріңіз.</div>';
+    }
+    picked.forEach(x=>{
+      const c = chanceFromDiff(x.diff);
+      const nm = x.uni.short_name || x.uni.name_kz;
+      const div = document.createElement('div');
+      div.className = 'uni-card';
+      div.innerHTML = `
+        <div class="uni-logo"><img src="${x.uni.logo_url}" alt="${nm}" onerror="this.parentNode.innerHTML='<i class=\\'fas fa-university\\' style=\\'color:var(--gp);font-size:24px\\'></i>'"></div>
+        <div class="uni-nm">${nm}</div>
+        <div class="uni-spec">${shortSpec(x.sp.name)}</div>
+        <div class="uni-rows">
+          <div class="r"><span class="k">Өту шегі</span><span class="v">${x.sp.thresholdScore} балл</span></div>
+          <div class="r"><span class="k">Сіздің балл</span><span class="v">${score} балл</span></div>
+          <div class="r"><span class="k">Қала</span><span class="v">${x.uni.city||'—'}</span></div>
         </div>
+        <div class="chance ${c.cls}">${c.label} мүмкіндік · ${c.pct}%</div>`;
+      grid.appendChild(div);
+    });
+  }
 
-        <div class="dashboard-grid">
+  // slider live update
+  const slider = document.getElementById('scoreSlider');
+  function syncSlider(){ document.getElementById('scoreOut').textContent = slider.value; slider.style.setProperty('--val', (slider.value/140*100)+'%'); }
+  slider.addEventListener('input', ()=>{ syncSlider(); });
+  document.getElementById('calcBtn').addEventListener('click', render);
+  ['subjSel','citySel','uniSel','quotaSel'].forEach(id=>document.getElementById(id).addEventListener('change', render));
 
-            <div class="card score-gauge">
-                <div class="score-info">
-                    <div class="score-title">Сіздің балыңыз</div>
-                    <div class="score-display">
-                        <span class="score-value" id="scoreValue">92</span>
-                        <span class="score-max">/ 140</span>
-                    </div>
-                    <div class="score-item"><i class="fas fa-graduation-cap"></i><span class="label">Грант түрі:</span> Жалпы мемлекеттік грант</div>
-                    <div class="score-item"><i class="fas fa-users"></i><span class="label">Квота түрі:</span> Квота жоқ</div>
-                    <div class="score-item"><i class="fas fa-code"></i><span class="label">Мамандық:</span> Информатика / CS</div>
-                    <div class="score-item"><i class="fas fa-map-marker-alt"></i><span class="label">Қала / облыс:</span> Алматы қаласы</div>
-                    <div class="score-item"><i class="fas fa-university"></i><span class="label">Университет:</span> Кез келген университет</div>
-                </div>
-                <div class="gauge-section">
-                    <svg class="gauge-svg" viewBox="0 0 300 180">
-                        <path class="bg-arc" d="M 50 150 A 100 100 0 0 1 250 150"/>
-                        <path class="arc-red" d="M 50 150 A 100 100 0 0 1 100 63.4"/>
-                        <path class="arc-orange" d="M 100 63.4 A 100 100 0 0 1 150 50"/>
-                        <path class="arc-yellow" d="M 150 50 A 100 100 0 0 1 200 63.4"/>
-                        <path class="arc-green" d="M 200 63.4 A 100 100 0 0 1 250 150"/>
-                        <polygon class="needle" points="150,150 148,55 150,50 152,55"/>
-                        <circle class="needle-center" cx="150" cy="150" r="8"/>
-                        <text x="55" y="140" class="gauge-label" text-anchor="middle">Төмен</text>
-                        <text x="55" y="153" class="gauge-sub-label" text-anchor="middle">0–63</text>
-                        <text x="100" y="55" class="gauge-label" text-anchor="middle">Тәуекел</text>
-                        <text x="100" y="68" class="gauge-sub-label" text-anchor="middle">64–79</text>
-                        <text x="200" y="55" class="gauge-label" text-anchor="middle">Орташа</text>
-                        <text x="200" y="68" class="gauge-sub-label" text-anchor="middle">80–101</text>
-                        <text x="245" y="140" class="gauge-label" text-anchor="middle">Жоғары</text>
-                        <text x="245" y="153" class="gauge-sub-label" text-anchor="middle">102–140</text>
-                    </svg>
-                    <div class="gauge-status" id="gaugeStatus">Жоғары</div>
-                    <div class="gauge-desc">«Информатика / CS» бойынша грант мүмкіндігі жоғары. Бірнеше университетке өтінім беру ұсынылады.</div>
-                </div>
-            </div>
-
-            <div class="card kenester">
-                <div class="kenester-title"><i class="fas fa-lightbulb"></i> Кеңестер</div>
-                <div class="kenester-list">
-                    <div class="kenester-item">
-                        <div class="kenester-point">Квота балл қоспайды</div>
-                        <div class="kenester-desc">Таңдалған квота тек грант конкурсында арнайы санат ретінде ескеріледі.</div>
-                    </div>
-                    <div class="kenester-item">
-                        <div class="kenester-point">Бірнеше ЖОО қарастыр</div>
-                        <div class="kenester-desc">Қала, университет және мамандықты салыстыру грант мүмкіндігін нақтырақ бағалауға көмектеседі.</div>
-                    </div>
-                    <div class="kenester-item">
-                        <div class="kenester-point">Өңірлік университеттер</div>
-                        <div class="kenester-desc">Астана мен Алматы ЖОО-ларынан басқа өңірлік ЖОО-ларда конкурс төмен.</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card universities">
-                <div class="uni-title">Ұсынылатын университеттер</div>
-                <div class="uni-grid">
-                    <div class="uni-card">
-                        <div class="uni-logo muit"><i class="fas fa-laptop-code"></i></div>
-                        <div class="uni-name">МУИТ</div>
-                        <div class="uni-details">
-                            <div class="uni-score-row"><span class="uni-score-range">92–105 балл</span><span class="uni-score-label">Жоғары</span></div>
-                            <div class="uni-location"><i class="fas fa-map-marker-alt"></i> Алматы қ.</div>
-                            <div class="uni-course">Информатика</div>
-                        </div>
-                    </div>
-                    <div class="uni-card">
-                        <div class="uni-logo"><img src="assets/university-logos/kaznu-university.svg" alt="ҚазҰУ" onerror="this.parentNode.innerHTML='&lt;i class=&quot;fas fa-university&quot; style=&quot;color:#316698&quot;&gt;&lt;/i&gt;'"></div>
-                        <div class="uni-name">ҚазҰУ аль-Фараби</div>
-                        <div class="uni-details">
-                            <div class="uni-score-row"><span class="uni-score-range">90–104 балл</span><span class="uni-score-label">Жоғары</span></div>
-                            <div class="uni-location"><i class="fas fa-map-marker-alt"></i> Алматы қ.</div>
-                            <div class="uni-course">Информатика</div>
-                        </div>
-                    </div>
-                    <div class="uni-card">
-                        <div class="uni-logo"><img src="assets/university-logos/narxoz-university.svg" alt="Нархоз" onerror="this.parentNode.innerHTML='&lt;span style=&quot;color:#ee5253;font-weight:800;font-size:14px&quot;&gt;NARXOZ&lt;/span&gt;'"></div>
-                        <div class="uni-name">Нархоз</div>
-                        <div class="uni-details">
-                            <div class="uni-score-row"><span class="uni-score-range med">85–100 балл</span><span class="uni-score-label med">Орташа</span></div>
-                            <div class="uni-location"><i class="fas fa-map-marker-alt"></i> Алматы қ.</div>
-                            <div class="uni-course">Информатика</div>
-                        </div>
-                    </div>
-                    <div class="uni-card">
-                        <div class="uni-logo"><img src="assets/university-logos/enu-university.svg" alt="ЕҰУ" onerror="this.parentNode.innerHTML='&lt;i class=&quot;fas fa-university&quot; style=&quot;color:#316698&quot;&gt;&lt;/i&gt;'"></div>
-                        <div class="uni-name">ЕҰУ</div>
-                        <div class="uni-details">
-                            <div class="uni-score-row"><span class="uni-score-range med">80–97 балл</span><span class="uni-score-label med">Орташа</span></div>
-                            <div class="uni-location"><i class="fas fa-map-marker-alt"></i> Астана қ.</div>
-                            <div class="uni-course">Информатика</div>
-                        </div>
-                    </div>
-                </div>
-                <a href="universities.html" class="view-all">Барлық университеттерді көру <i class="fas fa-arrow-right"></i></a>
-            </div>
-
-            <div class="card premium">
-                <div class="premium-header">
-                    <div class="premium-icon"><i class="fas fa-crown"></i></div>
-                    <div class="premium-tag">80–101 балл</div>
-                </div>
-                <div class="premium-title">Premium алу</div>
-                <div class="premium-desc">Premium-де шексіз есептеу, барлық мамандықтар мен университеттер бойынша нақты анализ</div>
-                <a href="pricing.html" class="premium-btn"><i class="fas fa-bolt"></i> Premium алу</a>
-            </div>
-
-        </div>
-    </main>
-
-    <script>
-        // Gauge needle: maps score (0..max) across a 180° sweep.
-        // needle base points straight up (rotate 0 = top, i.e. score = max/2).
-        // score 0   -> rotate -90deg (points left)
-        // score max -> rotate +90deg (points right)
-        function setGauge(score, max) {
-            const clamped = Math.max(0, Math.min(max, score));
-            const angle = (clamped / max) * 180 - 90;
-            const needle = document.querySelector('.gauge-svg .needle');
-            if (needle) needle.style.transform = `rotate(${angle}deg)`;
-        }
-
-        window.addEventListener('DOMContentLoaded', () => {
-            const score = parseInt(document.getElementById('scoreValue').textContent, 10) || 0;
-            requestAnimationFrame(() => setGauge(score, 140));
-
-            // visual-only tab highlight
-            document.querySelectorAll('.tab-link').forEach(tab => {
-                tab.addEventListener('click', () => {
-                    document.querySelectorAll('.tab-link').forEach(t => t.classList.remove('active'));
-                    tab.classList.add('active');
-                });
-            });
-        });
-    </script>
+  // init
+  syncSlider();
+  render();
+</script>
 </body>
 </html>
