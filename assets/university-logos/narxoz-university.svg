@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Narxoz University">
+  <rect width="256" height="256" rx="54" fill="#7C3AED"/>
+  <path d="M67 172V78h31l61 94h30V78" fill="none" stroke="#FFFFFF" stroke-width="20" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="188" cy="172" r="13" fill="#F2B84B"/>
+  <text x="128" y="222" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="800" fill="#FFFFFF">NARXOZ</text>
+</svg>

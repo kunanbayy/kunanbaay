@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="SDU University">
+  <rect width="256" height="256" rx="54" fill="#0E3157"/>
+  <path d="M72 90c23-32 89-32 112 0-20-9-41-13-56-13s-36 4-56 13Z" fill="#F47B20"/>
+  <path d="M55 104c28 4 52 18 73 43 21-25 45-39 73-43-18 31-42 55-73 74-31-19-55-43-73-74Z" fill="#FFFFFF"/>
+  <path d="M85 108c16 3 30 12 43 28 13-16 27-25 43-28-12 20-26 36-43 48-17-12-31-28-43-48Z" fill="#F47B20"/>
+  <text x="128" y="216" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="36" font-weight="800" fill="#FFFFFF">SDU</text>
+</svg>

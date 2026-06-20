@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Менің кабинетім — Shyraq Education</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    .quick-action {
+      background: var(--white); border-radius: var(--radius-lg); padding: 16px;
+      border: 1px solid var(--border); display: flex; align-items: center; gap: 12px;
+      transition: var(--transition); cursor: pointer; text-decoration: none;
+    }
+    .quick-action:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); border-color: var(--navy); }
+    .ui-icon { width: 20px; height: 20px; display: inline-flex; align-items: center; justify-content: center; color: currentColor; flex-shrink: 0; }
+    .ui-icon svg { width: 100%; height: 100%; stroke: currentColor; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+    .qa-icon { width: 44px; height: 44px; border-radius: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--navy); }
+    .dash-stat-icon { width: 42px; height: 42px; border-radius: 14px; display: flex; align-items: center; justify-content: center; color: var(--navy); background: #F1F5F9; }
+    .qa-title { font-weight: 700; color: var(--navy); font-size: 0.9rem; }
+    .qa-desc { font-size: 0.78rem; color: var(--text-muted); margin-top: 2px; }
+    .plan-card { background: var(--white); border-radius: var(--radius-lg); border: 1px solid var(--border); overflow: hidden; }
+    .plan-card-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .plan-card-body { padding: 16px 20px; display: flex; flex-direction: column; gap: 8px; }
+    .plan-item { display: flex; align-items: center; gap: 10px; font-size: 0.875rem; }
+    .plan-item.done { color: var(--text); }
+    .plan-item.done::before { content: '✓'; color: var(--emerald); font-weight: 700; }
+    .plan-item.pending { color: var(--text-muted); }
+    .plan-item.pending::before { content: '○'; color: var(--text-light); }
+    .activity-item { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+    .activity-item:last-child { border-bottom: none; }
+    .activity-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .mobile-top-bar { display: none; height: var(--nav-h); background: var(--white); border-bottom: 1px solid var(--border); padding: 0 20px; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; }
+    .sidebar .icon { width: 36px; height: 36px; border-radius: 12px; display: inline-flex; align-items: center; justify-content: center; background: #F8FAFC; color: #64748B; }
+    .sidebar-link.active .icon { background: #EAF0F8; color: var(--navy); }
+    .sidebar-link:hover .icon { background: #EEF4FB; color: var(--navy); }
+    .sidebar-link.ai-link .icon { background: #FFF7E6; color: #B7791F; }
+    @media (max-width: 768px) {
+      .mobile-top-bar { display: flex; }
+      .dashboard-main { padding: 20px 16px; }
+      .dash-stats { grid-template-columns: 1fr 1fr; }
+      .dash-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+<div class="dashboard-page">
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <a href="index.html" class="sidebar-logo">
+      <div class="sidebar-logo-icon">☀</div>
+      Shyraq
+    </a>
+
+    <div class="sidebar-section-title">Негізгі</div>
+    <a href="dashboard.html" class="sidebar-link active">
+      <span class="icon"><span class="ui-icon"><svg viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10.5V20h14v-9.5"/><path d="M9 20v-6h6v6"/></svg></span></span> Басты бет
+    </a>
+    <a href="test.html" class="sidebar-link">
+      <span class="icon"><span class="ui-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><path d="M12 12l7-7"/><path d="M16 5h3v3"/></svg></span></span> Мамандық тесті
+    </a>
+    <a href="results.html" class="sidebar-link">
+      <span class="icon"><span class="ui-icon"><svg viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8L19 15z"/></svg></span></span> Нәтижем
+    </a>
+
+    <div class="sidebar-section-title">Зерттеу</div>
+    <a href="specialties.html" class="sidebar-link">
+      <span class="icon"><span class="ui-icon"><svg viewBox="0 0 24 24"><path d="M5 4h9a3 3 0 0 1 3 3v13H8a3 3 0 0 0-3-3V4z"/><path d="M5 17a3 3 0 0 1 3-3h9"/></svg></span></span> Мамандықтар
+    </a>
+    <a href="universities.html" class="sidebar-link">
+      <span class="icon"><span class="ui-icon"><svg viewBox="0 0 24 24"><path d="M4 10h16"/><path d="M6 10v8"/><path d="M10 10v8"/><path d="M14 10v8"/><path d="M18 10v8"/><path d="M3 20h18"/><path d="M12 4 4 8h16l-8-4z"/></svg></span></span> Университеттер
+    </a>
+    <a href="grant.html" class="sidebar-link">
+      <span class="icon"><span class="ui-icon"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14" rx="3"/><path d="M8 9h8"/><path d="M8 13h3"/><path d="M15 13h1"/><path d="M8 16h1"/><path d="M12 16h1"/><path d="M16 16h1"/></svg></span></span> Грант калькулятор
+    </a>
+
+    <div class="sidebar-section-title">Менің</div>
+    <a href="#" class="sidebar-link">
+      <span class="icon"><span class="ui-icon"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="3"/><path d="M8 3v4"/><path d="M16 3v4"/><path d="M4 10h16"/><path d="M8 14h4"/></svg></span></span> Менің жоспарым
+    </a>
+    <a href="#" class="sidebar-link">
+      <span class="icon"><span class="ui-icon"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-8.5-9A4.7 4.7 0 0 1 12 6a4.7 4.7 0 0 1 8.5 5c-1.5 4.6-8.5 9-8.5 9z"/></svg></span></span> Таңдаулылар
+    </a>
+    <a href="#" class="sidebar-link ai-link" style="color:var(--gold)">
+      <span class="icon"><span class="ui-icon"><svg viewBox="0 0 24 24"><rect x="5" y="8" width="14" height="10" rx="3"/><path d="M12 8V5"/><path d="M9 13h.01"/><path d="M15 13h.01"/><path d="M9 18v2"/><path d="M15 18v2"/><path d="M3 12h2"/><path d="M19 12h2"/></svg></span></span> AI кеңесші
+      <span class="badge badge-gold" style="margin-left:auto;font-size:0.7rem">Premium</span>
+    </a>
+
+    <div class="sidebar-section-title">Аккаунт</div>
+    <a href="pricing.html" class="sidebar-link">
+      <span class="icon"><span class="ui-icon"><svg viewBox="0 0 24 24"><path d="M12 3l2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 17.2 6.4 20.2 7.5 14 3 9.6l6.2-.9L12 3z"/></svg></span></span> Тарифтер
+    </a>
+    <a href="profile.html" class="sidebar-link">
+      <span class="icon"><span class="ui-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span></span> Профиль
+    </a>
+    <a href="index.html" class="sidebar-link" onclick="localStorage.removeItem('shyraq_user')">
+      <span class="icon"><span class="ui-icon"><svg viewBox="0 0 24 24"><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/><path d="M21 4v16h-7"/></svg></span></span> Шығу
+    </a>
+
+    <div class="sidebar-premium">
+      <h4><span class="icon-3d icon-3d-support" style="width:34px;height:34px"></span> Premium</h4>
+      <p>AI кеңесші, толық анализ, PDF есеп</p>
+      <a href="pricing.html" class="btn btn-gold btn-sm btn-full">Premium алу</a>
+    </div>
+  </aside>
+
+  <!-- MOBILE TOP BAR -->
+  <div class="mobile-top-bar">
+    <button class="sidebar-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')" style="background:none;border:none;font-size:1.3rem;cursor:pointer">☰</button>
+    <a href="index.html" style="font-family:var(--font-display);font-weight:800;color:var(--navy);font-size:1.1rem;text-decoration:none">🔆 Shyraq</a>
+    <a href="profile.html" style="width:36px;height:36px;background:var(--navy);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:0.9rem;text-decoration:none" id="mobileAvatar">Е</a>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <main class="dashboard-main">
+    <div class="dashboard-header">
+      <div>
+        <div class="dashboard-greeting">Сәлем, <span id="userName">Ержан</span>!</div>
+        <p class="dashboard-subtext">Бүгін мамандық жолыңда жаңа қадам жасайық.</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <div class="badge badge-gray">Free жоспар</div>
+        <a href="profile.html" style="width:42px;height:42px;background:var(--navy);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:1rem;text-decoration:none" id="navAvatar">Е</a>
+      </div>
+    </div>
+
+    <!-- TEST CTA (shown if no test taken) -->
+    <div id="testCta" class="test-cta-card" style="display:none">
+      <h3>Мамандық тестін тапсыр!</h3>
+      <p>Сен әлі тестен өтпедің. 10 минут ішінде өзіңе сәйкес бағытты анықта.</p>
+      <a href="test.html" class="btn btn-gold">Тестті бастау</a>
+    </div>
+
+    <!-- STATS -->
+    <div class="dash-stats">
+      <div class="dash-stat">
+        <div class="dash-stat-icon"><span class="ui-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><path d="M12 12l7-7"/><path d="M16 5h3v3"/></svg></span></div>
+        <div class="dash-stat-value" id="statTest">—</div>
+        <div class="dash-stat-label">Мамандық тесті</div>
+      </div>
+      <div class="dash-stat">
+        <div class="dash-stat-icon"><span class="ui-icon"><svg viewBox="0 0 24 24"><path d="M7 4h10a2 2 0 0 1 2 2v14H7a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><path d="M9 8h6"/><path d="M9 12h6"/></svg></span></div>
+        <div class="dash-stat-value" id="statSubjects">0</div>
+        <div class="dash-stat-label">Таңдалған пәндер</div>
+      </div>
+      <div class="dash-stat">
+        <div class="dash-stat-icon"><span class="ui-icon"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14" rx="3"/><path d="M8 9h8"/><path d="M8 13h3"/><path d="M15 13h1"/></svg></span></div>
+        <div class="dash-stat-value" id="statGrant">—</div>
+        <div class="dash-stat-label">Грант мүмкіндігі</div>
+      </div>
+      <div class="dash-stat">
+        <div class="dash-stat-icon"><span class="ui-icon"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-8.5-9A4.7 4.7 0 0 1 12 6a4.7 4.7 0 0 1 8.5 5c-1.5 4.6-8.5 9-8.5 9z"/></svg></span></div>
+        <div class="dash-stat-value" id="statFav">0</div>
+        <div class="dash-stat-label">Таңдаулылар</div>
+      </div>
+    </div>
+
+    <div class="dash-grid">
+      <!-- LEFT COLUMN -->
+      <div>
+        <!-- Test result preview -->
+        <div class="card mb-16" id="resultPreview" style="display:none">
+          <div class="dash-section-title" style="margin-bottom:0">Менің нәтижем</div>
+          <div style="display:flex;gap:16px;margin-top:16px">
+            <div style="flex:1;background:#F8FAFC;border-radius:var(--radius);padding:14px">
+              <div style="font-size:0.78rem;color:var(--text-muted);margin-bottom:4px">Бағытың</div>
+              <div style="font-weight:700;color:var(--navy)" id="resultDirection">Гуманитарлық</div>
+            </div>
+            <div style="flex:1;background:#F8FAFC;border-radius:var(--radius);padding:14px">
+              <div style="font-size:0.78rem;color:var(--text-muted);margin-bottom:4px">ТОП мамандық</div>
+              <div style="font-weight:700;color:var(--navy)" id="resultTopSpec">Маркетинг</div>
+            </div>
+          </div>
+          <div style="margin-top:12px;display:flex;gap:8px">
+            <a href="results.html" class="btn btn-primary btn-sm">Толық нәтиже →</a>
+            <a href="test.html" class="btn btn-ghost btn-sm">Қайта тапсыру</a>
+          </div>
+        </div>
+
+        <!-- Quick actions -->
+        <div class="dash-section-title">Жылдам өту</div>
+        <div class="grid-2" style="gap:12px;margin-bottom:20px">
+          <a href="test.html" class="quick-action">
+            <div class="qa-icon" style="background:var(--navy-pale)"><span class="ui-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><path d="M12 12l7-7"/><path d="M16 5h3v3"/></svg></span></div>
+            <div><div class="qa-title">Мамандық тесті</div><div class="qa-desc">10 мин · 20 сұрақ</div></div>
+          </a>
+          <a href="grant.html" class="quick-action">
+            <div class="qa-icon" style="background:var(--emerald-light);color:#047857"><span class="ui-icon"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14" rx="3"/><path d="M8 9h8"/><path d="M8 13h3"/><path d="M15 13h1"/></svg></span></div>
+            <div><div class="qa-title">Грант есеп</div><div class="qa-desc">Баллыңды енгіз</div></div>
+          </a>
+          <a href="specialties.html" class="quick-action">
+            <div class="qa-icon" style="background:var(--gold-light);color:#B7791F"><span class="ui-icon"><svg viewBox="0 0 24 24"><path d="M5 4h9a3 3 0 0 1 3 3v13H8a3 3 0 0 0-3-3V4z"/><path d="M5 17a3 3 0 0 1 3-3h9"/></svg></span></div>
+            <div><div class="qa-title">Мамандықтар</div><div class="qa-desc">120+ вариант</div></div>
+          </a>
+          <a href="universities.html" class="quick-action">
+            <div class="qa-icon" style="background:var(--orange-light);color:#C2410C"><span class="ui-icon"><svg viewBox="0 0 24 24"><path d="M4 10h16"/><path d="M6 10v8"/><path d="M10 10v8"/><path d="M14 10v8"/><path d="M18 10v8"/><path d="M3 20h18"/><path d="M12 4 4 8h16l-8-4z"/></svg></span></div>
+            <div><div class="qa-title">Университеттер</div><div class="qa-desc">104 ЖОО</div></div>
+          </a>
+        </div>
+
+        <!-- Today's plan -->
+        <div class="plan-card">
+          <div class="plan-card-header">
+            <span class="dash-section-title" style="margin-bottom:0">Бүгінгі жоспар</span>
+            <span class="badge badge-gold">Streak: 3 күн</span>
+          </div>
+          <div class="plan-card-body">
+            <div class="plan-item done">Мамандық тестін тапсыру</div>
+            <div class="plan-item done">Бейінді пәндерді таңдау</div>
+            <div class="plan-item pending">Грант мүмкіндігін тексеру</div>
+            <div class="plan-item pending">3 университетті салыстыру</div>
+            <div class="plan-item pending">Таңдаулыларға сақтау</div>
+          </div>
+          <div style="padding:14px 20px;border-top:1px solid var(--border)">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+              <span style="font-size:0.82rem;color:var(--text-muted)">Прогрес</span>
+              <span style="font-size:0.82rem;font-weight:700;color:var(--navy)">2 / 5</span>
+            </div>
+            <div class="progress-wrap"><div class="progress-bar" style="width:40%"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT COLUMN -->
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <!-- UBT subjects -->
+        <div class="card">
+          <div class="dash-section-title">Таңдаған пәндерім</div>
+          <div id="subjectsList" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px">
+            <span class="badge badge-gold">Қазақстан тарихы</span>
+            <span class="badge badge-navy">Оқу сауаттылығы</span>
+            <span class="badge badge-navy">Матем. сауаттылық</span>
+          </div>
+          <a href="specialties.html#catalogFilters" class="btn btn-outline btn-sm" style="margin-top:14px;width:100%;justify-content:center">Пән таңдау →</a>
+        </div>
+
+        <!-- Recent activity -->
+        <div class="card">
+          <div class="dash-section-title">🕐 Соңғы белсенділік</div>
+          <div style="margin-top:8px">
+            <div class="activity-item">
+              <div class="activity-dot" style="background:var(--emerald)"></div>
+              <div style="flex:1">
+                <div style="font-size:0.875rem;font-weight:600;color:var(--text)">Тест тапсырылды</div>
+                <div style="font-size:0.78rem;color:var(--text-muted)">Бүгін · 14:32</div>
+              </div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-dot" style="background:var(--navy)"></div>
+              <div style="flex:1">
+                <div style="font-size:0.875rem;font-weight:600;color:var(--text)">SDU University сақталды</div>
+                <div style="font-size:0.78rem;color:var(--text-muted)">Кеше · 18:05</div>
+              </div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-dot" style="background:var(--gold)"></div>
+              <div style="flex:1">
+                <div style="font-size:0.875rem;font-weight:600;color:var(--text)">Грант есептелді · 92 балл</div>
+                <div style="font-size:0.78rem;color:var(--text-muted)">2 күн бұрын</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Premium upsell -->
+        <div style="background:linear-gradient(135deg, #FFFBEB, var(--gold-light));border:2px solid var(--gold);border-radius:var(--radius-lg);padding:20px">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+            <span class="ui-icon" style="color:var(--gold)"><svg viewBox="0 0 24 24"><path d="M12 3l2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 17.2 6.4 20.2 7.5 14 3 9.6l6.2-.9L12 3z"/></svg></span>
+            <span style="font-weight:700;color:var(--navy);font-size:0.95rem">Premium алу</span>
+          </div>
+          <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:14px">Толық анализ, AI кеңесші және PDF Career Report — бәрі 990 ₸/ай.</p>
+          <a href="pricing.html" class="btn btn-gold btn-sm btn-full" style="justify-content:center">Premium қосу</a>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="js/universities-data.js"></script>
+<script src="js/main.js"></script>
+<script src="js/auth-guard.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const user = JSON.parse(localStorage.getItem('shyraq_user'));
+    if (!user) { window.location.href = 'login.html'; return; }
+
+    const nameEl = document.getElementById('userName');
+    if (nameEl) nameEl.textContent = user.name || 'Оқушы';
+
+    const initials = (user.name || 'О')[0].toUpperCase();
+    document.querySelectorAll('#navAvatar, #mobileAvatar').forEach(el => el.textContent = initials);
+
+    const results = JSON.parse(localStorage.getItem('shyraq_results'));
+    const subjects = JSON.parse(localStorage.getItem('shyraq_subjects')) || [];
+    const favs = JSON.parse(localStorage.getItem('shyraq_favorites')) || [];
+
+    document.getElementById('statSubjects').textContent = subjects.length || 3;
+    document.getElementById('statFav').textContent = favs.length;
+
+    if (results) {
+      document.getElementById('statTest').textContent = '✓ Дайын';
+      document.getElementById('statGrant').textContent = results.grant || 'Орташа';
+      const previewEl = document.getElementById('resultPreview');
+      if (previewEl) {
+        previewEl.style.display = '';
+        document.getElementById('resultDirection').textContent = results.direction || 'Гуманитарлық';
+        document.getElementById('resultTopSpec').textContent = results.topSpec || 'Маркетинг';
+      }
+    } else {
+      document.getElementById('statTest').textContent = 'Тапсырылмады';
+      document.getElementById('statGrant').textContent = '—';
+      const ctaEl = document.getElementById('testCta');
+      if (ctaEl) ctaEl.style.display = '';
+    }
+  });
+</script>
+</body>
+</html>

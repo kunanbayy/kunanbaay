@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="AlmaU">
+  <rect width="256" height="256" rx="54" fill="#F97316"/>
+  <path d="M58 178 101 72h54l43 106h-34l-9-25h-55l-9 25H58Z" fill="#FFFFFF"/>
+  <path d="M110 127h36l-18-50-18 50Z" fill="#1E3A5F"/>
+  <text x="128" y="222" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="800" fill="#FFFFFF">AlmaU</text>
+</svg>

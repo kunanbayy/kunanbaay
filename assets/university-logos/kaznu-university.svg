@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="KazNU">
+  <rect width="256" height="256" rx="54" fill="#065F46"/>
+  <path d="M128 48 191 91v77l-63 40-63-40V91l63-43Z" fill="#FFFFFF"/>
+  <path d="M128 72 169 99v43l-41 26-41-26V99l41-27Z" fill="#10B981"/>
+  <path d="M128 91v58M99 108h58" stroke="#FFFFFF" stroke-width="11" stroke-linecap="round"/>
+  <text x="128" y="222" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="25" font-weight="800" fill="#FFFFFF">ҚазҰУ</text>
+</svg>

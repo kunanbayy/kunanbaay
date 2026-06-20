@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Тіркелу — Shyraq Education</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<div class="auth-page">
+  <!-- LEFT PANEL -->
+  <div class="auth-left">
+    <div class="auth-left-content">
+      <a href="index.html" class="nav-logo" style="margin-bottom:36px;display:inline-flex">
+        <div class="nav-logo-icon">🔆</div>
+        <span style="color:white">Shyraq Education</span>
+      </a>
+      <h2>Болашаққа бірінші қадам!</h2>
+      <p>Тіркеліп, мамандық тестін тапсыр. Өзіңе сәйкес бағытты 10 минутта анықта.</p>
+      <div class="auth-feature">
+        <div class="auth-feature-icon">🎯</div>
+        <div class="auth-feature-text">
+          <h4>Мамандық тесті</h4>
+          <p>20 сұрақ арқылы бейімің анықталады</p>
+        </div>
+      </div>
+      <div class="auth-feature">
+        <div class="auth-feature-icon">📊</div>
+        <div class="auth-feature-text">
+          <h4>Грант калькулятор</h4>
+          <p>Болжамды баллыңмен мүмкіндігіңді тексер</p>
+        </div>
+      </div>
+      <div class="auth-feature">
+        <div class="auth-feature-icon">🏛️</div>
+        <div class="auth-feature-text">
+          <h4>45+ Университет базасы</h4>
+          <p>Салыстыр, таңдаулыға сақта</p>
+        </div>
+      </div>
+      <div style="margin-top:32px;padding:20px;background:rgba(242,184,75,0.12);border-radius:var(--radius-lg);border:1px solid rgba(242,184,75,0.25)">
+        <p style="color:rgba(255,255,255,0.9);font-size:0.875rem;font-style:italic;margin-bottom:10px">"Shyraq арқылы маркетинг мамандығына грант алдым!"</p>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="width:32px;height:32px;background:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--navy);font-size:0.85rem">А</div>
+          <span style="color:rgba(255,255,255,0.7);font-size:0.8rem">Аяулым · SDU University</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="auth-right">
+    <div class="auth-form-wrap">
+      <a href="index.html" class="auth-logo">
+        <div class="auth-logo-icon">🔆</div>
+        Shyraq Education
+      </a>
+
+      <!-- Step indicator -->
+      <div id="stepIndicator" class="onboarding-steps">
+        <div class="onboarding-step active" id="dot1"></div>
+        <div class="onboarding-step" id="dot2"></div>
+        <div class="onboarding-step" id="dot3"></div>
+      </div>
+
+      <!-- STEP 1: Basic Info -->
+      <div id="step1">
+        <h1 class="auth-title">Тіркелу</h1>
+        <p class="auth-subtitle">Есептік жазба жасау үшін ақпаратты толтыр</p>
+        <div class="auth-form">
+          <div class="grid-2" style="gap:12px">
+            <div class="form-group">
+              <label class="form-label">Аты *</label>
+              <input id="firstName" type="text" class="form-input" placeholder="Ержан" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Тегі *</label>
+              <input id="lastName" type="text" class="form-input" placeholder="Сейтқали" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email немесе телефон *</label>
+            <input id="contact" type="text" class="form-input" placeholder="email@gmail.com немесе +77001234567" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Пароль *</label>
+            <div class="pw-wrap">
+              <input id="password" type="password" class="form-input" placeholder="Кемінде 8 таңба" />
+              <button class="pw-toggle" type="button" onclick="togglePw('password',this)">👁</button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Сынып *</label>
+            <select id="classYear" class="form-input form-select">
+              <option value="">Таңда...</option>
+              <option value="9">9 сынып</option>
+              <option value="10">10 сынып</option>
+              <option value="11">11 сынып</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Қала / Облыс *</label>
+            <select id="city" class="form-input form-select">
+              <option value="">Таңда...</option>
+              <option>Алматы</option><option>Астана</option><option>Шымкент</option>
+              <option>Қарағанды</option><option>Ақтөбе</option><option>Тараз</option>
+              <option>Павлодар</option><option>Өскемен</option><option>Семей</option>
+              <option>Атырау</option><option>Басқа қала</option>
+            </select>
+          </div>
+          <button class="btn btn-primary btn-full btn-lg" onclick="goStep2()">Жалғастыру →</button>
+          <p class="auth-footer-text">Аккаунтыңыз бар ма? <a href="login.html" class="auth-link">Кіру</a></p>
+        </div>
+      </div>
+
+      <!-- STEP 2: Interests -->
+      <div id="step2" style="display:none">
+        <h1 class="auth-title">Қызығушылықтарың</h1>
+        <p class="auth-subtitle">Осы ақпарат саған дәл нәтиже беруге көмектеседі</p>
+        <div style="display:flex;flex-direction:column;gap:20px">
+          <div class="form-group">
+            <label class="form-label">ҰБТ пәндерін таңдадың ба?</label>
+            <div class="option-grid">
+              <button class="option-btn" onclick="selectOption(this,'ubt')">✅ Иә, таңдадым</button>
+              <button class="option-btn" onclick="selectOption(this,'ubt')">🤔 Әлі жоқ</button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Қандай сала қызықтырады?</label>
+            <div class="option-grid">
+              <button class="option-btn" onclick="selectOption(this,'sector')">💻 IT / Технология</button>
+              <button class="option-btn" onclick="selectOption(this,'sector')">📚 Білім / Ғылым</button>
+              <button class="option-btn" onclick="selectOption(this,'sector')">💼 Бизнес / Маркетинг</button>
+              <button class="option-btn" onclick="selectOption(this,'sector')">🏥 Медицина</button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Грантқа түскің келе ме?</label>
+            <div class="option-grid">
+              <button class="option-btn" onclick="selectOption(this,'grant')">🎓 Грант алғым келеді</button>
+              <button class="option-btn" onclick="selectOption(this,'grant')">💳 Ақылы да қарастырамын</button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Қай тілде оқығың келеді?</label>
+            <div class="option-grid">
+              <button class="option-btn" onclick="selectOption(this,'lang')">🇰🇿 Қазақша</button>
+              <button class="option-btn" onclick="selectOption(this,'lang')">🇷🇺 Орысша</button>
+              <button class="option-btn" onclick="selectOption(this,'lang')">🇬🇧 Ағылшынша</button>
+              <button class="option-btn" onclick="selectOption(this,'lang')">🌐 Бәрі де жарайды</button>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px">
+            <button class="btn btn-ghost btn-full" onclick="goStep1()">← Артқа</button>
+            <button class="btn btn-primary btn-full" onclick="goStep3()">Жалғастыру →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 3: Complete -->
+      <div id="step3" style="display:none;text-align:center">
+        <div style="font-size:4rem;margin-bottom:16px">🎉</div>
+        <h1 class="auth-title">Тіркелу сәтті!</h1>
+        <p class="auth-subtitle">Жақсы! Енді саған сәйкес бағытты анықтайық.</p>
+        <div style="background:#F8FAFC;border-radius:var(--radius-lg);padding:20px;margin:24px 0;text-align:left">
+          <div style="font-size:0.875rem;color:var(--text-muted);margin-bottom:6px">Тіркелді:</div>
+          <div id="summaryName" style="font-weight:700;color:var(--navy);font-size:1.1rem"></div>
+          <div id="summaryMeta" style="font-size:0.875rem;color:var(--text-muted);margin-top:4px"></div>
+        </div>
+        <button class="btn btn-orange btn-full btn-lg" onclick="completeRegister()">
+          🎯 Мамандық тестінен өту
+        </button>
+        <a href="dashboard.html" class="btn btn-ghost btn-full" style="margin-top:10px">Кабинетке өту</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/universities-data.js"></script>
+<script src="js/main.js"></script>
+<script>
+  function togglePw(id, btn) {
+    const inp = document.getElementById(id);
+    inp.type = inp.type === 'password' ? 'text' : 'password';
+    btn.textContent = inp.type === 'password' ? '👁' : '🙈';
+  }
+
+  function selectOption(btn, group) {
+    const parent = btn.closest('.option-grid');
+    parent.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+  }
+
+  function updateDots(active) {
+    [1,2,3].forEach(i => {
+      const dot = document.getElementById('dot' + i);
+      dot.className = 'onboarding-step';
+      if (i < active) dot.classList.add('done');
+      else if (i === active) dot.classList.add('active');
+    });
+  }
+
+  function goStep1() {
+    document.getElementById('step1').style.display = '';
+    document.getElementById('step2').style.display = 'none';
+    updateDots(1);
+  }
+
+  function goStep2() {
+    const first = document.getElementById('firstName').value.trim();
+    const contact = document.getElementById('contact').value.trim();
+    const classYear = document.getElementById('classYear').value;
+    if (!first || !contact || !classYear) {
+      showToast('Барлық міндетті өрістерді толтырыңыз', 'error');
+      return;
+    }
+    document.getElementById('step1').style.display = 'none';
+    document.getElementById('step2').style.display = '';
+    updateDots(2);
+  }
+
+  function goStep3() {
+    const first = document.getElementById('firstName').value.trim();
+    const last = document.getElementById('lastName').value.trim();
+    const classYear = document.getElementById('classYear').value;
+    const city = document.getElementById('city').value;
+    document.getElementById('summaryName').textContent = first + ' ' + last;
+    document.getElementById('summaryMeta').textContent = classYear + ' сынып · ' + city;
+    document.getElementById('step2').style.display = 'none';
+    document.getElementById('step3').style.display = '';
+    updateDots(3);
+  }
+
+  function completeRegister() {
+    const user = {
+      name: document.getElementById('firstName').value.trim(),
+      lastName: document.getElementById('lastName').value.trim(),
+      classYear: document.getElementById('classYear').value,
+      city: document.getElementById('city').value,
+      plan: 'free'
+    };
+    localStorage.setItem('shyraq_user', JSON.stringify(user));
+    window.location.href = 'test.html';
+  }
+</script>
+</body>
+</html>

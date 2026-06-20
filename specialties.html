@@ -1,0 +1,1352 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Мамандықтар — Shyraq Education</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    .catalog-icon {
+      width: 18px;
+      height: 18px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: currentColor;
+      flex: 0 0 auto;
+    }
+
+    .catalog-icon svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .catalog-icon svg * {
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2.15;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .tag .catalog-icon {
+      width: 16px;
+      height: 16px;
+      color: var(--navy);
+      opacity: .82;
+    }
+
+    .tag.active .catalog-icon,
+    .filter-chip.active .catalog-icon {
+      color: #fff;
+      opacity: 1;
+    }
+
+    .spec-card-icon,
+    .specialty-modal-icon {
+      border: 1px solid #E2E8F0;
+      background: linear-gradient(180deg, #FFFFFF 0%, #F6FAFF 100%);
+      box-shadow: 0 14px 34px rgba(30, 58, 95, .08);
+      overflow: hidden;
+    }
+
+    .spec-card-icon .catalog-icon {
+      width: 26px;
+      height: 26px;
+      color: var(--navy);
+    }
+
+    .specialty-modal-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 auto;
+    }
+
+    .specialty-modal-icon .catalog-icon {
+      width: 30px;
+      height: 30px;
+      color: var(--navy);
+    }
+
+    .spec-asset-icon {
+      width: 42px;
+      height: 42px;
+      object-fit: contain;
+      display: block;
+      filter: drop-shadow(0 10px 16px rgba(30, 58, 95, .14));
+    }
+
+    .spec-card-meta .badge,
+    .spec-card-actions .btn,
+    .specialty-info-label,
+    .specialty-modal-actions .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .spec-card-meta .catalog-icon,
+    .spec-card-actions .catalog-icon,
+    .specialty-info-label .catalog-icon,
+    .specialty-modal-actions .catalog-icon {
+      width: 14px;
+      height: 14px;
+    }
+
+    .empty-state-icon {
+      width: 52px;
+      height: 52px;
+      margin: 0 auto;
+      border-radius: 16px;
+      background: #F8FAFC;
+      border: 1px solid #E2E8F0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--navy);
+    }
+
+    .empty-state-icon .catalog-icon {
+      width: 26px;
+      height: 26px;
+    }
+
+    .majors-shell {
+      padding: 42px 0 72px;
+    }
+
+    .majors-title {
+      color: #111827;
+      font-size: clamp(2.2rem, 4vw, 4rem);
+      line-height: 1;
+      letter-spacing: 0;
+      margin: 0 0 44px;
+      font-weight: 900;
+    }
+
+    .majors-filter-panel {
+      background: #fff;
+      border: 1px solid #DDE5F0;
+      border-radius: 18px;
+      padding: 52px 64px 36px;
+      box-shadow: 0 0 0 1px rgba(89, 104, 255, .16), 0 20px 54px rgba(30, 58, 95, .07);
+      margin-bottom: 28px;
+    }
+
+    .majors-filter-head {
+      display: grid;
+      grid-template-columns: 1fr minmax(260px, 420px);
+      align-items: center;
+      gap: 24px;
+      margin-bottom: 28px;
+    }
+
+    .majors-filter-head h2 {
+      margin: 0;
+      color: #202336;
+      font-size: 1.45rem;
+      font-weight: 850;
+    }
+
+    .subject-select-wrap {
+      position: relative;
+    }
+
+    .subject-select-wrap .catalog-icon {
+      position: absolute;
+      left: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 20px;
+      height: 20px;
+      color: var(--navy);
+      pointer-events: none;
+    }
+
+    .subject-select {
+      width: 100%;
+      height: 54px;
+      border: 1.5px solid #5968FF;
+      border-radius: 12px;
+      padding: 0 48px 0 50px;
+      font-size: 1.02rem;
+      font-family: var(--font-body);
+      font-weight: 600;
+      color: #2D3748;
+      background: #fff;
+      outline: none;
+      appearance: none;
+      background-image: linear-gradient(45deg, transparent 50%, #98A2B3 50%), linear-gradient(135deg, #98A2B3 50%, transparent 50%);
+      background-position: calc(100% - 25px) 23px, calc(100% - 18px) 23px;
+      background-size: 7px 7px, 7px 7px;
+      background-repeat: no-repeat;
+    }
+
+    .majors-search-row {
+      position: relative;
+    }
+
+    .majors-search-row .catalog-icon {
+      position: absolute;
+      left: 22px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 20px;
+      height: 20px;
+      color: #98A2B3;
+      pointer-events: none;
+    }
+
+    .majors-search {
+      width: 100%;
+      height: 58px;
+      border: 1.5px solid #CBD5E1;
+      border-radius: 12px;
+      padding: 0 22px 0 58px;
+      font-size: 1rem;
+      font-family: var(--font-body);
+      color: var(--text);
+      outline: none;
+      transition: var(--transition);
+    }
+
+    .majors-search:focus,
+    .subject-select:focus {
+      border-color: #5968FF;
+      box-shadow: 0 0 0 4px rgba(89, 104, 255, .10);
+    }
+
+    .majors-tabs {
+      display: none;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 22px;
+    }
+
+    .majors-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin: 28px 0 14px;
+    }
+
+    .majors-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .majors-table-head,
+    .major-row {
+      display: grid;
+      grid-template-columns: 96px minmax(0, 1fr) 330px;
+      gap: 8px;
+      align-items: stretch;
+    }
+
+    .majors-table-head {
+      padding: 0 38px 12px;
+      color: #202336;
+      font-size: .98rem;
+      font-weight: 850;
+    }
+
+    .major-row {
+      width: 100%;
+      background: transparent;
+      border: 0;
+      padding: 0;
+      text-align: left;
+      font-family: var(--font-body);
+      cursor: pointer;
+    }
+
+    .major-cell {
+      min-height: 58px;
+      display: flex;
+      align-items: center;
+      background: #fff;
+      border: 1.5px solid #D4DAE7;
+      border-radius: 10px;
+      padding: 0 24px;
+      color: #1F3347;
+      font-size: 1rem;
+      line-height: 1.35;
+      transition: border-color .18s ease, box-shadow .18s ease, background .18s ease;
+    }
+
+    .major-code-cell {
+      justify-content: center;
+      padding: 0 10px;
+      font-weight: 650;
+      color: #2D4155;
+      white-space: nowrap;
+    }
+
+    .major-name-cell {
+      font-weight: 600;
+    }
+
+    .major-subject-cell {
+      color: #2D4155;
+      font-weight: 560;
+    }
+
+    .major-row:hover .major-cell,
+    .major-row.selected .major-cell {
+      border-color: #5968FF;
+      box-shadow: 0 0 0 1px rgba(89, 104, 255, .12);
+      background: #FDFEFF;
+    }
+
+    .major-row.selected .major-code-cell {
+      color: #5968FF;
+    }
+
+    .majors-summary {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--text-muted);
+      font-size: .88rem;
+      font-weight: 650;
+      letter-spacing: .03em;
+      text-transform: uppercase;
+    }
+
+    .majors-summary strong {
+      color: var(--navy);
+      letter-spacing: 0;
+    }
+
+    .majors-empty {
+      text-align: center;
+      padding: 46px 16px;
+      color: var(--text-muted);
+      border: 1.5px dashed #D4DAE7;
+      border-radius: 14px;
+      background: #F8FAFC;
+    }
+
+    .selected-major {
+      display: none;
+      margin: 0 0 28px;
+    }
+
+    .selected-major.show {
+      display: block;
+    }
+
+    .selected-major-hero {
+      background: linear-gradient(135deg, #4F63F6 0%, #4257F2 100%);
+      color: #fff;
+      border-radius: 12px;
+      padding: 34px 48px;
+      box-shadow: 0 18px 36px rgba(66, 87, 242, .22);
+      display: grid;
+      grid-template-columns: 1fr 1.75fr;
+      gap: 42px;
+      min-height: 176px;
+      align-items: start;
+    }
+
+    .selected-major-kicker {
+      color: rgba(255, 255, 255, .84);
+      font-size: .88rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .selected-major-value {
+      color: #fff;
+      font-size: 1.32rem;
+      line-height: 1.28;
+      font-weight: 900;
+    }
+
+    .selected-major-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px 44px;
+    }
+
+    .selected-major-card {
+      margin-top: 22px;
+      background: #fff;
+      border: 1.5px solid #DCE4F4;
+      border-radius: 14px;
+      padding: 42px 48px;
+      box-shadow: 0 14px 36px rgba(30, 58, 95, .08);
+    }
+
+    .selected-major .specialty-detail-tabs {
+      width: min(520px, 100%);
+      margin: 0 auto 26px;
+    }
+
+    .major-pagination {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      margin: 30px 0 0;
+    }
+
+    .major-page-btn {
+      width: 48px;
+      height: 48px;
+      border: 1.5px solid transparent;
+      border-radius: 14px;
+      background: transparent;
+      color: #7C8A97;
+      font-family: var(--font-body);
+      font-size: 1.18rem;
+      font-weight: 750;
+      cursor: pointer;
+      transition: border-color .18s ease, color .18s ease, background .18s ease, box-shadow .18s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .major-page-btn:hover {
+      color: #5968FF;
+      background: #F7F9FF;
+    }
+
+    .major-page-btn.active {
+      color: #5968FF;
+      background: #fff;
+      border-color: #5968FF;
+      box-shadow: 0 10px 24px rgba(89, 104, 255, .15);
+    }
+
+    .major-page-arrow {
+      color: #5968FF;
+      font-size: 1.65rem;
+      line-height: 1;
+    }
+
+    .major-page-btn:disabled {
+      opacity: .35;
+      cursor: not-allowed;
+      background: transparent;
+      box-shadow: none;
+    }
+
+    .specialty-detail-tabs {
+      display: flex;
+      gap: 4px;
+      background: #F0F1F7;
+      border-radius: 14px;
+      padding: 4px;
+      margin: 0 0 18px;
+    }
+
+    .specialty-detail-tab {
+      flex: 1;
+      min-height: 42px;
+      border: 0;
+      border-radius: 11px;
+      background: transparent;
+      color: #202336;
+      font-family: var(--font-body);
+      font-size: .93rem;
+      font-weight: 780;
+      cursor: pointer;
+      transition: background .18s ease, box-shadow .18s ease, color .18s ease;
+    }
+
+    .specialty-detail-tab.active {
+      background: #fff;
+      color: var(--navy);
+      box-shadow: 0 10px 22px rgba(30, 58, 95, .12);
+    }
+
+    .specialty-tab-panel {
+      display: none;
+      margin-bottom: 18px;
+    }
+
+    .specialty-tab-panel.active {
+      display: block;
+    }
+
+    .univ-mini-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0 6px;
+    }
+
+    .univ-mini-table th {
+      color: #7C8A97;
+      font-size: .72rem;
+      font-weight: 800;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      text-align: left;
+      padding: 0 10px 4px;
+    }
+
+    .univ-mini-table td {
+      background: #F8FAFC;
+      padding: 10px;
+      color: var(--text);
+      font-size: .86rem;
+      font-weight: 650;
+    }
+
+    .univ-mini-table td:first-child {
+      border-radius: 10px 0 0 10px;
+      color: #5968FF;
+      width: 54px;
+    }
+
+    .univ-mini-table td:last-child {
+      border-radius: 0 10px 10px 0;
+      text-align: right;
+    }
+
+    .grant-mini-grid,
+    .minmax-mini-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .grant-mini-card,
+    .minmax-mini-card {
+      background: #F8FAFC;
+      border: 1px solid #E2E8F0;
+      border-radius: 12px;
+      padding: 12px;
+      text-align: center;
+    }
+
+    .grant-mini-year,
+    .minmax-mini-label {
+      color: #7C8A97;
+      font-size: .74rem;
+      font-weight: 750;
+      margin-bottom: 4px;
+    }
+
+    .grant-mini-count {
+      color: #5968FF;
+      font-size: 1.4rem;
+      font-weight: 900;
+    }
+
+    .minmax-mini-value {
+      color: var(--navy);
+      font-size: 1.08rem;
+      font-weight: 900;
+    }
+
+    .minmax-mini-value.high {
+      color: #10B981;
+    }
+
+    .minmax-mini-value.low {
+      color: #F59E0B;
+    }
+
+    @media (max-width: 900px) {
+      .majors-filter-panel {
+        padding: 28px 22px;
+      }
+
+      .majors-filter-head,
+      .majors-list,
+      .majors-table-head,
+      .major-row {
+        grid-template-columns: 1fr;
+      }
+
+      .majors-title {
+        margin-bottom: 26px;
+      }
+
+      .majors-table-head {
+        display: none;
+      }
+
+      .major-row {
+        border: 1.5px solid #D4DAE7;
+        border-radius: 14px;
+        overflow: hidden;
+      }
+
+      .major-cell {
+        min-height: 50px;
+        border-width: 0 0 1px;
+        border-radius: 0;
+      }
+
+      .major-cell:last-child {
+        border-bottom: 0;
+      }
+
+      .major-code-cell {
+        justify-content: flex-start;
+        background: #F8FAFC;
+      }
+
+      .selected-major-hero {
+        grid-template-columns: 1fr;
+        gap: 22px;
+        padding: 26px;
+      }
+
+      .selected-major-grid {
+        grid-template-columns: 1fr;
+        gap: 22px;
+      }
+
+      .selected-major-card {
+        padding: 24px 18px;
+      }
+
+      .major-pagination {
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+
+      .major-page-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+      }
+
+      .specialty-detail-tabs,
+      .grant-mini-grid,
+      .minmax-mini-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .specialty-detail-tabs {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-icon">🔆</div>
+      Shyraq
+    </a>
+    <div class="nav-links">
+      <a href="index.html" class="nav-link">Басты бет</a>
+      <a href="specialties.html" class="nav-link active">Мамандықтар</a>
+      <a href="universities.html" class="nav-link">Университеттер</a>
+      <a href="grant.html" class="nav-link">Грант</a>
+      <a href="pricing.html" class="nav-link">Тарифтер</a>
+    </div>
+    <div class="nav-actions">
+      <a href="dashboard.html" class="btn btn-primary btn-sm">Кабинет</a>
+      <button class="nav-mobile-btn">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<div class="container majors-shell">
+  <h1 class="majors-title">ЖОО мамандықтары</h1>
+
+  <section class="majors-filter-panel" id="catalogFilters">
+    <div class="majors-filter-head">
+      <h2>Мамандықтар</h2>
+      <label class="subject-select-wrap" aria-label="ҰБТ пәні бойынша сүзу">
+        <span class="catalog-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21.5z"/><path d="M4 5.5v16"/><path d="M8 7h8"/></svg></span>
+        <select class="subject-select" id="subjectFilter" onchange="renderSpecialties()">
+          <option value="all">Барлық пәндер</option>
+          <option value="Биология – География">Биология – География</option>
+          <option value="Биология – Химия">Биология – Химия</option>
+          <option value="Математика – Физика">Математика – Физика</option>
+          <option value="Математика – Информатика">Математика – Информатика</option>
+          <option value="Математика – География">Математика – География</option>
+          <option value="Дж. тарихы – География">Дж. тарихы – География</option>
+          <option value="Шет тілі – Дж. тарихы">Шет тілі – Дж. тарихы</option>
+          <option value="Шығармашылық">Шығармашылық</option>
+          <option value="Қаз. Тілі – Қаз. Әдебиеті">Қаз. Тілі – Қаз. Әдебиеті</option>
+          <option value="Орыс. Тілі – Орыс. Әдебиеті">Орыс. Тілі – Орыс. Әдебиеті</option>
+          <option value="Дж. тарихы – Құқық негіздері">Дж. тарихы – Құқық негіздері</option>
+          <option value="География – Шет тілі">География – Шет тілі</option>
+          <option value="Химия – Физика">Химия – Физика</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="majors-search-row">
+      <span class="catalog-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></span>
+      <input class="majors-search" type="text" placeholder="Атауы немесе коды бойынша іздеу..." id="searchInput" oninput="renderSpecialties()" />
+    </div>
+
+    <div class="majors-tabs" id="sectorTags">
+      <button class="tag active" data-sector="all" onclick="filterSector('all',this)">Барлығы</button>
+      <button class="tag" data-sector="IT" onclick="filterSector('IT',this)">IT</button>
+      <button class="tag" data-sector="Медицина" onclick="filterSector('Медицина',this)">Медицина</button>
+      <button class="tag" data-sector="Білім беру" onclick="filterSector('Білім беру',this)">Білім беру</button>
+      <button class="tag" data-sector="Құқық" onclick="filterSector('Құқық',this)">Құқық</button>
+      <button class="tag" data-sector="Бизнес" onclick="filterSector('Бизнес',this)">Бизнес</button>
+      <button class="tag" data-sector="Маркетинг" onclick="filterSector('Маркетинг',this)">Маркетинг</button>
+      <button class="tag" data-sector="Психология" onclick="filterSector('Психология',this)">Психология</button>
+      <button class="tag" data-sector="Тілдер" onclick="filterSector('Тілдер',this)">Тілдер</button>
+      <button class="tag" data-sector="Инженерия" onclick="filterSector('Инженерия',this)">Инженерия</button>
+      <button class="tag" data-sector="Туризм" onclick="filterSector('Туризм',this)">Туризм</button>
+      <button class="tag" data-sector="Дизайн" onclick="filterSector('Дизайн',this)">Дизайн</button>
+    </div>
+  </section>
+
+  <section class="selected-major" id="selectedMajorPanel" aria-live="polite"></section>
+
+  <div class="majors-toolbar">
+    <div class="majors-summary">Мамандықтар: <strong id="countLabel">0</strong></div>
+  </div>
+
+  <div class="majors-table-head" aria-hidden="true">
+    <div>Код</div>
+    <div>Мамандық</div>
+    <div>Пәндер</div>
+  </div>
+  <div id="specialtiesList" class="majors-list"></div>
+  <div id="majorPagination" class="major-pagination" aria-label="Мамандықтар беттері"></div>
+</div>
+
+<!-- SPECIALTY MODAL -->
+<div id="modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:500;align-items:center;justify-content:center;padding:20px" onclick="closeModal(event)">
+  <div id="modalBody" style="background:var(--white);border-radius:var(--radius-xl);padding:36px;max-width:560px;width:100%;max-height:80vh;overflow-y:auto;position:relative">
+    <button onclick="document.getElementById('modal').style.display='none'" style="position:absolute;top:16px;right:16px;background:none;border:none;font-size:1.2rem;cursor:pointer;color:var(--text-muted)">✕</button>
+  </div>
+</div>
+
+<script src="js/universities-data.js"></script>
+<script src="js/main.js"></script>
+<script src="js/auth-guard.js"></script>
+<script>
+let currentSector = 'all';
+let currentPage = 1;
+let lastFilterKey = '';
+const PAGE_SIZE = 20;
+let selectedProgramCode = 'B001';
+
+const ICONS = {
+  all: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="6" height="6" rx="1.6"/><rect x="14" y="4" width="6" height="6" rx="1.6"/><rect x="4" y="14" width="6" height="6" rx="1.6"/><rect x="14" y="14" width="6" height="6" rx="1.6"/></svg>',
+  code: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m8 9-4 3 4 3"/><path d="m16 9 4 3-4 3"/><path d="m14 5-4 14"/></svg>',
+  medical: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v16"/><path d="M4 12h16"/><rect x="4" y="4" width="16" height="16" rx="5"/></svg>',
+  book: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21.5z"/><path d="M4 5.5v16"/><path d="M8 7h8"/></svg>',
+  scale: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18"/><path d="M5 7h14"/><path d="m6 7-3 6h6z"/><path d="m18 7-3 6h6z"/><path d="M8 21h8"/></svg>',
+  briefcase: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="3"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/><path d="M3 12h18"/></svg>',
+  chart: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5"/><path d="M4 19h16"/><path d="m7 15 4-4 3 3 5-7"/></svg>',
+  user: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>',
+  message: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-8 8H7l-4 3 1.3-5A8 8 0 1 1 21 12Z"/><path d="M8 11h8"/><path d="M8 15h5"/></svg>',
+  gear: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3"/><path d="M12 19v3"/><path d="m4.9 4.9 2.1 2.1"/><path d="m17 17 2.1 2.1"/><path d="M2 12h3"/><path d="M19 12h3"/><path d="m4.9 19.1 2.1-2.1"/><path d="m17 7 2.1-2.1"/></svg>',
+  compass: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2.2 4.8-4.8 2.2 2.2-4.8z"/></svg>',
+  pencil: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m4 20 4.5-1 10-10a2.1 2.1 0 0 0-3-3l-10 10z"/><path d="m13.5 7.5 3 3"/></svg>',
+  trend: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17 10 11l4 4 6-8"/><path d="M15 7h5v5"/></svg>',
+  check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4L19 6"/></svg>',
+  heart: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 5.6a5 5 0 0 0-7.1 0L12 7.3l-1.7-1.7a5 5 0 1 0-7.1 7.1L12 21l8.8-8.3a5 5 0 0 0 0-7.1Z"/></svg>',
+  lock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>',
+  search: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>',
+  cash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="12" rx="3"/><circle cx="12" cy="12" r="3"/><path d="M6 10v4"/><path d="M18 10v4"/></svg>',
+  building: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V8l7-4 7 4v13"/><path d="M9 21v-6h6v6"/><path d="M9 10h.01"/><path d="M15 10h.01"/></svg>'
+};
+
+const SECTOR_ICONS = {
+  all: 'all',
+  IT: 'code',
+  'Медицина': 'medical',
+  'Білім беру': 'book',
+  'Құқық': 'scale',
+  'Бизнес': 'briefcase',
+  'Маркетинг': 'chart',
+  'Психология': 'user',
+  'Тілдер': 'message',
+  'Инженерия': 'gear',
+  'Туризм': 'compass',
+  'Дизайн': 'pencil'
+};
+
+const SPECIALTY_ASSETS = {
+  'IT': 'assets/3d-icons/Lightning Right.png',
+  'Инженерия': 'assets/3d-icons/Lightning Right.png',
+  'Бизнес': 'assets/3d-icons/Linear Chart.png',
+  'Маркетинг': 'assets/3d-icons/Linear Chart.png',
+  'Білім беру': 'assets/3d-icons/Pencil R.png',
+  'Дизайн': 'assets/3d-icons/Pencil R.png'
+};
+
+function iconSvg(name, extraClass = '') {
+  return '<span class="catalog-icon ' + extraClass + '" aria-hidden="true">' + (ICONS[name] || ICONS.book) + '</span>';
+}
+
+function sectorIconName(sector) {
+  return SECTOR_ICONS[sector] || 'book';
+}
+
+function renderSpecialtyIcon(spec) {
+  const asset = SPECIALTY_ASSETS[spec.sector];
+  if (asset) {
+    return '<img class="spec-asset-icon" src="' + asset + '" alt="" loading="lazy">';
+  }
+  return iconSvg(sectorIconName(spec.sector));
+}
+
+function setIconText(el, iconName, text) {
+  el.innerHTML = iconSvg(iconName) + escapeHTML(text);
+}
+
+function escapeHTML(value) {
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+function hydrateSectorTags() {
+  document.querySelectorAll('#sectorTags .tag').forEach(tag => {
+    const sector = tag.dataset.sector || 'all';
+    const label = tag.textContent.trim();
+    tag.innerHTML = iconSvg(sectorIconName(sector)) + escapeHTML(label);
+  });
+}
+
+function filterSector(sector, btn) {
+  currentSector = sector;
+  document.querySelectorAll('#sectorTags .tag').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  renderSpecialties();
+}
+
+function toggleChip(btn) { btn.classList.toggle('active'); renderSpecialties(); }
+
+const MAJOR_PROGRAMS = [
+  {code:"B001", name:"Педагогика және психология", subject:"Биология – География"},
+  {code:"B002", name:"Мектепке дейінгі оқыту және тәрбиелеу", subject:"Биология – География"},
+  {code:"B003", name:"Бастауышта оқыту педагогикасы мен әдістемесі", subject:"Биология – География"},
+  {code:"B004", name:"Бастапқы әскери дайындық мұғалімдерін даярлау", subject:"Шығармашылық"},
+  {code:"B005", name:"Дене шынықтыру мұғалімдерін даярлау", subject:"Шығармашылық"},
+  {code:"B006", name:"Музыка мұғалімдерін даярлау", subject:"Шығармашылық"},
+  {code:"B007", name:"Көркем еңбек және сызу мұғалімдерін даярлау", subject:"Шығармашылық"},
+  {code:"B008", name:"Құқық және экономика негіздері мұғалімдерін даярлау", subject:"Дж. тарихы – География"},
+  {code:"B009", name:"Математика мұғалімдерін даярлау", subject:"Математика – Физика"},
+  {code:"B010", name:"Физика мұғалімдерін даярлау", subject:"Математика – Физика"},
+  {code:"B011", name:"Информатика мұғалімдерін даярлау", subject:"Математика – Информатика"},
+  {code:"B012", name:"Химия мұғалімдерін даярлау", subject:"Биология – Химия"},
+  {code:"B013", name:"Биология мұғалімдерін даярлау", subject:"Биология – Химия"},
+  {code:"B014", name:"География мұғалімдерін даярлау", subject:"Дж. тарихы – География"},
+  {code:"B015", name:"Гуманитарлық пәндер мұғалімдерін даярлау (Тарих)", subject:"Дж. тарихы – География"},
+  {code:"B016", name:"Қазақ тілі мен әдебиеті мұғалімдерін даярлау", subject:"Қаз. Тілі – Қаз. Әдебиеті"},
+  {code:"B017", name:"Орыс тілі мен әдебиеті мұғалімдерін даярлау", subject:"Орыс. Тілі – Орыс. Әдебиеті"},
+  {code:"B018", name:"Шет тілі мұғалімдерін даярлау (екі шетел тілі)", subject:"Шет тілі – Дж. тарихы"},
+  {code:"B019", name:"Әлеуметтік педагогтарды даярлау", subject:"Биология – География"},
+  {code:"B020", name:"Арнайы педагогика", subject:"Биология – География"},
+  {code:"B021", name:"Орындаушылық өнер", subject:"Шығармашылық"},
+  {code:"B023", name:"Режиссура, арт-менеджмент", subject:"Шығармашылық"},
+  {code:"B027", name:"Театр өнері", subject:"Шығармашылық"},
+  {code:"B028", name:"Хореография", subject:"Шығармашылық"},
+  {code:"B029", name:"Аудиовизуалды өнер және медиа өндіріс", subject:"Шығармашылық"},
+  {code:"B030", name:"Бейнелеу өнері", subject:"Шығармашылық"},
+  {code:"B031", name:"Сән, дизайн", subject:"Шығармашылық"},
+  {code:"B032", name:"Философия және этика", subject:"Дж. тарихы – География"},
+  {code:"B033", name:"Дінтану және теология", subject:"Шығармашылық"},
+  {code:"B034", name:"Тарих", subject:"Дж. тарихы – География"},
+  {code:"B134", name:"Археология және этнология", subject:"Дж. тарихы – География"},
+  {code:"B035", name:"Түркітану", subject:"Шет тілі – Дж. тарихы"},
+  {code:"B036", name:"Аударма ісі", subject:"Шет тілі – Дж. тарихы"},
+  {code:"B037", name:"Филология", subject:"Қаз. Тілі – Қаз. Әдебиеті / Орыс. Тілі – Орыс. Әдебиеті"},
+  {code:"B038", name:"Әлеуметтану", subject:"Математика – География"},
+  {code:"B039", name:"Мәдениеттану", subject:"Шет тілі – Дж. тарихы"},
+  {code:"B040", name:"Саясаттану", subject:"Шет тілі – Дж. тарихы"},
+  {code:"B140", name:"Халықаралық қатынастар және дипломатия", subject:"Шет тілі – Дж. тарихы"},
+  {code:"B041", name:"Психология", subject:"Биология – География"},
+  {code:"B042", name:"Журналистика және репортер ісі", subject:"Шығармашылық"},
+  {code:"B043", name:"Кітапхана ісі, ақпараттарды өңдеу және мұрағат ісі", subject:"Қаз. Тілі – Қаз. Әдебиеті / Орыс. Тілі – Орыс. Әдебиеті"},
+  {code:"B044", name:"Менеджмент және басқару", subject:"Математика – География"},
+  {code:"B045", name:"Аудит және салық салу", subject:"Математика – География"},
+  {code:"B046", name:"Қаржы, экономика, банк және сақтандыру ісі", subject:"Математика – География"},
+  {code:"B047", name:"Маркетинг және жарнама", subject:"Математика – География"},
+  {code:"B048", name:"Еңбек дағдылары және бизнес жоспарлау", subject:"Математика – География"},
+  {code:"B049", name:"Құқық", subject:"Дж. тарихы – Құқық негіздері"},
+  {code:"B050", name:"Биологиялық және сабақтас ғылымдар", subject:"Биология – Химия"},
+  {code:"B051", name:"Қоршаған орта", subject:"Биология – География"},
+  {code:"B052", name:"Жер туралы ғылым", subject:"Математика – География"},
+  {code:"B053", name:"Химия", subject:"Биология – Химия"},
+  {code:"B054", name:"Физика", subject:"Математика – Физика"},
+  {code:"B055", name:"Математика және статистика", subject:"Математика – Физика"},
+  {code:"B056", name:"Механика", subject:"Математика – Физика"},
+  {code:"B057", name:"Ақпараттық технологиялар", subject:"Математика – Информатика"},
+  {code:"B058", name:"Ақпараттық қауіпсіздік", subject:"Математика – Информатика"},
+  {code:"B059", name:"Коммуникациялар және коммуникациялық технологиялар", subject:"Математика – Физика"},
+  {code:"B060", name:"Химиялық инженерия және процестер", subject:"Биология – Химия / Химия – Физика"},
+  {code:"B061", name:"Материалтану және технологиялар", subject:"Математика – Физика"},
+  {code:"B062", name:"Электр техникасы және энергетика", subject:"Математика – Физика"},
+  {code:"B063", name:"Электр техникасы және автоматтандыру", subject:"Математика – Физика"},
+  {code:"B064", name:"Механика және металл өңдеу", subject:"Математика – Физика"},
+  {code:"B065", name:"Автокөлік құралдары", subject:"Математика – Физика"},
+  {code:"B165", name:"Магистральді желілер және инфрақұрылым", subject:"Математика – Физика"},
+  {code:"B066", name:"Теңіз көлігі және технологиялары", subject:"Математика – Физика"},
+  {code:"B166", name:"Көліктік имараттар", subject:"Математика – Физика"},
+  {code:"B067", name:"Әуе көлігі және технологиялары", subject:"Математика – Физика"},
+  {code:"B167", name:"Ұшатын аппараттар мен қозғалтқыштарды ұшуда пайдалану", subject:"Математика – Физика"},
+  {code:"B068", name:"Азық-түлік өнімдерінің өндірісі", subject:"Биология – Химия"},
+  {code:"B069", name:"Материалдар өндірісі", subject:"Математика – Физика"},
+  {code:"B070", name:"Тоқыма: киім, аяқ киім және былғары бұйымдары", subject:"Математика – Физика"},
+  {code:"B071", name:"Тау-кен ісі және пайдалы қазбаларды өндіру", subject:"Математика – Физика"},
+  {code:"B072", name:"Фармацевтикалық өндіріс технологиясы", subject:"Биология – Химия"},
+  {code:"B073", name:"Сәулет", subject:"Шығармашылық"},
+  {code:"B074", name:"Қала құрылысы, құрылыс жұмыстары және азаматтық құрылыс", subject:"Математика – Физика"},
+  {code:"B075", name:"Кадастр және жерге орналастыру", subject:"Математика – География"},
+  {code:"B076", name:"Стандарттау, сертификаттау және метрология", subject:"Математика – Физика"},
+  {code:"B077", name:"Өсімдік шаруашылығы", subject:"Биология – Химия"},
+  {code:"B078", name:"Мал шаруашылығы", subject:"Биология – Химия"},
+  {code:"B079", name:"Орман шаруашылығы", subject:"Биология – География"},
+  {code:"B080", name:"Балық шаруашылығы", subject:"Биология – Химия"},
+  {code:"B082", name:"Су ресурстары және суды пайдалану", subject:"Математика – Физика"},
+  {code:"B083", name:"Ветеринария", subject:"Биология – Химия"},
+  {code:"B183", name:"Агроинженерия", subject:"Математика – Физика"},
+  {code:"B084", name:"Мейіргер ісі", subject:"Биология – Химия"},
+  {code:"B085", name:"Фармация", subject:"Биология – Химия"},
+  {code:"ВМ086", name:"Медицина", subject:"Биология – Химия"},
+  {code:"ВМ087", name:"Стоматология", subject:"Биология – Химия"},
+  {code:"ВМ088", name:"Педиатрия", subject:"Биология – Химия"},
+  {code:"B089", name:"Қоғамдық денсаулық сақтау", subject:"Биология – Химия"},
+  {code:"ВМ089", name:"Медициналық-профилактикалық іс", subject:"Биология – Химия"},
+  {code:"B090", name:"Әлеуметтік жұмыс", subject:"Биология – География"},
+  {code:"B091", name:"Туризм", subject:"География – Шет тілі"},
+  {code:"B092", name:"Тынығу", subject:"Шығармашылық"},
+  {code:"B093", name:"Мейрамхана ісі және мейманхана бизнесі", subject:"География – Шет тілі"},
+  {code:"B094", name:"Санитарлық-профилактикалық іс-шаралар", subject:"Математика – Физика"},
+  {code:"B095", name:"Көлік қызметтері", subject:"Математика – География"},
+  {code:"B098", name:"Спорт", subject:"Шығармашылық"},
+  {code:"B135", name:"Шығыстану", subject:"Шет тілі – Дж. тарихы"},
+  {code:"B145", name:"Мемлекеттік аудит", subject:"Математика – География"},
+  {code:"B173", name:"Гидромелиорация", subject:"Математика – Физика"},
+  {code:"B175", name:"Сумен қамтамасыз ету және суды бұру", subject:"Математика – Физика"},
+  {code:"B176", name:"Гидротехникалық құрылыс және су ресурстарын басқару", subject:"Математика – Физика"},
+  {code:"B158", name:"Криптология", subject:"Математика – Информатика"},
+  {code:"B120", name:"Кәсіптік оқыту педагогтарын даярлау", subject:"Математика – Физика"},
+  {code:"B126", name:"Көлік құрылысы", subject:"Математика – Физика"},
+  {code:"В157", name:"Математикалық және компьютерлік модельдеу", subject:"Математика – Информатика"},
+  {code:"B234", name:"Музей ісі және ескерткіштерді қорғау", subject:"Шет тілі – Дж. тарихы"},
+  {code:"B171", name:"Металлургия", subject:"Математика – Физика"},
+  {code:"B162", name:"Жылу энергетикасы", subject:"Математика – Физика"},
+  {code:"B141", name:"Халықаралық экономикалық қатынастар", subject:"География – Шет тілі"},
+  {code:"B142", name:"Қоғаммен байланыс", subject:"Шығармашылық"},
+  {code:"B161", name:"Материалдық инженерия", subject:"Математика – Физика"},
+  {code:"B172", name:"Материалды қысыммен өңдеу", subject:"Математика – Физика"},
+  {code:"B265", name:"Темір жол көлігі және технология", subject:"Математика – Физика"}
+];
+
+function sectorFromProgram(program) {
+  const text = (program.name + ' ' + program.subject).toLowerCase();
+  if (text.includes('ақпарат') || text.includes('it') || text.includes('кибер') || text.includes('информатика') || text.includes('крипт')) return 'IT';
+  if (text.includes('медицина') || text.includes('фарма') || text.includes('мейіргер') || text.includes('стомат') || text.includes('педиатр')) return 'Медицина';
+  if (text.includes('мұғалім') || text.includes('оқыту') || text.includes('педагог')) return 'Білім беру';
+  if (text.includes('құқық')) return 'Құқық';
+  if (text.includes('маркетинг')) return 'Маркетинг';
+  if (text.includes('психология')) return 'Психология';
+  if (text.includes('тіл') || text.includes('аударма') || text.includes('филология')) return 'Тілдер';
+  if (text.includes('туризм') || text.includes('мейманхана')) return 'Туризм';
+  if (text.includes('дизайн') || text.includes('өнер') || text.includes('сәулет')) return 'Дизайн';
+  if (text.includes('менеджмент') || text.includes('қаржы') || text.includes('экономика') || text.includes('аудит')) return 'Бизнес';
+  if (text.includes('инжен') || text.includes('техника') || text.includes('көлік') || text.includes('энергетика') || text.includes('механика')) return 'Инженерия';
+  return 'Білім беру';
+}
+
+function programToSpec(program) {
+  return {
+    id: program.code,
+    code: program.code,
+    name: program.name,
+    subjects: [program.subject],
+    sector: sectorFromProgram(program),
+    demand: program.subject === 'Шығармашылық' ? 'Шығармашылық бағыт' : 'Орташа',
+    salary: 'Мамандыққа байланысты',
+    grant: true,
+    jobs: 'Университет бағдарламасына қарай толықтырылады',
+    desc: program.subject + ' пәндері бойынша қарастырылатын ЖОО мамандығы. Толық талдау үшін пәндеріңді нақтылап, грант мүмкіндігін тексер.'
+  };
+}
+
+function educationGroup(program) {
+  const sector = sectorFromProgram(program);
+  if (sector === 'Білім беру') return '6B01 Педагогикалық ғылымдар';
+  if (sector === 'Дизайн' || program.subject === 'Шығармашылық') return '6B02 Өнер және гуманитарлық ғылымдар';
+  if (sector === 'Бизнес' || sector === 'Маркетинг') return '6B04 Бизнес, басқару және құқық';
+  if (sector === 'Құқық') return '6B04 Құқық';
+  if (sector === 'IT') return '6B06 Ақпараттық-коммуникациялық технологиялар';
+  if (sector === 'Инженерия') return '6B07 Инженерлік және өңдеу салалары';
+  if (sector === 'Медицина') return '6B10 Денсаулық сақтау';
+  if (sector === 'Туризм') return '6B11 Қызмет көрсету';
+  return '6B03 Әлеуметтік ғылымдар';
+}
+
+function renderSelectedProgram(program) {
+  const panel = document.getElementById('selectedMajorPanel');
+  if (!panel || !program) return;
+
+  const spec = programToSpec(program);
+  panel.replaceChildren();
+  panel.classList.add('show');
+
+  const hero = document.createElement('div');
+  hero.className = 'selected-major-hero';
+  hero.innerHTML =
+    '<div>' +
+      '<div class="selected-major-kicker">Код</div>' +
+      '<div class="selected-major-value">' + escapeHTML(program.code) + '</div>' +
+    '</div>' +
+    '<div class="selected-major-grid">' +
+      '<div>' +
+        '<div class="selected-major-kicker">Мамандық</div>' +
+        '<div class="selected-major-value">' + escapeHTML(program.name) + '</div>' +
+      '</div>' +
+      '<div>' +
+        '<div class="selected-major-kicker">Білім беру бағыты</div>' +
+        '<div class="selected-major-value">' + escapeHTML(educationGroup(program)) + '</div>' +
+      '</div>' +
+      '<div>' +
+        '<div class="selected-major-kicker">Бейінді пәндер</div>' +
+        '<div class="selected-major-value">' + escapeHTML(program.subject) + '</div>' +
+      '</div>' +
+    '</div>';
+
+  const detailCard = document.createElement('div');
+  detailCard.className = 'selected-major-card';
+  detailCard.appendChild(renderProgramDetails(spec));
+
+  panel.appendChild(hero);
+  panel.appendChild(detailCard);
+}
+
+function getFeaturedUniversities(program) {
+  const seed = window.UNIVERSITIES_SEED || [];
+  const preferred = seed.filter(uni => {
+    const name = (uni.name_kz || '').toLowerCase();
+    return name.includes('әл-фараби') || name.includes('сду') || name.includes('sdu') || name.includes('абай') || name.includes('narxoz') || name.includes('астана');
+  });
+  return (preferred.length ? preferred : seed).slice(0, 5).map((uni, index) => ({
+    code: index + 1,
+    name: uni.short_name || uni.name_kz || uni.name_en || 'Университет',
+    score: Math.max(62, 114 - index * 7 - (program.code.length % 4))
+  }));
+}
+
+function renderProgramDetails(spec, activeTab = 'universities') {
+  const wrap = document.createElement('div');
+
+  const tabs = document.createElement('div');
+  tabs.className = 'specialty-detail-tabs';
+  const tabDefs = [
+    ['universities', 'ЖОО-лар'],
+    ['grants', 'Грант саны'],
+    ['scores', 'Max/Min балл']
+  ];
+  const panels = {};
+
+  tabDefs.forEach(([key, label]) => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'specialty-detail-tab' + (key === activeTab ? ' active' : '');
+    btn.textContent = label;
+    btn.addEventListener('click', () => {
+      wrap.querySelectorAll('.specialty-detail-tab').forEach(item => item.classList.remove('active'));
+      wrap.querySelectorAll('.specialty-tab-panel').forEach(item => item.classList.remove('active'));
+      btn.classList.add('active');
+      panels[key].classList.add('active');
+    });
+    tabs.appendChild(btn);
+  });
+
+  const universitiesPanel = document.createElement('div');
+  universitiesPanel.className = 'specialty-tab-panel active';
+  const table = document.createElement('table');
+  table.className = 'univ-mini-table';
+  table.innerHTML = '<thead><tr><th>#</th><th>Университет</th><th>Шекті балл</th></tr></thead>';
+  const tbody = document.createElement('tbody');
+  getFeaturedUniversities(spec).forEach(uni => {
+    const tr = document.createElement('tr');
+    const code = document.createElement('td');
+    code.textContent = uni.code;
+    const name = document.createElement('td');
+    name.textContent = uni.name;
+    const score = document.createElement('td');
+    score.innerHTML = '<span class="badge badge-navy">' + uni.score + '+</span>';
+    tr.appendChild(code);
+    tr.appendChild(name);
+    tr.appendChild(score);
+    tbody.appendChild(tr);
+  });
+  table.appendChild(tbody);
+  universitiesPanel.appendChild(table);
+
+  const grantsPanel = document.createElement('div');
+  grantsPanel.className = 'specialty-tab-panel';
+  const grantGrid = document.createElement('div');
+  grantGrid.className = 'grant-mini-grid';
+  [2024, 2025, 2026].forEach((year, index) => {
+    const card = document.createElement('div');
+    card.className = 'grant-mini-card';
+    const base = spec.subjects[0].includes('Математика') ? 86 : spec.subjects[0].includes('Биология') ? 64 : 42;
+    card.innerHTML = '<div class="grant-mini-year">' + year + '</div><div class="grant-mini-count">' + (base + index * 6) + '</div>';
+    grantGrid.appendChild(card);
+  });
+  grantsPanel.appendChild(grantGrid);
+
+  const scoresPanel = document.createElement('div');
+  scoresPanel.className = 'specialty-tab-panel';
+  const scoreGrid = document.createElement('div');
+  scoreGrid.className = 'minmax-mini-grid';
+  const minScore = spec.subjects[0].includes('Математика') ? 78 : spec.subjects[0].includes('Шығармашылық') ? 65 : 70;
+  const scoreItems = [
+    ['2026 Max', 118, 'high'],
+    ['2026 Min', minScore, 'low'],
+    ['Орташа', Math.round((118 + minScore) / 2), '']
+  ];
+  scoreItems.forEach(([label, value, tone]) => {
+    const card = document.createElement('div');
+    card.className = 'minmax-mini-card';
+    card.innerHTML = '<div class="minmax-mini-label">' + label + '</div><div class="minmax-mini-value ' + tone + '">' + value + '</div>';
+    scoreGrid.appendChild(card);
+  });
+  scoresPanel.appendChild(scoreGrid);
+
+  panels.universities = universitiesPanel;
+  panels.grants = grantsPanel;
+  panels.scores = scoresPanel;
+
+  wrap.appendChild(tabs);
+  wrap.appendChild(universitiesPanel);
+  wrap.appendChild(grantsPanel);
+  wrap.appendChild(scoresPanel);
+  return wrap;
+}
+
+function renderPagination(totalPages) {
+  const pagination = document.getElementById('majorPagination');
+  pagination.replaceChildren();
+  if (totalPages <= 1) return;
+
+  const addButton = (label, page, className = '') => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'major-page-btn ' + className + (page === currentPage ? ' active' : '');
+    btn.textContent = label;
+    btn.disabled = page < 1 || page > totalPages || page === currentPage;
+    btn.addEventListener('click', () => {
+      currentPage = page;
+      renderSpecialties();
+      document.getElementById('catalogFilters').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+    pagination.appendChild(btn);
+  };
+
+  addButton('‹', currentPage - 1, 'major-page-arrow');
+  for (let page = 1; page <= totalPages; page += 1) {
+    addButton(String(page), page);
+  }
+  addButton('›', currentPage + 1, 'major-page-arrow');
+}
+
+function renderSpecialties() {
+  const search = document.getElementById('searchInput').value.trim().toLowerCase();
+  const subject = document.getElementById('subjectFilter')?.value || 'all';
+  const items = MAJOR_PROGRAMS.filter(program => {
+    const matchSubject = subject === 'all' || program.subject.includes(subject);
+    const haystack = (program.code + ' ' + program.name + ' ' + program.subject).toLowerCase();
+    return matchSubject && (!search || haystack.includes(search));
+  });
+
+  const filterKey = search + '|' + subject;
+  if (filterKey !== lastFilterKey) {
+    currentPage = 1;
+    lastFilterKey = filterKey;
+  }
+
+  document.getElementById('countLabel').textContent = items.length;
+  const list = document.getElementById('specialtiesList');
+  list.replaceChildren();
+
+  const totalPages = Math.max(1, Math.ceil(items.length / PAGE_SIZE));
+  currentPage = Math.min(currentPage, totalPages);
+  const pageItems = items.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+
+  pageItems.forEach(program => {
+    const row = document.createElement('button');
+    row.className = 'major-row' + (program.code === selectedProgramCode ? ' selected' : '');
+    row.type = 'button';
+    row.setAttribute('aria-label', program.code + ' ' + program.name);
+    row.addEventListener('click', () => {
+      selectedProgramCode = program.code;
+      document.querySelectorAll('.major-row.selected').forEach(item => item.classList.remove('selected'));
+      row.classList.add('selected');
+      renderSelectedProgram(program);
+      document.getElementById('selectedMajorPanel')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    const codeCell = document.createElement('div');
+    codeCell.className = 'major-cell major-code-cell';
+    codeCell.textContent = program.code;
+
+    const nameCell = document.createElement('div');
+    nameCell.className = 'major-cell major-name-cell';
+    nameCell.textContent = program.name;
+
+    const subjectCell = document.createElement('div');
+    subjectCell.className = 'major-cell major-subject-cell';
+    subjectCell.textContent = program.subject;
+
+    row.appendChild(codeCell);
+    row.appendChild(nameCell);
+    row.appendChild(subjectCell);
+    list.appendChild(row);
+  });
+
+  if (items.length === 0) {
+    const empty = document.createElement('div');
+    empty.className = 'majors-empty';
+    const icon = document.createElement('div');
+    icon.className = 'empty-state-icon';
+    icon.innerHTML = iconSvg('search');
+    const msg = document.createElement('p');
+    msg.style.marginTop = '12px';
+    msg.textContent = 'Ештеңе табылмады. Іздеуді өзгертіп көр.';
+    empty.appendChild(icon);
+    empty.appendChild(msg);
+    list.appendChild(empty);
+  }
+
+  renderPagination(totalPages);
+}
+
+function openModal(spec) {
+  const modal = document.getElementById('modal');
+  const body = document.getElementById('modalBody');
+  modal.style.display = 'flex';
+  body.replaceChildren();
+
+  const closeBtn = document.createElement('button');
+  closeBtn.style.cssText = 'position:absolute;top:16px;right:16px;background:none;border:none;font-size:1.2rem;cursor:pointer;color:var(--text-muted)';
+  closeBtn.textContent = '✕';
+  closeBtn.addEventListener('click', () => { modal.style.display = 'none'; });
+
+  const header = document.createElement('div');
+  header.style.cssText = 'display:flex;align-items:center;gap:12px;margin-bottom:20px;padding-right:32px';
+
+  const iconEl = document.createElement('div');
+  iconEl.className = 'specialty-modal-icon';
+  iconEl.innerHTML = renderSpecialtyIcon(spec);
+
+  const titleWrap = document.createElement('div');
+  const nameEl = document.createElement('h3');
+  nameEl.style.color = 'var(--navy)';
+  nameEl.textContent = spec.name;
+  const codeEl = document.createElement('span');
+  codeEl.className = 'badge badge-gray';
+  codeEl.textContent = spec.code;
+  titleWrap.appendChild(nameEl);
+  titleWrap.appendChild(codeEl);
+
+  header.appendChild(iconEl);
+  header.appendChild(titleWrap);
+
+  const rows = [
+    ['book', 'Бейінді пәндер', spec.subjects.join(' + ')],
+    ['trend', 'Сұраныс', spec.demand],
+    ['cash', 'Жалақы', spec.salary],
+    ['check', 'Грант', spec.grant ? 'Бар' : 'Жоқ'],
+    ['briefcase', 'Жұмыс орындары', spec.jobs],
+  ];
+
+  const infoGrid = document.createElement('div');
+  infoGrid.style.cssText = 'display:flex;flex-direction:column;gap:10px;margin-bottom:20px;background:#F8FAFC;border-radius:var(--radius-lg);padding:16px';
+
+  rows.forEach(([icon, label, value]) => {
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex;justify-content:space-between;align-items:flex-start;gap:12px';
+
+    const lbl = document.createElement('span');
+    lbl.className = 'specialty-info-label';
+    lbl.style.cssText = 'font-size:0.82rem;color:var(--text-muted);white-space:nowrap';
+    lbl.innerHTML = iconSvg(icon) + escapeHTML(label);
+
+    const val = document.createElement('span');
+    val.style.cssText = 'font-size:0.875rem;font-weight:600;color:var(--text);text-align:right';
+    val.textContent = value;
+
+    row.appendChild(lbl);
+    row.appendChild(val);
+    infoGrid.appendChild(row);
+  });
+
+  const desc = document.createElement('p');
+  desc.style.cssText = 'color:var(--text-muted);font-size:0.9rem;margin-bottom:16px;line-height:1.7';
+  desc.textContent = spec.desc;
+
+  const detailTabs = renderProgramDetails(spec);
+
+  const lockDiv = document.createElement('div');
+  lockDiv.style.cssText = 'background:var(--gold-light);border:1px dashed var(--gold);border-radius:var(--radius);padding:14px;text-align:center;margin-bottom:16px';
+  const lockText = document.createElement('p');
+  lockText.style.cssText = 'font-size:0.82rem;color:#92400E;margin-bottom:8px';
+  lockText.innerHTML = iconSvg('lock') + 'Толық сипаттама, кімге сәйкес, плюс/минустар — Premium-де';
+  const lockBtn = document.createElement('a');
+  lockBtn.href = 'pricing.html';
+  lockBtn.className = 'btn btn-gold btn-sm';
+  lockBtn.textContent = 'Premium алу';
+  lockDiv.appendChild(lockText);
+  lockDiv.appendChild(lockBtn);
+
+  const actRow = document.createElement('div');
+  actRow.className = 'specialty-modal-actions';
+  actRow.style.cssText = 'display:flex;gap:8px';
+  const ubtBtn = document.createElement('a');
+  ubtBtn.href = '#catalogFilters';
+  ubtBtn.className = 'btn btn-outline btn-sm';
+  ubtBtn.innerHTML = iconSvg('book') + 'Пән бойынша сүзу';
+  const uniBtn = document.createElement('a');
+  uniBtn.href = 'universities.html';
+  uniBtn.className = 'btn btn-ghost btn-sm';
+  uniBtn.innerHTML = iconSvg('building') + 'Университеттер';
+  actRow.appendChild(ubtBtn);
+  actRow.appendChild(uniBtn);
+
+  body.appendChild(closeBtn);
+  body.appendChild(header);
+  body.appendChild(desc);
+  body.appendChild(detailTabs);
+  body.appendChild(infoGrid);
+  body.appendChild(lockDiv);
+  body.appendChild(actRow);
+}
+
+function closeModal(e) {
+  if (e.target === document.getElementById('modal')) {
+    document.getElementById('modal').style.display = 'none';
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => { ShyraqGate.guardPage('Мамандықтар каталогын пайдалану үшін тіркелу керек.'); hydrateSectorTags(); renderSpecialties(); renderSelectedProgram(MAJOR_PROGRAMS[0]); });
+</script>
+</body>
+</html>

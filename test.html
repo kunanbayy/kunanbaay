@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Мамандық тесті — Shyraq Education</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    body { background: #F8FAFC; }
+    .test-exit {
+      background: none; border: none; color: var(--text-muted); font-size: 0.875rem;
+      display: flex; align-items: center; gap: 6px; cursor: pointer; padding: 8px 12px;
+      border-radius: var(--radius); transition: var(--transition);
+    }
+    .test-exit:hover { background: #F8FAFC; color: var(--navy); }
+    .question-enter { animation: slideIn 0.3s ease both; }
+    @keyframes slideIn { from { opacity:0; transform: translateX(20px); } to { opacity:1; transform:translateX(0); } }
+  </style>
+</head>
+<body>
+<div class="test-page">
+  <!-- TOP BAR -->
+  <div class="test-topbar">
+    <a href="index.html" class="test-topbar-logo">🔆 Shyraq</a>
+    <div class="test-progress-wrap">
+      <div class="test-progress-label">
+        <span id="progressLabel">Сұрақ 1 / 20</span>
+      </div>
+      <div class="progress-wrap">
+        <div class="progress-bar" id="progressBar" style="width:5%"></div>
+      </div>
+    </div>
+    <button class="test-exit" onclick="if(confirm('Тестті тоқтатасыз ба? Прогресс сақталмайды.'))window.location.href='dashboard.html'">
+      ✕ Шығу
+    </button>
+  </div>
+
+  <!-- TEST BODY -->
+  <div class="test-body">
+    <div class="test-card" id="testCard">
+      <div class="question-num" id="qNum">СҰРАҚ 1</div>
+      <div class="question-text" id="qText">Жүктелуде...</div>
+      <div class="answer-options" id="answerOptions"></div>
+      <div class="test-actions">
+        <button class="btn btn-ghost" id="prevBtn" onclick="prevQuestion()" style="display:none">← Алдыңғы</button>
+        <div id="skipInfo" style="font-size:0.8rem;color:var(--text-light)">Жауапты таңда</div>
+        <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()" disabled>Келесі →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/universities-data.js"></script>
+<script src="js/main.js"></script>
+<script src="js/auth-guard.js"></script>
+<script>
+const QUESTIONS = [
+  { id: 1, text: 'Адамдармен сөйлесу, жаңа танысу ұнай ма?', category: 'social' },
+  { id: 2, text: 'Математика немесе логикалық есептер ұнай ма?', category: 'analytic' },
+  { id: 3, text: 'Тарих, қоғам, тіл саласы қызықты ма?', category: 'humanit' },
+  { id: 4, text: 'Жаратылыстану (физика, химия, биология) ұнай ма?', category: 'science' },
+  { id: 5, text: 'Болашақта кабинетте (офиста) жұмыс ұнай ма?', category: 'office' },
+  { id: 6, text: 'Креативті жобалар жасау (дизайн, суреттеу) ұнай ма?', category: 'creative' },
+  { id: 7, text: 'Балалармен немесе жастармен жұмыс ұнай ма?', category: 'edu' },
+  { id: 8, text: 'Бизнес, кәсіпкерлік немесе стартап ашқың келе ме?', category: 'business' },
+  { id: 9, text: 'Техника, машина, механизм туралы білу ұнай ма?', category: 'tech' },
+  { id: 10, text: 'Бір нәрсені басқаларға түсіндіру ұнай ма?', category: 'teach' },
+  { id: 11, text: 'Зерттеу жүргізу, мақала жазу, талдау ұнай ма?', category: 'research' },
+  { id: 12, text: 'Музыка, театр, өнер саласы қызықты ма?', category: 'art' },
+  { id: 13, text: 'Шет елдерге саяхат жасау, тілдер үйрену ұнай ма?', category: 'intl' },
+  { id: 14, text: 'Компьютер, бағдарлама жасау ұнай ма?', category: 'it' },
+  { id: 15, text: 'Адамдар денсаулығы, медицина саласы қызықты ма?', category: 'medicine' },
+  { id: 16, text: 'Әділеттілік, заң, саясат туралы ойлану ұнай ма?', category: 'law' },
+  { id: 17, text: 'Табиғат, экология, ауыл шаруашылығы ұнай ма?', category: 'nature' },
+  { id: 18, text: 'Есеп, қаржы, сандармен жұмыс ұнай ма?', category: 'finance' },
+  { id: 19, text: 'Жарнама, маркетинг, брендинг саласы қызықты ма?', category: 'marketing' },
+  { id: 20, text: 'Үлкен мақсатқа жету үшін ұзақ уақыт дайындалуға дайынсың ба?', category: 'ambition' },
+];
+
+const ANSWERS = [
+  { label: 'А', text: 'Иә, өте ұнайды' },
+  { label: 'Б', text: 'Жақсы ұнайды' },
+  { label: 'В', text: 'Аздап ұнайды' },
+  { label: 'Г', text: 'Ұнамайды' },
+];
+
+let current = 0;
+const scores = {};
+
+function renderQuestion() {
+  const q = QUESTIONS[current];
+  const total = QUESTIONS.length;
+  const pct = Math.round(((current + 1) / total) * 100);
+
+  document.getElementById('progressLabel').textContent = `Сұрақ ${current + 1} / ${total}`;
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('qNum').textContent = `СҰРАҚ ${current + 1}`;
+  document.getElementById('qText').textContent = q.text;
+  document.getElementById('qNum').className = 'question-num question-enter';
+
+  const opts = document.getElementById('answerOptions');
+  opts.replaceChildren();
+  ANSWERS.forEach((a, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'answer-btn';
+    if (scores[q.id] === i) btn.classList.add('selected');
+
+    const letter = document.createElement('span');
+    letter.className = 'answer-letter';
+    letter.textContent = a.label;
+
+    const label = document.createElement('span');
+    label.textContent = a.text;
+
+    btn.appendChild(letter);
+    btn.appendChild(label);
+
+    btn.addEventListener('click', () => selectAnswer(i, btn));
+    opts.appendChild(btn);
+  });
+
+  document.getElementById('prevBtn').style.display = current > 0 ? '' : 'none';
+  document.getElementById('nextBtn').disabled = scores[q.id] === undefined;
+  document.getElementById('nextBtn').textContent = current === total - 1 ? 'Нәтижені көру ✓' : 'Келесі →';
+}
+
+function selectAnswer(idx, btn) {
+  const q = QUESTIONS[current];
+  scores[q.id] = idx;
+  document.querySelectorAll('.answer-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  document.getElementById('nextBtn').disabled = false;
+  document.getElementById('skipInfo').textContent = '';
+}
+
+function nextQuestion() {
+  if (current < QUESTIONS.length - 1) {
+    current++;
+    renderQuestion();
+  } else {
+    finishTest();
+  }
+}
+
+function prevQuestion() {
+  if (current > 0) { current--; renderQuestion(); }
+}
+
+function finishTest() {
+  // Tally scores by category
+  const catScores = {};
+  QUESTIONS.forEach(q => {
+    const ans = scores[q.id] ?? 3;
+    const points = [3, 2, 1, 0][ans];
+    catScores[q.category] = (catScores[q.category] || 0) + points;
+  });
+
+  // Determine direction
+  const humanitScore = (catScores.humanit||0) + (catScores.social||0) + (catScores.teach||0) + (catScores.law||0);
+  const techScore = (catScores.analytic||0) + (catScores.tech||0) + (catScores.it||0) + (catScores.science||0);
+  const creativeScore = (catScores.creative||0) + (catScores.art||0) + (catScores.marketing||0);
+  const businessScore = (catScores.business||0) + (catScores.finance||0) + (catScores.intl||0);
+  const scienceScore = (catScores.medicine||0) + (catScores.nature||0) + (catScores.research||0);
+
+  const maxScore = Math.max(humanitScore, techScore, creativeScore, businessScore, scienceScore);
+  let direction, topSpec, grant;
+
+  if (maxScore === humanitScore) {
+    direction = 'Гуманитарлық + Коммуникациялық';
+    topSpec = 'Маркетинг, Психология, Журналистика';
+    grant = 'Орташа';
+  } else if (maxScore === techScore) {
+    direction = 'Техникалық + IT';
+    topSpec = 'IT, Инженерия, Физика';
+    grant = 'Жоғары';
+  } else if (maxScore === creativeScore) {
+    direction = 'Шығармашылық + Дизайн';
+    topSpec = 'Дизайн, Маркетинг, Журналистика';
+    grant = 'Орташа';
+  } else if (maxScore === businessScore) {
+    direction = 'Бизнес + Халықаралық';
+    topSpec = 'Бизнес, Маркетинг, Аударма';
+    grant = 'Орташа';
+  } else {
+    direction = 'Жаратылыстану + Медицина';
+    topSpec = 'Медицина, Биология, Химия';
+    grant = 'Жоғары';
+  }
+
+  const results = { direction, topSpec, grant, catScores, date: new Date().toISOString() };
+  localStorage.setItem('shyraq_results', JSON.stringify(results));
+  window.location.href = 'results.html';
+}
+
+document.addEventListener('DOMContentLoaded', () => renderQuestion());
+</script>
+</body>
+</html>

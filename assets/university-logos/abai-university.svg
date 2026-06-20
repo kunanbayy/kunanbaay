@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Abai University">
+  <rect width="256" height="256" rx="54" fill="#123C69"/>
+  <path d="M61 151h134v23H61z" fill="#F2B84B"/>
+  <path d="M75 132h106v19H75z" fill="#FFFFFF"/>
+  <path d="M84 82h88l14 50H70l14-50Z" fill="#FFFFFF"/>
+  <path d="M96 94h13v30H96zm26 0h13v30h-13zm26 0h13v30h-13z" fill="#123C69"/>
+  <path d="M68 76h120l-60-32-60 32Z" fill="#F2B84B"/>
+  <text x="128" y="215" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="30" font-weight="800" fill="#FFFFFF">ABAI</text>
+</svg>

@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Грант Калькулятор — Shyraq Education</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    .score-slider {
+      -webkit-appearance: none; appearance: none;
+      width: 100%; height: 8px; border-radius: 4px;
+      background: linear-gradient(to right, var(--navy) 0%, var(--navy) var(--val, 66%), var(--border) var(--val, 66%), var(--border) 100%);
+      outline: none; cursor: pointer;
+    }
+    .score-slider::-webkit-slider-thumb {
+      -webkit-appearance: none; width: 24px; height: 24px;
+      border-radius: 50%; background: var(--navy); cursor: pointer;
+      box-shadow: 0 2px 8px rgba(30,58,95,0.3);
+    }
+    .score-slider::-moz-range-thumb {
+      width: 24px; height: 24px; border-radius: 50%; background: var(--navy);
+      cursor: pointer; border: none; box-shadow: 0 2px 8px rgba(30,58,95,0.3);
+    }
+    .meter-bar { display: flex; margin: 16px 0; border-radius: var(--radius); overflow: hidden; height: 12px; background: var(--border); }
+    .meter-fill { height: 100%; transition: width 0.5s ease; }
+    .level-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
+    .level-indicator {
+      position: relative; display: flex; align-items: center; gap: 9px; text-align: left; padding: 12px;
+      border-radius: 16px; border: 1px solid #E2E8F0; background: #fff; transition: var(--transition);
+    }
+    .level-dot { width: 11px; height: 11px; border-radius: 50%; flex: 0 0 auto; box-shadow: 0 0 0 5px rgba(226,232,240,.55); }
+    .level-copy { min-width: 0; }
+    .level-copy strong { display: block; color: var(--navy); font-size: .86rem; line-height: 1.1; }
+    .level-copy span { display: block; color: var(--text-muted); font-size: .68rem; margin-top: 3px; white-space: nowrap; }
+    .level-indicator.active-emerald { border-color: rgba(16,185,129,.45); background: #ECFDF5; box-shadow: 0 10px 24px rgba(16,185,129,.10); }
+    .level-indicator.active-gold { border-color: rgba(242,184,75,.55); background: #FFFBEB; box-shadow: 0 10px 24px rgba(242,184,75,.10); }
+    .level-indicator.active-orange { border-color: rgba(249,115,22,.48); background: #FFF7ED; box-shadow: 0 10px 24px rgba(249,115,22,.10); }
+    .level-indicator.active-red { border-color: rgba(239,68,68,.42); background: #FEF2F2; box-shadow: 0 10px 24px rgba(239,68,68,.10); }
+    .grant-calc { max-width: 920px; margin: 0 auto; display: flex; flex-direction: column; }
+    .grant-hero-head { text-align: center; max-width: 720px; margin: 0 auto 24px; }
+    .grant-hero-head h1 { color: var(--navy); margin: 10px 0 10px; letter-spacing: 0; }
+    .grant-hero-head p { color: var(--text-muted); line-height: 1.65; font-size: 1rem; }
+    .grant-target-icon { width: 96px; height: 96px; margin: 0 auto 18px; position: relative; border-radius: 28px; background: linear-gradient(145deg,#F8FAFC,#EEF4FF); border: 1px solid #DBE6F5; box-shadow: 0 18px 44px rgba(30,58,95,.12); }
+    .grant-target-icon::before { content: ""; position: absolute; inset: 22px; border-radius: 50%; background: radial-gradient(circle at center, #22D3EE 0 10%, #fff 11% 25%, #38BDF8 26% 40%, #EAF3FF 41% 55%, #3B82F6 56% 72%, #DDEBFF 73% 100%); box-shadow: 0 8px 18px rgba(59,130,246,.28); }
+    .grant-target-icon::after { content: ""; position: absolute; width: 42px; height: 8px; border-radius: 999px; background: #F97316; transform: rotate(-38deg); top: 33px; left: 47px; box-shadow: 0 8px 14px rgba(249,115,22,.22); }
+    .grant-compact-card { background: #fff; border: 1px solid #DDE6F2; border-radius: 28px; padding: 34px; box-shadow: 0 24px 70px rgba(30,58,95,.10); }
+    .grant-form-card { order: 1; background: #fff; border: 1px solid #DDE6F2; border-radius: 28px; padding: 34px; box-shadow: 0 24px 70px rgba(30,58,95,.10); }
+    .compact-top-note { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 18px 0 24px; }
+    .compact-note { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 18px; padding: 14px 16px; color: var(--text-muted); line-height: 1.55; font-size: .88rem; }
+    .compact-note strong { display: block; color: var(--navy); font-size: .95rem; margin-bottom: 4px; }
+    .tip-card { background: var(--white); border-radius: var(--radius-lg); border: 1px solid var(--border); padding: 16px; margin-bottom: 12px; display: flex; gap: 14px; align-items: flex-start; }
+    .tip-icon { font-size: 1.4rem; flex-shrink: 0; }
+    .grant-intro-grid { display: none; }
+    .grant-info-box { background: #fff; border: 1px solid var(--border); border-radius: var(--radius-xl); padding: 20px; box-shadow: var(--shadow-sm); }
+    .grant-info-box h3 { color: var(--navy); margin-bottom: 10px; font-size: 1rem; }
+    .grant-info-box p { color: var(--text-muted); font-size: 0.9rem; line-height: 1.6; }
+    .grant-pill-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+    .grant-pill { display: inline-flex; align-items: center; gap: 6px; border: 1px solid #E2E8F0; background: #F8FAFC; border-radius: 999px; padding: 7px 11px; font-size: 0.78rem; color: var(--navy); font-weight: 700; }
+    .type-panels { order: 2; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin: 12px 0 24px; }
+    .type-panel { background: #FBFCFE; border: 1px solid #E2E8F0; border-radius: 20px; padding: 14px; box-shadow: none; }
+    .type-panel h3 { color: var(--navy); font-size: .96rem; margin-bottom: 10px; }
+    .type-list { display: flex; flex-direction: column; gap: 7px; }
+    .type-item { display: flex; align-items: center; justify-content: space-between; gap: 10px; background: #fff; border: 1px solid #E7EDF5; border-radius: 13px; padding: 9px 10px; font-size: 0.82rem; color: var(--text); }
+    .type-item::before { content: ""; width: 20px; height: 20px; border-radius: 6px; background: #ECEBFF; flex: 0 0 auto; }
+    .type-item span { flex: 1; min-width: 0; }
+    .field-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
+    .field-row .form-label { margin-bottom: 0; }
+    .info-btn { width: 26px; height: 26px; border: 0; background: #F1F5F9; color: #94A3B8; border-radius: 50%; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; transition: var(--transition); flex-shrink: 0; font-size: .78rem; }
+    .info-btn:hover { background: var(--navy); color: #fff; }
+    .quota-note { background: #FFF7ED; border: 1px solid #FED7AA; color: #9A3412; border-radius: var(--radius-lg); padding: 12px 14px; font-size: 0.85rem; line-height: 1.55; margin: 16px 0 20px; }
+    .error-text { color: #DC2626; font-size: 0.82rem; margin-top: 10px; display: none; }
+    .modal-backdrop { position: fixed; inset: 0; background: rgba(15,23,42,.48); display: none; align-items: center; justify-content: center; padding: 18px; z-index: 1000; }
+    .modal-backdrop.open { display: flex; }
+    .info-modal { width: min(720px, 94vw); max-height: 86vh; background: #fff; border: 1px solid #E2E8F0; border-radius: 22px; box-shadow: 0 30px 80px rgba(15,23,42,.24); display: flex; flex-direction: column; overflow: hidden; }
+    .info-modal-head { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 20px 22px; border-bottom: 1px solid #E2E8F0; }
+    .info-modal-title { font-family: var(--font-display); font-size: 1.15rem; font-weight: 800; color: var(--navy); }
+    .modal-close { width: 34px; height: 34px; border-radius: 50%; border: 1px solid #CBD5E1; background: #fff; color: var(--navy); cursor: pointer; font-size: 1.2rem; line-height: 1; }
+    .modal-close:hover { background: #F1F5F9; }
+    .info-modal-body { padding: 20px 22px 24px; overflow: auto; font-size: 0.96rem; line-height: 1.6; color: var(--text); }
+    .info-modal-body p { margin-bottom: 12px; }
+    .info-modal-body ul { padding-left: 20px; margin: 8px 0 12px; }
+    .info-modal-body li { margin-bottom: 6px; }
+    .result-details { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 16px; text-align: left; }
+    .result-detail { background: rgba(255,255,255,.72); border: 1px solid rgba(226,232,240,.8); border-radius: var(--radius); padding: 10px 12px; }
+    .result-detail span { display: block; color: var(--text-muted); font-size: 0.74rem; margin-bottom: 3px; }
+    .result-detail strong { color: var(--navy); font-size: 0.88rem; }
+    .grant-result { order: 3; }
+    @media (max-width: 768px) {
+      .compact-top-note, .type-panels, .result-details, .level-grid { grid-template-columns: 1fr; }
+      .grant-compact-card { padding: 22px; border-radius: 22px; }
+      .grant-form-card { padding: 22px; border-radius: 22px; }
+      .grant-hero-head { text-align: left; }
+      .grant-target-icon { margin-left: 0; width: 82px; height: 82px; }
+      .info-modal { width: 94vw; max-height: 84vh; border-radius: 18px; }
+      .info-modal-head, .info-modal-body { padding-left: 16px; padding-right: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-icon">🔆</div>
+      Shyraq
+    </a>
+    <div class="nav-links">
+      <a href="index.html" class="nav-link">Басты бет</a>
+      <a href="specialties.html" class="nav-link">Мамандықтар</a>
+      <a href="universities.html" class="nav-link">Университеттер</a>
+      <a href="grant.html" class="nav-link active">Грант</a>
+      <a href="pricing.html" class="nav-link">Тарифтер</a>
+    </div>
+    <div class="nav-actions">
+      <a href="dashboard.html" class="btn btn-primary btn-sm">Кабинет</a>
+      <button class="nav-mobile-btn">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<div class="container" style="padding-top:40px;padding-bottom:60px">
+  <div class="grant-calc">
+    <div class="grant-hero-head">
+      <div class="grant-target-icon" aria-hidden="true"></div>
+      <div class="badge badge-navy" style="margin-bottom:10px">Грант және квота</div>
+      <h1>ҰБТ балыңыз бойынша грантқа түсу мүмкіндігін тексеріңіз</h1>
+      <p>ҰБТ балыңызды, грант түрін, квота санатын, мамандықты және қалаңызды енгізіңіз. Жүйе грантқа түсу мүмкіндігін алдын ала бағалайды.</p>
+      <div class="compact-top-note">
+        <div class="compact-note"><strong>Грант</strong>Оқу ақысын мемлекет, әкімдік, университет немесе басқа ұйым төлейтін қаржыландыру түрі.</div>
+        <div class="compact-note"><strong>Квота</strong>ҰБТ балына балл қоспайды, тек грант конкурсында арнайы санат ретінде ескеріледі.</div>
+      </div>
+    </div>
+
+    <div class="grant-intro-grid">
+      <div class="grant-info-box">
+        <h3>Грант деген не?</h3>
+        <p>Грант — оқу ақысын мемлекет, әкімдік, университет немесе басқа ұйым төлейтін қаржыландыру түрі.</p>
+        <div class="grant-pill-list">
+          <span class="grant-pill">Жалпы мемлекеттік</span>
+          <span class="grant-pill">Нысаналы</span>
+          <span class="grant-pill">Серпін</span>
+          <span class="grant-pill">Әкімдік</span>
+        </div>
+      </div>
+      <div class="grant-info-box">
+        <h3>Квота деген не?</h3>
+        <p>Квота — белгілі бір әлеуметтік немесе өңірлік санаттағы талапкерлерге грант конкурсында бөлек қарастырылатын мүмкіндік.</p>
+        <div class="quota-note" style="margin-bottom:0"><strong>Маңызды:</strong> квота ҰБТ балына қосымша балл қоспайды.</div>
+      </div>
+    </div>
+
+    <div class="type-panels">
+      <div class="type-panel">
+        <h3>Грант түрлері</h3>
+        <div class="type-list">
+          <div class="type-item"><span>Жалпы мемлекеттік грант</span><button type="button" class="info-btn" onclick="openInfo('stateGrant')">?</button></div>
+          <div class="type-item"><span>Нысаналы грант</span><button type="button" class="info-btn" onclick="openInfo('targetGrant')">?</button></div>
+          <div class="type-item"><span>Серпін гранты</span><button type="button" class="info-btn" onclick="openInfo('serpin')">?</button></div>
+          <div class="type-item"><span>Әкімдік гранты</span><button type="button" class="info-btn" onclick="openInfo('akimatGrant')">?</button></div>
+          <div class="type-item"><span>Университет гранты / ішкі жеңілдік</span><button type="button" class="info-btn" onclick="openInfo('universityGrant')">?</button></div>
+        </div>
+      </div>
+      <div class="type-panel">
+        <h3>Квота түрлері</h3>
+        <div class="type-list">
+          <div class="type-item"><span>Квота жоқ</span><button type="button" class="info-btn" onclick="openInfo('noQuota')">?</button></div>
+          <div class="type-item"><span>Ауылдық квота</span><button type="button" class="info-btn" onclick="openInfo('rural')">?</button></div>
+          <div class="type-item"><span>Жетім балаларға арналған квота</span><button type="button" class="info-btn" onclick="openInfo('orphan')">?</button></div>
+          <div class="type-item"><span>Мүгедектігі бар адамдарға арналған квота</span><button type="button" class="info-btn" onclick="openInfo('disability')">?</button></div>
+          <div class="type-item"><span>Көпбалалы отбасы квотасы</span><button type="button" class="info-btn" onclick="openInfo('large_family')">?</button></div>
+          <div class="type-item"><span>Толық емес отбасы квотасы</span><button type="button" class="info-btn" onclick="openInfo('single_parent')">?</button></div>
+          <div class="type-item"><span>Мүгедектігі бар бала тәрбиелеп отырған отбасы квотасы</span><button type="button" class="info-btn" onclick="openInfo('disabled_child_family')">?</button></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CALCULATOR FORM -->
+    <div class="grant-form-card mb-24">
+      <h3 style="color:var(--navy);margin-bottom:8px">Грант мүмкіндігін тексеру</h3>
+      <p style="color:var(--text-muted);font-size:0.9rem;line-height:1.6;margin-bottom:24px">Грант түрлері мен квота түрлері бөлек таңдалады. Квота баллды өзгертпейді.</p>
+
+      <!-- Score slider -->
+      <div style="margin-bottom:32px">
+        <label class="form-label" style="margin-bottom:12px;display:block">Жалпы ҰБТ баллы (0–140)</label>
+        <div style="display:flex;align-items:center;gap:24px">
+          <div class="score-display" id="scoreDisplay">92</div>
+          <div style="flex:1">
+            <input type="range" class="score-slider" id="scoreSlider" min="0" max="140" value="92" oninput="updateScore(this.value)" />
+            <div style="display:flex;justify-content:space-between;margin-top:6px">
+              <span style="font-size:0.75rem;color:var(--text-muted)">0</span>
+              <span style="font-size:0.75rem;color:var(--text-muted)">70 (орташа)</span>
+              <span style="font-size:0.75rem;color:var(--text-muted)">140</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-2" style="gap:16px;margin-bottom:20px">
+        <div class="form-group">
+          <div class="field-row">
+            <label class="form-label" for="grantTypeSelect">Грант түрі</label>
+            <button type="button" class="info-btn" onclick="openSelectedGrantInfo()" aria-label="Грант түрі туралы ақпарат">?</button>
+          </div>
+          <select class="form-input form-select" id="grantTypeSelect" onchange="calculate(false)">
+            <option value="state">Жалпы мемлекеттік грант</option>
+            <option value="target">Нысаналы грант</option>
+            <option value="serpin">Серпін гранты</option>
+            <option value="akimat">Әкімдік гранты</option>
+            <option value="university">Университет гранты / ішкі жеңілдік</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <div class="field-row">
+            <label class="form-label" for="quotaSelect">Квота түрі</label>
+            <button type="button" class="info-btn" id="quotaInfoBtn" onclick="openSelectedQuotaInfo()" aria-label="Квота туралы ақпарат">?</button>
+          </div>
+          <select class="form-input form-select" id="quotaSelect" onchange="calculate(false)">
+            <option value="none">Квота жоқ</option>
+            <option value="rural">Ауылдық квота</option>
+            <option value="orphan">Жетім балаларға арналған квота</option>
+            <option value="disability">Мүгедектігі бар адамдарға арналған квота</option>
+            <option value="large_family">Көпбалалы отбасы квотасы</option>
+            <option value="single_parent">Толық емес отбасы квотасы</option>
+            <option value="disabled_child_family">Мүгедектігі бар бала тәрбиелеп отырған отбасы квотасы</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Мамандық</label>
+          <select class="form-input form-select" id="specialtySelect" onchange="calculate(false)">
+            <option value="general">Жалпы</option>
+            <option value="pedagogy">Педагогика</option>
+            <option value="medicine">Медицина</option>
+            <option value="it">IT / Техникалық</option>
+            <option value="law">Заңтану</option>
+            <option value="humanities">Гуманитарлық</option>
+            <option value="economy">Экономика / Бизнес</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Қала / облыс</label>
+          <select class="form-input form-select" id="citySelect" onchange="calculate(false)">
+            <option value="almaty">Алматы</option>
+            <option value="astana">Астана</option>
+            <option value="shymkent">Шымкент</option>
+            <option value="regional">Өңірлік қала</option>
+            <option value="rural">Ауыл / Кент</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Университет</label>
+          <select class="form-input form-select" id="universitySelect" onchange="calculate(false)">
+            <option value="any">Кез келген университет</option>
+            <option value="sdu">SDU University</option>
+            <option value="kaznu">ҚазҰУ</option>
+            <option value="enu">ЕҰУ</option>
+            <option value="aitu">Astana IT University</option>
+            <option value="regional">Өңірлік университеттер</option>
+          </select>
+        </div>
+      </div>
+
+      <label class="w-check" style="display:flex;align-items:center;gap:10px;margin:4px 0 12px;color:var(--text-muted)">
+        <input type="checkbox" id="confirmData" style="width:18px;height:18px;accent-color:var(--navy)" />
+        Деректерді дұрыс енгіздім
+      </label>
+      <div class="quota-note"><strong>Ескерту:</strong> квота ҰБТ балына қосымша балл қоспайды. Ол тек грант конкурсында арнайы санат ретінде ескеріледі.</div>
+      <div class="error-text" id="grantError">Деректерді растаңыз және ҰБТ баллын дұрыс енгізіңіз.</div>
+
+      <button class="btn btn-primary btn-full btn-lg" onclick="calculate(true)">
+        Мүмкіндігімді тексеру →
+      </button>
+      <a href="universities.html" class="btn btn-ghost btn-full" style="justify-content:center;margin-top:10px">Ары қарай қарау</a>
+    </div>
+
+    <!-- RESULT -->
+    <div class="grant-result" id="grantResult">
+      <h3 style="color:var(--navy);margin-bottom:16px">Нәтиже</h3>
+
+      <!-- Meter -->
+      <div class="level-grid" id="levelGrid">
+        <div class="level-indicator active-emerald">
+          <div class="level-dot" style="background:#10B981"></div>
+          <div class="level-copy">
+            <strong>Жоғары</strong>
+            <span>100–140 балл</span>
+          </div>
+        </div>
+        <div class="level-indicator">
+          <div class="level-dot" style="background:#F2B84B"></div>
+          <div class="level-copy">
+            <strong>Орташа</strong>
+            <span>75–99 балл</span>
+          </div>
+        </div>
+        <div class="level-indicator">
+          <div class="level-dot" style="background:#F97316"></div>
+          <div class="level-copy">
+            <strong>Тәуекел</strong>
+            <span>58–74 балл</span>
+          </div>
+        </div>
+        <div class="level-indicator">
+          <div class="level-dot" style="background:#EF4444"></div>
+          <div class="level-copy">
+            <strong>Төмен</strong>
+            <span>0–57 балл</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main result card -->
+      <div id="mainResultCard" style="background:var(--emerald-light);border:2px solid var(--emerald);border-radius:var(--radius-xl);padding:24px;margin-bottom:20px;text-align:center">
+        <div style="font-size:2.5rem;margin-bottom:10px" id="resultEmoji">✓</div>
+        <div style="font-family:var(--font-display);font-size:1.4rem;font-weight:800;color:var(--navy);margin-bottom:8px" id="resultLevel">Орташа мүмкіндік</div>
+        <p style="color:var(--text-muted);font-size:0.9rem;line-height:1.7" id="resultMsg">Грант мүмкіндігің бар. Бірнеше ЖОО-ға тіркелу ұсынылады.</p>
+        <div class="result-details">
+          <div class="result-detail"><span>Сіздің балыңыз</span><strong id="resultScore">92</strong></div>
+          <div class="result-detail"><span>Грант түрі</span><strong id="resultGrantType">Жалпы мемлекеттік грант</strong></div>
+          <div class="result-detail"><span>Квота түрі</span><strong id="resultQuotaType">Квота жоқ</strong></div>
+          <div class="result-detail"><span>Мамандық</span><strong id="resultSpecialty">Жалпы</strong></div>
+          <div class="result-detail"><span>Қала / облыс</span><strong id="resultCity">Алматы</strong></div>
+          <div class="result-detail"><span>Университет</span><strong id="resultUniversity">Кез келген университет</strong></div>
+        </div>
+      </div>
+
+      <!-- Score breakdown -->
+      <div style="background:#F8FAFC;border-radius:var(--radius-lg);padding:18px;margin-bottom:20px">
+        <div style="font-weight:700;color:var(--navy);margin-bottom:14px;font-size:0.9rem">Балл көрсеткіші</div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <span style="font-size:0.875rem;color:var(--text-muted)">Сенің баллың</span>
+            <span style="font-weight:800;color:var(--navy);font-size:1.1rem" id="scoreVal">92</span>
+          </div>
+          <div class="progress-wrap">
+            <div class="progress-bar emerald" id="scoreProgressBar" style="width:66%"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:0.75rem;color:var(--text-muted)">
+            <span>0</span><span>Орташа: 75</span><span>Максимум: 140</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tips -->
+      <div id="tipsContainer">
+        <div style="font-weight:700;color:var(--navy);margin-bottom:12px;font-size:0.9rem">Кеңестер</div>
+        <div class="tip-card">
+          <div class="tip-icon">•</div>
+          <div>
+            <div style="font-weight:600;color:var(--text);font-size:0.875rem;margin-bottom:4px">Квота балл қоспайды</div>
+            <p style="font-size:0.82rem;color:var(--text-muted)">Таңдалған квота тек грант конкурсында арнайы санат ретінде ескеріледі.</p>
+          </div>
+        </div>
+        <div class="tip-card">
+          <div class="tip-icon">•</div>
+          <div>
+            <div style="font-weight:600;color:var(--text);font-size:0.875rem;margin-bottom:4px">Бірнеше ЖОО қарастыр</div>
+            <p style="font-size:0.82rem;color:var(--text-muted)">Қала, университет және мамандықты салыстыру грант мүмкіндігін нақтырақ бағалауға көмектеседі.</p>
+          </div>
+        </div>
+        <div class="tip-card">
+          <div class="tip-icon">•</div>
+          <div>
+            <div style="font-weight:600;color:var(--text);font-size:0.875rem;margin-bottom:4px">Өңірлік университеттер</div>
+            <p style="font-size:0.82rem;color:var(--text-muted)">Астана мен Алматы ЖОО-ларынан басқа өңірлік ЖОО-ларда конкурс төмен.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Universities suggestion -->
+      <div style="margin-top:20px;padding-top:20px;border-top:1px solid var(--border)">
+        <div style="font-weight:700;color:var(--navy);margin-bottom:12px;font-size:0.9rem">Ұсынылатын университеттер</div>
+        <div id="suggestedUnis" style="display:flex;flex-wrap:wrap;gap:8px"></div>
+        <a href="universities.html" class="btn btn-outline btn-sm" style="margin-top:12px">Барлық университеттерді көру →</a>
+      </div>
+
+      <!-- Premium lock for unlimited -->
+      <div style="margin-top:20px;background:var(--gold-pale);border:1px dashed var(--gold);border-radius:var(--radius-lg);padding:14px;text-align:center">
+        <p style="font-size:0.82rem;color:#92400E;margin-bottom:8px">🔒 Premium-де шексіз есептеу, барлық мамандықтар мен университеттер бойынша нақты анализ</p>
+        <a href="pricing.html" class="btn btn-gold btn-sm">Premium алу</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="infoModal" role="dialog" aria-modal="true" aria-labelledby="infoModalTitle">
+  <div class="info-modal">
+    <div class="info-modal-head">
+      <div class="info-modal-title" id="infoModalTitle">Ақпарат</div>
+      <button class="modal-close" type="button" onclick="closeInfo()" aria-label="Жабу">×</button>
+    </div>
+    <div class="info-modal-body" id="infoModalBody"></div>
+  </div>
+</div>
+
+<script src="js/universities-data.js"></script>
+<script src="js/main.js"></script>
+<script src="js/auth-guard.js"></script>
+<script>
+const SPECIALTY_THRESHOLDS = {
+  general: { high: 100, med: 75, low: 58 },
+  pedagogy: { high: 80, med: 60, low: 45 },
+  medicine: { high: 110, med: 90, low: 72 },
+  it: { high: 100, med: 78, low: 62 },
+  law: { high: 105, med: 82, low: 65 },
+  humanities: { high: 90, med: 68, low: 52 },
+  economy: { high: 95, med: 72, low: 58 },
+};
+
+const UNI_SUGGESTIONS = {
+  high: ['SDU University', 'AITU', 'ҚазҰУ', 'ЕҰУ', 'Narxoz'],
+  med: ['ЕҰУ', 'ҚазҰУ', 'ҚБТУ', 'ҚазҰПУ', 'Narxoz'],
+  low: ['ҚазҰПУ', 'Өңірлік ЖОО', 'Болашақ', 'Сарайшық'],
+  vlow: ['Өңірлік ЖОО', 'Ақылы оқу', 'Колледж'],
+};
+
+const LABELS = {
+  grant: {
+    state: 'Жалпы мемлекеттік грант',
+    target: 'Нысаналы грант',
+    serpin: 'Серпін гранты',
+    akimat: 'Әкімдік гранты',
+    university: 'Университет гранты / ішкі жеңілдік',
+  },
+  quota: {
+    none: 'Квота жоқ',
+    rural: 'Ауылдық квота',
+    orphan: 'Жетім балаларға арналған квота',
+    disability: 'Мүгедектігі бар адамдарға арналған квота',
+    large_family: 'Көпбалалы отбасы квотасы',
+    single_parent: 'Толық емес отбасы квотасы',
+    disabled_child_family: 'Мүгедектігі бар бала тәрбиелеп отырған отбасы квотасы',
+  },
+  specialty: {
+    general: 'Жалпы',
+    pedagogy: 'Педагогика',
+    medicine: 'Медицина',
+    it: 'IT / Техникалық',
+    law: 'Заңтану',
+    humanities: 'Гуманитарлық',
+    economy: 'Экономика / Бизнес',
+  },
+  city: {
+    almaty: 'Алматы',
+    astana: 'Астана',
+    shymkent: 'Шымкент',
+    regional: 'Өңірлік қала',
+    rural: 'Ауыл / Кент',
+  },
+  university: {
+    any: 'Кез келген университет',
+    sdu: 'SDU University',
+    kaznu: 'ҚазҰУ',
+    enu: 'ЕҰУ',
+    aitu: 'Astana IT University',
+    regional: 'Өңірлік университеттер',
+  },
+};
+
+const INFO_CONTENT = {
+  stateGrant: {
+    title: 'Грант түрлері',
+    body: `<p><strong>Грант</strong> — оқу ақысын мемлекет, әкімдік, университет немесе басқа ұйым төлейтін қаржыландыру түрі.</p>
+      <ul>
+        <li><strong>Жалпы мемлекеттік грант:</strong> республикалық конкурс арқылы бөлінеді.</li>
+        <li><strong>Нысаналы грант:</strong> белгілі өңір немесе ұйым қажеттілігіне қарай бөлінуі мүмкін.</li>
+        <li><strong>Серпін гранты:</strong> белгілі өңір түлектеріне басқа аймақта оқу мүмкіндігін береді.</li>
+        <li><strong>Әкімдік гранты:</strong> жергілікті әкімдік қолдауымен беріледі.</li>
+        <li><strong>Университет гранты / ішкі жеңілдік:</strong> ЖОО-ның өз бағдарламасы бойынша беріледі.</li>
+      </ul>`,
+  },
+  targetGrant: {
+    title: 'Нысаналы грант',
+    body: `<p>Нысаналы грант белгілі бір өңірдің, сала немесе ұйымның қажеттілігіне қарай бөлінуі мүмкін.</p>
+      <p>Бұл грант түрінде оқу аяқталғаннан кейін еңбек ету міндеттемесі немесе қосымша шарттар болуы мүмкін.</p>`,
+  },
+  serpin: {
+    title: 'Серпін гранты',
+    body: `<p>Серпін бағдарламасы белгілі бір өңірлердің түлектеріне басқа аймақтардағы жоғары оқу орындарында білім алуға мүмкіндік береді.</p>
+      <p>Бағдарлама көбіне педагогикалық, техникалық, IT және ауыл шаруашылығы бағыттарындағы мамандықтарға беріледі.</p>
+      <p><strong>Серпін гранты ҰБТ балына қосымша балл қоспайды.</strong> Бұл — бөлек грант түрі.</p>`,
+  },
+  akimatGrant: {
+    title: 'Әкімдік гранты',
+    body: `<p>Әкімдік гранты жергілікті атқарушы органның қолдауымен бөлінеді.</p>
+      <p>Шарттары өңірге, мамандыққа және сол жылғы қабылдау ережесіне байланысты өзгеруі мүмкін.</p>`,
+  },
+  universityGrant: {
+    title: 'Университет гранты / ішкі жеңілдік',
+    body: `<p>Университет гранты немесе ішкі жеңілдік ЖОО-ның өз ережесі бойынша беріледі.</p>
+      <p>Ол академиялық нәтиже, конкурс, әлеуметтік жағдай немесе арнайы бағдарлама негізінде ұсынылуы мүмкін.</p>`,
+  },
+  noQuota: {
+    title: 'Квота жоқ',
+    body: `<p>Бұл таңдауда талапкер жалпы конкурс бойынша қарастырылады.</p>
+      <p>Квота таңдалмаса да, грант мүмкіндігі ҰБТ балы, мамандық, университет және конкурс деңгейі бойынша алдын ала бағаланады.</p>`,
+  },
+  rural: {
+    title: 'Ауылдық квота',
+    body: `<p><strong>Ауылдық квота ҰБТ-да қосымша балл бермейді.</strong></p>
+      <p>Бұл квота ауыл мектептерін бітірген талапкерлерге кейбір мамандықтар бойынша грант конкурсында бөлек мүмкіндік береді.</p>
+      <p>Көбіне педагогика, ауыл шаруашылығы, ветеринария, медицина және басқа өңірге қажет бағыттарда қолданылады.</p>
+      <p><strong>Маңызды:</strong> ауылдық квота барлық мамандыққа берілмейді.</p>`,
+  },
+  orphan: {
+    title: 'Жетім балаларға арналған квота',
+    body: `<p>Бұл квота жетім балаларға және ата-анасының қамқорлығынсыз қалған балаларға арналған.</p>
+      <p><strong>Квота ҰБТ балына қосымша балл қоспайды.</strong> Ол грант конкурсында арнайы санат ретінде ескеріледі.</p>
+      <p>Құжаттар: туу туралы куәлік, ата-анасының қайтыс болуы туралы куәлік, қамқоршылық немесе қорғаншылық туралы құжат, қажет болса қосымша анықтамалар.</p>`,
+  },
+  disability: {
+    title: 'Мүгедектігі бар адамдарға арналған квота',
+    body: `<p>Бұл квота мүгедектігі бар талапкерлерге арналған.</p>
+      <p><strong>Квота ҰБТ балына қосымша балл қоспайды.</strong> Ол грант конкурсында арнайы санат ретінде қарастырылады.</p>
+      <p>Қатыса алатындар: бала кезінен мүгедектігі бар талапкерлер, I немесе II топтағы мүгедектігі бар талапкерлер, мүгедектігі бар балалар арасынан шыққан талапкерлер.</p>
+      <p>Құжаттар: мәртебесін растайтын анықтама, медициналық-әлеуметтік сараптама құжаты және қажет болса қосымша құжаттар.</p>`,
+  },
+  large_family: {
+    title: 'Көпбалалы отбасы квотасы',
+    body: `<p>Көпбалалы отбасы квотасы кәмелетке толмаған төрт және одан көп бала тәрбиелеп отырған отбасынан шыққан талапкерлерге арналған.</p>
+      <p><strong>Бұл квота ҰБТ балына қосымша балл қоспайды.</strong> Ол грант конкурсында арнайы санат ретінде ескеріледі.</p>
+      <p>Құжаттар: талапкердің туу туралы куәлігі, ата-анасының жеке куәлігі, отбасында төрт және одан көп бала бар екенін растайтын құжаттар.</p>`,
+  },
+  single_parent: {
+    title: 'Толық емес отбасы квотасы',
+    body: `<p>Толық емес отбасы квотасы кемінде үш жыл толық емес отбасы мәртебесі бар отбасындағы балаларға арналған.</p>
+      <p><strong>Бұл квота ҰБТ балына қосымша балл қоспайды.</strong> Ол грант конкурсында арнайы санат ретінде қарастырылады.</p>
+      <p>Маңызды шарттар: талапкер 18 жасқа толмаған болуы керек; ата-анасы ажырасқан болса, кемінде 3 жыл өткен болуы керек; қажет құжаттармен расталады.</p>`,
+  },
+  disabled_child_family: {
+    title: 'Мүгедектігі бар бала тәрбиелеп отырған отбасы квотасы',
+    body: `<p>Бұл квота мүгедектігі бар бала тәрбиелеп отырған отбасынан шыққан талапкерлерге арналған.</p>
+      <p><strong>Квота ҰБТ балына қосымша балл қоспайды.</strong> Ол грант конкурсында арнайы санат ретінде ескеріледі.</p>
+      <p>Құжаттар: талапкердің туу туралы куәлігі, отбасында мүгедектігі бар бала бар екенін растайтын анықтама, медициналық-әлеуметтік сараптама құжаты және қажет болса қосымша құжаттар.</p>`,
+  },
+};
+
+function updateScore(val) {
+  val = parseInt(val);
+  document.getElementById('scoreDisplay').textContent = val;
+  const pct = (val / 140 * 100).toFixed(1);
+  document.getElementById('scoreSlider').style.setProperty('--val', pct + '%');
+  calculate(false);
+}
+
+function calculate(requireConfirm = false) {
+  const score = parseInt(document.getElementById('scoreSlider').value);
+  const grantType = document.getElementById('grantTypeSelect').value;
+  const specialty = document.getElementById('specialtySelect').value;
+  const quota = document.getElementById('quotaSelect').value;
+  const city = document.getElementById('citySelect').value;
+  const university = document.getElementById('universitySelect').value;
+  const thresh = SPECIALTY_THRESHOLDS[specialty] || SPECIALTY_THRESHOLDS.general;
+  const error = document.getElementById('grantError');
+
+  if (requireConfirm && !document.getElementById('confirmData').checked) {
+    error.style.display = 'block';
+    return;
+  }
+  error.style.display = 'none';
+
+  if (requireConfirm && window.ShyraqGate && !isPremium()) {
+    const uses = ShyraqGate.getGrantUses();
+    if (uses >= ShyraqGate.FREE_LIMITS.grantUses) {
+      showToast('Free нұсқада грант калькулятор 1 рет қолжетімді. Шексіз есептеу үшін Premium қосыңыз.', 'error');
+      setTimeout(() => { window.location.href = 'pricing.html'; }, 900);
+      return;
+    }
+    ShyraqGate.incGrantUses();
+  }
+
+  let level, emoji, msg, levelClass, uniKey;
+
+  if (score >= thresh.high) {
+    level = 'Қауіпсіз таңдау'; emoji = '✓'; levelClass = 'active-emerald'; uniKey = 'high';
+    msg = 'Балыңыз таңдаған бағыт бойынша жоғары. Бірнеше университетті қатар қарастырған дұрыс.';
+  } else if (score >= thresh.med) {
+    level = 'Орташа мүмкіндік'; emoji = '•'; levelClass = 'active-gold'; uniKey = 'med';
+    msg = 'Грант мүмкіндігі бар. Қала, университет және мамандық бойынша бірнеше нұсқа таңдаңыз.';
+  } else if (score >= thresh.low) {
+    level = 'Тәуекел'; emoji = '!'; levelClass = 'active-orange'; uniKey = 'low';
+    msg = 'Мүмкіндік тәуекелді. Өңірлік университеттерді және баллды арттыру жоспарын қарастырыңыз.';
+  } else {
+    level = 'Мүмкіндігі төмен'; emoji = '!'; levelClass = 'active-red'; uniKey = 'vlow';
+    msg = 'Балыңызды арттыру қажет. Дайындық жоспарын күшейтіп, балама оқу нұсқаларын қарастырыңыз.';
+  }
+
+  if (quota !== 'none') {
+    msg += ' ' + LABELS.quota[quota] + ' ҰБТ балыңызға қосымша балл қоспайды, бірақ грант конкурсында арнайы санат ретінде ескерілуі мүмкін.';
+  }
+
+  // Update UI
+  document.getElementById('resultEmoji').textContent = emoji;
+  document.getElementById('resultLevel').textContent = level;
+  document.getElementById('resultMsg').textContent = msg;
+  document.getElementById('scoreVal').textContent = score;
+  document.getElementById('resultScore').textContent = score;
+  document.getElementById('resultGrantType').textContent = LABELS.grant[grantType] || LABELS.grant.state;
+  document.getElementById('resultQuotaType').textContent = LABELS.quota[quota] || LABELS.quota.none;
+  document.getElementById('resultSpecialty').textContent = LABELS.specialty[specialty] || LABELS.specialty.general;
+  document.getElementById('resultCity').textContent = LABELS.city[city] || LABELS.city.almaty;
+  document.getElementById('resultUniversity').textContent = LABELS.university[university] || LABELS.university.any;
+  document.getElementById('scoreProgressBar').style.width = (score / 140 * 100) + '%';
+
+  const card = document.getElementById('mainResultCard');
+  card.className = '';
+  card.style.cssText = 'border-radius:var(--radius-xl);padding:24px;margin-bottom:20px;text-align:center;border:2px solid;transition:var(--transition)';
+  if (uniKey === 'high') { card.style.background = 'var(--emerald-light)'; card.style.borderColor = 'var(--emerald)'; }
+  else if (uniKey === 'med') { card.style.background = 'var(--gold-pale)'; card.style.borderColor = 'var(--gold)'; }
+  else if (uniKey === 'low') { card.style.background = 'var(--orange-light)'; card.style.borderColor = 'var(--orange)'; }
+  else { card.style.background = '#FEF2F2'; card.style.borderColor = '#EF4444'; }
+
+  // Level indicators
+  document.querySelectorAll('.level-indicator').forEach(el => {
+    el.className = 'level-indicator';
+  });
+  const indicators = document.querySelectorAll('.level-indicator');
+  if (uniKey === 'high' && indicators[0]) indicators[0].classList.add('active-emerald');
+  else if (uniKey === 'med' && indicators[1]) indicators[1].classList.add('active-gold');
+  else if (uniKey === 'low' && indicators[2]) indicators[2].classList.add('active-orange');
+  else if (indicators[3]) indicators[3].classList.add('active-red');
+
+  // Universities
+  const unis = document.getElementById('suggestedUnis');
+  unis.replaceChildren();
+  (UNI_SUGGESTIONS[uniKey] || []).forEach(uni => {
+    const tag = document.createElement('span');
+    tag.className = 'badge badge-navy';
+    tag.textContent = uni;
+    unis.appendChild(tag);
+  });
+}
+
+function openInfo(key) {
+  const data = INFO_CONTENT[key] || INFO_CONTENT.stateGrant;
+  document.getElementById('infoModalTitle').textContent = data.title;
+  document.getElementById('infoModalBody').innerHTML = data.body;
+  document.getElementById('infoModal').classList.add('open');
+}
+
+function openSelectedQuotaInfo() {
+  const key = document.getElementById('quotaSelect').value;
+  if (key === 'none') {
+    openInfo('noQuota');
+    return;
+  }
+  openInfo(key);
+}
+
+function openSelectedGrantInfo() {
+  const map = {
+    state: 'stateGrant',
+    target: 'targetGrant',
+    serpin: 'serpin',
+    akimat: 'akimatGrant',
+    university: 'universityGrant',
+  };
+  const key = document.getElementById('grantTypeSelect').value;
+  openInfo(map[key] || 'stateGrant');
+}
+
+function closeInfo() {
+  document.getElementById('infoModal').classList.remove('open');
+}
+
+document.getElementById('infoModal').addEventListener('click', (event) => {
+  if (event.target.id === 'infoModal') closeInfo();
+});
+
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape') closeInfo();
+});
+
+document.addEventListener('DOMContentLoaded', () => { ShyraqGate.guardPage('Грант калькуляторды пайдалану үшін тіркелу керек.');
+  calculate(false);
+  document.getElementById('scoreSlider').style.setProperty('--val', '65.7%');
+});
+</script>
+</body>
+</html>

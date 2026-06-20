@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ҰБТ Пәндері — Shyraq Education</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    .ubt-page-shell {
+      padding-top: 44px;
+      padding-bottom: 70px;
+    }
+
+    .ubt-hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: end;
+      gap: 24px;
+      margin-bottom: 30px;
+    }
+
+    .ubt-hero-card {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 18px;
+      border: 1px solid #E2E8F0;
+      border-radius: 20px;
+      background: #fff;
+      box-shadow: 0 16px 38px rgba(30, 58, 95, .07);
+      color: var(--navy);
+      font-weight: 800;
+    }
+
+    .ubt-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 420px;
+      gap: 28px;
+      align-items: start;
+    }
+
+    .ubt-panel {
+      background: #fff;
+      border: 1px solid #E2E8F0;
+      border-radius: 24px;
+      padding: 24px;
+      box-shadow: 0 18px 46px rgba(30, 58, 95, .06);
+    }
+
+    .ubt-panel.soft {
+      background: linear-gradient(180deg, #FFFFFF 0%, #FFFDF8 100%);
+      border-color: #F2D89A;
+    }
+
+    .ubt-panel-head {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .ubt-panel-head h3 {
+      color: var(--navy);
+      font-size: 1rem;
+      margin: 0;
+    }
+
+    .ubt-svg-icon {
+      width: 20px;
+      height: 20px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: currentColor;
+      flex: 0 0 auto;
+    }
+
+    .ubt-svg-icon svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2.15;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .ubt-inline-icon,
+    .ubt-mini-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 13px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #F7FAFE;
+      border: 1px solid #DFE8F3;
+      color: #2D5491;
+      flex: 0 0 auto;
+    }
+
+    .ubt-inline-icon.gold {
+      background: #FFF8E6;
+      border-color: #F6D993;
+      color: #B7791F;
+    }
+
+    .ubt-inline-icon.green {
+      background: #ECFDF5;
+      border-color: #BEEBD8;
+      color: #059669;
+    }
+
+    .ubt-mandatory-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .ubt-mandatory-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px;
+      background: #fff;
+      border-radius: 16px;
+      border: 1px solid #EEE4C9;
+    }
+
+    .ubt-subjects-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 0;
+    }
+
+    .ubt-subject-card {
+      min-height: 138px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: space-between;
+      text-align: left;
+      padding: 16px;
+      border-radius: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .ubt-subject-card::after {
+      content: "";
+      position: absolute;
+      inset: auto 14px 14px auto;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: rgba(45, 84, 145, .04);
+      transform: scale(0);
+      transition: var(--transition);
+    }
+
+    .ubt-subject-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 34px rgba(30, 58, 95, .08);
+    }
+
+    .ubt-subject-card.selected {
+      border-color: #2D5491;
+      background: #F4F8FF;
+    }
+
+    .ubt-subject-card.selected::after {
+      transform: scale(1);
+    }
+
+    .ubt-subject-emoji {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(145deg, #F8FBFF, #FFFFFF);
+      border: 1px solid #DCE8F6;
+      color: #2D5491;
+      box-shadow: 0 12px 24px rgba(30,58,95,.07);
+    }
+
+    .ubt-subject-card.selected .ubt-subject-emoji {
+      background: #2D5491;
+      color: #fff;
+      border-color: #2D5491;
+    }
+
+    .ubt-subject-emoji .ubt-svg-icon {
+      width: 24px;
+      height: 24px;
+    }
+
+    .ubt-match-card {
+      background: #F8FAFC;
+      border: 1px solid #E5EAF2;
+      border-radius: 16px;
+      padding: 12px;
+    }
+
+    .ubt-match-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #EEF4FB;
+      color: #2D5491;
+      flex: 0 0 auto;
+    }
+
+    .ubt-info-card {
+      background: linear-gradient(145deg, #FFFFFF 0%, #F8FBFF 100%);
+      border: 1px solid #DDE7F3;
+      position: sticky;
+      top: 92px;
+    }
+
+    .ubt-info-stat {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 12px;
+      align-items: center;
+      background: #F8FAFC;
+      border: 1px solid #E5EAF2;
+      border-radius: 18px;
+      padding: 14px;
+    }
+
+    .ubt-empty {
+      text-align: center;
+      padding: 34px 18px;
+      color: var(--text-muted);
+    }
+
+    .ubt-empty .ubt-inline-icon {
+      margin: 0 auto 12px;
+      width: 58px;
+      height: 58px;
+      border-radius: 18px;
+    }
+
+    .ubt-empty .ubt-svg-icon {
+      width: 28px;
+      height: 28px;
+    }
+
+    @media (max-width: 900px) {
+      .ubt-hero,
+      .ubt-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .ubt-info-card {
+        position: static;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .ubt-page-shell {
+        padding-top: 28px;
+      }
+
+      .ubt-panel {
+        padding: 18px;
+        border-radius: 20px;
+      }
+
+      .ubt-subjects-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-icon">🔆</div>
+      Shyraq
+    </a>
+    <div class="nav-links">
+      <a href="index.html" class="nav-link">Басты бет</a>
+      <a href="specialties.html" class="nav-link">Мамандықтар</a>
+      <a href="universities.html" class="nav-link">Университеттер</a>
+      <a href="grant.html" class="nav-link">Грант</a>
+      <a href="pricing.html" class="nav-link">Тарифтер</a>
+    </div>
+    <div class="nav-actions">
+      <a href="dashboard.html" class="btn btn-primary btn-sm">Кабинет</a>
+      <button class="nav-mobile-btn">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<div class="container ubt-page-shell">
+  <div class="ubt-hero">
+    <div>
+      <div class="badge badge-navy" style="margin-bottom:10px">ҰБТ 2026</div>
+      <h1 style="color:var(--navy);margin-bottom:8px">ҰБТ пәндері</h1>
+      <p style="color:var(--text-muted);max-width:620px;line-height:1.7">
+        3 міндетті пән және 2 таңдаулы пәнді түсінікті түрде таңда. Жүйе саған сәйкес мамандықтарды бірден көрсетеді.
+      </p>
+    </div>
+    <div class="ubt-hero-card">
+      <span class="ubt-inline-icon gold" data-ubt-icon="target"></span>
+      <span>Пән → мамандық → грант</span>
+    </div>
+  </div>
+
+  <div class="ubt-layout">
+    <div>
+      <!-- Mandatory subjects -->
+      <div class="ubt-panel soft mb-16">
+        <div class="ubt-panel-head">
+          <span class="ubt-inline-icon gold" data-ubt-icon="star"></span>
+          <h3 style="color:var(--navy);font-size:1rem">Міндетті пәндер (3)</h3>
+          <span class="badge badge-gold" style="margin-left:auto">Барлығы міндетті</span>
+        </div>
+        <div class="ubt-mandatory-list">
+          <div class="ubt-mandatory-item">
+            <span class="ubt-mini-icon" data-ubt-icon="history"></span>
+            <div>
+              <div style="font-weight:700;color:var(--navy);font-size:0.9rem">Қазақстан тарихы</div>
+              <div style="font-size:0.78rem;color:var(--text-muted)">Макс. балл: 20</div>
+            </div>
+            <span class="badge badge-gold" style="margin-left:auto">Міндетті</span>
+          </div>
+          <div class="ubt-mandatory-item">
+            <span class="ubt-mini-icon" data-ubt-icon="book"></span>
+            <div>
+              <div style="font-weight:700;color:var(--navy);font-size:0.9rem">Оқу сауаттылығы</div>
+              <div style="font-size:0.78rem;color:var(--text-muted)">Макс. балл: 20</div>
+            </div>
+            <span class="badge badge-gold" style="margin-left:auto">Міндетті</span>
+          </div>
+          <div class="ubt-mandatory-item">
+            <span class="ubt-mini-icon" data-ubt-icon="calculator"></span>
+            <div>
+              <div style="font-weight:700;color:var(--navy);font-size:0.9rem">Математикалық сауаттылық</div>
+              <div style="font-size:0.78rem;color:var(--text-muted)">Макс. балл: 20</div>
+            </div>
+            <span class="badge badge-gold" style="margin-left:auto">Міндетті</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Optional subjects -->
+      <div class="ubt-panel">
+        <div class="ubt-panel-head">
+          <span class="ubt-inline-icon" data-ubt-icon="edit"></span>
+          <h3 style="color:var(--navy);font-size:1rem">Таңдаулы пәндер (2 таңда)</h3>
+          <span class="badge badge-navy" id="selectedCount" style="margin-left:auto">0/2 таңдалды</span>
+        </div>
+        <div class="ubt-subjects-grid" id="subjectGrid"></div>
+        <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">
+          <button class="btn btn-primary btn-full" onclick="saveSubjects()">✓ Пәндерді сақтау</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Results -->
+    <div>
+      <div class="ubt-panel mb-16" id="resultsCard">
+        <div class="ubt-panel-head">
+          <span class="ubt-inline-icon green" data-ubt-icon="spark"></span>
+          <h3 style="color:var(--navy);font-size:1rem">Сәйкес мамандықтар</h3>
+        </div>
+        <div id="matchedSpecialties">
+          <div class="ubt-empty">
+            <span class="ubt-inline-icon" data-ubt-icon="book"></span>
+            <p>Таңдаулы пәндеріңді таңда — мамандықтар пайда болады</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Info card -->
+      <div class="ubt-panel ubt-info-card">
+        <div class="ubt-panel-head">
+          <span class="ubt-inline-icon gold" data-ubt-icon="lightbulb"></span>
+          <h3 style="color:var(--navy);font-size:1rem">ҰБТ туралы</h3>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div class="ubt-info-stat">
+            <span class="ubt-mini-icon gold" data-ubt-icon="target"></span>
+            <div>
+            <div style="color:var(--navy);font-weight:700;font-size:0.875rem;margin-bottom:4px">Жалпы максималды балл</div>
+            <div style="color:var(--gold);font-family:var(--font-display);font-size:1.6rem;font-weight:800">140</div>
+            <div style="color:var(--text-muted);font-size:0.78rem">60 (міндетті) + 80 (таңдаулы)</div>
+            </div>
+          </div>
+          <div class="ubt-info-stat">
+            <span class="ubt-mini-icon green" data-ubt-icon="check"></span>
+            <div>
+            <div style="color:var(--navy);font-weight:700;font-size:0.875rem;margin-bottom:4px">Грант минималды балл</div>
+            <div style="color:var(--emerald);font-family:var(--font-display);font-size:1.6rem;font-weight:800">58–70+</div>
+            <div style="color:var(--text-muted);font-size:0.78rem">Мамандыққа байланысты</div>
+            </div>
+          </div>
+          <div class="ubt-info-stat">
+            <span class="ubt-mini-icon" data-ubt-icon="calendar"></span>
+            <div>
+            <div style="color:var(--navy);font-weight:700;font-size:0.875rem;margin-bottom:4px">ҰБТ мерзімі 2026</div>
+            <div style="color:var(--text);font-size:0.9rem;font-weight:700">Маусым · Шілде 2026</div>
+            </div>
+          </div>
+        </div>
+        <a href="grant.html" class="btn btn-gold btn-full btn-sm" style="margin-top:14px;justify-content:center">Грант калькулятор →</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/universities-data.js"></script>
+<script src="js/main.js"></script>
+<script src="js/auth-guard.js"></script>
+<script>
+const UBT_ICONS = {
+  star: '<svg viewBox="0 0 24 24"><path d="m12 3 2.7 5.47 6.03.88-4.36 4.25 1.03 6-5.4-2.84-5.4 2.84 1.03-6-4.36-4.25 6.03-.88L12 3z"/></svg>',
+  target: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 12l7-7"/><path d="M16 5h3v3"/></svg>',
+  history: '<svg viewBox="0 0 24 24"><path d="M4 10h16"/><path d="M6 10v8"/><path d="M10 10v8"/><path d="M14 10v8"/><path d="M18 10v8"/><path d="M3 20h18"/><path d="M12 4 4 8h16l-8-4z"/></svg>',
+  book: '<svg viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21.5z"/><path d="M4 5.5v16"/><path d="M8 7h8"/></svg>',
+  calculator: '<svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="3"/><path d="M8 7h8"/><path d="M8 12h2"/><path d="M12 12h2"/><path d="M16 12h.01"/><path d="M8 16h2"/><path d="M12 16h2"/><path d="M16 16h.01"/></svg>',
+  edit: '<svg viewBox="0 0 24 24"><path d="m4 20 4.5-1 10-10a2.1 2.1 0 0 0-3-3l-10 10z"/><path d="m13.5 7.5 3 3"/></svg>',
+  spark: '<svg viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8L19 15z"/></svg>',
+  lightbulb: '<svg viewBox="0 0 24 24"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M8 14a6 6 0 1 1 8 0c-.8.7-1 1.3-1 2H9c0-.7-.2-1.3-1-2Z"/></svg>',
+  check: '<svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></svg>',
+  calendar: '<svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="3"/><path d="M8 3v4"/><path d="M16 3v4"/><path d="M4 10h16"/><path d="M8 14h4"/></svg>',
+  math: '<svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M8 9h4"/><path d="M10 7v4"/><path d="M15 8h1"/><path d="M15 11h1"/><path d="M8 15h4"/><path d="M15 16h1"/></svg>',
+  atom: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="1.7"/><ellipse cx="12" cy="12" rx="9" ry="3.5"/><ellipse cx="12" cy="12" rx="9" ry="3.5" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="9" ry="3.5" transform="rotate(120 12 12)"/></svg>',
+  flask: '<svg viewBox="0 0 24 24"><path d="M9 3h6"/><path d="M10 3v5l-5 9a3 3 0 0 0 2.6 4.5h8.8A3 3 0 0 0 19 17l-5-9V3"/><path d="M8 15h8"/></svg>',
+  leaf: '<svg viewBox="0 0 24 24"><path d="M5 19c8 1 14-5 14-14-9 0-14 5-14 14Z"/><path d="M5 19 15 9"/></svg>',
+  globe: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c3 3 3 15 0 18"/><path d="M12 3c-3 3-3 15 0 18"/></svg>',
+  language: '<svg viewBox="0 0 24 24"><path d="M4 5h9"/><path d="M9 3v2"/><path d="M6 10c2.5-1.2 4-3 5-5"/><path d="M5 14l4-4 4 4"/><path d="M15 21l1-3h4l1 3"/><path d="M16.5 15 18 11l1.5 4"/></svg>',
+  document: '<svg viewBox="0 0 24 24"><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2z"/><path d="M9 13h6"/><path d="M9 17h4"/></svg>',
+  briefcase: '<svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="3"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/><path d="M3 12h18"/></svg>',
+  code: '<svg viewBox="0 0 24 24"><path d="m8 9-4 3 4 3"/><path d="m16 9 4 3-4 3"/><path d="m14 5-4 14"/></svg>',
+  medical: '<svg viewBox="0 0 24 24"><path d="M12 4v16"/><path d="M4 12h16"/><rect x="4" y="4" width="16" height="16" rx="5"/></svg>',
+  scale: '<svg viewBox="0 0 24 24"><path d="M12 3v18"/><path d="M5 7h14"/><path d="m6 7-3 6h6z"/><path d="m18 7-3 6h6z"/><path d="M8 21h8"/></svg>',
+  plane: '<svg viewBox="0 0 24 24"><path d="M21 4 9 16"/><path d="M21 4 14 22l-4-8-8-4z"/></svg>'
+};
+
+const SUBJECT_ICON_MAP = {
+  math: 'math',
+  physics: 'atom',
+  chemistry: 'flask',
+  biology: 'leaf',
+  geography: 'globe',
+  world_hist: 'book',
+  english: 'language',
+  kaz_lit: 'document'
+};
+
+function ubtIcon(name) {
+  return '<span class="ubt-svg-icon" aria-hidden="true">' + (UBT_ICONS[name] || UBT_ICONS.book) + '</span>';
+}
+
+function hydrateStaticIcons() {
+  document.querySelectorAll('[data-ubt-icon]').forEach(el => {
+    el.innerHTML = ubtIcon(el.dataset.ubtIcon);
+  });
+}
+
+function matchIconName(name) {
+  if (/IT|Деректер|Инженерия|Энергетика|Физика/.test(name)) return /IT|Деректер/.test(name) ? 'code' : 'atom';
+  if (/Медицина|Фармация|Био|Химиялық/.test(name)) return 'medical';
+  if (/Маркетинг|Экономика/.test(name)) return 'briefcase';
+  if (/Заң/.test(name)) return 'scale';
+  if (/Туризм|Халықаралық/.test(name)) return 'plane';
+  return 'book';
+}
+
+const OPTIONAL_SUBJECTS = [
+  { id: 'math', name: 'Математика', maxScore: 40 },
+  { id: 'physics', name: 'Физика', maxScore: 40 },
+  { id: 'chemistry', name: 'Химия', maxScore: 40 },
+  { id: 'biology', name: 'Биология', maxScore: 40 },
+  { id: 'geography', name: 'География', maxScore: 40 },
+  { id: 'world_hist', name: 'Дүниежүзі тарихы', maxScore: 40 },
+  { id: 'english', name: 'Ағылшын тілі', maxScore: 40 },
+  { id: 'kaz_lit', name: 'Қазақ тілі/Әдебиет', maxScore: 40 },
+];
+
+const SUBJECT_MATCHES = {
+  math: ['IT', 'Инженерия', 'Экономика', 'Физика мұғалімі', 'Деректер ғылымы'],
+  physics: ['Инженерия', 'IT', 'Физика мұғалімі', 'Энергетика'],
+  chemistry: ['Медицина', 'Фармация', 'Биохимия', 'Химиялық технология'],
+  biology: ['Медицина', 'Биология мұғалімі', 'Психология', 'Биотехнология'],
+  geography: ['Маркетинг', 'Геология', 'Туризм', 'Экология'],
+  world_hist: ['Заңтану', 'Халықаралық қатынастар', 'Аударма ісі', 'Журналистика', 'Тарих мұғалімі'],
+  english: ['Аударма ісі', 'Халықаралық қатынастар', 'Туризм', 'Ағылшын тілі мұғалімі', 'Журналистика'],
+  kaz_lit: ['Қазақ тілі мұғалімі', 'Заңтану', 'Журналистика', 'Филология'],
+};
+
+let selected = JSON.parse(localStorage.getItem('shyraq_subjects')) || [];
+
+function renderGrid() {
+  const grid = document.getElementById('subjectGrid');
+  grid.replaceChildren();
+  OPTIONAL_SUBJECTS.forEach(subj => {
+    const card = document.createElement('div');
+    card.className = 'ubt-subject-card';
+    if (selected.includes(subj.id)) card.classList.add('selected');
+    card.addEventListener('click', () => toggleSubject(subj.id, card));
+
+    const emoji = document.createElement('div');
+    emoji.className = 'ubt-subject-emoji';
+    emoji.innerHTML = ubtIcon(SUBJECT_ICON_MAP[subj.id]);
+
+    const name = document.createElement('div');
+    name.className = 'ubt-subject-name';
+    name.textContent = subj.name;
+
+    const type = document.createElement('div');
+    type.className = 'ubt-subject-type';
+    type.textContent = 'Макс. ' + subj.maxScore + ' балл';
+
+    card.appendChild(emoji);
+    card.appendChild(name);
+    card.appendChild(type);
+    grid.appendChild(card);
+  });
+  updateCount();
+  updateMatches();
+}
+
+function toggleSubject(id, card) {
+  const idx = selected.indexOf(id);
+  if (idx === -1) {
+    if (selected.length >= 2) {
+      showToast('Тек 2 пән таңдай аласың', 'error');
+      return;
+    }
+    selected.push(id);
+    card.classList.add('selected');
+  } else {
+    selected.splice(idx, 1);
+    card.classList.remove('selected');
+  }
+  updateCount();
+  updateMatches();
+}
+
+function updateCount() {
+  document.getElementById('selectedCount').textContent = selected.length + '/2 таңдалды';
+}
+
+function updateMatches() {
+  const container = document.getElementById('matchedSpecialties');
+  container.replaceChildren();
+
+  if (selected.length === 0) {
+    const empty = document.createElement('div');
+    empty.className = 'ubt-empty';
+    const icon = document.createElement('div');
+    icon.className = 'ubt-inline-icon';
+    icon.innerHTML = ubtIcon('book');
+    const msg = document.createElement('p');
+    msg.style.marginTop = '12px';
+    msg.textContent = 'Таңдаулы пәндеріңді таңда — мамандықтар пайда болады';
+    empty.appendChild(icon);
+    empty.appendChild(msg);
+    container.appendChild(empty);
+    return;
+  }
+
+  const allMatches = new Set();
+  selected.forEach(id => {
+    (SUBJECT_MATCHES[id] || []).forEach(m => allMatches.add(m));
+  });
+
+  const label = document.createElement('p');
+  label.style.cssText = 'font-size:0.82rem;color:var(--text-muted);margin-bottom:10px';
+  label.textContent = 'Сенің пәндеріңмен түсе алатын мамандықтар:';
+  container.appendChild(label);
+
+  allMatches.forEach(spec => {
+    const item = document.createElement('div');
+    item.className = 'ubt-match-card';
+
+    const icon = document.createElement('span');
+    icon.className = 'ubt-match-icon';
+    icon.innerHTML = ubtIcon(matchIconName(spec));
+
+    const text = document.createElement('span');
+    text.style.cssText = 'font-weight:600;color:var(--navy);font-size:0.875rem';
+    text.textContent = spec;
+
+    const arrow = document.createElement('a');
+    arrow.href = 'specialties.html';
+    arrow.style.cssText = 'margin-left:auto;color:var(--navy);font-size:0.8rem;font-weight:600;text-decoration:none';
+    arrow.textContent = 'Толығырақ →';
+
+    item.appendChild(icon);
+    item.appendChild(text);
+    item.appendChild(arrow);
+    container.appendChild(item);
+  });
+}
+
+function saveSubjects() {
+  if (selected.length < 2) {
+    showToast('2 таңдаулы пән таңдаңыз', 'error');
+    return;
+  }
+  localStorage.setItem('shyraq_subjects', JSON.stringify(selected));
+  showToast('Пәндер сақталды!');
+}
+
+document.addEventListener('DOMContentLoaded', () => { ShyraqGate.guardPage('ҰБТ пәндері бетін пайдалану үшін тіркелу керек.'); hydrateStaticIcons(); renderGrid(); });
+</script>
+</body>
+</html>

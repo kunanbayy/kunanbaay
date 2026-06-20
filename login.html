@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Кіру — Shyraq Education</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<div class="auth-page">
+  <!-- LEFT PANEL -->
+  <div class="auth-left">
+    <div class="auth-left-content">
+      <a href="index.html" class="nav-logo" style="margin-bottom:36px;display:inline-flex">
+        <div class="nav-logo-icon">🔆</div>
+        <span style="color:white">Shyraq Education</span>
+      </a>
+      <h2>Қайта оралдың!</h2>
+      <p>Кіріп, мамандық нәтижеңді, грант мүмкіндігіңді және дайындық жоспарыңды жалғастыр.</p>
+
+      <div style="margin-top:36px;display:flex;flex-direction:column;gap:16px">
+        <div style="background:rgba(255,255,255,0.07);border-radius:var(--radius-lg);padding:18px 20px;display:flex;align-items:center;gap:14px">
+          <span style="font-size:1.5rem">🎯</span>
+          <div>
+            <div style="color:white;font-weight:600;font-size:0.9rem">Мамандық тестің сақталды</div>
+            <div style="color:rgba(255,255,255,0.6);font-size:0.8rem">Нәтижені кабинетіңнен оқи аласың</div>
+          </div>
+        </div>
+        <div style="background:rgba(255,255,255,0.07);border-radius:var(--radius-lg);padding:18px 20px;display:flex;align-items:center;gap:14px">
+          <span style="font-size:1.5rem">🏛️</span>
+          <div>
+            <div style="color:white;font-weight:600;font-size:0.9rem">Университеттер тіркелді</div>
+            <div style="color:rgba(255,255,255,0.6);font-size:0.8rem">Таңдаулы ЖОО тізімің дайын</div>
+          </div>
+        </div>
+        <div style="background:rgba(255,255,255,0.07);border-radius:var(--radius-lg);padding:18px 20px;display:flex;align-items:center;gap:14px">
+          <span style="font-size:1.5rem">💰</span>
+          <div>
+            <div style="color:white;font-weight:600;font-size:0.9rem">Грант мүмкіндігің</div>
+            <div style="color:rgba(255,255,255,0.6);font-size:0.8rem">Есептеу нәтижесі сақталды</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:36px;padding:20px;background:rgba(242,184,75,0.12);border-radius:var(--radius-lg);border:1px solid rgba(242,184,75,0.25)">
+        <div style="color:var(--gold);font-weight:700;font-size:0.82rem;margin-bottom:8px">⭐ PREMIUM МҮМКІНДІК</div>
+        <p style="color:rgba(255,255,255,0.85);font-size:0.875rem;line-height:1.6">AI кеңесші, PDF Career Report және жеке оқу жоспары — Premium-де!</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="auth-right">
+    <div class="auth-form-wrap">
+      <a href="index.html" class="auth-logo">
+        <div class="auth-logo-icon">🔆</div>
+        Shyraq Education
+      </a>
+      <h1 class="auth-title">Кіру</h1>
+      <p class="auth-subtitle">Аккаунтыңа кіріп, жалғастыр</p>
+
+      <div class="auth-form">
+        <div class="form-group">
+          <label class="form-label">Email немесе телефон</label>
+          <input id="loginContact" type="text" class="form-input" placeholder="email@gmail.com немесе +77001234567" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Пароль</label>
+          <div class="pw-wrap">
+            <input id="loginPw" type="password" class="form-input" placeholder="Паролыңды енгіз" />
+            <button class="pw-toggle" type="button" onclick="togglePw()">👁</button>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:flex-end">
+          <a href="#" class="auth-link" style="font-size:0.875rem">Парольді ұмыттың ба?</a>
+        </div>
+        <button class="btn btn-primary btn-full btn-lg" onclick="doLogin()">Кіру →</button>
+
+        <div class="divider-text">немесе</div>
+
+        <button class="btn btn-outline btn-full" style="justify-content:center;gap:10px" onclick="demoLogin()">
+          <span>👤</span> Демо аккаунтпен кіру
+        </button>
+
+        <p class="auth-footer-text">
+          Аккаунтыңыз жоқ па? <a href="register.html" class="auth-link">Тіркелу</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/universities-data.js"></script>
+<script src="js/main.js"></script>
+<script>
+  function togglePw() {
+    const inp = document.getElementById('loginPw');
+    const btn = document.querySelector('.pw-toggle');
+    inp.type = inp.type === 'password' ? 'text' : 'password';
+    btn.textContent = inp.type === 'password' ? '👁' : '🙈';
+  }
+
+  function doLogin() {
+    const contact = document.getElementById('loginContact').value.trim();
+    const pw = document.getElementById('loginPw').value;
+    if (!contact || !pw) {
+      showToast('Email/телефон және парольді енгізіңіз', 'error');
+      return;
+    }
+    const user = { name: 'Ержан', email: contact, classYear: '11', city: 'Алматы', plan: 'free' };
+    localStorage.setItem('shyraq_user', JSON.stringify(user));
+    window.location.href = 'dashboard.html';
+  }
+
+  function demoLogin() {
+    const user = { name: 'Ержан', email: 'demo@shyraq.edu.kz', classYear: '11', city: 'Алматы', plan: 'free' };
+    localStorage.setItem('shyraq_user', JSON.stringify(user));
+    window.location.href = 'dashboard.html';
+  }
+</script>
+</body>
+</html>
