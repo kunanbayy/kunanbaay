@@ -723,7 +723,7 @@
       .pf-item:nth-child(6) { left:calc(59% + 522px); opacity:0; }
       .pf-emblem { position:absolute; top:24px; left:24px; width:60px; height:60px; border-radius:20px; background:rgba(255,255,255,.13); backdrop-filter:blur(14px) saturate(1.4); border:1px solid rgba(255,255,255,.24); display:flex; align-items:center; justify-content:center; z-index:3; box-shadow:0 8px 24px rgba(15,23,42,.22), inset 0 1px 0 rgba(255,255,255,.24); }
       .pf-emblem .ix { width:26px; height:26px; color:#fff; }
-      .pf-mini { position:absolute; left:18px; right:18px; bottom:26px; z-index:3; font-family:var(--fd); font-weight:800; font-size:.93rem; letter-spacing:-.02em; color:#fff; line-height:1.2; text-shadow:0 3px 12px rgba(0,0,0,.36); transition:opacity .4s; }
+      .pf-mini { position:absolute; left:16px; right:16px; bottom:22px; z-index:3; font-family:var(--fd); font-weight:800; font-size:.84rem; letter-spacing:-.02em; color:#fff; line-height:1.18; text-shadow:0 3px 12px rgba(0,0,0,.36); transition:opacity .4s; overflow-wrap:anywhere; word-break:break-word; hyphens:auto; }
       .pf-content { position:absolute; left:52px; right:52px; bottom:50px; max-width:520px; z-index:3; opacity:0; pointer-events:none; transition:opacity .4s; }
       .pf-item:nth-child(2) .pf-content { opacity:1; pointer-events:auto; }
       .pf-item:nth-child(2) .pf-mini { opacity:0; }
@@ -1339,26 +1339,31 @@ tick(); setInterval(tick, 30000);
   initStepGrid();
 })();
 
-/* ── UNIVERSITY LOGOS ── */
+/* ── UNIVERSITY LOGOS (from database, new logos) ── */
 (function() {
-  const unis = [
-    { abbr: 'SDU', name: 'SDU University', city: 'Қаскелен', color: '#0E3157',
-      logo: 'https://edurank.org/assets/img/uni-logos/suleyman-demirel-university-kazakhstan-logo.png' },
-    { abbr: 'NU', name: 'Назарбаев Университеті', city: 'Астана', color: '#1E40AF',
-      logo: 'https://edurank.org/assets/img/uni-logos/nazarbayev-university-logo.png' },
-    { abbr: 'AITU', name: 'Astana IT University', city: 'Астана', color: '#0E7490',
-      logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Astana_IT_University_logo.png/120px-Astana_IT_University_logo.png' },
-    { abbr: 'ҚазҰУ', name: 'Әл-Фараби ҚазҰУ', city: 'Алматы', color: '#065F46',
-      logo: 'https://edurank.org/assets/img/uni-logos/al-farabi-kazakh-national-university-logo.jpg' },
-    { abbr: 'ЕҰУ', name: 'Еуразия ұлттық ун.', city: 'Астана', color: '#1D4ED8',
-      logo: 'https://edurank.org/assets/img/uni-logos/l-n-gumilyov-eurasian-national-university-logo.png' },
-    { abbr: 'NRX', name: 'Narxoz University', city: 'Алматы', color: '#7C3AED',
-      logo: 'https://edurank.org/assets/img/uni-logos/narxoz-university-logo.png' },
-    { abbr: 'ҚБТУ', name: 'ҚБТУ', city: 'Алматы', color: '#B45309',
-      logo: 'https://edurank.org/assets/img/uni-logos/kazakh-british-technical-university-logo.png' },
-    { abbr: 'ABAI', name: 'Абай университеті', city: 'Алматы', color: '#123C69',
-      logo: 'https://edurank.org/assets/img/uni-logos/kazakh-national-pedagogical-university-logo.png' },
+  const FEATURED = [
+    { id: 66, label: 'SDU University' },
+    { id: 71, label: 'Astana IT University' },
+    { id: 24, label: 'Әл-Фараби ҚазҰУ' },
+    { id: 12, label: 'Л.Н. Гумилёв ЕҰУ' },
+    { id: 18, label: 'Narxoz University' },
+    { id: 67, label: 'ҚБТУ' },
+    { id: 6,  label: 'Абай университеті' },
+    { id: 25, label: 'Satbayev University' },
   ];
+  const SEED = window.UNIVERSITIES_SEED || [];
+  const byId = {};
+  SEED.forEach(u => { byId[u.id] = u; });
+  const unis = FEATURED.map(f => {
+    const u = byId[f.id] || {};
+    return {
+      abbr: ((u.short_name || f.label || 'ЖОО').trim().split(/\s+/)[0] || 'ЖОО').slice(0, 5),
+      name: f.label,
+      city: u.city || '',
+      color: '#1E3A5F',
+      logo: u.logo_url || ''
+    };
+  }).filter(x => x.logo);
   const grid = document.getElementById('unisGrid');
   unis.forEach(u => {
     const card = document.createElement('div');
