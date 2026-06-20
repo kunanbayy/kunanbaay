@@ -19,6 +19,7 @@
     body { background: #FBFBFE; }
     body::before, body::after { display: none; }
     .grant-wrap { max-width: 1180px; margin: 0 auto; padding: 36px 24px 80px; }
+    .hidden { display: none !important; }
 
     .gp-eyebrow { display: inline-flex; align-items: center; gap: 8px; background: var(--gp-soft); color: var(--gp); font-weight: 700; font-size: .8rem; padding: 7px 14px; border-radius: 999px; }
     .gp-h1 { font-family: var(--font-display); color: var(--ink); font-size: clamp(1.8rem,3.5vw,2.6rem); margin: 16px 0 12px; letter-spacing: -.02em; }
@@ -28,8 +29,18 @@
     .gp-card h2.card-title { font-size: 1.3rem; color: var(--ink); margin-bottom: 6px; }
     .gp-card .card-desc { color: var(--text-muted); font-size: .95rem; margin-bottom: 22px; }
 
+    /* Mode toggle */
+    .mode-toggle { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 26px 0 0; }
+    .mode-btn { display: flex; align-items: center; gap: 14px; text-align: left; background: #fff; border: 2px solid var(--g-line); border-radius: 18px; padding: 18px 20px; cursor: pointer; transition: .18s; font-family: var(--font-body); }
+    .mode-btn:hover { border-color: var(--gp-soft); }
+    .mode-btn.active { border-color: var(--gp); background: var(--gp-softer); box-shadow: 0 10px 26px rgba(109,93,252,.12); }
+    .mode-btn .mi { width: 46px; height: 46px; flex: 0 0 46px; border-radius: 13px; background: var(--gp-soft); color: var(--gp); display: flex; align-items: center; justify-content: center; font-size: 1.25rem; }
+    .mode-btn.active .mi { background: var(--gp); color: #fff; }
+    .mode-btn .mt { font-weight: 800; color: var(--ink); font-size: 1rem; }
+    .mode-btn .md { font-size: .82rem; color: var(--text-muted); margin-top: 2px; }
+
     /* Form */
-    .form-section { margin-top: 30px; }
+    .form-section { margin-top: 20px; }
     .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
     .field { display: flex; flex-direction: column; gap: 8px; }
     .field.full { grid-column: 1 / -1; }
@@ -48,7 +59,14 @@
     .btn-calc { margin-top: 22px; width: 100%; min-height: 58px; border: none; border-radius: 16px; background: var(--gp); color: #fff; font-weight: 800; font-size: 1.05rem; font-family: var(--font-body); display: inline-flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 14px 30px rgba(109,93,252,.28); transition: .18s; }
     .btn-calc:hover { background: var(--gp-dark); transform: translateY(-2px); }
 
-    /* Results */
+    /* Program picker (mode 2) */
+    .prog-card { margin-top: 20px; }
+    .prog-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+    .prog-field { display: flex; flex-direction: column; gap: 8px; }
+    .prog-field label { font-size: .82rem; font-weight: 800; color: var(--gp); display: flex; align-items: center; gap: 8px; }
+    .prog-num { width: 22px; height: 22px; border-radius: 50%; background: var(--gp); color: #fff; display: inline-flex; align-items: center; justify-content: center; font-size: .72rem; }
+
+    /* Results (mode 1) */
     .results { margin-top: 24px; display: grid; grid-template-columns: 1fr 1.15fr; gap: 24px; align-items: start; }
     .res-score { font-family: var(--font-display); font-weight: 800; font-size: 3.2rem; color: var(--gp); line-height: 1; margin: 14px 0 16px; }
     .res-score small { font-size: 1.3rem; color: var(--text-light); font-weight: 600; }
@@ -74,13 +92,11 @@
     .scale-row .sl-fill { height: 100%; border-radius: 999px; width: 0; transition: width 1s cubic-bezier(.4,0,.2,1); }
     .scale-row .sl-range { font-size: .72rem; color: var(--text-light); font-weight: 600; text-align: right; }
 
-    /* Section title */
     .sec-title { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 46px 0 18px; flex-wrap: wrap; }
     .sec-title h2 { font-size: 1.5rem; color: var(--ink); display: flex; align-items: center; gap: 10px; }
     .sec-title .view-all { color: var(--gp); font-weight: 700; font-size: .95rem; display: inline-flex; align-items: center; gap: 6px; }
     .sec-sub { color: var(--text-muted); font-size: .95rem; margin: -8px 0 18px; }
 
-    /* 4 choice cards */
     .uni-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
     .uni-card { position: relative; background: #fff; border: 1px solid var(--g-line); border-radius: 20px; padding: 20px 18px 18px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px; transition: .2s; }
     .uni-card:hover { transform: translateY(-4px); box-shadow: 0 16px 36px rgba(109,93,252,.14); border-color: var(--gp-soft); }
@@ -103,15 +119,21 @@
     .chance.low  { background: var(--g-red-bg);   color: var(--g-red); }
     .card-note { font-size: .76rem; color: var(--text-muted); line-height: 1.4; }
 
-    /* AI counselor */
     .ai-card { margin-top: 24px; display: grid; grid-template-columns: 64px 1fr; gap: 18px; align-items: start; background: linear-gradient(135deg, #F6F4FF, #FFFFFF); border: 1px solid var(--gp-soft); border-radius: 22px; padding: 26px; }
     .ai-ic { width: 64px; height: 64px; border-radius: 18px; background: var(--gp); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 1.7rem; box-shadow: 0 12px 26px rgba(109,93,252,.32); }
-    .ai-card h3 { font-size: 1.1rem; color: var(--ink); margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+    .ai-card h3 { font-size: 1.1rem; color: var(--ink); margin-bottom: 8px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
     .ai-card p { color: var(--text); font-size: .98rem; line-height: 1.65; }
+    .pill-premium { font-size: .68rem; font-weight: 800; background: var(--g-gold-bg); color: var(--g-gold); padding: 4px 10px; border-radius: 999px; text-transform: uppercase; }
+
+    /* Mode 2 free count */
+    .free-count { margin-top: 24px; text-align: center; background: linear-gradient(135deg, var(--gp-softer), #fff); border: 1px solid var(--gp-soft); border-radius: 22px; padding: 34px 24px; }
+    .free-count .fc-num { font-family: var(--font-display); font-weight: 800; font-size: 3rem; color: var(--gp); line-height: 1; }
+    .free-count .fc-txt { color: var(--text); font-size: 1.05rem; margin-top: 8px; font-weight: 600; }
+    .free-count .fc-sub { color: var(--text-muted); font-size: .9rem; margin-top: 6px; }
 
     /* Locked */
     .locked-wrap { position: relative; margin-top: 6px; border-radius: 22px; overflow: hidden; border: 1px solid var(--g-line); }
-    .locked-blur { filter: blur(7px); pointer-events: none; user-select: none; padding: 28px; background: #fff; }
+    .locked-blur { filter: blur(8px); pointer-events: none; user-select: none; padding: 28px; background: #fff; }
     .lk-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
     .lk-box { background: #F4F5FA; border-radius: 14px; padding: 18px; }
     .lk-box .t { height: 12px; width: 60%; background: #E2E8F0; border-radius: 6px; margin-bottom: 12px; }
@@ -120,8 +142,20 @@
     .locked-overlay { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; text-align: center; padding: 24px; background: linear-gradient(180deg, rgba(255,255,255,.55), rgba(255,255,255,.86)); }
     .lock-ic { width: 60px; height: 60px; border-radius: 50%; background: var(--gp); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; box-shadow: 0 12px 30px rgba(109,93,252,.4); }
     .locked-overlay h3 { font-size: 1.45rem; color: var(--ink); }
-    .lk-feats { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; max-width: 620px; }
+    .lk-feats { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; max-width: 640px; }
     .lk-feat { background: #fff; border: 1px solid var(--g-line); border-radius: 999px; padding: 6px 13px; font-size: .8rem; color: var(--text); font-weight: 600; }
+    .lk-feat i { color: var(--g-green); margin-right: 5px; }
+
+    /* program analysis blocks (behind blur) */
+    .prog-block { background: #fff; border: 1px solid var(--g-line); border-radius: 16px; padding: 18px; margin-bottom: 14px; }
+    .prog-block:last-child { margin-bottom: 0; }
+    .prog-block h4 { font-size: 1rem; color: var(--ink); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .prog-block .pcode { font-size: .72rem; font-weight: 800; background: var(--gp-soft); color: var(--gp); padding: 3px 8px; border-radius: 6px; }
+    .prow { display: grid; grid-template-columns: 1fr auto auto auto; gap: 12px; align-items: center; padding: 9px 0; border-top: 1px dashed #EEF0F6; font-size: .86rem; }
+    .prow .pu { font-weight: 700; color: var(--ink); }
+    .prow .role { font-size: .72rem; font-weight: 800; padding: 3px 9px; border-radius: 999px; }
+    .prow .thr { color: var(--text-muted); }
+    .prow .pp { font-weight: 800; }
 
     /* Pricing */
     .price-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; max-width: 820px; }
@@ -139,7 +173,6 @@
     .price-btn.solid { background: var(--gp); color: #fff; border-color: var(--gp); }
     .price-btn.solid:hover { background: var(--gp-dark); }
 
-    /* Tips */
     .tips-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
     .tip { display: flex; gap: 14px; background: #fff; border: 1px solid var(--g-line); border-radius: 16px; padding: 18px; }
     .tip .ic { width: 42px; height: 42px; flex: 0 0 42px; border-radius: 12px; background: var(--gp-soft); color: var(--gp); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
@@ -149,12 +182,13 @@
     @media (max-width: 920px) {
       .results { grid-template-columns: 1fr; }
       .uni-grid { grid-template-columns: repeat(2, 1fr); }
-      .price-grid, .lk-grid { grid-template-columns: 1fr; }
+      .price-grid, .lk-grid, .mode-toggle { grid-template-columns: 1fr; }
     }
     @media (max-width: 560px) {
-      .form-grid, .tips-grid, .uni-grid { grid-template-columns: 1fr; }
+      .form-grid, .tips-grid, .uni-grid, .prog-grid { grid-template-columns: 1fr; }
       .prob-pct { font-size: 2.6rem; }
       .ai-card { grid-template-columns: 1fr; }
+      .prow { grid-template-columns: 1fr auto; }
     }
   </style>
 </head>
@@ -200,7 +234,19 @@
   <h1 class="gp-h1">Грант мүмкіндігін тексер</h1>
   <p class="gp-sub">ҰБТ нәтижесі бойынша қай мамандықтар мен университеттерге түсе алатыныңызды анықтап, мемлекеттік грант конкурсына арналған ең тиімді «4 таңдау» стратегияңызды құрыңыз.</p>
 
-  <!-- STEP 1 — FORM -->
+  <!-- MODE TOGGLE -->
+  <div class="mode-toggle">
+    <button class="mode-btn active" id="modeAiBtn" data-mode="ai">
+      <div class="mi"><i class="fas fa-robot"></i></div>
+      <div><div class="mt">🤖 AI 4 таңдау құрастырсын</div><div class="md">Жүйе сізге ең тиімді 4 нұсқаны автоматты ұсынады</div></div>
+    </button>
+    <button class="mode-btn" id="modeManualBtn" data-mode="manual">
+      <div class="mi"><i class="fas fa-pen-to-square"></i></div>
+      <div><div class="mt">✍️ Мен өзім таңдаймын</div><div class="md">4 мамандықты өзіңіз таңдап, талдау алыңыз</div></div>
+    </button>
+  </div>
+
+  <!-- FORM (shared) -->
   <div class="gp-card form-section">
     <h2 class="card-title">Деректеріңізді енгізіңіз</h2>
     <p class="card-desc">ҰБТ балыңыз бен таңдауыңызды енгізіп, нәтижеңізді анықтаңыз.</p>
@@ -228,7 +274,7 @@
           <option value="__other">Басқа өңірлер</option>
         </select>
       </div>
-      <div class="field">
+      <div class="field" id="uniField">
         <label>Университет</label>
         <select id="uniSel"><option value="">Кез келген университет</option></select>
       </div>
@@ -243,90 +289,124 @@
         </select>
       </div>
     </div>
-    <button class="btn-calc" id="calcBtn"><i class="fas fa-wand-magic-sparkles"></i> Менің 4 таңдауымды құру</button>
-  </div>
 
-  <!-- STEP 2 + 3 — RESULT + GRANT CHANCE -->
-  <div class="results" id="results">
-    <div class="gp-card">
-      <h2 class="card-title">Сіздің нәтижеңіз</h2>
-      <div class="res-score"><span id="resScore">92</span><small>/ 140</small></div>
-      <div class="res-list">
-        <div class="res-item"><i class="fas fa-graduation-cap"></i><span class="k">Грант түрі</span><span class="v">Жалпы мемлекеттік</span></div>
-        <div class="res-item"><i class="fas fa-users"></i><span class="k">Квота түрі</span><span class="v" id="resQuota">Квота жоқ</span></div>
-        <div class="res-item"><i class="fas fa-book"></i><span class="k">Таңдау пәндері</span><span class="v" id="resSubj">—</span></div>
-        <div class="res-item"><i class="fas fa-map-marker-alt"></i><span class="k">Қала</span><span class="v" id="resCity">Қазақстан бойынша</span></div>
-        <div class="res-item"><i class="fas fa-university"></i><span class="k">Университет</span><span class="v" id="resUni">Кез келген</span></div>
+    <!-- Program picker (manual mode only) -->
+    <div class="prog-card hidden" id="progCard" style="margin-top:22px;border-top:1px solid var(--g-line);padding-top:22px;">
+      <h2 class="card-title" style="font-size:1.05rem;">Өз 4 мамандығыңызды таңдаңыз</h2>
+      <p class="card-desc" style="margin-bottom:16px;">Таңдалған пәндер бойынша қолжетімді білім беру бағдарламалары тобынан (ББТ) 4 мамандық таңдаңыз.</p>
+      <div class="prog-grid">
+        <div class="prog-field"><label><span class="prog-num">1</span> 1-таңдау</label><select id="prog0"></select></div>
+        <div class="prog-field"><label><span class="prog-num">2</span> 2-таңдау</label><select id="prog1"></select></div>
+        <div class="prog-field"><label><span class="prog-num">3</span> 3-таңдау</label><select id="prog2"></select></div>
+        <div class="prog-field"><label><span class="prog-num">4</span> 4-таңдау</label><select id="prog3"></select></div>
       </div>
     </div>
 
-    <div class="gp-card">
-      <span class="prob-cap">Грант мүмкіндігі</span>
-      <div class="prob-head">
-        <div class="prob-pct"><span id="probPct">72</span>%</div>
-        <div class="prob-level" id="probLevel">🟡 Орташа мүмкіндік</div>
+    <button class="btn-calc" id="calcBtn"><i class="fas fa-wand-magic-sparkles"></i> <span id="calcLabel">Менің 4 таңдауымды құру</span></button>
+  </div>
+
+  <!-- ============ MODE 1: AI BUILDS 4 ============ -->
+  <div id="mode1Wrap">
+    <div class="results" id="results">
+      <div class="gp-card">
+        <h2 class="card-title">Сіздің нәтижеңіз</h2>
+        <div class="res-score"><span id="resScore">92</span><small>/ 140</small></div>
+        <div class="res-list">
+          <div class="res-item"><i class="fas fa-graduation-cap"></i><span class="k">Грант түрі</span><span class="v">Жалпы мемлекеттік</span></div>
+          <div class="res-item"><i class="fas fa-users"></i><span class="k">Квота түрі</span><span class="v" id="resQuota">Квота жоқ</span></div>
+          <div class="res-item"><i class="fas fa-book"></i><span class="k">Таңдау пәндері</span><span class="v" id="resSubj">—</span></div>
+          <div class="res-item"><i class="fas fa-map-marker-alt"></i><span class="k">Қала</span><span class="v" id="resCity">Қазақстан бойынша</span></div>
+          <div class="res-item"><i class="fas fa-university"></i><span class="k">Университет</span><span class="v" id="resUni">Кез келген</span></div>
+        </div>
       </div>
-      <div class="prob-bar"><div class="prob-bar-fill" id="probBar"></div></div>
-      <p class="prob-desc" id="probDesc">Сіздің нәтижеңіз бойынша грантқа түсу мүмкіндігі жақсы. Бірнеше университетке құжат тапсыру ұсынылады.</p>
-      <div class="scale-rows" id="scaleRows">
-        <div class="scale-row" data-band="low"><span class="sl-name">Төмен</span><div class="sl-track"><div class="sl-fill" style="background:var(--g-red)"></div></div><span class="sl-range">0–63</span></div>
-        <div class="scale-row" data-band="risk"><span class="sl-name">Тәуекел</span><div class="sl-track"><div class="sl-fill" style="background:var(--g-orange)"></div></div><span class="sl-range">64–79</span></div>
-        <div class="scale-row" data-band="med"><span class="sl-name">Орташа</span><div class="sl-track"><div class="sl-fill" style="background:var(--g-gold)"></div></div><span class="sl-range">80–101</span></div>
-        <div class="scale-row" data-band="high"><span class="sl-name">Жоғары</span><div class="sl-track"><div class="sl-fill" style="background:var(--g-green)"></div></div><span class="sl-range">102–140</span></div>
+      <div class="gp-card">
+        <span class="prob-cap">Грант мүмкіндігі</span>
+        <div class="prob-head">
+          <div class="prob-pct"><span id="probPct">72</span>%</div>
+          <div class="prob-level" id="probLevel">🟡 Орташа мүмкіндік</div>
+        </div>
+        <div class="prob-bar"><div class="prob-bar-fill" id="probBar"></div></div>
+        <p class="prob-desc" id="probDesc">Сіздің нәтижеңіз бойынша грантқа түсу мүмкіндігі жақсы.</p>
+        <div class="scale-rows" id="scaleRows">
+          <div class="scale-row" data-band="low"><span class="sl-name">Төмен</span><div class="sl-track"><div class="sl-fill" style="background:var(--g-red)"></div></div><span class="sl-range">0–63</span></div>
+          <div class="scale-row" data-band="risk"><span class="sl-name">Тәуекел</span><div class="sl-track"><div class="sl-fill" style="background:var(--g-orange)"></div></div><span class="sl-range">64–79</span></div>
+          <div class="scale-row" data-band="med"><span class="sl-name">Орташа</span><div class="sl-track"><div class="sl-fill" style="background:var(--g-gold)"></div></div><span class="sl-range">80–101</span></div>
+          <div class="scale-row" data-band="high"><span class="sl-name">Жоғары</span><div class="sl-track"><div class="sl-fill" style="background:var(--g-green)"></div></div><span class="sl-range">102–140</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec-title">
+      <h2>🤖 Shyraq ұсынған 4 таңдау</h2>
+      <a href="universities.html" class="view-all">Барлығын көру <i class="fas fa-arrow-right"></i></a>
+    </div>
+    <p class="sec-sub">Стратегия: бір «арман» нұсқа, екі нақты нұсқа және бір қауіпсіз нұсқа.</p>
+    <div class="uni-grid" id="uniGrid"></div>
+
+    <div class="ai-card">
+      <div class="ai-ic"><i class="fas fa-robot"></i></div>
+      <div><h3>Shyraq AI кеңесшісі</h3><p id="aiText">—</p></div>
+    </div>
+
+    <div class="sec-title"><h2 id="lockedTitle">🔒 Тағы сәйкес нұсқалар табылды</h2></div>
+    <div class="locked-wrap">
+      <div class="locked-blur">
+        <div class="lk-grid">
+          <div class="lk-box"><div class="t"></div><div class="b"></div></div>
+          <div class="lk-box"><div class="t"></div><div class="b"></div></div>
+          <div class="lk-box"><div class="t"></div><div class="b"></div></div>
+        </div>
+        <div class="lk-line" style="width:92%"></div><div class="lk-line" style="width:80%"></div><div class="lk-line" style="width:88%"></div><div class="lk-line" style="width:72%"></div>
+      </div>
+      <div class="locked-overlay">
+        <div class="lock-ic"><i class="fas fa-lock"></i></div>
+        <h3 id="lockedHead">Толық аналитиканы ашу</h3>
+        <div class="lk-feats">
+          <span class="lk-feat">Барлық университеттер</span><span class="lk-feat">Барлық мамандықтар</span>
+          <span class="lk-feat">Соңғы 3 жыл статистикасы</span><span class="lk-feat">Толық грант ықтималдығы</span>
+          <span class="lk-feat">Серпін мүмкіндіктері</span><span class="lk-feat">Конкурс деңгейі</span>
+        </div>
+        <a href="pricing.html" class="btn btn-primary btn-lg" style="background:var(--gp);border-color:var(--gp);margin-top:6px"><i class="fas fa-crown" style="margin-right:8px"></i> Толық аналитиканы ашу</a>
       </div>
     </div>
   </div>
 
-  <!-- STEP 4 — AI GENERATED 4 CHOICES -->
-  <div class="sec-title">
-    <h2>🤖 Shyraq ұсынған 4 таңдау</h2>
-    <a href="universities.html" class="view-all">Барлығын көру <i class="fas fa-arrow-right"></i></a>
-  </div>
-  <p class="sec-sub">Мемлекеттік грант конкурсында қолданылатын стратегия: бір «арман» нұсқа, екі нақты нұсқа және бір қауіпсіз нұсқа.</p>
-  <div class="uni-grid" id="uniGrid"></div>
-
-  <!-- STEP 7 — AI COUNSELOR -->
-  <div class="ai-card">
-    <div class="ai-ic"><i class="fas fa-robot"></i></div>
-    <div>
-      <h3>Shyraq AI кеңесшісі</h3>
-      <p id="aiText">—</p>
+  <!-- ============ MODE 2: USER PICKS 4 ============ -->
+  <div id="mode2Wrap" class="hidden">
+    <div class="free-count">
+      <div class="fc-num" id="fcNum">0</div>
+      <div class="fc-txt" id="fcTxt">4 мамандық бойынша сәйкес университет табылды</div>
+      <div class="fc-sub">Толық ұсыныстарды көру үшін аналитиканы ашыңыз.</div>
     </div>
-  </div>
 
-  <!-- STEP 5 — LOCKED ANALYTICS -->
-  <div class="sec-title"><h2 id="lockedTitle">🔒 Тағы сәйкес нұсқалар табылды</h2></div>
-  <div class="locked-wrap">
-    <div class="locked-blur">
-      <div class="lk-grid">
-        <div class="lk-box"><div class="t"></div><div class="b"></div></div>
-        <div class="lk-box"><div class="t"></div><div class="b"></div></div>
-        <div class="lk-box"><div class="t"></div><div class="b"></div></div>
+    <div class="sec-title"><h2>🔒 Толық университет ұсыныстары дайын</h2></div>
+    <div class="locked-wrap">
+      <div class="locked-blur" id="progAnalysis"></div>
+      <div class="locked-overlay">
+        <div class="lock-ic"><i class="fas fa-lock"></i></div>
+        <h3>Толық университет ұсыныстарын ашу</h3>
+        <div class="lk-feats">
+          <span class="lk-feat"><i class="fas fa-check"></i>Әр мамандыққа сәйкес университеттер</span>
+          <span class="lk-feat"><i class="fas fa-check"></i>Соңғы 3 жыл грант шектері</span>
+          <span class="lk-feat"><i class="fas fa-check"></i>Грант ықтималдығы</span>
+          <span class="lk-feat"><i class="fas fa-check"></i>Қауіпсіз және тәуекел университеттер</span>
+          <span class="lk-feat"><i class="fas fa-check"></i>Қай университетті қай орынға қою керек</span>
+          <span class="lk-feat"><i class="fas fa-check"></i>AI приоритет стратегиясы</span>
+        </div>
+        <a href="pricing.html" class="btn btn-primary btn-lg" style="background:var(--gp);border-color:var(--gp);margin-top:6px"><i class="fas fa-crown" style="margin-right:8px"></i> Толық ұсыныстарды ашу</a>
       </div>
-      <div class="lk-line" style="width:92%"></div>
-      <div class="lk-line" style="width:80%"></div>
-      <div class="lk-line" style="width:88%"></div>
-      <div class="lk-line" style="width:72%"></div>
     </div>
-    <div class="locked-overlay">
-      <div class="lock-ic"><i class="fas fa-lock"></i></div>
-      <h3 id="lockedHead">Толық аналитиканы ашу</h3>
-      <div class="lk-feats">
-        <span class="lk-feat">Барлық университеттер</span>
-        <span class="lk-feat">Барлық мамандықтар</span>
-        <span class="lk-feat">Соңғы 3 жыл статистикасы</span>
-        <span class="lk-feat">Толық грант ықтималдығы</span>
-        <span class="lk-feat">Серпін мүмкіндіктері</span>
-        <span class="lk-feat">Ауыл квотасы әсері</span>
-        <span class="lk-feat">Конкурс деңгейі</span>
-        <span class="lk-feat">Альтернативті мамандықтар</span>
-        <span class="lk-feat">Қауіпсіз таңдау стратегиялары</span>
+
+    <div class="ai-card" style="margin-top:24px;">
+      <div class="ai-ic"><i class="fas fa-robot"></i></div>
+      <div>
+        <h3>Shyraq AI Кеңесі <span class="pill-premium">Premium</span></h3>
+        <p id="aiText2">Толық AI приоритет стратегиясы Premium пайдаланушыларға қолжетімді.</p>
       </div>
-      <a href="pricing.html" class="btn btn-primary btn-lg" style="background:var(--gp);border-color:var(--gp);margin-top:6px"><i class="fas fa-crown" style="margin-right:8px"></i> Толық аналитиканы ашу</a>
     </div>
   </div>
 
-  <!-- STEP 6 — PRICING -->
+  <!-- PRICING (shared) -->
   <div class="sec-title"><h2>Тарифтер</h2></div>
   <div class="price-grid">
     <div class="price-card">
@@ -346,8 +426,7 @@
       <div class="price-amt">1 990 ₸ <small>/ ай</small></div>
       <ul class="price-feats">
         <li><i class="fas fa-check"></i> Шексіз есептеу</li>
-        <li><i class="fas fa-check"></i> Барлық мамандықтар</li>
-        <li><i class="fas fa-check"></i> Барлық университеттер</li>
+        <li><i class="fas fa-check"></i> Барлық мамандықтар мен университеттер</li>
         <li><i class="fas fa-check"></i> AI Кеңесші</li>
         <li><i class="fas fa-check"></i> Грант жаңартулары</li>
         <li><i class="fas fa-check"></i> Приоритетті ұсыныстар</li>
@@ -358,11 +437,11 @@
     </div>
   </div>
 
-  <!-- TIPS -->
+  <!-- TIPS (shared) -->
   <div class="sec-title"><h2>Кеңестер</h2></div>
   <div class="tips-grid">
     <div class="tip"><div class="ic"><i class="fas fa-circle-info"></i></div><div><div class="tt">Квота балл қоспайды</div><div class="td">Таңдалған квота тек грант конкурсында арнайы санат ретінде ескеріледі, балға қосылмайды.</div></div></div>
-    <div class="tip"><div class="ic"><i class="fas fa-layer-group"></i></div><div><div class="tt">4 басымдылықты дұрыс ретте</div><div class="td">Арман нұсқаны бірінші, қауіпсіз нұсқаны соңына қойыңыз — грант конкурсы басымдылық бойынша жүреді.</div></div></div>
+    <div class="tip"><div class="ic"><i class="fas fa-layer-group"></i></div><div><div class="tt">4 басымдылықты дұрыс ретте</div><div class="td">Арман нұсқаны бірінші, қауіпсіз нұсқаны соңына қойыңыз — конкурс басымдылық бойынша жүреді.</div></div></div>
     <div class="tip"><div class="ic"><i class="fas fa-location-dot"></i></div><div><div class="tt">Өңірлік университеттер</div><div class="td">Астана мен Алматыдан басқа өңірлік ЖОО-ларда конкурс төмен болуы мүмкін.</div></div></div>
     <div class="tip"><div class="ic"><i class="fas fa-shuffle"></i></div><div><div class="tt">Ұқсас мамандықтар</div><div class="td">Балл жетпеген жағдайда ұқсас мамандықтарды қарастырыңыз — өту шегі төмен болуы мүмкін.</div></div></div>
   </div>
@@ -372,12 +451,11 @@
 <script src="js/universities-data.js"></script>
 <script>
   const SEED = window.UNIVERSITIES_SEED || [];
+  const MAIN_CITIES = ["Алматы","Астана","Шымкент"];
 
-  // map raw DB subject words -> canonical tokens
   const TOK = {"математика":"math","информатика":"info","физика":"phys","биология":"bio","география":"geo","химия":"chem","ин. язык":"foreign","вс. история":"hist","основы права":"law","рус. язык":"ruslang","рус. литература":"ruslit","каз. язык":"kazlang","каз. литература":"kazlit","творческий экзамен":"creative"};
   function dbTokens(s){ const set=new Set(); (s||"").split(",").forEach(p=>p.split(/[–-]/).forEach(r=>{ const k=r.trim().toLowerCase(); if(TOK[k]) set.add(TOK[k]); })); return set; }
 
-  // UNT subject combinations (Kazakh label + canonical tokens)
   const SUBJECTS = [
     ["Математика және Информатика", ["math","info"]],
     ["Математика және Физика", ["math","phys"]],
@@ -395,25 +473,22 @@
   ];
   (function(){ const sel=document.getElementById('subjSel'); SUBJECTS.forEach((s,i)=>{ const o=document.createElement('option'); o.value=i; o.textContent=s[0]; sel.appendChild(o); }); })();
 
-  // nicer major labels for common majors
-  const MAJOR_TR = {
-    "Информационные технологии (IT)":"Computer Science",
-    "Информационная безопасность (Kибербезопасность)":"Cyber Security",
-    "Информационная безопасность (Kибербезопасность)":"Cyber Security",
-    "Криптология":"Cryptology",
-    "Коммуникации и коммуникационные технологии":"Communication Tech"
+  // Kazakh names for program groups (ББТ). Fallback = cleaned Russian.
+  const CODE_KK = {
+    "B001":"Педагогика және психология","B002":"Мектепке дейінгі оқыту және тәрбиелеу","B003":"Бастауышта оқыту педагогикасы","B004":"Алғашқы әскери дайындық мұғалімдері","B005":"Дене шынықтыру мұғалімдері","B006":"Музыка мұғалімдері","B007":"Көркем еңбек және сызу мұғалімдері","B008":"Құқық және экономика негіздері мұғалімдері","B009":"Математика мұғалімдері","B010":"Физика мұғалімдері","B011":"Информатика мұғалімдері","B012":"Химия мұғалімдері","B013":"Биология мұғалімдері","B014":"География мұғалімдері","B015":"Гуманитарлық пәндер мұғалімдері","B016":"Қазақ тілі мен әдебиеті мұғалімдері","B017":"Орыс тілі мен әдебиеті мұғалімдері","B018":"Шетел тілі мұғалімдері","B019":"Әлеуметтік педагогтар","B020":"Арнайы педагогика (Дефектология)","B021":"Орындаушылық өнер","B027":"Театр өнері","B028":"Хореография","B029":"Аудиовизуалды құралдар және медиа","B030":"Бейнелеу өнері","B031":"Сән, дизайн","B032":"Философия және этика","B033":"Дін және теология","B034":"Тарих","B035":"Түркітану","B036":"Аударма ісі","B037":"Филология","B038":"Әлеуметтану","B039":"Мәдениеттану","B040":"Саясаттану","B041":"Психология","B042":"Журналистика","B043":"Кітапхана және архив ісі","B044":"Менеджмент және басқару","B045":"Аудит және салық салу","B046":"Қаржы, экономика және банк ісі","B047":"Маркетинг және жарнама","B048":"Еңбек дағдылары (HR)","B049":"Құқық","B050":"Биологиялық ғылымдар","B051":"Қоршаған орта (Экология)","B052":"Жер туралы ғылым","B053":"Химия","B054":"Физика","B055":"Математика және статистика","B056":"Механика","B057":"Ақпараттық технологиялар","B058":"Ақпараттық қауіпсіздік","B059":"Коммуникациялық технологиялар","B060":"Химиялық инженерия","B061":"Материалтану және технологиялар","B062":"Электротехника және энергетика","B063":"Электротехника және автоматтандыру","B064":"Механика және металл өңдеу","B065":"Автокөлік құралдары","B066":"Теңіз көлігі","B067":"Әуе көлігі және технологиялары","B068":"Тамақ өнімдерін өндіру","B069":"Материалдар өндірісі","B070":"Тоқыма, киім, аяқ киім","B071":"Тау-кен ісі","B072":"Фармацевтикалық өндіріс","B073":"Сәулет","B074":"Қала құрылысы және құрылыс","B075":"Кадастр және жерге орналастыру","B076":"Стандарттау және метрология","B077":"Өсімдік шаруашылығы","B078":"Мал шаруашылығы","B079":"Орман шаруашылығы","B080":"Балық шаруашылығы","B082":"Су ресурстары","B083":"Ветеринария","B084":"Мейіргер ісі","B085":"Фармация","B089":"Қоғамдық денсаулық","B090":"Әлеуметтік жұмыс","B091":"Туризм","B092":"Демалыс","B093":"Мейрамхана және қонақүй бизнесі","B094":"Санитарлық-профилактикалық шаралар","B095":"Көлік қызметтері","B098":"Спорт","B140":"Халықаралық қатынастар және дипломатия","B141":"Халықаралық экономикалық қатынастар","B142":"Қоғаммен байланыс","B158":"Криптология","ВМ086":"Медицина","ВМ087":"Стоматология","ВМ088":"Педиатрия","ВМ089":"Медициналық-профилактикалық іс"
   };
-  function specLabel(name){ if(MAJOR_TR[name]) return MAJOR_TR[name]; return (name||"").replace(/\s*\(.*?\)\s*/g,"").trim(); }
+  function baseCode(c){ return (c||"").split(" ")[0].trim(); }
+  function codeName(code, ruName){ return CODE_KK[code] || (ruName||"").replace(/\s*\(.*$/,"").trim() || code; }
 
-  // university dropdown
+  function specLabel(name){ return (name||"").replace(/\s*\(.*?\)\s*/g,"").trim(); }
+
+  // university dropdown (mode 1)
   (function(){
     const sel=document.getElementById('uniSel');
     SEED.filter(u=>u.short_name||u.name_kz).map(u=>({id:u.id,nm:(u.short_name||u.name_kz)}))
       .sort((a,b)=>a.nm.localeCompare(b.nm,'ru'))
       .forEach(u=>{ const o=document.createElement('option'); o.value=u.id; o.textContent=u.nm; sel.appendChild(o); });
   })();
-
-  const MAIN_CITIES = ["Алматы","Астана","Шымкент"];
 
   function chanceFromDiff(diff){
     const pct=Math.max(3,Math.min(99,Math.round(50+diff*2.2)));
@@ -430,7 +505,6 @@
     if(diff>=-8) return "Сәл жетпейді, бірақ мүмкіндік бар.";
     return "Балл айтарлықтай жетпейді.";
   }
-
   function scoreToPct(s){
     const bands=[{lo:0,hi:63,plo:5,phi:34},{lo:64,hi:79,plo:35,phi:54},{lo:80,hi:101,plo:55,phi:84},{lo:102,hi:140,plo:85,phi:99}];
     const b=bands.find(b=>s>=b.lo&&s<=b.hi)||bands[3];
@@ -444,11 +518,12 @@
     low:{nm:'🔴 Төмен мүмкіндік',color:'var(--g-red)',bg:'var(--g-red-bg)',bar:'var(--g-red)',desc:'Грантқа түсу мүмкіндігі төмен. Балл талабы аз мамандықтар мен өңірлік университеттерді қарастырыңыз.'}
   };
 
+  function cityOk(u, city){ if(city==='__other') return MAIN_CITIES.indexOf(u.city)<0; if(city) return u.city===city; return true; }
+
   function matchAll(score, tokens, city, uniId){
     const out=[];
     SEED.forEach(u=>{
-      if(city==='__other'){ if(MAIN_CITIES.indexOf(u.city)>=0) return; }
-      else if(city){ if(u.city!==city) return; }
+      if(!cityOk(u,city)) return;
       if(uniId && String(u.id)!==String(uniId)) return;
       (u.specialties||[]).forEach(sp=>{
         if(sp.thresholdScore==null) return;
@@ -460,7 +535,6 @@
     return out;
   }
 
-  // build the Kazakhstan "4 choices" strategy
   function pick4(all){
     const used=new Set();
     const take=arr=>{ for(const x of arr){ if(!used.has(x.uni.id)){ used.add(x.uni.id); return x; } } return null; };
@@ -468,51 +542,54 @@
     const r1 = take(all.filter(x=>x.diff>=0 && x.diff<=12).sort((a,b)=>a.diff-b.diff)) || take([...all].sort((a,b)=>Math.abs(a.diff)-Math.abs(b.diff)));
     const r2 = take(all.filter(x=>x.diff>=0 && x.diff<=22).sort((a,b)=>a.diff-b.diff)) || take([...all].sort((a,b)=>Math.abs(a.diff)-Math.abs(b.diff)));
     const safe = take(all.filter(x=>x.diff>=15).sort((a,b)=>a.diff-b.diff)) || take(all.filter(x=>x.diff>=0).sort((a,b)=>b.diff-a.diff));
-    const labelled=[];
-    if(dream) labelled.push(['Арман нұсқа','prio-dream',dream]);
-    if(r1) labelled.push(['Нақты нұсқа','prio-real',r1]);
-    if(r2) labelled.push(['Нақты нұсқа','prio-real',r2]);
-    if(safe) labelled.push(['Қауіпсіз нұсқа','prio-safe',safe]);
-    return labelled;
+    const L=[];
+    if(dream) L.push(['Арман нұсқа','prio-dream',dream]);
+    if(r1) L.push(['Нақты нұсқа','prio-real',r1]);
+    if(r2) L.push(['Нақты нұсқа','prio-real',r2]);
+    if(safe) L.push(['Қауіпсіз нұсқа','prio-safe',safe]);
+    return L;
   }
 
-  function render(){
+  /* ---------- form readers ---------- */
+  function readForm(){
     const score=+document.getElementById('scoreSlider').value;
     const subj=SUBJECTS[+document.getElementById('subjSel').value];
-    const subjText=subj[0], tokens=subj[1];
     const citySel=document.getElementById('citySel');
-    const city=citySel.value, cityText=citySel.selectedOptions[0].textContent;
     const uniSel=document.getElementById('uniSel');
-    const uniId=uniSel.value, uniText=uniSel.selectedOptions[0].textContent;
-    const quota=document.getElementById('quotaSel').value;
+    return {
+      score, subjText:subj[0], tokens:subj[1],
+      city:citySel.value, cityText:citySel.selectedOptions[0].textContent,
+      uniId:uniSel.value, uniText:uniSel.selectedOptions[0].textContent,
+      quota:document.getElementById('quotaSel').value
+    };
+  }
 
-    document.getElementById('resScore').textContent=score;
-    document.getElementById('resQuota').textContent=quota;
-    document.getElementById('resSubj').textContent=subjText;
-    document.getElementById('resCity').textContent=cityText;
-    document.getElementById('resUni').textContent=uniText;
+  /* ---------- MODE 1 render ---------- */
+  function renderMode1(){
+    const f=readForm();
+    document.getElementById('resScore').textContent=f.score;
+    document.getElementById('resQuota').textContent=f.quota;
+    document.getElementById('resSubj').textContent=f.subjText;
+    document.getElementById('resCity').textContent=f.cityText;
+    document.getElementById('resUni').textContent=f.uniText;
 
-    // grant chance
-    const pct=scoreToPct(score), band=bandOf(score), bt=BAND_TEXT[band];
+    const pct=scoreToPct(f.score), band=bandOf(f.score), bt=BAND_TEXT[band];
     document.getElementById('probPct').textContent=pct;
     const lv=document.getElementById('probLevel'); lv.textContent=bt.nm; lv.style.color=bt.color; lv.style.background=bt.bg;
     document.getElementById('probDesc').textContent=bt.desc;
     const bar=document.getElementById('probBar'); bar.style.width=pct+'%'; bar.style.background=bt.bar;
     const fills={low:25,risk:50,med:75,high:100};
-    document.querySelectorAll('.scale-row').forEach(row=>{ const b=row.dataset.band; row.classList.toggle('active',b===band); row.querySelector('.sl-fill').style.width=(b===band?Math.max(30,pct):fills[b])+'%'; });
+    document.querySelectorAll('#scaleRows .scale-row').forEach(row=>{ const b=row.dataset.band; row.classList.toggle('active',b===band); row.querySelector('.sl-fill').style.width=(b===band?Math.max(30,pct):fills[b])+'%'; });
 
-    // 4 choices
-    const all=matchAll(score,tokens,city,uniId);
+    const all=matchAll(f.score,f.tokens,f.city,f.uniId);
     const picks=pick4(all);
     const grid=document.getElementById('uniGrid'); grid.innerHTML='';
     if(!picks.length){
       grid.innerHTML='<div style="grid-column:1/-1;text-align:center;color:var(--text-muted);padding:34px;border:1px dashed var(--g-line);border-radius:18px;">Бұл таңдау бойынша мамандық табылмады. Пәндерді немесе қаланы өзгертіп көріңіз.</div>';
     }
     picks.forEach(([plabel,pcls,x])=>{
-      const c=chanceFromDiff(x.diff);
-      const nm=x.uni.short_name||x.uni.name_kz;
-      const div=document.createElement('div');
-      div.className='uni-card';
+      const c=chanceFromDiff(x.diff); const nm=x.uni.short_name||x.uni.name_kz;
+      const div=document.createElement('div'); div.className='uni-card';
       div.innerHTML=`
         <div class="prio ${pcls}">${plabel}</div>
         <div class="uni-logo"><img src="${x.uni.logo_url}" alt="${nm}" onerror="this.parentNode.innerHTML='<i class=\\'fas fa-university\\' style=\\'color:var(--gp);font-size:24px\\'></i>'"></div>
@@ -520,7 +597,7 @@
         <div class="uni-spec">${specLabel(x.sp.name)}</div>
         <div class="uni-rows">
           <div class="r"><span class="k">Өту шегі</span><span class="v">${x.sp.thresholdScore} балл</span></div>
-          <div class="r"><span class="k">Сіздің балл</span><span class="v">${score} балл</span></div>
+          <div class="r"><span class="k">Сіздің балл</span><span class="v">${f.score} балл</span></div>
           <div class="r"><span class="k">Қала</span><span class="v">${x.uni.city||'—'}</span></div>
         </div>
         <div class="chance ${c.cls}">${c.emoji} ${c.label} · ${c.pct}%</div>
@@ -528,34 +605,147 @@
       grid.appendChild(div);
     });
 
-    // locked count
     const remaining=Math.max(0, all.length - picks.length);
     document.getElementById('lockedTitle').textContent=`🔒 Тағы ${remaining} сәйкес нұсқа табылды`;
     document.getElementById('lockedHead').textContent=`Тағы ${remaining} нұсқаны ашу`;
 
-    // AI counselor
     const names=picks.slice(0,3).map(p=>p[2].uni.short_name||p[2].uni.name_kz);
     let ai='';
     if(picks.length){
-      const list = names.length>1 ? names.slice(0,-1).join(', ')+' және '+names[names.length-1] : names[0];
-      ai = `${score} балл нәтижесі бойынша сізге ${list} университеттері сәйкес келеді. `;
-      if(band==='high') ai += `Мүмкіндігіңіз жоғары — арман нұсқаңызды бірінші басымдылыққа қойып, қалғандарын қауіпсіздік үшін қосыңыз.`;
-      else if(band==='med') ai += `Грант ықтималдығын арттыру үшін «${subjText}» бойынша өңірлік университеттердегі бағдарламаларды да қарастыру ұсынылады.`;
-      else ai += `Балл талабы төмендеу мамандықтар мен өңірлік университеттерді таңдасаңыз, грантқа түсу мүмкіндігіңіз артады.`;
-    } else {
-      ai = `Бұл пәндер тіркесімі бойынша нұсқа табылмады. Басқа пән тіркесімін немесе қаланы таңдап көріңіз.`;
-    }
+      const list=names.length>1?names.slice(0,-1).join(', ')+' және '+names[names.length-1]:names[0];
+      ai=`${f.score} балл нәтижесі бойынша сізге ${list} университеттері сәйкес келеді. `;
+      if(band==='high') ai+='Мүмкіндігіңіз жоғары — арман нұсқаңызды бірінші басымдылыққа қойыңыз.';
+      else if(band==='med') ai+=`Грант ықтималдығын арттыру үшін «${f.subjText}» бойынша өңірлік университеттерді де қарастырыңыз.`;
+      else ai+='Балл талабы төмендеу мамандықтар мен өңірлік университеттерді таңдасаңыз, мүмкіндігіңіз артады.';
+    } else { ai='Бұл пәндер тіркесімі бойынша нұсқа табылмады. Басқа тіркесімді таңдап көріңіз.'; }
     document.getElementById('aiText').textContent=ai;
   }
 
+  /* ---------- MODE 2: programs ---------- */
+  function programsForSubject(tokens){
+    const map={};
+    SEED.forEach(u=>(u.specialties||[]).forEach(sp=>{
+      if(sp.thresholdScore==null) return;
+      const dt=dbTokens(sp.subjects);
+      if(tokens.length && !tokens.every(t=>dt.has(t))) return;
+      const code=baseCode(sp.code); if(!code) return;
+      if(!map[code]) map[code]={code, name:codeName(code,sp.name), n:0};
+      map[code].n++;
+    }));
+    return Object.values(map).sort((a,b)=>b.n-a.n);
+  }
+
+  function fillProgramSelects(){
+    const tokens=SUBJECTS[+document.getElementById('subjSel').value][1];
+    const progs=programsForSubject(tokens);
+    for(let i=0;i<4;i++){
+      const sel=document.getElementById('prog'+i);
+      const prev=sel.value;
+      sel.innerHTML='';
+      const empty=document.createElement('option'); empty.value=''; empty.textContent='— таңдаңыз —'; sel.appendChild(empty);
+      progs.forEach(p=>{ const o=document.createElement('option'); o.value=p.code; o.textContent=`${p.code} · ${p.name}`; sel.appendChild(o); });
+      // default first 4 distinct
+      if(progs[i]) sel.value=progs[i].code;
+      if(prev && progs.some(p=>p.code===prev)) sel.value=prev;
+    }
+  }
+
+  function unisForProgram(code, score, city){
+    const out=[];
+    SEED.forEach(u=>{
+      if(!cityOk(u,city)) return;
+      (u.specialties||[]).forEach(sp=>{
+        if(sp.thresholdScore==null) return;
+        if(baseCode(sp.code)!==code) return;
+        out.push({uni:u, sp:sp, diff:score-sp.thresholdScore});
+      });
+    });
+    // dedupe by university, keep best (smallest |diff|, prefer reachable)
+    const byU={};
+    out.forEach(x=>{ const id=x.uni.id; if(!byU[id] || Math.abs(x.diff)<Math.abs(byU[id].diff)) byU[id]=x; });
+    return Object.values(byU);
+  }
+
+  const ROLE_STYLE={
+    'Ең тиімді':{bg:'var(--g-green-bg)',c:'var(--g-green)'},
+    'Қауіпсіз':{bg:'var(--g-blue-bg)',c:'var(--g-blue)'},
+    'Тәуекел':{bg:'var(--g-orange-bg)',c:'var(--g-orange)'},
+    'Арман':{bg:'var(--gp-soft)',c:'var(--gp)'}
+  };
+  function roleFor(diff){ if(diff>=15)return'Қауіпсіз'; if(diff>=2)return'Ең тиімді'; if(diff>=-8)return'Тәуекел'; return'Арман'; }
+
+  function renderMode2(){
+    const f=readForm();
+    const codes=[];
+    for(let i=0;i<4;i++){ const v=document.getElementById('prog'+i).value; if(v && codes.indexOf(v)<0) codes.push(v); }
+
+    const allU=new Set(); const blocks=[]; const aiNames=[];
+    codes.forEach(code=>{
+      const list=unisForProgram(code, f.score, f.city);
+      list.forEach(x=>allU.add(x.uni.id));
+      // order: best fit first
+      const sorted=list.slice().sort((a,b)=>{
+        const ra=roleFor(a.diff), rb=roleFor(b.diff);
+        return chanceFromDiff(b.diff).pct - chanceFromDiff(a.diff).pct;
+      }).slice(0,4);
+      const nm = CODE_KK[code] || (list[0]?specLabel(list[0].sp.name):code);
+      if(sorted[0]) aiNames.push({code, nm, top:sorted[0]});
+      let rows='';
+      sorted.forEach(x=>{
+        const c=chanceFromDiff(x.diff); const role=roleFor(x.diff); const rs=ROLE_STYLE[role];
+        rows+=`<div class="prow"><span class="pu">${x.uni.short_name||x.uni.name_kz}</span><span class="role" style="background:${rs.bg};color:${rs.c}">${role}</span><span class="thr">Өту шегі: ${x.sp.thresholdScore}</span><span class="pp" style="color:${c.cls==='high'?'var(--g-green)':c.cls==='risk'?'var(--g-orange)':'var(--g-red)'}">${c.pct}%</span></div>`;
+      });
+      if(!rows) rows='<div class="prow"><span class="pu" style="color:var(--text-muted)">Сәйкес университет табылмады</span></div>';
+      blocks.push(`<div class="prog-block"><h4><span class="pcode">${code}</span> ${nm} <span style="margin-left:auto;font-size:.8rem;color:var(--text-muted)">Сіздің балл: ${f.score}</span></h4>${rows}</div>`);
+    });
+
+    document.getElementById('fcNum').textContent=allU.size;
+    document.getElementById('fcTxt').textContent=`${codes.length} мамандық бойынша ${allU.size} сәйкес университет табылды`;
+    document.getElementById('progAnalysis').innerHTML=blocks.join('') || '<div style="color:var(--text-muted);text-align:center;padding:20px">Мамандық таңдаңыз.</div>';
+
+    // premium AI advice text
+    let ai='';
+    if(aiNames.length){
+      const top=aiNames[0];
+      const eff=aiNames.map(a=>a.top.uni.short_name||a.top.uni.name_kz).slice(0,2);
+      ai=`Сіз таңдаған ${top.code} «${top.nm}» бағыты бойынша ${eff.join(' және ')} университеттері ең тиімді. `;
+      const risky=aiNames.find(a=>a.top.diff<0 && a.top.diff>=-8);
+      if(risky) ai+=`${risky.top.uni.short_name||risky.top.uni.name_kz} үшін балл шекарасына өте жақынсыз. `;
+      ai+='Қауіпсіз стратегия ретінде ең жоғары мүмкіндікті университетті бірінші приоритетке қою ұсынылады.';
+    } else { ai='Мамандықтарды таңдаңыз — AI приоритет стратегиясын дайындайды.'; }
+    document.getElementById('aiText2').textContent=ai;
+  }
+
+  /* ---------- mode switching ---------- */
+  let MODE='ai';
+  function setMode(m){
+    MODE=m;
+    document.getElementById('modeAiBtn').classList.toggle('active', m==='ai');
+    document.getElementById('modeManualBtn').classList.toggle('active', m==='manual');
+    document.getElementById('mode1Wrap').classList.toggle('hidden', m!=='ai');
+    document.getElementById('mode2Wrap').classList.toggle('hidden', m!=='manual');
+    document.getElementById('progCard').classList.toggle('hidden', m!=='manual');
+    document.getElementById('uniField').classList.toggle('hidden', m==='manual');
+    document.getElementById('calcLabel').textContent = m==='ai' ? 'Менің 4 таңдауымды құру' : 'Талдау жаса';
+    if(m==='manual') fillProgramSelects();
+    runCurrent();
+  }
+  function runCurrent(){ if(MODE==='ai') renderMode1(); else renderMode2(); }
+
+  /* ---------- wiring ---------- */
   const slider=document.getElementById('scoreSlider');
   function syncSlider(){ document.getElementById('scoreOut').textContent=slider.value; slider.style.setProperty('--val',(slider.value/140*100)+'%'); }
   slider.addEventListener('input', syncSlider);
-  document.getElementById('calcBtn').addEventListener('click', render);
-  ['subjSel','citySel','uniSel','quotaSel'].forEach(id=>document.getElementById(id).addEventListener('change', render));
+  document.getElementById('calcBtn').addEventListener('click', runCurrent);
+  document.getElementById('modeAiBtn').addEventListener('click', ()=>setMode('ai'));
+  document.getElementById('modeManualBtn').addEventListener('click', ()=>setMode('manual'));
+  document.getElementById('subjSel').addEventListener('change', ()=>{ if(MODE==='manual') fillProgramSelects(); runCurrent(); });
+  ['citySel','uniSel','quotaSel'].forEach(id=>document.getElementById(id).addEventListener('change', runCurrent));
+  ['prog0','prog1','prog2','prog3'].forEach(id=>document.getElementById(id).addEventListener('change', renderMode2));
 
   syncSlider();
-  render();
+  fillProgramSelects();
+  renderMode1();
 </script>
 </body>
 </html>
