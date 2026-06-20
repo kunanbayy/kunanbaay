@@ -8,141 +8,138 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
   <style>
     :root {
-      --gp: #6D5DFC;          /* grant purple */
-      --gp-dark: #5848e0;
-      --gp-soft: #EEEBFF;
-      --gp-softer: #F6F4FF;
-      --g-green: #10B981;  --g-green-bg: #ECFDF5;
-      --g-gold:  #F59E0B;  --g-gold-bg:  #FFFBEB;
-      --g-orange:#F97316;  --g-orange-bg:#FFF7ED;
-      --g-red:   #EF4444;  --g-red-bg:   #FEF2F2;
+      --gp: #6D5DFC; --gp-dark: #5848e0; --gp-soft: #EEEBFF; --gp-softer: #F6F4FF;
+      --g-green: #10B981; --g-green-bg: #ECFDF5;
+      --g-gold:  #F59E0B; --g-gold-bg:  #FFFBEB;
+      --g-orange:#F97316; --g-orange-bg:#FFF7ED;
+      --g-red:   #EF4444; --g-red-bg:   #FEF2F2;
+      --g-blue:  #3B82F6; --g-blue-bg:  #EFF6FF;
       --g-line: #ECECF3;
     }
-
     body { background: #FBFBFE; }
     body::before, body::after { display: none; }
-
     .grant-wrap { max-width: 1180px; margin: 0 auto; padding: 36px 24px 80px; }
 
-    /* ---- Section heading ---- */
-    .gp-eyebrow {
-      display: inline-flex; align-items: center; gap: 8px;
-      background: var(--gp-soft); color: var(--gp);
-      font-weight: 700; font-size: .8rem; padding: 7px 14px; border-radius: 999px;
-    }
+    .gp-eyebrow { display: inline-flex; align-items: center; gap: 8px; background: var(--gp-soft); color: var(--gp); font-weight: 700; font-size: .8rem; padding: 7px 14px; border-radius: 999px; }
     .gp-h1 { font-family: var(--font-display); color: var(--ink); font-size: clamp(1.8rem,3.5vw,2.6rem); margin: 16px 0 12px; letter-spacing: -.02em; }
-    .gp-sub { color: var(--text-muted); font-size: 1.02rem; max-width: 640px; line-height: 1.6; }
+    .gp-sub { color: var(--text-muted); font-size: 1.02rem; max-width: 660px; line-height: 1.6; }
 
-    /* ---- Card base ---- */
     .gp-card { background: #fff; border: 1px solid var(--g-line); border-radius: 22px; padding: 28px; box-shadow: 0 8px 30px rgba(20,20,50,.04); }
     .gp-card h2.card-title { font-size: 1.3rem; color: var(--ink); margin-bottom: 6px; }
     .gp-card .card-desc { color: var(--text-muted); font-size: .95rem; margin-bottom: 22px; }
 
-    /* ---- Form ---- */
+    /* Form */
     .form-section { margin-top: 30px; }
     .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
     .field { display: flex; flex-direction: column; gap: 8px; }
     .field.full { grid-column: 1 / -1; }
     .field label { font-size: .82rem; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: .04em; }
-    .field select, .field input[type="number"] {
-      width: 100%; min-height: 52px; padding: 0 16px; border-radius: 14px;
-      border: 1.5px solid #E2E8F0; background: #fff; font-size: .98rem; font-weight: 600; color: var(--ink);
-      transition: .18s; font-family: var(--font-body); appearance: none;
-    }
+    .field select, .field input[type="number"] { width: 100%; min-height: 52px; padding: 0 16px; border-radius: 14px; border: 1.5px solid #E2E8F0; background: #fff; font-size: .98rem; font-weight: 600; color: var(--ink); transition: .18s; font-family: var(--font-body); appearance: none; }
     .field select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236D5DFC' stroke-width='3'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; padding-right: 42px; cursor: pointer; }
     .field select:focus, .field input:focus { outline: none; border-color: var(--gp); box-shadow: 0 0 0 4px rgba(109,93,252,.12); }
-
     .score-field { background: var(--gp-softer); border: 1.5px solid var(--gp-soft); border-radius: 16px; padding: 18px; }
     .score-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 14px; }
     .score-head .lbl { font-size: .82rem; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: .04em; }
     .score-head .val { font-family: var(--font-display); font-weight: 800; font-size: 2rem; color: var(--gp); }
     .score-head .val small { font-size: 1rem; color: var(--text-light); font-weight: 600; }
-    .score-slider { -webkit-appearance: none; appearance: none; width: 100%; height: 8px; border-radius: 999px; cursor: pointer;
-      background: linear-gradient(to right, var(--gp) 0%, var(--gp) var(--val,66%), #E2E8F0 var(--val,66%), #E2E8F0 100%); }
+    .score-slider { -webkit-appearance: none; appearance: none; width: 100%; height: 8px; border-radius: 999px; cursor: pointer; background: linear-gradient(to right, var(--gp) 0%, var(--gp) var(--val,66%), #E2E8F0 var(--val,66%), #E2E8F0 100%); }
     .score-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 26px; height: 26px; border-radius: 50%; background: #fff; border: 6px solid var(--gp); box-shadow: 0 6px 16px rgba(109,93,252,.4); cursor: pointer; }
     .score-slider::-moz-range-thumb { width: 26px; height: 26px; border-radius: 50%; background: #fff; border: 6px solid var(--gp); box-shadow: 0 6px 16px rgba(109,93,252,.4); cursor: pointer; }
-
     .btn-calc { margin-top: 22px; width: 100%; min-height: 58px; border: none; border-radius: 16px; background: var(--gp); color: #fff; font-weight: 800; font-size: 1.05rem; font-family: var(--font-body); display: inline-flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 14px 30px rgba(109,93,252,.28); transition: .18s; }
     .btn-calc:hover { background: var(--gp-dark); transform: translateY(-2px); }
 
-    /* ---- Results ---- */
+    /* Results */
     .results { margin-top: 24px; display: grid; grid-template-columns: 1fr 1.15fr; gap: 24px; align-items: start; }
-
-    .res-list { display: flex; flex-direction: column; gap: 4px; margin-top: 18px; }
-    .res-score { font-family: var(--font-display); font-weight: 800; font-size: 3.2rem; color: var(--gp); line-height: 1; margin-bottom: 16px; }
+    .res-score { font-family: var(--font-display); font-weight: 800; font-size: 3.2rem; color: var(--gp); line-height: 1; margin: 14px 0 16px; }
     .res-score small { font-size: 1.3rem; color: var(--text-light); font-weight: 600; }
+    .res-list { display: flex; flex-direction: column; gap: 4px; }
     .res-item { display: flex; align-items: center; gap: 12px; padding: 9px 0; border-bottom: 1px dashed #EEF0F6; font-size: .94rem; }
     .res-item:last-child { border-bottom: none; }
     .res-item i { color: var(--gp); width: 20px; text-align: center; }
     .res-item .k { color: var(--text-muted); }
     .res-item .v { margin-left: auto; font-weight: 700; color: var(--ink); text-align: right; }
 
-    /* probability scale */
-    .prob-head { display: flex; align-items: center; gap: 16px; margin-bottom: 4px; }
-    .prob-pct { font-family: var(--font-display); font-weight: 800; font-size: 3.4rem; line-height: 1; color: var(--ink); }
-    .prob-level { font-weight: 800; font-size: 1.1rem; padding: 8px 16px; border-radius: 999px; }
-    .prob-desc { color: var(--text-muted); font-size: .95rem; line-height: 1.6; margin: 16px 0 22px; }
-    .scale-rows { display: flex; flex-direction: column; gap: 14px; }
-    .scale-row { display: grid; grid-template-columns: 78px 1fr 44px; align-items: center; gap: 12px; opacity: .55; transition: .25s; }
+    .prob-cap { font-size: .82rem; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: .04em; }
+    .prob-head { display: flex; align-items: center; gap: 14px; margin: 8px 0 14px; flex-wrap: wrap; }
+    .prob-pct { font-family: var(--font-display); font-weight: 800; font-size: 3.2rem; line-height: 1; color: var(--ink); }
+    .prob-level { font-weight: 800; font-size: 1rem; padding: 8px 16px; border-radius: 999px; }
+    .prob-bar { height: 16px; border-radius: 999px; background: #F1F2F7; overflow: hidden; }
+    .prob-bar-fill { height: 100%; border-radius: 999px; width: 0; transition: width 1s cubic-bezier(.4,0,.2,1); }
+    .prob-desc { color: var(--text-muted); font-size: .95rem; line-height: 1.6; margin: 16px 0 20px; }
+    .scale-rows { display: flex; flex-direction: column; gap: 12px; }
+    .scale-row { display: grid; grid-template-columns: 78px 1fr 44px; align-items: center; gap: 12px; opacity: .5; transition: .25s; }
     .scale-row.active { opacity: 1; }
     .scale-row .sl-name { font-weight: 700; font-size: .9rem; color: var(--ink); }
-    .scale-row .sl-track { height: 12px; border-radius: 999px; background: #F1F2F7; overflow: hidden; }
+    .scale-row .sl-track { height: 10px; border-radius: 999px; background: #F1F2F7; overflow: hidden; }
     .scale-row .sl-fill { height: 100%; border-radius: 999px; width: 0; transition: width 1s cubic-bezier(.4,0,.2,1); }
     .scale-row .sl-range { font-size: .72rem; color: var(--text-light); font-weight: 600; text-align: right; }
-    .scale-row.active .sl-name { font-size: .96rem; }
-    .scale-row.active::after { content: '◀'; }
 
-    /* ---- Recommended cards ---- */
-    .sec-title { display: flex; align-items: center; justify-content: space-between; margin: 44px 0 18px; }
-    .sec-title h2 { font-size: 1.45rem; color: var(--ink); }
+    /* Section title */
+    .sec-title { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 46px 0 18px; flex-wrap: wrap; }
+    .sec-title h2 { font-size: 1.5rem; color: var(--ink); display: flex; align-items: center; gap: 10px; }
     .sec-title .view-all { color: var(--gp); font-weight: 700; font-size: .95rem; display: inline-flex; align-items: center; gap: 6px; }
+    .sec-sub { color: var(--text-muted); font-size: .95rem; margin: -8px 0 18px; }
+
+    /* 4 choice cards */
     .uni-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
-    .uni-card { background: #fff; border: 1px solid var(--g-line); border-radius: 20px; padding: 22px 18px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 12px; transition: .2s; }
+    .uni-card { position: relative; background: #fff; border: 1px solid var(--g-line); border-radius: 20px; padding: 20px 18px 18px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px; transition: .2s; }
     .uni-card:hover { transform: translateY(-4px); box-shadow: 0 16px 36px rgba(109,93,252,.14); border-color: var(--gp-soft); }
-    .uni-logo { width: 64px; height: 64px; border-radius: 16px; background: #F8FAFC; border: 1px solid #EEF0F6; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .prio { align-self: stretch; margin: -4px -4px 4px; font-size: .72rem; font-weight: 800; letter-spacing: .02em; padding: 7px; border-radius: 12px; text-transform: uppercase; }
+    .prio-dream { background: var(--gp-soft); color: var(--gp); }
+    .prio-real  { background: var(--g-blue-bg); color: var(--g-blue); }
+    .prio-safe  { background: var(--g-green-bg); color: var(--g-green); }
+    .uni-logo { width: 60px; height: 60px; border-radius: 16px; background: #F8FAFC; border: 1px solid #EEF0F6; display: flex; align-items: center; justify-content: center; overflow: hidden; }
     .uni-logo img { width: 100%; height: 100%; object-fit: contain; padding: 6px; }
-    .uni-nm { font-weight: 800; font-size: .98rem; color: var(--ink); min-height: 2.4em; display: flex; align-items: center; }
-    .uni-spec { font-size: .82rem; color: var(--text-muted); min-height: 2.2em; }
-    .uni-rows { width: 100%; display: flex; flex-direction: column; gap: 6px; margin-top: 4px; padding-top: 12px; border-top: 1px solid #F1F2F7; }
+    .uni-nm { font-weight: 800; font-size: .96rem; color: var(--ink); min-height: 2.3em; display: flex; align-items: center; }
+    .uni-spec { font-size: .82rem; color: var(--text-muted); min-height: 2.2em; line-height: 1.35; }
+    .uni-rows { width: 100%; display: flex; flex-direction: column; gap: 6px; margin-top: 2px; padding-top: 12px; border-top: 1px solid #F1F2F7; }
     .uni-rows .r { display: flex; justify-content: space-between; font-size: .8rem; }
     .uni-rows .r .k { color: var(--text-light); }
     .uni-rows .r .v { font-weight: 700; color: var(--ink); }
-    .chance { margin-top: 6px; width: 100%; padding: 9px; border-radius: 12px; font-weight: 800; font-size: .85rem; }
+    .chance { margin-top: 4px; width: 100%; padding: 9px; border-radius: 12px; font-weight: 800; font-size: .82rem; }
     .chance.high { background: var(--g-green-bg); color: var(--g-green); }
     .chance.med  { background: var(--g-gold-bg);  color: var(--g-gold); }
     .chance.risk { background: var(--g-orange-bg);color: var(--g-orange); }
     .chance.low  { background: var(--g-red-bg);   color: var(--g-red); }
+    .card-note { font-size: .76rem; color: var(--text-muted); line-height: 1.4; }
 
-    /* ---- Locked ---- */
-    .locked-wrap { position: relative; margin-top: 16px; border-radius: 22px; overflow: hidden; border: 1px solid var(--g-line); }
+    /* AI counselor */
+    .ai-card { margin-top: 24px; display: grid; grid-template-columns: 64px 1fr; gap: 18px; align-items: start; background: linear-gradient(135deg, #F6F4FF, #FFFFFF); border: 1px solid var(--gp-soft); border-radius: 22px; padding: 26px; }
+    .ai-ic { width: 64px; height: 64px; border-radius: 18px; background: var(--gp); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 1.7rem; box-shadow: 0 12px 26px rgba(109,93,252,.32); }
+    .ai-card h3 { font-size: 1.1rem; color: var(--ink); margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+    .ai-card p { color: var(--text); font-size: .98rem; line-height: 1.65; }
+
+    /* Locked */
+    .locked-wrap { position: relative; margin-top: 6px; border-radius: 22px; overflow: hidden; border: 1px solid var(--g-line); }
     .locked-blur { filter: blur(7px); pointer-events: none; user-select: none; padding: 28px; background: #fff; }
     .lk-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-    .lk-box { background: #F8FAFC; border-radius: 14px; padding: 18px; }
+    .lk-box { background: #F4F5FA; border-radius: 14px; padding: 18px; }
     .lk-box .t { height: 12px; width: 60%; background: #E2E8F0; border-radius: 6px; margin-bottom: 12px; }
-    .lk-box .b { height: 28px; width: 40%; background: #D7DBE8; border-radius: 8px; }
+    .lk-box .b { height: 26px; width: 45%; background: #D7DBE8; border-radius: 8px; }
     .lk-line { height: 14px; background: #E9ECF5; border-radius: 7px; margin-top: 12px; }
-    .locked-overlay { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; text-align: center; padding: 24px; background: linear-gradient(180deg, rgba(255,255,255,.5), rgba(255,255,255,.82)); }
-    .lock-ic { width: 64px; height: 64px; border-radius: 50%; background: var(--gp); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; box-shadow: 0 12px 30px rgba(109,93,252,.4); }
-    .locked-overlay h3 { font-size: 1.4rem; color: var(--ink); }
-    .locked-overlay p { color: var(--text-muted); max-width: 460px; }
+    .locked-overlay { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; text-align: center; padding: 24px; background: linear-gradient(180deg, rgba(255,255,255,.55), rgba(255,255,255,.86)); }
+    .lock-ic { width: 60px; height: 60px; border-radius: 50%; background: var(--gp); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; box-shadow: 0 12px 30px rgba(109,93,252,.4); }
+    .locked-overlay h3 { font-size: 1.45rem; color: var(--ink); }
+    .lk-feats { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; max-width: 620px; }
+    .lk-feat { background: #fff; border: 1px solid var(--g-line); border-radius: 999px; padding: 6px 13px; font-size: .8rem; color: var(--text); font-weight: 600; }
 
-    /* ---- Pricing ---- */
-    .price-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-    .price-card { background: #fff; border: 1px solid var(--g-line); border-radius: 22px; padding: 28px; display: flex; flex-direction: column; gap: 14px; position: relative; transition: .2s; }
+    /* Pricing */
+    .price-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; max-width: 820px; }
+    .price-card { background: #fff; border: 1px solid var(--g-line); border-radius: 22px; padding: 30px; display: flex; flex-direction: column; gap: 14px; position: relative; transition: .2s; }
     .price-card.featured { border-color: var(--gp); box-shadow: 0 18px 44px rgba(109,93,252,.18); }
-    .price-badge { position: absolute; top: -13px; left: 50%; transform: translateX(-50%); background: var(--gp); color: #fff; font-size: .75rem; font-weight: 800; padding: 6px 16px; border-radius: 999px; }
-    .price-name { font-weight: 700; color: var(--text-muted); font-size: .95rem; }
-    .price-amt { font-family: var(--font-display); font-weight: 800; font-size: 2.1rem; color: var(--ink); }
+    .price-badge { position: absolute; top: -13px; left: 50%; transform: translateX(-50%); background: var(--gp); color: #fff; font-size: .75rem; font-weight: 800; padding: 6px 16px; border-radius: 999px; white-space: nowrap; }
+    .price-name { font-weight: 700; color: var(--text-muted); font-size: .98rem; }
+    .price-amt { font-family: var(--font-display); font-weight: 800; font-size: 2.2rem; color: var(--ink); }
     .price-amt small { font-size: .9rem; color: var(--text-light); font-weight: 600; }
-    .price-feats { display: flex; flex-direction: column; gap: 10px; margin: 6px 0 8px; }
-    .price-feats li { list-style: none; display: flex; align-items: center; gap: 10px; font-size: .9rem; color: var(--text); }
+    .price-feats { display: flex; flex-direction: column; gap: 11px; margin: 6px 0 8px; }
+    .price-feats li { list-style: none; display: flex; align-items: center; gap: 10px; font-size: .92rem; color: var(--text); }
     .price-feats i { color: var(--g-green); }
-    .price-btn { margin-top: auto; min-height: 50px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-weight: 800; border: 1.5px solid var(--gp); color: var(--gp); background: #fff; transition: .18s; }
+    .price-btn { margin-top: auto; min-height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-weight: 800; border: 1.5px solid var(--gp); color: var(--gp); background: #fff; transition: .18s; }
     .price-btn:hover { background: var(--gp-soft); }
     .price-btn.solid { background: var(--gp); color: #fff; border-color: var(--gp); }
     .price-btn.solid:hover { background: var(--gp-dark); }
 
-    /* ---- Tips ---- */
+    /* Tips */
     .tips-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
     .tip { display: flex; gap: 14px; background: #fff; border: 1px solid var(--g-line); border-radius: 16px; padding: 18px; }
     .tip .ic { width: 42px; height: 42px; flex: 0 0 42px; border-radius: 12px; background: var(--gp-soft); color: var(--gp); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
@@ -157,6 +154,7 @@
     @media (max-width: 560px) {
       .form-grid, .tips-grid, .uni-grid { grid-template-columns: 1fr; }
       .prob-pct { font-size: 2.6rem; }
+      .ai-card { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -198,13 +196,13 @@
 <div class="grant-wrap">
 
   <!-- HERO -->
-  <div class="gp-eyebrow"><i class="fas fa-graduation-cap"></i> Грант калькуляторы</div>
-  <h1 class="gp-h1">Грант мүмкіндігін талда</h1>
-  <p class="gp-sub">ҰБТ балың мен таңдауыңды енгіз де, Қазақстандағы қай университеттер мен мамандықтарға грантқа түсе алатыныңды бірден көр.</p>
+  <div class="gp-eyebrow"><i class="fas fa-graduation-cap"></i> Грант мүмкіндігін талдаушы</div>
+  <h1 class="gp-h1">Грант мүмкіндігін тексер</h1>
+  <p class="gp-sub">ҰБТ нәтижесі бойынша қай мамандықтар мен университеттерге түсе алатыныңызды анықтап, мемлекеттік грант конкурсына арналған ең тиімді «4 таңдау» стратегияңызды құрыңыз.</p>
 
-  <!-- 1. FORM -->
+  <!-- STEP 1 — FORM -->
   <div class="gp-card form-section">
-    <h2 class="card-title">Грант мүмкіндігін тексер</h2>
+    <h2 class="card-title">Деректеріңізді енгізіңіз</h2>
     <p class="card-desc">ҰБТ балыңыз бен таңдауыңызды енгізіп, нәтижеңізді анықтаңыз.</p>
     <div class="form-grid">
       <div class="field full">
@@ -218,14 +216,7 @@
       </div>
       <div class="field">
         <label>Таңдау пәндері</label>
-        <select id="subjSel">
-          <option value="Математика – Информатика">Математика + Информатика</option>
-          <option value="Математика – Физика">Математика + Физика</option>
-          <option value="Биология – Химия">Биология + Химия</option>
-          <option value="Биология – География">Биология + География</option>
-          <option value="Математика – География">Математика + География</option>
-          <option value="Ин. язык – Вс. история">Шетел тілі + Дүниежүзі тарихы</option>
-        </select>
+        <select id="subjSel"></select>
       </div>
       <div class="field">
         <label>Қала</label>
@@ -234,6 +225,7 @@
           <option value="Алматы">Алматы</option>
           <option value="Астана">Астана</option>
           <option value="Шымкент">Шымкент</option>
+          <option value="__other">Басқа өңірлер</option>
         </select>
       </div>
       <div class="field">
@@ -247,13 +239,14 @@
           <option>Ауыл квотасы</option>
           <option>Көпбалалы отбасы</option>
           <option>Мүгедектік квотасы</option>
+          <option>Серпін</option>
         </select>
       </div>
     </div>
-    <button class="btn-calc" id="calcBtn"><i class="fas fa-bolt"></i> Грант мүмкіндігін есептеу</button>
+    <button class="btn-calc" id="calcBtn"><i class="fas fa-wand-magic-sparkles"></i> Менің 4 таңдауымды құру</button>
   </div>
 
-  <!-- 2 + 3. RESULT + PROBABILITY SCALE -->
+  <!-- STEP 2 + 3 — RESULT + GRANT CHANCE -->
   <div class="results" id="results">
     <div class="gp-card">
       <h2 class="card-title">Сіздің нәтижеңіз</h2>
@@ -261,17 +254,19 @@
       <div class="res-list">
         <div class="res-item"><i class="fas fa-graduation-cap"></i><span class="k">Грант түрі</span><span class="v">Жалпы мемлекеттік</span></div>
         <div class="res-item"><i class="fas fa-users"></i><span class="k">Квота түрі</span><span class="v" id="resQuota">Квота жоқ</span></div>
-        <div class="res-item"><i class="fas fa-book"></i><span class="k">Таңдау пәндері</span><span class="v" id="resSubj">Математика + Информатика</span></div>
+        <div class="res-item"><i class="fas fa-book"></i><span class="k">Таңдау пәндері</span><span class="v" id="resSubj">—</span></div>
         <div class="res-item"><i class="fas fa-map-marker-alt"></i><span class="k">Қала</span><span class="v" id="resCity">Қазақстан бойынша</span></div>
         <div class="res-item"><i class="fas fa-university"></i><span class="k">Университет</span><span class="v" id="resUni">Кез келген</span></div>
       </div>
     </div>
 
     <div class="gp-card">
+      <span class="prob-cap">Грант мүмкіндігі</span>
       <div class="prob-head">
         <div class="prob-pct"><span id="probPct">72</span>%</div>
-        <div class="prob-level" id="probLevel">Орташа мүмкіндік</div>
+        <div class="prob-level" id="probLevel">🟡 Орташа мүмкіндік</div>
       </div>
+      <div class="prob-bar"><div class="prob-bar-fill" id="probBar"></div></div>
       <p class="prob-desc" id="probDesc">Сіздің нәтижеңіз бойынша грантқа түсу мүмкіндігі жақсы. Бірнеше университетке құжат тапсыру ұсынылады.</p>
       <div class="scale-rows" id="scaleRows">
         <div class="scale-row" data-band="low"><span class="sl-name">Төмен</span><div class="sl-track"><div class="sl-fill" style="background:var(--g-red)"></div></div><span class="sl-range">0–63</span></div>
@@ -282,15 +277,25 @@
     </div>
   </div>
 
-  <!-- 4. RECOMMENDED -->
+  <!-- STEP 4 — AI GENERATED 4 CHOICES -->
   <div class="sec-title">
-    <h2>Ұсынылатын университеттер</h2>
+    <h2>🤖 Shyraq ұсынған 4 таңдау</h2>
     <a href="universities.html" class="view-all">Барлығын көру <i class="fas fa-arrow-right"></i></a>
   </div>
+  <p class="sec-sub">Мемлекеттік грант конкурсында қолданылатын стратегия: бір «арман» нұсқа, екі нақты нұсқа және бір қауіпсіз нұсқа.</p>
   <div class="uni-grid" id="uniGrid"></div>
 
-  <!-- 5. LOCKED FULL ANALYSIS -->
-  <div class="sec-title"><h2>Толық талдау</h2></div>
+  <!-- STEP 7 — AI COUNSELOR -->
+  <div class="ai-card">
+    <div class="ai-ic"><i class="fas fa-robot"></i></div>
+    <div>
+      <h3>Shyraq AI кеңесшісі</h3>
+      <p id="aiText">—</p>
+    </div>
+  </div>
+
+  <!-- STEP 5 — LOCKED ANALYTICS -->
+  <div class="sec-title"><h2 id="lockedTitle">🔒 Тағы сәйкес нұсқалар табылды</h2></div>
   <div class="locked-wrap">
     <div class="locked-blur">
       <div class="lk-grid">
@@ -301,59 +306,63 @@
       <div class="lk-line" style="width:92%"></div>
       <div class="lk-line" style="width:80%"></div>
       <div class="lk-line" style="width:88%"></div>
-      <div class="lk-line" style="width:74%"></div>
+      <div class="lk-line" style="width:72%"></div>
     </div>
     <div class="locked-overlay">
       <div class="lock-ic"><i class="fas fa-lock"></i></div>
-      <h3>Толық мүмкіндіктерді ашу</h3>
-      <p>Барлық сәйкес мамандықтар, барлық университеттер, грант ықтималдығы %, соңғы 3 жыл статистикасы, қала және мамандық бойынша сүзгі, конкурс деңгейі.</p>
-      <a href="pricing.html" class="btn btn-primary btn-lg" style="background:var(--gp);border-color:var(--gp)"><i class="fas fa-crown" style="margin-right:8px"></i> Premium арқылы толық нәтижені ашыңыз</a>
+      <h3 id="lockedHead">Толық аналитиканы ашу</h3>
+      <div class="lk-feats">
+        <span class="lk-feat">Барлық университеттер</span>
+        <span class="lk-feat">Барлық мамандықтар</span>
+        <span class="lk-feat">Соңғы 3 жыл статистикасы</span>
+        <span class="lk-feat">Толық грант ықтималдығы</span>
+        <span class="lk-feat">Серпін мүмкіндіктері</span>
+        <span class="lk-feat">Ауыл квотасы әсері</span>
+        <span class="lk-feat">Конкурс деңгейі</span>
+        <span class="lk-feat">Альтернативті мамандықтар</span>
+        <span class="lk-feat">Қауіпсіз таңдау стратегиялары</span>
+      </div>
+      <a href="pricing.html" class="btn btn-primary btn-lg" style="background:var(--gp);border-color:var(--gp);margin-top:6px"><i class="fas fa-crown" style="margin-right:8px"></i> Толық аналитиканы ашу</a>
     </div>
   </div>
 
-  <!-- 6. PRICING -->
+  <!-- STEP 6 — PRICING -->
   <div class="sec-title"><h2>Тарифтер</h2></div>
   <div class="price-grid">
     <div class="price-card">
       <div class="price-name">Бір реттік есеп</div>
       <div class="price-amt">499 ₸</div>
       <ul class="price-feats">
-        <li><i class="fas fa-check"></i> 1 толық есеп</li>
-        <li><i class="fas fa-check"></i> Толық аналитика</li>
+        <li><i class="fas fa-check"></i> Толық нәтиже</li>
         <li><i class="fas fa-check"></i> Барлық университеттер</li>
+        <li><i class="fas fa-check"></i> Барлық мамандықтар</li>
+        <li><i class="fas fa-check"></i> PDF есеп</li>
       </ul>
       <a href="payment.html" class="price-btn">Сатып алу</a>
     </div>
     <div class="price-card featured">
-      <div class="price-badge">Танымал</div>
-      <div class="price-name">Айлық Premium</div>
+      <div class="price-badge">⭐ Ең танымал</div>
+      <div class="price-name">Premium</div>
       <div class="price-amt">1 990 ₸ <small>/ ай</small></div>
       <ul class="price-feats">
         <li><i class="fas fa-check"></i> Шексіз есептеу</li>
         <li><i class="fas fa-check"></i> Барлық мамандықтар</li>
         <li><i class="fas fa-check"></i> Барлық университеттер</li>
-        <li><i class="fas fa-check"></i> Жеке ұсыныстар</li>
-        <li><i class="fas fa-check"></i> Грант жаңалықтары</li>
-      </ul>
-      <a href="payment.html" class="price-btn solid">Premium алу</a>
-    </div>
-    <div class="price-card">
-      <div class="price-badge" style="background:var(--g-green)">Ең тиімді</div>
-      <div class="price-name">Жылдық Premium</div>
-      <div class="price-amt">14 990 ₸ <small>/ жыл</small></div>
-      <ul class="price-feats">
-        <li><i class="fas fa-check"></i> Барлық Premium мүмкіндіктер</li>
-        <li><i class="fas fa-check"></i> 2 ай тегін</li>
+        <li><i class="fas fa-check"></i> AI Кеңесші</li>
+        <li><i class="fas fa-check"></i> Грант жаңартулары</li>
+        <li><i class="fas fa-check"></i> Приоритетті ұсыныстар</li>
+        <li><i class="fas fa-check"></i> Толық аналитика</li>
+        <li><i class="fas fa-check"></i> Болашақ мамандықтар тренді</li>
       </ul>
       <a href="payment.html" class="price-btn solid">Premium алу</a>
     </div>
   </div>
 
-  <!-- 7. TIPS -->
+  <!-- TIPS -->
   <div class="sec-title"><h2>Кеңестер</h2></div>
   <div class="tips-grid">
     <div class="tip"><div class="ic"><i class="fas fa-circle-info"></i></div><div><div class="tt">Квота балл қоспайды</div><div class="td">Таңдалған квота тек грант конкурсында арнайы санат ретінде ескеріледі, балға қосылмайды.</div></div></div>
-    <div class="tip"><div class="ic"><i class="fas fa-layer-group"></i></div><div><div class="tt">Бірнеше университет таңдаңыз</div><div class="td">Қала, университет және мамандықты салыстыру грант мүмкіндігін нақтырақ бағалауға көмектеседі.</div></div></div>
+    <div class="tip"><div class="ic"><i class="fas fa-layer-group"></i></div><div><div class="tt">4 басымдылықты дұрыс ретте</div><div class="td">Арман нұсқаны бірінші, қауіпсіз нұсқаны соңына қойыңыз — грант конкурсы басымдылық бойынша жүреді.</div></div></div>
     <div class="tip"><div class="ic"><i class="fas fa-location-dot"></i></div><div><div class="tt">Өңірлік университеттер</div><div class="td">Астана мен Алматыдан басқа өңірлік ЖОО-ларда конкурс төмен болуы мүмкін.</div></div></div>
     <div class="tip"><div class="ic"><i class="fas fa-shuffle"></i></div><div><div class="tt">Ұқсас мамандықтар</div><div class="td">Балл жетпеген жағдайда ұқсас мамандықтарды қарастырыңыз — өту шегі төмен болуы мүмкін.</div></div></div>
   </div>
@@ -364,29 +373,64 @@
 <script>
   const SEED = window.UNIVERSITIES_SEED || [];
 
-  // normalize "Математика – Информатика" -> sorted lowercase key
-  function normSubj(s){ if(!s) return ''; return s.replace(/[–-]/g,'|').split('|').map(x=>x.trim().toLowerCase()).filter(Boolean).sort().join('|'); }
+  // map raw DB subject words -> canonical tokens
+  const TOK = {"математика":"math","информатика":"info","физика":"phys","биология":"bio","география":"geo","химия":"chem","ин. язык":"foreign","вс. история":"hist","основы права":"law","рус. язык":"ruslang","рус. литература":"ruslit","каз. язык":"kazlang","каз. литература":"kazlit","творческий экзамен":"creative"};
+  function dbTokens(s){ const set=new Set(); (s||"").split(",").forEach(p=>p.split(/[–-]/).forEach(r=>{ const k=r.trim().toLowerCase(); if(TOK[k]) set.add(TOK[k]); })); return set; }
 
-  // populate university dropdown
+  // UNT subject combinations (Kazakh label + canonical tokens)
+  const SUBJECTS = [
+    ["Математика және Информатика", ["math","info"]],
+    ["Математика және Физика", ["math","phys"]],
+    ["Математика және География", ["math","geo"]],
+    ["Биология және Химия", ["bio","chem"]],
+    ["Биология және География", ["bio","geo"]],
+    ["Химия және Физика", ["chem","phys"]],
+    ["География және Шетел тілі", ["geo","foreign"]],
+    ["Шетел тілі және Дүниежүзі тарихы", ["foreign","hist"]],
+    ["Дүниежүзі тарихы және География", ["hist","geo"]],
+    ["Дүниежүзілік тарих және Құқық негіздері", ["hist","law"]],
+    ["Орыс тілі және Орыс әдебиеті", ["ruslang","ruslit"]],
+    ["Қазақ тілі және Қазақ әдебиеті", ["kazlang","kazlit"]],
+    ["Шығармашылық емтихан", ["creative"]]
+  ];
+  (function(){ const sel=document.getElementById('subjSel'); SUBJECTS.forEach((s,i)=>{ const o=document.createElement('option'); o.value=i; o.textContent=s[0]; sel.appendChild(o); }); })();
+
+  // nicer major labels for common majors
+  const MAJOR_TR = {
+    "Информационные технологии (IT)":"Computer Science",
+    "Информационная безопасность (Kибербезопасность)":"Cyber Security",
+    "Информационная безопасность (Kибербезопасность)":"Cyber Security",
+    "Криптология":"Cryptology",
+    "Коммуникации и коммуникационные технологии":"Communication Tech"
+  };
+  function specLabel(name){ if(MAJOR_TR[name]) return MAJOR_TR[name]; return (name||"").replace(/\s*\(.*?\)\s*/g,"").trim(); }
+
+  // university dropdown
   (function(){
-    const sel = document.getElementById('uniSel');
-    const list = SEED.filter(u=>u.short_name||u.name_kz)
-      .map(u=>({id:u.id, nm:(u.short_name||u.name_kz)}))
-      .sort((a,b)=>a.nm.localeCompare(b.nm,'ru'));
-    list.forEach(u=>{ const o=document.createElement('option'); o.value=u.id; o.textContent=u.nm; sel.appendChild(o); });
+    const sel=document.getElementById('uniSel');
+    SEED.filter(u=>u.short_name||u.name_kz).map(u=>({id:u.id,nm:(u.short_name||u.name_kz)}))
+      .sort((a,b)=>a.nm.localeCompare(b.nm,'ru'))
+      .forEach(u=>{ const o=document.createElement('option'); o.value=u.id; o.textContent=u.nm; sel.appendChild(o); });
   })();
 
+  const MAIN_CITIES = ["Алматы","Астана","Шымкент"];
+
   function chanceFromDiff(diff){
-    const pct = Math.max(3, Math.min(99, Math.round(50 + diff*2.2)));
-    let cls,label;
-    if(pct>=80){cls='high';label='Жоғары';}
-    else if(pct>=55){cls='med';label='Орташа';}
-    else if(pct>=35){cls='risk';label='Тәуекел';}
-    else {cls='low';label='Төмен';}
-    return {pct,cls,label};
+    const pct=Math.max(3,Math.min(99,Math.round(50+diff*2.2)));
+    let cls,emoji,label;
+    if(diff>=15){cls='high';emoji='🟢';label='Қауіпсіз';}
+    else if(diff>=0){cls='high';emoji='🟢';label='Жоғары мүмкіндік';}
+    else if(diff>=-8){cls='risk';emoji='🟡';label='Тәуекел';}
+    else {cls='low';emoji='🔴';label='Төмен мүмкіндік';}
+    return {pct,cls,emoji,label};
+  }
+  function noteFor(diff){
+    if(diff>=15) return "Балыңыз жеткілікті — сенімді таңдау.";
+    if(diff>=0)  return "Грантқа түсу мүмкіндігі жоғары.";
+    if(diff>=-8) return "Сәл жетпейді, бірақ мүмкіндік бар.";
+    return "Балл айтарлықтай жетпейді.";
   }
 
-  // overall banded percentage from raw score
   function scoreToPct(s){
     const bands=[{lo:0,hi:63,plo:5,phi:34},{lo:64,hi:79,plo:35,phi:54},{lo:80,hi:101,plo:55,phi:84},{lo:102,hi:140,plo:85,phi:99}];
     const b=bands.find(b=>s>=b.lo&&s<=b.hi)||bands[3];
@@ -394,104 +438,122 @@
   }
   function bandOf(s){ if(s>=102)return'high'; if(s>=80)return'med'; if(s>=64)return'risk'; return'low'; }
   const BAND_TEXT={
-    high:{nm:'Жоғары мүмкіндік',color:'var(--g-green)',bg:'var(--g-green-bg)',desc:'Грантқа түсу мүмкіндігіңіз өте жоғары. Таңдаған университеттеріңізге сеніммен құжат тапсырыңыз.'},
-    med:{nm:'Орташа мүмкіндік',color:'var(--g-gold)',bg:'var(--g-gold-bg)',desc:'Сіздің нәтижеңіз бойынша грантқа түсу мүмкіндігі жақсы. Бірнеше университетке құжат тапсыру ұсынылады.'},
-    risk:{nm:'Тәуекелді мүмкіндік',color:'var(--g-orange)',bg:'var(--g-orange-bg)',desc:'Мүмкіндік бар, бірақ тәуекел жоғары. Өткен жылғы балы төмен ЖОО мен мамандықтарды қарастырыңыз.'},
-    low:{nm:'Төмен мүмкіндік',color:'var(--g-red)',bg:'var(--g-red-bg)',desc:'Грантқа түсу мүмкіндігі төмен. Балл талабы аз мамандықтар мен өңірлік университеттерді қарастырыңыз.'}
+    high:{nm:'🟢 Жоғары мүмкіндік',color:'var(--g-green)',bg:'var(--g-green-bg)',bar:'var(--g-green)',desc:'Грантқа түсу мүмкіндігіңіз өте жоғары. Таңдаған университеттеріңізге сеніммен құжат тапсырыңыз.'},
+    med:{nm:'🟡 Орташа мүмкіндік',color:'var(--g-gold)',bg:'var(--g-gold-bg)',bar:'var(--g-gold)',desc:'Сіздің нәтижеңіз бойынша грантқа түсу мүмкіндігі жақсы. Бірнеше университетке құжат тапсыру ұсынылады.'},
+    risk:{nm:'🟠 Тәуекелді мүмкіндік',color:'var(--g-orange)',bg:'var(--g-orange-bg)',bar:'var(--g-orange)',desc:'Мүмкіндік бар, бірақ тәуекел жоғары. Өткен жылғы балы төмен ЖОО мен мамандықтарды қарастырыңыз.'},
+    low:{nm:'🔴 Төмен мүмкіндік',color:'var(--g-red)',bg:'var(--g-red-bg)',bar:'var(--g-red)',desc:'Грантқа түсу мүмкіндігі төмен. Балл талабы аз мамандықтар мен өңірлік университеттерді қарастырыңыз.'}
   };
 
-  function recommend(score, subjKey, city, uniId){
+  function matchAll(score, tokens, city, uniId){
     const out=[];
     SEED.forEach(u=>{
-      if(city && u.city!==city) return;
+      if(city==='__other'){ if(MAIN_CITIES.indexOf(u.city)>=0) return; }
+      else if(city){ if(u.city!==city) return; }
       if(uniId && String(u.id)!==String(uniId)) return;
       (u.specialties||[]).forEach(sp=>{
         if(sp.thresholdScore==null) return;
-        if(subjKey && normSubj(sp.subjects)!==subjKey) return;
+        const dt=dbTokens(sp.subjects);
+        if(tokens.length && !tokens.every(t=>dt.has(t))) return;
         out.push({uni:u, sp:sp, diff:score-sp.thresholdScore});
       });
     });
-    // recommend universities whose threshold sits close to the student's score:
-    // 2 reachable "safe" picks just below the score, 2 nearby "reach" picks just above.
-    const safe  = out.filter(x=>x.diff>=0).sort((a,b)=>a.diff-b.diff);  // closest below
-    const reach = out.filter(x=>x.diff<0).sort((a,b)=>b.diff-a.diff);   // smallest miss
-    const ordered = [...safe.slice(0,2), ...reach.slice(0,2), ...safe.slice(2), ...reach.slice(2)];
-    const seen = new Set(); const picked = [];
-    for(const x of ordered){ if(seen.has(x.uni.id)) continue; seen.add(x.uni.id); picked.push(x); if(picked.length>=4) break; }
-    return {picked: picked, total: out.length, unis: new Set(out.map(x=>x.uni.id)).size};
+    return out;
   }
 
-  function shortSpec(name){ return (name||'').replace(/\s*\(.*?\)\s*/g,'').trim(); }
+  // build the Kazakhstan "4 choices" strategy
+  function pick4(all){
+    const used=new Set();
+    const take=arr=>{ for(const x of arr){ if(!used.has(x.uni.id)){ used.add(x.uni.id); return x; } } return null; };
+    const dream = take(all.filter(x=>x.diff<0).sort((a,b)=>b.diff-a.diff)) || take(all.filter(x=>x.diff>=0).sort((a,b)=>a.diff-b.diff));
+    const r1 = take(all.filter(x=>x.diff>=0 && x.diff<=12).sort((a,b)=>a.diff-b.diff)) || take([...all].sort((a,b)=>Math.abs(a.diff)-Math.abs(b.diff)));
+    const r2 = take(all.filter(x=>x.diff>=0 && x.diff<=22).sort((a,b)=>a.diff-b.diff)) || take([...all].sort((a,b)=>Math.abs(a.diff)-Math.abs(b.diff)));
+    const safe = take(all.filter(x=>x.diff>=15).sort((a,b)=>a.diff-b.diff)) || take(all.filter(x=>x.diff>=0).sort((a,b)=>b.diff-a.diff));
+    const labelled=[];
+    if(dream) labelled.push(['Арман нұсқа','prio-dream',dream]);
+    if(r1) labelled.push(['Нақты нұсқа','prio-real',r1]);
+    if(r2) labelled.push(['Нақты нұсқа','prio-real',r2]);
+    if(safe) labelled.push(['Қауіпсіз нұсқа','prio-safe',safe]);
+    return labelled;
+  }
 
   function render(){
-    const score = +document.getElementById('scoreSlider').value;
-    const subjRaw = document.getElementById('subjSel').value;
-    const subjText = document.getElementById('subjSel').selectedOptions[0].textContent;
-    const subjKey = normSubj(subjRaw);
-    const city = document.getElementById('citySel').value;
-    const cityText = document.getElementById('citySel').selectedOptions[0].textContent;
-    const uniId = document.getElementById('uniSel').value;
-    const uniText = document.getElementById('uniSel').selectedOptions[0].textContent;
-    const quota = document.getElementById('quotaSel').value;
+    const score=+document.getElementById('scoreSlider').value;
+    const subj=SUBJECTS[+document.getElementById('subjSel').value];
+    const subjText=subj[0], tokens=subj[1];
+    const citySel=document.getElementById('citySel');
+    const city=citySel.value, cityText=citySel.selectedOptions[0].textContent;
+    const uniSel=document.getElementById('uniSel');
+    const uniId=uniSel.value, uniText=uniSel.selectedOptions[0].textContent;
+    const quota=document.getElementById('quotaSel').value;
 
-    // result info
-    document.getElementById('resScore').textContent = score;
-    document.getElementById('resQuota').textContent = quota;
-    document.getElementById('resSubj').textContent = subjText;
-    document.getElementById('resCity').textContent = cityText;
-    document.getElementById('resUni').textContent = uniText;
+    document.getElementById('resScore').textContent=score;
+    document.getElementById('resQuota').textContent=quota;
+    document.getElementById('resSubj').textContent=subjText;
+    document.getElementById('resCity').textContent=cityText;
+    document.getElementById('resUni').textContent=uniText;
 
-    // probability headline
-    const pct = scoreToPct(score);
-    const band = bandOf(score);
-    const bt = BAND_TEXT[band];
-    document.getElementById('probPct').textContent = pct;
-    const lv = document.getElementById('probLevel');
-    lv.textContent = bt.nm; lv.style.color = bt.color; lv.style.background = bt.bg;
-    document.getElementById('probDesc').textContent = bt.desc;
+    // grant chance
+    const pct=scoreToPct(score), band=bandOf(score), bt=BAND_TEXT[band];
+    document.getElementById('probPct').textContent=pct;
+    const lv=document.getElementById('probLevel'); lv.textContent=bt.nm; lv.style.color=bt.color; lv.style.background=bt.bg;
+    document.getElementById('probDesc').textContent=bt.desc;
+    const bar=document.getElementById('probBar'); bar.style.width=pct+'%'; bar.style.background=bt.bar;
+    const fills={low:25,risk:50,med:75,high:100};
+    document.querySelectorAll('.scale-row').forEach(row=>{ const b=row.dataset.band; row.classList.toggle('active',b===band); row.querySelector('.sl-fill').style.width=(b===band?Math.max(30,pct):fills[b])+'%'; });
 
-    // scale rows: fill levels, highlight active band
-    const fills = {low:25, risk:50, med:75, high:100};
-    document.querySelectorAll('.scale-row').forEach(row=>{
-      const b = row.dataset.band;
-      row.classList.toggle('active', b===band);
-      row.querySelector('.sl-fill').style.width = (b===band ? Math.max(30,(pct))+'%' : fills[b]+'%');
-    });
-
-    // recommended
-    const {picked,total,unis} = recommend(score, subjKey, city, uniId);
-    const grid = document.getElementById('uniGrid');
-    grid.innerHTML = '';
-    if(!picked.length){
-      grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--text-muted);padding:30px;">Бұл таңдау бойынша мамандық табылмады. Пәндерді немесе қаланы өзгертіп көріңіз.</div>';
+    // 4 choices
+    const all=matchAll(score,tokens,city,uniId);
+    const picks=pick4(all);
+    const grid=document.getElementById('uniGrid'); grid.innerHTML='';
+    if(!picks.length){
+      grid.innerHTML='<div style="grid-column:1/-1;text-align:center;color:var(--text-muted);padding:34px;border:1px dashed var(--g-line);border-radius:18px;">Бұл таңдау бойынша мамандық табылмады. Пәндерді немесе қаланы өзгертіп көріңіз.</div>';
     }
-    picked.forEach(x=>{
-      const c = chanceFromDiff(x.diff);
-      const nm = x.uni.short_name || x.uni.name_kz;
-      const div = document.createElement('div');
-      div.className = 'uni-card';
-      div.innerHTML = `
+    picks.forEach(([plabel,pcls,x])=>{
+      const c=chanceFromDiff(x.diff);
+      const nm=x.uni.short_name||x.uni.name_kz;
+      const div=document.createElement('div');
+      div.className='uni-card';
+      div.innerHTML=`
+        <div class="prio ${pcls}">${plabel}</div>
         <div class="uni-logo"><img src="${x.uni.logo_url}" alt="${nm}" onerror="this.parentNode.innerHTML='<i class=\\'fas fa-university\\' style=\\'color:var(--gp);font-size:24px\\'></i>'"></div>
         <div class="uni-nm">${nm}</div>
-        <div class="uni-spec">${shortSpec(x.sp.name)}</div>
+        <div class="uni-spec">${specLabel(x.sp.name)}</div>
         <div class="uni-rows">
           <div class="r"><span class="k">Өту шегі</span><span class="v">${x.sp.thresholdScore} балл</span></div>
           <div class="r"><span class="k">Сіздің балл</span><span class="v">${score} балл</span></div>
           <div class="r"><span class="k">Қала</span><span class="v">${x.uni.city||'—'}</span></div>
         </div>
-        <div class="chance ${c.cls}">${c.label} мүмкіндік · ${c.pct}%</div>`;
+        <div class="chance ${c.cls}">${c.emoji} ${c.label} · ${c.pct}%</div>
+        <div class="card-note">${noteFor(x.diff)}</div>`;
       grid.appendChild(div);
     });
+
+    // locked count
+    const remaining=Math.max(0, all.length - picks.length);
+    document.getElementById('lockedTitle').textContent=`🔒 Тағы ${remaining} сәйкес нұсқа табылды`;
+    document.getElementById('lockedHead').textContent=`Тағы ${remaining} нұсқаны ашу`;
+
+    // AI counselor
+    const names=picks.slice(0,3).map(p=>p[2].uni.short_name||p[2].uni.name_kz);
+    let ai='';
+    if(picks.length){
+      const list = names.length>1 ? names.slice(0,-1).join(', ')+' және '+names[names.length-1] : names[0];
+      ai = `${score} балл нәтижесі бойынша сізге ${list} университеттері сәйкес келеді. `;
+      if(band==='high') ai += `Мүмкіндігіңіз жоғары — арман нұсқаңызды бірінші басымдылыққа қойып, қалғандарын қауіпсіздік үшін қосыңыз.`;
+      else if(band==='med') ai += `Грант ықтималдығын арттыру үшін «${subjText}» бойынша өңірлік университеттердегі бағдарламаларды да қарастыру ұсынылады.`;
+      else ai += `Балл талабы төмендеу мамандықтар мен өңірлік университеттерді таңдасаңыз, грантқа түсу мүмкіндігіңіз артады.`;
+    } else {
+      ai = `Бұл пәндер тіркесімі бойынша нұсқа табылмады. Басқа пән тіркесімін немесе қаланы таңдап көріңіз.`;
+    }
+    document.getElementById('aiText').textContent=ai;
   }
 
-  // slider live update
-  const slider = document.getElementById('scoreSlider');
-  function syncSlider(){ document.getElementById('scoreOut').textContent = slider.value; slider.style.setProperty('--val', (slider.value/140*100)+'%'); }
-  slider.addEventListener('input', ()=>{ syncSlider(); });
+  const slider=document.getElementById('scoreSlider');
+  function syncSlider(){ document.getElementById('scoreOut').textContent=slider.value; slider.style.setProperty('--val',(slider.value/140*100)+'%'); }
+  slider.addEventListener('input', syncSlider);
   document.getElementById('calcBtn').addEventListener('click', render);
   ['subjSel','citySel','uniSel','quotaSel'].forEach(id=>document.getElementById(id).addEventListener('change', render));
 
-  // init
   syncSlider();
   render();
 </script>
