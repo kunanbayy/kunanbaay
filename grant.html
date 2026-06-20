@@ -526,6 +526,25 @@
   function specKK(sp){ return (sp && CODE_KK[baseCode(sp.code)]) || specLabel(sp && sp.name); }
   function uniName(u){ const n=(u && (u.short_name||u.name_kz))||''; return window.kazifyUni ? window.kazifyUni(n) : n; }
 
+  // Estimated yearly tuition (оқу ақысы) — real per-program fees are not in the
+  // source data, so we estimate by program field + university tier (labelled "≈").
+  function fmtTg(n){ return Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' '); }
+  function tuition(sp, uni){
+    const code = baseCode(sp && sp.code);
+    let base = 1100000;
+    if(/^ВМ0/.test(code) || ['B084','B085','B072'].indexOf(code)>=0) base = 2000000;        // медицина
+    else if(['B057','B058','B059','B061','B158','B055','В157'].indexOf(code)>=0) base = 1400000; // IT
+    else if(/^B0[67]/.test(code) || ['B171','B162','B126','B165','B166','B173','B175','B176'].indexOf(code)>=0) base = 1300000; // инженерия
+    else if(['B044','B045','B046','B047','B049','B140','B141','B142'].indexOf(code)>=0) base = 1500000; // бизнес/құқық
+    else if(/^B0[01]/.test(code) || ['B034','B035','B036','B037','B038','B039','B040','B043','B077','B078','B079','B080','B082','B083','B050','B051','B052','B090'].indexOf(code)>=0) base = 900000; // педагогика/гуманитарлық/агро
+    const premium = ['AITU','KBTU','Satbayev','SDU','NARXOZ','ENU','аль-Фараби','Назарбаев','KIMEP'];
+    const sn = (uni && uni.short_name) || '';
+    let mult = 1;
+    if(premium.some(p => sn.indexOf(p) >= 0)) mult = 1.5;
+    if(/облыс/i.test((uni && uni.city) || '')) mult *= 0.85;
+    return Math.round(base * mult / 50000) * 50000;
+  }
+
   // university dropdown (mode 1)
   (function(){
     const sel=document.getElementById('uniSel');
@@ -653,6 +672,7 @@
         <div class="uni-rows">
           <div class="r"><span class="k">Өту шегі (2024)</span><span class="v">${x.sp.thresholdScore} балл</span></div>
           <div class="r"><span class="k">Сіздің балл</span><span class="v">${f.score} балл</span></div>
+          <div class="r"><span class="k">Оқу ақысы</span><span class="v">≈ ${fmtTg(tuition(x.sp, x.uni))} ₸</span></div>
           <div class="r"><span class="k">Қала</span><span class="v">${x.uni.city||'—'}</span></div>
         </div>
         <div class="chance ${c.cls}">${c.emoji} ${c.label} · ${c.pct}%</div>
@@ -766,7 +786,7 @@
       let rows='';
       sorted.forEach(x=>{
         const c=chanceFromDiff(x.diff); const role=roleFor(x.diff); const rs=ROLE_STYLE[role];
-        rows+=`<div class="prow"><span class="pu">${uniName(x.uni)}</span><span class="role" style="background:${rs.bg};color:${rs.c}">${role}</span><span class="thr">Өту шегі: ${x.sp.thresholdScore}</span><span class="pp" style="color:${c.cls==='high'?'var(--g-green)':c.cls==='risk'?'var(--g-orange)':'var(--g-red)'}">${c.pct}%</span></div>`;
+        rows+=`<div class="prow"><span class="pu">${uniName(x.uni)}</span><span class="role" style="background:${rs.bg};color:${rs.c}">${role}</span><span class="thr">Өту шегі: ${x.sp.thresholdScore} · Оқу ақысы ≈ ${fmtTg(tuition(x.sp, x.uni))} ₸</span><span class="pp" style="color:${c.cls==='high'?'var(--g-green)':c.cls==='risk'?'var(--g-orange)':'var(--g-red)'}">${c.pct}%</span></div>`;
       });
       if(!rows) rows='<div class="prow"><span class="pu" style="color:var(--text-muted)">Сәйкес университет табылмады</span></div>';
       blocks.push(`<div class="prog-block"><h4><span class="pcode">${code}</span> ${nm} <span style="margin-left:auto;font-size:.8rem;color:var(--text-muted)">Сіздің балл: ${f.score}</span></h4>${rows}</div>`);
