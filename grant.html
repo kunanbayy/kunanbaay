@@ -1,1879 +1,473 @@
 <!DOCTYPE html>
 <html lang="kk">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Грант Калькулятор — Shyraq Education</title>
-  <link rel="stylesheet" href="css/style.css" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <style>
-    .score-slider {
-      -webkit-appearance: none; appearance: none;
-      width: 100%; height: 8px; border-radius: 4px;
-      background: linear-gradient(to right, var(--navy) 0%, var(--navy) var(--val, 66%), var(--border) var(--val, 66%), var(--border) 100%);
-      outline: none; cursor: pointer;
-    }
-    .score-slider::-webkit-slider-thumb {
-      -webkit-appearance: none; width: 24px; height: 24px;
-      border-radius: 50%; background: var(--navy); cursor: pointer;
-      box-shadow: 0 2px 8px rgba(30,58,95,0.3);
-    }
-    .score-slider::-moz-range-thumb {
-      width: 24px; height: 24px; border-radius: 50%; background: var(--navy);
-      cursor: pointer; border: none; box-shadow: 0 2px 8px rgba(30,58,95,0.3);
-    }
-    .meter-bar { display: flex; margin: 16px 0; border-radius: var(--radius); overflow: hidden; height: 12px; background: var(--border); }
-    .meter-fill { height: 100%; transition: width 0.5s ease; }
-    .level-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
-    .level-indicator {
-      position: relative; display: flex; align-items: center; gap: 9px; text-align: left; padding: 12px;
-      border-radius: 16px; border: 1px solid #E2E8F0; background: #fff; transition: var(--transition);
-    }
-    .level-dot { width: 11px; height: 11px; border-radius: 50%; flex: 0 0 auto; box-shadow: 0 0 0 5px rgba(226,232,240,.55); }
-    .level-copy { min-width: 0; }
-    .level-copy strong { display: block; color: var(--navy); font-size: .86rem; line-height: 1.1; }
-    .level-copy span { display: block; color: var(--text-muted); font-size: .68rem; margin-top: 3px; white-space: nowrap; }
-    .level-indicator.active-emerald { border-color: rgba(16,185,129,.45); background: #ECFDF5; box-shadow: 0 10px 24px rgba(16,185,129,.10); }
-    .level-indicator.active-gold { border-color: rgba(242,184,75,.55); background: #FFFBEB; box-shadow: 0 10px 24px rgba(242,184,75,.10); }
-    .level-indicator.active-orange { border-color: rgba(249,115,22,.48); background: #FFF7ED; box-shadow: 0 10px 24px rgba(249,115,22,.10); }
-    .level-indicator.active-red { border-color: rgba(239,68,68,.42); background: #FEF2F2; box-shadow: 0 10px 24px rgba(239,68,68,.10); }
-    .grant-calc { max-width: 920px; margin: 0 auto; display: flex; flex-direction: column; }
-    .grant-hero-head { text-align: center; max-width: 720px; margin: 0 auto 24px; }
-    .grant-hero-head h1 { color: var(--navy); margin: 10px 0 10px; letter-spacing: 0; }
-    .grant-hero-head p { color: var(--text-muted); line-height: 1.65; font-size: 1rem; }
-    .grant-target-icon { width: 96px; height: 96px; margin: 0 auto 18px; position: relative; border-radius: 28px; background: linear-gradient(145deg,#F8FAFC,#EEF4FF); border: 1px solid #DBE6F5; box-shadow: 0 18px 44px rgba(30,58,95,.12); }
-    .grant-target-icon::before { content: ""; position: absolute; inset: 22px; border-radius: 50%; background: radial-gradient(circle at center, #22D3EE 0 10%, #fff 11% 25%, #38BDF8 26% 40%, #EAF3FF 41% 55%, #3B82F6 56% 72%, #DDEBFF 73% 100%); box-shadow: 0 8px 18px rgba(59,130,246,.28); }
-    .grant-target-icon::after { content: ""; position: absolute; width: 42px; height: 8px; border-radius: 999px; background: #F97316; transform: rotate(-38deg); top: 33px; left: 47px; box-shadow: 0 8px 14px rgba(249,115,22,.22); }
-    .grant-compact-card { background: #fff; border: 1px solid #DDE6F2; border-radius: 28px; padding: 34px; box-shadow: 0 24px 70px rgba(30,58,95,.10); }
-    .grant-form-card { order: 1; background: #fff; border: 1px solid #DDE6F2; border-radius: 28px; padding: 34px; box-shadow: 0 24px 70px rgba(30,58,95,.10); }
-    .compact-top-note { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 18px 0 24px; }
-    .compact-note { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 18px; padding: 14px 16px; color: var(--text-muted); line-height: 1.55; font-size: .88rem; }
-    .compact-note strong { display: block; color: var(--navy); font-size: .95rem; margin-bottom: 4px; }
-    .tip-card { background: var(--white); border-radius: var(--radius-lg); border: 1px solid var(--border); padding: 16px; margin-bottom: 12px; display: flex; gap: 14px; align-items: flex-start; }
-    .tip-icon { font-size: 1.4rem; flex-shrink: 0; }
-    .grant-intro-grid { display: none; }
-    .grant-info-box { background: #fff; border: 1px solid var(--border); border-radius: var(--radius-xl); padding: 20px; box-shadow: var(--shadow-sm); }
-    .grant-info-box h3 { color: var(--navy); margin-bottom: 10px; font-size: 1rem; }
-    .grant-info-box p { color: var(--text-muted); font-size: 0.9rem; line-height: 1.6; }
-    .grant-pill-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
-    .grant-pill { display: inline-flex; align-items: center; gap: 6px; border: 1px solid #E2E8F0; background: #F8FAFC; border-radius: 999px; padding: 7px 11px; font-size: 0.78rem; color: var(--navy); font-weight: 700; }
-    .type-panels { order: 2; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin: 12px 0 24px; }
-    .type-panel { background: #FBFCFE; border: 1px solid #E2E8F0; border-radius: 20px; padding: 14px; box-shadow: none; }
-    .type-panel h3 { color: var(--navy); font-size: .96rem; margin-bottom: 10px; }
-    .type-list { display: flex; flex-direction: column; gap: 7px; }
-    .type-item { display: flex; align-items: center; justify-content: space-between; gap: 10px; background: #fff; border: 1px solid #E7EDF5; border-radius: 13px; padding: 9px 10px; font-size: 0.82rem; color: var(--text); }
-    .type-item::before { content: ""; width: 20px; height: 20px; border-radius: 6px; background: #ECEBFF; flex: 0 0 auto; }
-    .type-item span { flex: 1; min-width: 0; }
-    .field-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
-    .field-row .form-label { margin-bottom: 0; }
-    .info-btn { width: 26px; height: 26px; border: 0; background: #F1F5F9; color: #94A3B8; border-radius: 50%; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; transition: var(--transition); flex-shrink: 0; font-size: .78rem; }
-    .info-btn:hover { background: var(--navy); color: #fff; }
-    .quota-note { background: #FFF7ED; border: 1px solid #FED7AA; color: #9A3412; border-radius: var(--radius-lg); padding: 12px 14px; font-size: 0.85rem; line-height: 1.55; margin: 16px 0 20px; }
-    .error-text { color: #DC2626; font-size: 0.82rem; margin-top: 10px; display: none; }
-    .modal-backdrop { position: fixed; inset: 0; background: rgba(15,23,42,.48); display: none; align-items: center; justify-content: center; padding: 18px; z-index: 1000; }
-    .modal-backdrop.open { display: flex; }
-    .info-modal { width: min(720px, 94vw); max-height: 86vh; background: #fff; border: 1px solid #E2E8F0; border-radius: 22px; box-shadow: 0 30px 80px rgba(15,23,42,.24); display: flex; flex-direction: column; overflow: hidden; }
-    .info-modal-head { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 20px 22px; border-bottom: 1px solid #E2E8F0; }
-    .info-modal-title { font-family: var(--font-display); font-size: 1.15rem; font-weight: 800; color: var(--navy); }
-    .modal-close { width: 34px; height: 34px; border-radius: 50%; border: 1px solid #CBD5E1; background: #fff; color: var(--navy); cursor: pointer; font-size: 1.2rem; line-height: 1; }
-    .modal-close:hover { background: #F1F5F9; }
-    .info-modal-body { padding: 20px 22px 24px; overflow: auto; font-size: 0.96rem; line-height: 1.6; color: var(--text); }
-    .info-modal-body p { margin-bottom: 12px; }
-    .info-modal-body ul { padding-left: 20px; margin: 8px 0 12px; }
-    .info-modal-body li { margin-bottom: 6px; }
-    .result-details { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 16px; text-align: left; }
-    .result-detail { background: rgba(255,255,255,.72); border: 1px solid rgba(226,232,240,.8); border-radius: var(--radius); padding: 10px 12px; }
-    .result-detail span { display: block; color: var(--text-muted); font-size: 0.74rem; margin-bottom: 3px; }
-    .result-detail strong { color: var(--navy); font-size: 0.88rem; }
-    .grant-result { order: 3; }
-    @media (max-width: 768px) {
-      .compact-top-note, .type-panels, .result-details, .level-grid { grid-template-columns: 1fr; }
-      .grant-compact-card { padding: 22px; border-radius: 22px; }
-      .grant-form-card { padding: 22px; border-radius: 22px; }
-      .grant-hero-head { text-align: left; }
-      .grant-target-icon { margin-left: 0; width: 82px; height: 82px; }
-      .info-modal { width: 94vw; max-height: 84vh; border-radius: 18px; }
-      .info-modal-head, .info-modal-body { padding-left: 16px; padding-right: 16px; }
-    }
-
-    /* Grant page refresh: compact glass/bento layout */
-    :root {
-      --grant-navy: #0F2343;
-      --grant-gold: #F2B705;
-      --grant-teal: #16B3A3;
-      --grant-cream: #FFF6E6;
-      --grant-line: rgba(15, 35, 67, .12);
-      --grant-glass: rgba(255, 255, 255, .78);
-      --grant-shadow: 0 24px 70px rgba(15, 35, 67, .12);
-    }
-
-    body {
-      background:
-        radial-gradient(circle at 8% 8%, rgba(242, 183, 5, .15), transparent 27%),
-        radial-gradient(circle at 86% 13%, rgba(22, 179, 163, .13), transparent 26%),
-        radial-gradient(circle at 76% 86%, rgba(15, 35, 67, .08), transparent 28%),
-        linear-gradient(135deg, #F8FAFC 0%, #FFFDF7 52%, #F4FBFA 100%);
-      color: #16233A;
-    }
-
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: -1;
-      opacity: .42;
-      background:
-        linear-gradient(90deg, rgba(15, 35, 67, .034) 1px, transparent 1px),
-        linear-gradient(rgba(15, 35, 67, .026) 1px, transparent 1px);
-      background-size: 44px 44px;
-      -webkit-mask-image: linear-gradient(to bottom, #000, transparent 82%);
-      mask-image: linear-gradient(to bottom, #000, transparent 82%);
-    }
-
-    .nav {
-      background: rgba(255, 255, 255, .86);
-      border-bottom: 1px solid rgba(15, 35, 67, .08);
-      box-shadow: 0 12px 40px rgba(15, 35, 67, .06);
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-    }
-
-    .nav-logo-icon {
-      background: linear-gradient(135deg, var(--grant-navy), #173B66);
-      color: var(--grant-gold);
-      box-shadow: 0 12px 26px rgba(15, 35, 67, .16);
-    }
-
-    .container {
-      max-width: 1240px;
-    }
-
-    .grant-calc {
-      max-width: 1180px;
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: minmax(320px, 392px) minmax(0, 1fr);
-      gap: 18px;
-      align-items: start;
-    }
-
-    .grant-hero-head {
-      grid-column: 1 / -1;
-      max-width: none;
-      margin: 0;
-      display: grid;
-      grid-template-columns: auto 1fr;
-      gap: 0 22px;
-      text-align: left;
-      position: relative;
-      overflow: hidden;
-      padding: 32px 34px;
-      border-radius: 32px;
-      background: linear-gradient(135deg, rgba(255,255,255,.9), rgba(255,246,230,.74));
-      border: 1px solid rgba(15, 35, 67, .10);
-      box-shadow: var(--grant-shadow);
-    }
-
-    .grant-hero-head::before {
-      content: "";
-      position: absolute;
-      width: 280px;
-      height: 280px;
-      right: -70px;
-      top: -120px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(242, 183, 5, .22), transparent 68%);
-    }
-
-    .grant-hero-head::after {
-      content: "";
-      position: absolute;
-      width: 360px;
-      height: 120px;
-      right: -80px;
-      bottom: -38px;
-      border-radius: 999px;
-      transform: rotate(-10deg);
-      background: linear-gradient(135deg, rgba(22,179,163,.13), rgba(15,35,67,.05));
-    }
-
-    .grant-target-icon {
-      grid-row: 1 / 5;
-      width: 92px;
-      height: 92px;
-      margin: 4px 0 0;
-      z-index: 1;
-      border-radius: 28px;
-      background:
-        radial-gradient(circle at 50% 50%, #fff 0 23%, transparent 24%),
-        radial-gradient(circle at 50% 50%, #38D5CB 0 39%, transparent 40%),
-        radial-gradient(circle at 50% 50%, #fff 0 52%, transparent 53%),
-        radial-gradient(circle at 50% 50%, #4D72F5 0 68%, transparent 69%),
-        linear-gradient(145deg, #F8FBFF, #EAF1FA);
-      border: 1px solid rgba(15,35,67,.10);
-      box-shadow: 0 18px 36px rgba(15, 35, 67, .14);
-    }
-
-    .grant-target-icon::before {
-      inset: 0;
-      border: 0;
-      background: transparent;
-      box-shadow: none;
-    }
-
-    .grant-target-icon::after {
-      top: 16px;
-      left: auto;
-      right: 14px;
-      width: 46px;
-      height: 10px;
-      border-radius: 999px;
-      background: linear-gradient(90deg, var(--grant-gold), #F59E0B);
-      transform: rotate(-40deg);
-      box-shadow: 0 10px 18px rgba(245, 158, 11, .22);
-    }
-
-    .grant-hero-head .badge {
-      justify-self: start;
-      z-index: 1;
-      background: rgba(15, 35, 67, .08);
-      color: var(--grant-navy);
-      border: 1px solid rgba(15, 35, 67, .08);
-    }
-
-    .grant-hero-head h1 {
-      z-index: 1;
-      color: var(--grant-navy);
-      font-size: clamp(2rem, 4vw, 3.35rem);
-      line-height: 1;
-      letter-spacing: -.02em;
-      margin: 4px 0 12px;
-    }
-
-    .grant-hero-head p {
-      z-index: 1;
-      color: #5F6D80;
-      font-size: 1.05rem;
-      line-height: 1.6;
-      max-width: 720px;
-    }
-
-    .compact-top-note {
-      grid-column: 1 / -1;
-      z-index: 1;
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px;
-      margin: 26px 0 0;
-    }
-
-    .compact-note {
-      background: rgba(255,255,255,.76);
-      border: 1px solid rgba(15,35,67,.10);
-      border-radius: 18px;
-      padding: 14px 16px;
-      box-shadow: 0 12px 30px rgba(15,35,67,.07);
-    }
-
-    .compact-note strong {
-      color: var(--grant-navy);
-    }
-
-    .grant-intro-grid {
-      display: none !important;
-    }
-
-    .grant-form-card {
-      grid-column: 1;
-      grid-row: 2 / span 2;
-      position: sticky;
-      top: 88px;
-      overflow: hidden;
-      background: var(--grant-glass);
-      border: 1px solid rgba(15,35,67,.10);
-      border-radius: 30px;
-      padding: 24px;
-      box-shadow: var(--grant-shadow);
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-    }
-
-    .grant-form-card::before {
-      content: "";
-      position: absolute;
-      inset: 0 0 auto 0;
-      height: 5px;
-      background: linear-gradient(90deg, var(--grant-navy), var(--grant-gold), var(--grant-teal));
-    }
-
-    .grant-form-card h3 {
-      color: var(--grant-navy) !important;
-      font-size: 1.25rem;
-    }
-
-    .grant-form-card .grid-2 {
-      grid-template-columns: 1fr !important;
-      gap: 14px !important;
-    }
-
-    .grant-form-card .form-label {
-      color: var(--grant-navy);
-      font-weight: 800;
-    }
-
-    .grant-form-card .form-input {
-      min-height: 52px;
-      border-radius: 16px;
-      border: 1px solid rgba(15,35,67,.12);
-      background-color: rgba(255,255,255,.84);
-      color: #16233A;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.85);
-    }
-
-    .grant-form-card .form-input:focus {
-      border-color: rgba(15,35,67,.42);
-      box-shadow: 0 0 0 4px rgba(15,35,67,.08);
-    }
-
-    .score-display {
-      min-width: 86px;
-      color: var(--grant-navy);
-      font-size: 3.1rem;
-      font-weight: 900;
-      line-height: 1;
-    }
-
-    .score-slider {
-      height: 10px;
-      border-radius: 999px;
-      background: linear-gradient(to right, var(--grant-navy) 0%, var(--grant-navy) var(--val, 66%), #E6ECF4 var(--val, 66%), #E6ECF4 100%);
-    }
-
-    .score-slider::-webkit-slider-thumb {
-      width: 28px;
-      height: 28px;
-      background: #fff;
-      border: 7px solid var(--grant-navy);
-      box-shadow: 0 10px 22px rgba(15,35,67,.22);
-    }
-
-    .score-slider::-moz-range-thumb {
-      width: 28px;
-      height: 28px;
-      background: #fff;
-      border: 7px solid var(--grant-navy);
-      box-shadow: 0 10px 22px rgba(15,35,67,.22);
-    }
-
-    .type-panels {
-      grid-column: 2;
-      grid-row: 2;
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 14px;
-      margin: 0;
-    }
-
-    .type-panel {
-      background: var(--grant-glass);
-      border: 1px solid rgba(15,35,67,.10);
-      border-radius: 26px;
-      padding: 18px;
-      box-shadow: 0 18px 52px rgba(15,35,67,.09);
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-    }
-
-    .type-panel h3 {
-      color: var(--grant-navy);
-      font-size: 1.08rem;
-      margin-bottom: 14px;
-    }
-
-    .type-list {
-      gap: 8px;
-    }
-
-    .type-item {
-      display: grid;
-      grid-template-columns: 18px 1fr auto;
-      align-items: center;
-      gap: 10px;
-      border-radius: 14px;
-      padding: 10px;
-      background: rgba(255,255,255,.62);
-      border: 1px solid rgba(15,35,67,.07);
-      color: #334155;
-      font-size: .92rem;
-      font-weight: 700;
-    }
-
-    .type-item::before {
-      content: "";
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--grant-gold), #FFD166);
-      box-shadow: 0 0 0 6px rgba(242,183,5,.12);
-      flex: 0 0 auto;
-    }
-
-    .type-panel:nth-child(2) .type-item::before {
-      background: linear-gradient(135deg, var(--grant-teal), #22C55E);
-      box-shadow: 0 0 0 6px rgba(22,179,163,.12);
-    }
-
-    .info-btn {
-      width: 28px;
-      height: 28px;
-      border-radius: 10px;
-      color: var(--grant-navy);
-      background: rgba(15,35,67,.06);
-      border: 1px solid rgba(15,35,67,.08);
-      font-weight: 900;
-    }
-
-    .info-btn:hover {
-      background: var(--grant-navy);
-      color: #fff;
-    }
-
-    .quota-note {
-      border-radius: 16px;
-      background: rgba(242,183,5,.10);
-      border: 1px solid rgba(242,183,5,.28);
-      color: #7A4A00;
-      line-height: 1.55;
-    }
-
-    .grant-result {
-      grid-column: 2;
-      grid-row: 3;
-      background: var(--grant-glass);
-      border: 1px solid rgba(15,35,67,.10);
-      border-radius: 30px;
-      padding: 22px;
-      box-shadow: var(--grant-shadow);
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-      overflow: hidden;
-    }
-
-    .grant-result > h3 {
-      color: var(--grant-navy);
-      font-size: 1.35rem;
-    }
-
-    .level-grid {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 8px;
-    }
-
-    .level-indicator {
-      background: rgba(255,255,255,.72);
-      border: 1px solid rgba(15,35,67,.08);
-      border-radius: 18px;
-      padding: 12px 10px;
-      box-shadow: 0 10px 24px rgba(15,35,67,.05);
-    }
-
-    #mainResultCard {
-      background: linear-gradient(135deg, rgba(22,179,163,.11), rgba(242,183,5,.12)) !important;
-      border: 1px solid rgba(22,179,163,.24) !important;
-      border-radius: 24px !important;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.75), 0 16px 38px rgba(15,35,67,.08) !important;
-    }
-
-    .result-detail,
-    .tip-card {
-      background: rgba(255,255,255,.74);
-      border: 1px solid rgba(15,35,67,.08);
-      border-radius: 16px;
-      box-shadow: 0 10px 26px rgba(15,35,67,.05);
-    }
-
-    .grant-result .btn-primary,
-    .grant-form-card .btn-primary {
-      background: linear-gradient(135deg, var(--grant-navy), #183A67);
-      box-shadow: 0 14px 30px rgba(15,35,67,.18);
-    }
-
-    .grant-result .btn-gold,
-    .grant-form-card .btn-gold {
-      background: linear-gradient(135deg, var(--grant-gold), #FFD166);
-      color: var(--grant-navy);
-      box-shadow: 0 14px 30px rgba(242,183,5,.18);
-    }
-
-    .modal-backdrop {
-      background: rgba(15,35,67,.36);
-      backdrop-filter: blur(9px);
-      -webkit-backdrop-filter: blur(9px);
-    }
-
-    .info-modal {
-      border-radius: 28px;
-      border: 1px solid rgba(15,35,67,.10);
-      box-shadow: 0 30px 90px rgba(15,35,67,.24);
-    }
-
-    @media (max-width: 980px) {
-      .grant-calc {
-        grid-template-columns: 1fr;
-      }
-
-      .grant-form-card,
-      .type-panels,
-      .grant-result {
-        grid-column: 1;
-        grid-row: auto;
-        position: static;
-      }
-
-      .type-panels {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-    }
-
-    @media (max-width: 640px) {
-      .container {
-        padding-left: 14px;
-        padding-right: 14px;
-      }
-
-      .grant-hero-head {
-        grid-template-columns: 1fr;
-        padding: 24px;
-      }
-
-      .grant-target-icon {
-        grid-row: auto;
-        margin-bottom: 16px;
-      }
-
-      .compact-top-note,
-      .type-panels,
-      .level-grid,
-      .result-details {
-        grid-template-columns: 1fr;
-      }
-
-      .score-display {
-        font-size: 2.45rem;
-      }
-    }
-    /* Final grant page refresh */
-    :root {
-      --grant-purple: #8B5CF6;
-      --grant-purple-dark: #7C3AED;
-      --grant-amber: #F59E0B;
-      --grant-pink: #EC4899;
-      --grant-slate: #0F172A;
-      --grant-muted: #64748B;
-      --grant-glass: rgba(255,255,255,.72);
-      --grant-border: rgba(255,255,255,.88);
-      --grant-shadow: 0 24px 70px rgba(15,23,42,.08), inset 0 0 0 1px rgba(255,255,255,.45);
-    }
-
-    body {
-      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif !important;
-      background: #F8FAFC;
-      background-image:
-        radial-gradient(at 8% 18%, rgba(139,92,246,.22) 0, transparent 46%),
-        radial-gradient(at 82% 4%, rgba(245,158,11,.22) 0, transparent 45%),
-        radial-gradient(at 88% 82%, rgba(236,72,153,.14) 0, transparent 48%);
-      color: var(--grant-slate);
-    }
-
-    .nav { background: transparent; border-bottom: 0; box-shadow: none; padding-top: 18px; }
-    .nav-inner {
-      background: rgba(255,255,255,.78);
-      border: 1px solid rgba(255,255,255,.9);
-      border-radius: 999px;
-      box-shadow: 0 18px 44px rgba(15,23,42,.07);
-      backdrop-filter: blur(22px);
-      -webkit-backdrop-filter: blur(22px);
-      padding: 14px 22px;
-    }
-
-    .grant-calc {
-      max-width: 1180px;
-      margin: 0 auto;
-      display: grid !important;
-      grid-template-columns: minmax(330px,390px) minmax(0,1fr);
-      gap: 20px;
-      align-items: start;
-    }
-
-    .grant-hero-head {
-      grid-column: 1 / -1;
-      text-align: left !important;
-      max-width: none !important;
-      margin: 0 !important;
-      display: grid !important;
-      grid-template-columns: 96px 1fr;
-      gap: 24px;
-      align-items: center;
-      padding: 34px;
-      border-radius: 34px;
-      background: linear-gradient(135deg,rgba(255,255,255,.92),rgba(255,255,255,.55));
-      border: 1px solid var(--grant-border);
-      box-shadow: var(--grant-shadow);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      overflow: hidden;
-      position: relative;
-    }
-
-    .grant-hero-head::before {
-      content: "";
-      position: absolute;
-      right: -90px;
-      bottom: -130px;
-      width: 360px;
-      height: 360px;
-      border-radius: 50%;
-      background: radial-gradient(circle,rgba(245,158,11,.22),transparent 62%);
-      pointer-events: none;
-    }
-
-    .grant-target-icon {
-      width: 92px !important;
-      height: 92px !important;
-      margin: 0 !important;
-      border-radius: 24px !important;
-      background: linear-gradient(135deg,#fff,rgba(255,255,255,.45)) !important;
-      box-shadow: 0 18px 40px rgba(139,92,246,.18) !important;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-    }
-
-    .grant-target-icon::before {
-      content: "";
-      position: absolute;
-      inset: 18px;
-      border-radius: 50%;
-      background: radial-gradient(circle at center,#22D3EE 0 14%,#fff 15% 32%,#38BDF8 33% 48%,#EAF3FF 49% 60%,#4D72F5 61% 75%,#EAF3FF 76% 100%);
-    }
-
-    .grant-target-icon::after {
-      content: "";
-      position: absolute;
-      width: 48px;
-      height: 10px;
-      border-radius: 999px;
-      background: linear-gradient(90deg,#F2B705,#F97316);
-      transform: rotate(-40deg);
-      top: 24px;
-      right: 8px;
-      box-shadow: 0 8px 18px rgba(249,115,22,.24);
-    }
-
-    .grant-hero-head h1 {
-      font-family: 'Inter', sans-serif !important;
-      font-size: clamp(2.25rem,5vw,4.1rem) !important;
-      line-height: .96 !important;
-      letter-spacing: -.055em !important;
-      color: #0F172A !important;
-      margin: 0 0 18px !important;
-      font-weight: 900 !important;
-      max-width: 880px;
-    }
-
-    .grant-hero-head p {
-      font-size: 1.08rem !important;
-      line-height: 1.55 !important;
-      color: var(--grant-muted) !important;
-      max-width: 860px;
-      margin: 0 !important;
-    }
-
-    .compact-top-note {
-      grid-column: 1 / -1;
-      display: grid !important;
-      grid-template-columns: repeat(2,minmax(0,1fr));
-      gap: 16px;
-      margin-top: 20px !important;
-    }
-
-    .compact-note {
-      background: rgba(255,255,255,.72) !important;
-      border: 1px solid rgba(255,255,255,.9) !important;
-      border-radius: 22px !important;
-      padding: 18px 20px !important;
-      box-shadow: 0 10px 26px rgba(15,23,42,.04);
-      color: var(--grant-muted) !important;
-    }
-
-    .compact-note strong { color: var(--grant-slate) !important; font-weight: 900; }
-
-    .type-panels {
-      grid-column: 2;
-      grid-row: 2;
-      display: grid !important;
-      grid-template-columns: repeat(2,minmax(0,1fr));
-      gap: 14px;
-      margin: 0 !important;
-    }
-
-    .type-panel,
-    .grant-form-card,
-    .grant-result {
-      background: var(--grant-glass) !important;
-      border: 1px solid var(--grant-border) !important;
-      box-shadow: var(--grant-shadow) !important;
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      border-radius: 30px !important;
-    }
-
-    .type-panel { padding: 18px !important; }
-    .type-panel h3, .grant-form-card h3, .grant-result h3 { font-family: 'Inter', sans-serif !important; }
-    .type-panel h3 { font-size: 1rem !important; color: var(--grant-slate) !important; margin-bottom: 12px !important; }
-    .type-list { display: grid !important; gap: 8px !important; }
-    .type-item {
-      min-height: 44px;
-      border-radius: 14px !important;
-      background: rgba(255,255,255,.58) !important;
-      border: 1px solid rgba(15,23,42,.06) !important;
-      padding: 10px 10px 10px 13px !important;
-      font-size: .88rem !important;
-      color: var(--grant-slate) !important;
-    }
-
-    .type-item::before { display: none !important; }
-    .type-item button, .info-btn {
-      width: 24px !important;
-      height: 24px !important;
-      border-radius: 999px !important;
-      border: 0 !important;
-      background: #E2E8F0 !important;
-      color: #64748B !important;
-      font-weight: 900 !important;
-      flex: 0 0 24px;
-    }
-
-    .grant-form-card {
-      grid-column: 1;
-      grid-row: 2 / span 3;
-      position: sticky;
-      top: 22px;
-      padding: 30px !important;
-      margin: 0 !important;
-    }
-
-    .grant-form-card h3 {
-      font-size: 1.45rem !important;
-      font-weight: 900 !important;
-      letter-spacing: -.02em;
-      color: var(--grant-slate) !important;
-      margin-bottom: 6px !important;
-    }
-
-    .grant-form-card > p {
-      font-size: .95rem !important;
-      color: var(--grant-muted) !important;
-      line-height: 1.55 !important;
-    }
-
-    .grant-form-card .form-label {
-      font-size: .78rem !important;
-      text-transform: uppercase;
-      letter-spacing: .08em;
-      font-weight: 900 !important;
-      color: #64748B !important;
-    }
-
-    #scoreDisplay,
-    .score-display {
-      font-family: 'Inter', sans-serif !important;
-      font-size: 4rem !important;
-      line-height: .9 !important;
-      font-weight: 900 !important;
-      letter-spacing: -.06em !important;
-      color: #0F172A !important;
-      min-width: 120px;
-      text-align: left;
-    }
-
-    .score-slider {
-      height: 8px !important;
-      border-radius: 999px !important;
-      background: linear-gradient(to right,var(--grant-purple) var(--val,65%),#E2E8F0 var(--val,65%)) !important;
-    }
-
-    .score-slider::-webkit-slider-thumb {
-      width: 28px !important;
-      height: 28px !important;
-      background: #fff !important;
-      border: 5px solid var(--grant-purple) !important;
-      box-shadow: 0 8px 20px rgba(139,92,246,.35) !important;
-    }
-
-    .form-input {
-      min-height: 58px;
-      border-radius: 18px !important;
-      border: 1px solid rgba(15,23,42,.08) !important;
-      background-color: rgba(255,255,255,.68) !important;
-      font-family: 'Inter', sans-serif !important;
-      font-weight: 700 !important;
-      color: #0F172A !important;
-    }
-
-    .form-input:focus {
-      border-color: var(--grant-purple) !important;
-      box-shadow: 0 0 0 4px rgba(139,92,246,.12) !important;
-      outline: none;
-      background-color: #fff !important;
-    }
-
-    .quota-note {
-      border-radius: 18px !important;
-      background: rgba(139,92,246,.10) !important;
-      border: 1px solid rgba(139,92,246,.18) !important;
-      color: #4C1D95 !important;
-      font-weight: 700;
-      line-height: 1.45;
-    }
-
-    .btn { border-radius: 18px !important; font-family: 'Inter', sans-serif !important; font-weight: 900 !important; }
-    .grant-form-card .btn-primary {
-      background: linear-gradient(135deg,var(--grant-purple),#7C3AED) !important;
-      box-shadow: 0 16px 28px rgba(139,92,246,.22) !important;
-      min-height: 60px;
-      font-size: 1.02rem;
-    }
-
-    .grant-result {
-      grid-column: 2;
-      grid-row: 3;
-      padding: 22px !important;
-      margin: 0 !important;
-    }
-
-    .grant-result > h3, .level-grid { display: none !important; }
-
-    #mainResultCard {
-      display: grid !important;
-      grid-template-columns: minmax(0,1fr) 118px;
-      gap: 18px;
-      align-items: center;
-      text-align: left !important;
-      border: 1px solid rgba(255,255,255,.85) !important;
-      border-left: 5px solid var(--grant-purple) !important;
-      border-radius: 28px !important;
-      padding: 28px !important;
-      margin-bottom: 18px !important;
-      background: linear-gradient(135deg,rgba(255,255,255,.94),rgba(255,255,255,.50)) !important;
-      box-shadow: var(--grant-shadow);
-    }
-
-    #mainResultCard[data-level="high"] { border-left-color: #10B981 !important; }
-    #mainResultCard[data-level="med"] { border-left-color: #F59E0B !important; }
-    #mainResultCard[data-level="low"] { border-left-color: #F97316 !important; }
-    #mainResultCard[data-level="vlow"] { border-left-color: #EF4444 !important; }
-
-    #resultEmoji {
-      grid-column: 2;
-      grid-row: 1 / 5;
-      font-size: 4.6rem !important;
-      margin: 0 !important;
-      text-align: center;
-      filter: drop-shadow(0 12px 24px rgba(245,158,11,.16));
-    }
-
-    #resultLevel {
-      font-family: 'Inter', sans-serif !important;
-      font-size: clamp(1.8rem,3vw,2.55rem) !important;
-      line-height: 1.05 !important;
-      letter-spacing: -.04em !important;
-      color: #0F172A !important;
-      margin: 0 !important;
-      font-weight: 900 !important;
-    }
-
-    #resultMsg {
-      font-size: 1.02rem !important;
-      line-height: 1.58 !important;
-      color: var(--grant-muted) !important;
-      max-width: 680px;
-    }
-
-    .result-details {
-      grid-column: 1 / -1;
-      display: grid !important;
-      grid-template-columns: repeat(3,minmax(0,1fr));
-      gap: 10px;
-      margin-top: 10px;
-    }
-
-    .result-detail {
-      background: rgba(248,250,252,.78) !important;
-      border: 1px solid rgba(15,23,42,.05) !important;
-      border-radius: 16px !important;
-      padding: 12px !important;
-    }
-
-    .result-detail span {
-      font-size: .72rem !important;
-      text-transform: uppercase;
-      letter-spacing: .06em;
-      color: #64748B !important;
-      font-weight: 900;
-    }
-
-    .result-detail strong { font-size: .96rem !important; color: #0F172A !important; }
-
-    .grant-stats-grid {
-      display: grid;
-      grid-template-columns: repeat(5,minmax(112px,1fr));
-      gap: 14px;
-      margin-bottom: 18px;
-    }
-
-    .grant-stat-card {
-      background: rgba(255,255,255,.68);
-      border: 1px solid rgba(255,255,255,.86);
-      border-radius: 22px;
-      padding: 18px 14px;
-      text-align: center;
-      box-shadow: 0 16px 36px rgba(15,23,42,.05);
-    }
-
-    .grant-stat-icon { font-size: 1.4rem; color: var(--grant-purple); display: block; margin-bottom: 10px; }
-    .grant-stat-blue { color: #6366F1 !important; }
-    .grant-stat-green { color: #10B981 !important; }
-    .grant-stat-gold { color: #F59E0B !important; }
-    .grant-stat-pink { color: #EC4899 !important; }
-    .grant-stat-cyan { color: #0EA5E9 !important; }
-    .grant-stat-value { font-size: 1.35rem; font-weight: 900; color: #0F172A; line-height: 1; }
-    .grant-stat-label { margin-top: 7px; font-size: .72rem; line-height: 1.15; text-transform: uppercase; letter-spacing: .06em; color: #64748B; font-weight: 900; }
-
-    .score-breakdown {
-      background: rgba(255,255,255,.58) !important;
-      border: 1px solid rgba(255,255,255,.82) !important;
-      border-radius: 22px !important;
-    }
-
-    #tipsContainer { display: grid; gap: 10px; }
-    #suggestedUnis {
-      display: grid !important;
-      grid-template-columns: repeat(2,minmax(0,1fr));
-      gap: 14px !important;
-    }
-
-    #suggestedUnis > div {
-      background: rgba(255,255,255,.72) !important;
-      border: 1px solid rgba(15,23,42,.06) !important;
-      border-radius: 20px !important;
-      padding: 18px !important;
-      box-shadow: 0 12px 28px rgba(15,23,42,.04);
-    }
-
-    #suggestedUnis .badge {
-      width: 100%;
-      justify-content: flex-start;
-      background: rgba(255,255,255,.78) !important;
-      border: 1px solid rgba(139,92,246,.12) !important;
-      color: #0F172A !important;
-      padding: 13px 15px !important;
-      border-radius: 16px !important;
-      font-size: .92rem !important;
-      box-shadow: 0 10px 24px rgba(15,23,42,.04);
-    }
-
-    @media (max-width: 980px) {
-      .grant-calc { grid-template-columns: 1fr; }
-      .type-panels, .grant-form-card, .grant-result { grid-column: 1; grid-row: auto; }
-      .grant-form-card { position: static; }
-      .grant-stats-grid { grid-template-columns: repeat(2,1fr); }
-    }
-
-    @media (max-width: 640px) {
-      .nav-inner { border-radius: 24px; }
-      .grant-hero-head { grid-template-columns: 1fr; padding: 24px; }
-      .compact-top-note, .type-panels, .result-details, #suggestedUnis { grid-template-columns: 1fr; }
-      .grant-hero-head h1 { font-size: 2.4rem !important; }
-      #scoreDisplay, .score-display { font-size: 3.4rem !important; }
-      #mainResultCard { grid-template-columns: 1fr; }
-      #resultEmoji { grid-column: auto; grid-row: auto; }
-      .grant-stats-grid { grid-template-columns: 1fr 1fr; }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Грант мүмкіндігін тексеру — Shyraq Education</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #6c5ce7;
+            --primary-active: #5b4cc1;
+            --secondary-color: #f7f6fd;
+            --secondary-active: #efebff;
+            --text-dark: #333;
+            --text-medium: #555;
+            --text-light: #888;
+            --border-color: #eee;
+            --white: #fff;
+            --gauge-low: #ff4d4d;
+            --gauge-risk: #ff8e4a;
+            --gauge-med: #ffc233;
+            --gauge-high: #4dcf8c;
+            --score-bg-high: #f2fde2;
+            --score-text-high: #a3d13b;
+            --score-bg-med: #fff9e6;
+            --score-text-med: #fbc531;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--secondary-color);
+            margin: 0;
+            color: var(--text-dark);
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            grid-template-rows: 60px 1fr;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* --- Header --- */
+        header {
+            grid-column: 1 / -1;
+            background-color: var(--white);
+            display: flex;
+            align-items: center;
+            padding: 0 30px;
+            border-bottom: 1px solid var(--border-color);
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--primary-color);
+            text-decoration: none;
+            margin-right: auto;
+        }
+
+        .logo i { margin-right: 12px; font-size: 20px; }
+
+        .main-title { font-size: 20px; font-weight: 700; color: var(--text-dark); }
+
+        /* --- Sidebar --- */
+        aside {
+            grid-row: 2;
+            background-color: var(--white);
+            padding: 20px 0;
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 14px 30px;
+            color: var(--text-medium);
+            text-decoration: none;
+            transition: background-color 0.3s, color 0.3s;
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .nav-link i { width: 25px; text-align: center; margin-right: 15px; color: var(--text-light); font-size: 18px; }
+        .nav-link:hover { background-color: #fafafa; }
+        .nav-link.active { background-color: var(--secondary-active); color: var(--primary-color); font-weight: 700; }
+        .nav-link.active i { color: var(--primary-color); }
+
+        .light-mode {
+            display: flex;
+            align-items: center;
+            margin-top: auto;
+            margin-bottom: 20px;
+            padding: 0 30px;
+            font-size: 14px;
+            color: var(--text-light);
+            cursor: pointer;
+        }
+        .light-mode i { margin-right: 10px; color: #fbc531; }
+        .light-mode.selected { color: var(--primary-color); font-weight: 600; }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            padding: 20px 30px;
+            border-top: 1px solid var(--border-color);
+            cursor: pointer;
+        }
+        .user-initial {
+            background-color: var(--primary-color);
+            color: var(--white);
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; margin-right: 15px; font-size: 16px;
+        }
+        .user-details { display: flex; flex-direction: column; }
+        .user-name { font-weight: 700; font-size: 14px; }
+        .user-email { color: var(--text-light); font-size: 12px; }
+
+        /* --- Main Content --- */
+        main {
+            grid-column: 2;
+            grid-row: 2;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .top-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 30px;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .tab-link {
+            display: flex; align-items: center;
+            padding: 10px 25px 20px 25px;
+            color: var(--text-medium);
+            text-decoration: none;
+            transition: color 0.3s;
+            position: relative;
+            font-size: 15px;
+            background: none; border: none; cursor: pointer;
+            font-family: inherit;
+        }
+        .tab-link i { margin-right: 10px; color: var(--text-light); }
+        .tab-link.active { color: var(--primary-color); font-weight: 700; }
+        .tab-link.active i { color: var(--primary-color); }
+        .tab-link.active::after {
+            content: '';
+            position: absolute; bottom: -1px; left: 0;
+            width: 100%; height: 4px;
+            background-color: var(--primary-color);
+            border-radius: 4px 4px 0 0;
+        }
+
+        /* Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr) 300px;
+            grid-template-rows: auto auto;
+            gap: 25px;
+        }
+
+        .card {
+            background-color: var(--white);
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            padding: 30px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+        }
+
+        /* Card 1: Score & Gauge */
+        .card.score-gauge { grid-column: 1 / 3; display: flex; gap: 30px; }
+        .score-info { flex: 1; display: flex; flex-direction: column; gap: 12px; }
+        .score-title { font-size: 15px; color: var(--text-dark); font-weight: 600; }
+        .score-display { display: flex; align-items: baseline; gap: 5px; margin-bottom: 5px; }
+        .score-value { font-size: 40px; font-weight: 800; color: var(--primary-color); }
+        .score-max { font-size: 20px; color: var(--text-light); }
+        .score-item { display: flex; align-items: center; font-size: 14px; color: var(--text-dark); }
+        .score-item i { color: var(--primary-color); margin-right: 15px; font-size: 16px; width: 20px; text-align: center; }
+        .score-item .label { color: var(--text-light); margin-right: 6px; }
+
+        .gauge-section { flex: 1.3; display: flex; flex-direction: column; align-items: center; position: relative; }
+        .gauge-svg { width: 100%; max-width: 350px; }
+        .gauge-status { font-size: 18px; font-weight: 800; color: var(--gauge-high); margin-top: 15px; }
+        .gauge-desc { font-size: 12px; color: var(--text-light); text-align: center; max-width: 280px; line-height: 1.5; margin-top: 5px; }
+
+        /* Card 2: Keñester */
+        .card.kenester { grid-column: 3; display: flex; flex-direction: column; gap: 15px; }
+        .kenester-title { display: flex; align-items: center; font-size: 15px; font-weight: 700; }
+        .kenester-title i { color: #fbc531; margin-right: 10px; font-size: 16px; }
+        .kenester-list { display: flex; flex-direction: column; gap: 20px; }
+        .kenester-item { display: flex; flex-direction: column; gap: 5px; }
+        .kenester-point { display: flex; align-items: center; font-weight: 700; font-size: 14px; }
+        .kenester-point::before {
+            content: ''; display: block; width: 7px; height: 7px;
+            background-color: var(--primary-color); border-radius: 50%; margin-right: 12px;
+        }
+        .kenester-desc { font-size: 12px; color: var(--text-light); margin-left: 19px; line-height: 1.5; }
+
+        /* Card 3: Universitietter */
+        .card.universities { grid-column: 1 / 3; grid-row: 2; display: flex; flex-direction: column; gap: 20px; }
+        .uni-title { font-size: 15px; font-weight: 700; }
+        .uni-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; }
+        .uni-card {
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 15px;
+            display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px;
+            transition: box-shadow .2s, transform .2s;
+        }
+        .uni-card:hover { box-shadow: 0 10px 24px rgba(108,92,231,.12); transform: translateY(-2px); }
+        .uni-logo { width: 55px; height: 55px; display: flex; align-items: center; justify-content: center; font-size: 26px; }
+        .uni-logo img { max-width: 100%; max-height: 100%; object-fit: contain; }
+        .uni-logo.muit { color: #316698; }
+        .uni-name { font-size: 12px; font-weight: 700; color: var(--text-dark); height: 2.8em; overflow: hidden; line-height: 1.4; display: flex; align-items: center; }
+        .uni-details { display: flex; flex-direction: column; gap: 5px; width: 100%; }
+        .uni-score-row { display: flex; gap: 4px; font-size: 10px; font-weight: 700; justify-content: center; }
+        .uni-score-range { background-color: var(--score-bg-high); color: var(--score-text-high); padding: 3px 6px; border-radius: 4px; }
+        .uni-score-range.med { background-color: var(--score-bg-med); color: var(--score-text-med); }
+        .uni-score-label { background-color: var(--score-bg-high); color: var(--score-text-high); padding: 3px 6px; border-radius: 4px; }
+        .uni-score-label.med { background-color: var(--score-bg-med); color: var(--score-text-med); }
+        .uni-location { font-size: 10px; color: var(--text-light); display: flex; align-items: center; gap: 5px; justify-content: center; }
+        .uni-course { font-size: 10px; color: var(--text-light); font-weight: 500; }
+        .view-all { display: flex; align-items: center; justify-content: center; text-decoration: none; color: var(--primary-color); font-size: 14px; font-weight: 700; margin-top: 10px; }
+        .view-all i { margin-left: 8px; }
+
+        /* Card 4: Premium */
+        .card.premium { grid-column: 3; grid-row: 2; display: flex; flex-direction: column; align-items: center; gap: 15px; text-align: center; }
+        .premium-header { width: 100%; display: flex; justify-content: center; position: relative; }
+        .premium-icon { color: #fbc531; font-size: 26px; }
+        .premium-icon i { animation: crownSwing 4s ease-in-out infinite; display: inline-block; }
+        .premium-tag { position: absolute; right: 0; top: -10px; background-color: var(--secondary-active); color: var(--primary-color); font-size: 10px; font-weight: 800; padding: 3px 6px; border-radius: 4px; }
+        .premium-title { font-size: 14px; font-weight: 700; color: var(--primary-color); }
+        .premium-desc { font-size: 12px; color: var(--text-light); line-height: 1.5; max-width: 240px; }
+        .premium-btn { display: flex; align-items: center; justify-content: center; background-color: var(--primary-color); color: var(--white); border-radius: 10px; padding: 12px; width: 100%; text-decoration: none; font-size: 14px; font-weight: 700; transition: background-color 0.3s; }
+        .premium-btn:hover { background-color: var(--primary-active); }
+        .premium-btn i { margin-right: 10px; font-size: 12px; }
+
+        /* SVG Gauge styling */
+        .gauge-svg .bg-arc { fill: none; stroke: #eee; stroke-width: 20; }
+        .gauge-svg .arc-red { fill: none; stroke: var(--gauge-low); stroke-width: 20; }
+        .gauge-svg .arc-orange { fill: none; stroke: var(--gauge-risk); stroke-width: 20; }
+        .gauge-svg .arc-yellow { fill: none; stroke: var(--gauge-med); stroke-width: 20; }
+        .gauge-svg .arc-green { fill: none; stroke: var(--gauge-high); stroke-width: 20; }
+        .gauge-svg .needle { fill: #333; transform-origin: 150px 150px; transform: rotate(-90deg); transition: transform 1.6s cubic-bezier(.34,1.56,.64,1); }
+        .gauge-svg .needle-center { fill: #333; }
+        .gauge-svg .gauge-label { fill: #333; font-weight: 700; font-size: 13px; }
+        .gauge-svg .gauge-sub-label { fill: #888; font-size: 9px; font-weight: 500; }
+
+        @keyframes crownSwing {
+            0% { transform: rotate(0deg); }
+            10% { transform: rotate(-8deg); }
+            20% { transform: rotate(8deg); }
+            30% { transform: rotate(-8deg); }
+            40%, 100% { transform: rotate(0deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 1100px) {
+            .dashboard-grid { grid-template-columns: 1fr 1fr; }
+            .card.score-gauge { grid-column: 1 / -1; }
+            .card.kenester { grid-column: 1 / -1; }
+            .card.universities { grid-column: 1 / -1; grid-row: auto; }
+            .card.premium { grid-column: 1 / -1; grid-row: auto; }
+        }
+        @media (max-width: 860px) {
+            body { grid-template-columns: 1fr; grid-template-rows: 60px 1fr; height: auto; overflow: auto; }
+            aside { display: none; }
+            main { grid-column: 1; }
+            .card.score-gauge { flex-direction: column; }
+            .uni-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 520px) {
+            .uni-grid { grid-template-columns: 1fr; }
+            main { padding: 18px; }
+        }
+    </style>
 </head>
 <body>
 
-<nav class="nav">
-  <div class="nav-inner">
-    <a href="index.html" class="nav-logo">
-      <div class="nav-logo-icon">🔆</div>
-      Shyraq
-    </a>
-    <div class="nav-links">
-      <a href="index.html" class="nav-link">Басты бет</a>
-      <a href="specialties.html" class="nav-link">Мамандықтар</a>
-      
-      <a href="universities.html" class="nav-link">Университеттер</a>
-      <a href="grant.html" class="nav-link active">Грант</a>
-      <a href="pricing.html" class="nav-link">Тарифтер</a>
-    </div>
-    <div class="nav-actions">
-      <a href="dashboard.html" class="btn btn-primary btn-sm">Кабинет</a>
-      <button class="nav-mobile-btn">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-      </button>
-    </div>
-  </div>
-</nav>
+    <header>
+        <a href="index.html" class="logo">
+            <i class="fas fa-star"></i>
+            <span>shyraq</span>
+        </a>
+        <div class="main-title">Грант мүмкіндігін тексеру</div>
+    </header>
 
-<div class="container" style="padding-top:40px;padding-bottom:60px">
-  <div class="grant-calc">
-    <div class="grant-hero-head">
-      <div class="grant-target-icon" aria-hidden="true"></div>
-      <div class="badge badge-navy" style="margin-bottom:10px">Грант және квота</div>
-      <h1>ҰБТ балыңыз бойынша грантқа түсу мүмкіндігін тексеріңіз</h1>
-      <p>ҰБТ балыңызды, грант түрін, квота санатын, мамандықты және қалаңызды енгізіңіз. Жүйе грантқа түсу мүмкіндігін алдын ала бағалайды.</p>
-      <div class="compact-top-note">
-        <div class="compact-note"><strong>Грант</strong>Оқу ақысын мемлекет, әкімдік, университет немесе басқа ұйым төлейтін қаржыландыру түрі.</div>
-        <div class="compact-note"><strong>Квота</strong>ҰБТ балына балл қоспайды, тек грант конкурсында арнайы санат ретінде ескеріледі.</div>
-      </div>
-    </div>
+    <aside>
+        <a href="index.html" class="nav-link"><i class="fas fa-home"></i> Басты бет</a>
+        <a href="profile.html" class="nav-link"><i class="fas fa-user"></i> Профиль</a>
+        <a href="specialties.html" class="nav-link"><i class="fas fa-heart"></i> Мамандықтар</a>
+        <a href="universities.html" class="nav-link"><i class="fas fa-university"></i> Университеттер</a>
+        <a href="grant.html" class="nav-link active"><i class="fas fa-graduation-cap"></i> Грант</a>
+        <a href="results.html" class="nav-link"><i class="fas fa-calculator"></i> Есептеулер тарихы</a>
+        <a href="profile.html" class="nav-link"><i class="fas fa-bookmark"></i> Таңдаулылар</a>
+        <a href="pricing.html" class="nav-link"><i class="fas fa-lightbulb"></i> Кеңестер</a>
 
-    <div class="grant-intro-grid">
-      <div class="grant-info-box">
-        <h3>Грант деген не?</h3>
-        <p>Грант — оқу ақысын мемлекет, әкімдік, университет немесе басқа ұйым төлейтін қаржыландыру түрі.</p>
-        <div class="grant-pill-list">
-          <span class="grant-pill">Жалпы мемлекеттік</span>
-          <span class="grant-pill">Нысаналы</span>
-          <span class="grant-pill">Серпін</span>
-          <span class="grant-pill">Әкімдік</span>
+        <div class="light-mode selected">
+            <i class="fas fa-sun"></i> Жарық режимі
         </div>
-      </div>
-      <div class="grant-info-box">
-        <h3>Квота деген не?</h3>
-        <p>Квота — белгілі бір әлеуметтік немесе өңірлік санаттағы талапкерлерге грант конкурсында бөлек қарастырылатын мүмкіндік.</p>
-        <div class="quota-note" style="margin-bottom:0"><strong>Маңызды:</strong> квота ҰБТ балына қосымша балл қоспайды.</div>
-      </div>
-    </div>
 
-    <div class="type-panels">
-      <div class="type-panel">
-        <h3>Грант түрлері</h3>
-        <div class="type-list">
-          <div class="type-item"><span>Жалпы мемлекеттік грант</span><button type="button" class="info-btn" onclick="openInfo('stateGrant')">?</button></div>
-          <div class="type-item"><span>Нысаналы грант</span><button type="button" class="info-btn" onclick="openInfo('targetGrant')">?</button></div>
-          <div class="type-item"><span>Серпін гранты</span><button type="button" class="info-btn" onclick="openInfo('serpin')">?</button></div>
-          <div class="type-item"><span>Әкімдік гранты</span><button type="button" class="info-btn" onclick="openInfo('akimatGrant')">?</button></div>
-          <div class="type-item"><span>Университет гранты / ішкі жеңілдік</span><button type="button" class="info-btn" onclick="openInfo('universityGrant')">?</button></div>
-        </div>
-      </div>
-      <div class="type-panel">
-        <h3>Квота түрлері</h3>
-        <div class="type-list">
-          <div class="type-item"><span>Квота жоқ</span><button type="button" class="info-btn" onclick="openInfo('noQuota')">?</button></div>
-          <div class="type-item"><span>Ауылдық квота</span><button type="button" class="info-btn" onclick="openInfo('rural')">?</button></div>
-          <div class="type-item"><span>Жетім балаларға арналған квота</span><button type="button" class="info-btn" onclick="openInfo('orphan')">?</button></div>
-          <div class="type-item"><span>Мүгедектігі бар адамдарға арналған квота</span><button type="button" class="info-btn" onclick="openInfo('disability')">?</button></div>
-          <div class="type-item"><span>Көпбалалы отбасы квотасы</span><button type="button" class="info-btn" onclick="openInfo('large_family')">?</button></div>
-          <div class="type-item"><span>Толық емес отбасы квотасы</span><button type="button" class="info-btn" onclick="openInfo('single_parent')">?</button></div>
-          <div class="type-item"><span>Мүгедектігі бар бала тәрбиелеп отырған отбасы квотасы</span><button type="button" class="info-btn" onclick="openInfo('disabled_child_family')">?</button></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- CALCULATOR FORM -->
-    <div class="grant-form-card mb-24">
-      <h3 style="color:var(--navy);margin-bottom:8px">Талдау баптауы</h3>
-      <p style="color:var(--text-muted);font-size:0.9rem;line-height:1.6;margin-bottom:24px">Грант түрлері мен квота түрлері бөлек таңдалады. Квота баллды өзгертпейді.</p>
-
-      <!-- Score slider -->
-      <div style="margin-bottom:32px">
-        <label class="form-label" style="margin-bottom:12px;display:block">Жиналған балл (0–140)</label>
-        <div style="display:flex;align-items:center;gap:24px">
-          <div class="score-display" id="scoreDisplay">92</div>
-          <div style="flex:1">
-            <input type="range" class="score-slider" id="scoreSlider" min="0" max="140" value="92" oninput="updateScore(this.value)" />
-            <div style="display:flex;justify-content:space-between;margin-top:6px">
-              <span style="font-size:0.75rem;color:var(--text-muted)">0</span>
-              <span style="font-size:0.75rem;color:var(--text-muted)">70 (орташа)</span>
-              <span style="font-size:0.75rem;color:var(--text-muted)">140</span>
+        <a href="profile.html" class="user-profile" style="text-decoration:none;color:inherit;">
+            <div class="user-initial">A</div>
+            <div class="user-details">
+                <span class="user-name">Аружан</span>
+                <span class="user-email">aruzhan@mail.com</span>
             </div>
-          </div>
+            <i class="fas fa-chevron-down" style="margin-left: auto; font-size: 12px; color: var(--text-light);"></i>
+        </a>
+    </aside>
+
+    <main>
+        <div class="top-tabs">
+            <button class="tab-link active" data-tab="check"><i class="fas fa-chart-line"></i> Грант мүмкіндігін тексеру</button>
+            <button class="tab-link" data-tab="types"><i class="fas fa-list-ul"></i> Грант түрлері</button>
+            <button class="tab-link" data-tab="quota"><i class="fas fa-users-cog"></i> Квота түрлері</button>
+            <button class="tab-link" data-tab="result"><i class="fas fa-poll"></i> Нәтиже</button>
         </div>
-      </div>
 
-      <div class="grid-2" style="gap:16px;margin-bottom:20px">
-        <div class="form-group">
-          <div class="field-row">
-            <label class="form-label" for="grantTypeSelect">Грант түрі</label>
-            <button type="button" class="info-btn" onclick="openSelectedGrantInfo()" aria-label="Грант түрі туралы ақпарат">?</button>
-          </div>
-          <select class="form-input form-select" id="grantTypeSelect" onchange="calculate(false)">
-            <option value="state">Жалпы мемлекеттік грант</option>
-            <option value="target">Нысаналы грант</option>
-            <option value="serpin">Серпін гранты</option>
-            <option value="akimat">Әкімдік гранты</option>
-            <option value="university">Университет гранты / ішкі жеңілдік</option>
-          </select>
+        <div class="dashboard-grid">
+
+            <div class="card score-gauge">
+                <div class="score-info">
+                    <div class="score-title">Сіздің балыңыз</div>
+                    <div class="score-display">
+                        <span class="score-value" id="scoreValue">92</span>
+                        <span class="score-max">/ 140</span>
+                    </div>
+                    <div class="score-item"><i class="fas fa-graduation-cap"></i><span class="label">Грант түрі:</span> Жалпы мемлекеттік грант</div>
+                    <div class="score-item"><i class="fas fa-users"></i><span class="label">Квота түрі:</span> Квота жоқ</div>
+                    <div class="score-item"><i class="fas fa-code"></i><span class="label">Мамандық:</span> Информатика / CS</div>
+                    <div class="score-item"><i class="fas fa-map-marker-alt"></i><span class="label">Қала / облыс:</span> Алматы қаласы</div>
+                    <div class="score-item"><i class="fas fa-university"></i><span class="label">Университет:</span> Кез келген университет</div>
+                </div>
+                <div class="gauge-section">
+                    <svg class="gauge-svg" viewBox="0 0 300 180">
+                        <path class="bg-arc" d="M 50 150 A 100 100 0 0 1 250 150"/>
+                        <path class="arc-red" d="M 50 150 A 100 100 0 0 1 100 63.4"/>
+                        <path class="arc-orange" d="M 100 63.4 A 100 100 0 0 1 150 50"/>
+                        <path class="arc-yellow" d="M 150 50 A 100 100 0 0 1 200 63.4"/>
+                        <path class="arc-green" d="M 200 63.4 A 100 100 0 0 1 250 150"/>
+                        <polygon class="needle" points="150,150 148,55 150,50 152,55"/>
+                        <circle class="needle-center" cx="150" cy="150" r="8"/>
+                        <text x="55" y="140" class="gauge-label" text-anchor="middle">Төмен</text>
+                        <text x="55" y="153" class="gauge-sub-label" text-anchor="middle">0–63</text>
+                        <text x="100" y="55" class="gauge-label" text-anchor="middle">Тәуекел</text>
+                        <text x="100" y="68" class="gauge-sub-label" text-anchor="middle">64–79</text>
+                        <text x="200" y="55" class="gauge-label" text-anchor="middle">Орташа</text>
+                        <text x="200" y="68" class="gauge-sub-label" text-anchor="middle">80–101</text>
+                        <text x="245" y="140" class="gauge-label" text-anchor="middle">Жоғары</text>
+                        <text x="245" y="153" class="gauge-sub-label" text-anchor="middle">102–140</text>
+                    </svg>
+                    <div class="gauge-status" id="gaugeStatus">Жоғары</div>
+                    <div class="gauge-desc">«Информатика / CS» бойынша грант мүмкіндігі жоғары. Бірнеше университетке өтінім беру ұсынылады.</div>
+                </div>
+            </div>
+
+            <div class="card kenester">
+                <div class="kenester-title"><i class="fas fa-lightbulb"></i> Кеңестер</div>
+                <div class="kenester-list">
+                    <div class="kenester-item">
+                        <div class="kenester-point">Квота балл қоспайды</div>
+                        <div class="kenester-desc">Таңдалған квота тек грант конкурсында арнайы санат ретінде ескеріледі.</div>
+                    </div>
+                    <div class="kenester-item">
+                        <div class="kenester-point">Бірнеше ЖОО қарастыр</div>
+                        <div class="kenester-desc">Қала, университет және мамандықты салыстыру грант мүмкіндігін нақтырақ бағалауға көмектеседі.</div>
+                    </div>
+                    <div class="kenester-item">
+                        <div class="kenester-point">Өңірлік университеттер</div>
+                        <div class="kenester-desc">Астана мен Алматы ЖОО-ларынан басқа өңірлік ЖОО-ларда конкурс төмен.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card universities">
+                <div class="uni-title">Ұсынылатын университеттер</div>
+                <div class="uni-grid">
+                    <div class="uni-card">
+                        <div class="uni-logo muit"><i class="fas fa-laptop-code"></i></div>
+                        <div class="uni-name">МУИТ</div>
+                        <div class="uni-details">
+                            <div class="uni-score-row"><span class="uni-score-range">92–105 балл</span><span class="uni-score-label">Жоғары</span></div>
+                            <div class="uni-location"><i class="fas fa-map-marker-alt"></i> Алматы қ.</div>
+                            <div class="uni-course">Информатика</div>
+                        </div>
+                    </div>
+                    <div class="uni-card">
+                        <div class="uni-logo"><img src="assets/university-logos/kaznu-university.svg" alt="ҚазҰУ" onerror="this.parentNode.innerHTML='&lt;i class=&quot;fas fa-university&quot; style=&quot;color:#316698&quot;&gt;&lt;/i&gt;'"></div>
+                        <div class="uni-name">ҚазҰУ аль-Фараби</div>
+                        <div class="uni-details">
+                            <div class="uni-score-row"><span class="uni-score-range">90–104 балл</span><span class="uni-score-label">Жоғары</span></div>
+                            <div class="uni-location"><i class="fas fa-map-marker-alt"></i> Алматы қ.</div>
+                            <div class="uni-course">Информатика</div>
+                        </div>
+                    </div>
+                    <div class="uni-card">
+                        <div class="uni-logo"><img src="assets/university-logos/narxoz-university.svg" alt="Нархоз" onerror="this.parentNode.innerHTML='&lt;span style=&quot;color:#ee5253;font-weight:800;font-size:14px&quot;&gt;NARXOZ&lt;/span&gt;'"></div>
+                        <div class="uni-name">Нархоз</div>
+                        <div class="uni-details">
+                            <div class="uni-score-row"><span class="uni-score-range med">85–100 балл</span><span class="uni-score-label med">Орташа</span></div>
+                            <div class="uni-location"><i class="fas fa-map-marker-alt"></i> Алматы қ.</div>
+                            <div class="uni-course">Информатика</div>
+                        </div>
+                    </div>
+                    <div class="uni-card">
+                        <div class="uni-logo"><img src="assets/university-logos/enu-university.svg" alt="ЕҰУ" onerror="this.parentNode.innerHTML='&lt;i class=&quot;fas fa-university&quot; style=&quot;color:#316698&quot;&gt;&lt;/i&gt;'"></div>
+                        <div class="uni-name">ЕҰУ</div>
+                        <div class="uni-details">
+                            <div class="uni-score-row"><span class="uni-score-range med">80–97 балл</span><span class="uni-score-label med">Орташа</span></div>
+                            <div class="uni-location"><i class="fas fa-map-marker-alt"></i> Астана қ.</div>
+                            <div class="uni-course">Информатика</div>
+                        </div>
+                    </div>
+                </div>
+                <a href="universities.html" class="view-all">Барлық университеттерді көру <i class="fas fa-arrow-right"></i></a>
+            </div>
+
+            <div class="card premium">
+                <div class="premium-header">
+                    <div class="premium-icon"><i class="fas fa-crown"></i></div>
+                    <div class="premium-tag">80–101 балл</div>
+                </div>
+                <div class="premium-title">Premium алу</div>
+                <div class="premium-desc">Premium-де шексіз есептеу, барлық мамандықтар мен университеттер бойынша нақты анализ</div>
+                <a href="pricing.html" class="premium-btn"><i class="fas fa-bolt"></i> Premium алу</a>
+            </div>
+
         </div>
-        <div class="form-group">
-          <div class="field-row">
-            <label class="form-label" for="quotaSelect">Квота түрі</label>
-            <button type="button" class="info-btn" id="quotaInfoBtn" onclick="openSelectedQuotaInfo()" aria-label="Квота туралы ақпарат">?</button>
-          </div>
-          <select class="form-input form-select" id="quotaSelect" onchange="calculate(false)">
-            <option value="none">Квота жоқ</option>
-            <option value="rural">Ауылдық квота</option>
-            <option value="orphan">Жетім балаларға арналған квота</option>
-            <option value="disability">Мүгедектігі бар адамдарға арналған квота</option>
-            <option value="large_family">Көпбалалы отбасы квотасы</option>
-            <option value="single_parent">Толық емес отбасы квотасы</option>
-            <option value="disabled_child_family">Мүгедектігі бар бала тәрбиелеп отырған отбасы квотасы</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Мамандық</label>
-          <select class="form-input form-select" id="specialtySelect" onchange="onSpecialtyChange()">
-            <optgroup label="IT / Техникалық">
-              <option value="cs">Информатика / Computer Science</option>
-              <option value="software">Бағдарламалық жасақтама</option>
-              <option value="comp_eng">Компьютерлік инженерия</option>
-              <option value="info_sys">Ақпараттық жүйелер</option>
-              <option value="cybersec">Киберқауіпсіздік</option>
-              <option value="data_sci">Деректер ғылымы (Data Science)</option>
-              <option value="telecom">Телекоммуникация</option>
-              <option value="electronics">Электроника, Робототехника</option>
-            </optgroup>
-            <optgroup label="Медицина">
-              <option value="gen_medicine">Жалпы медицина</option>
-              <option value="dentistry">Стоматология</option>
-              <option value="pharmacy">Фармация</option>
-              <option value="pediatrics">Педиатрия</option>
-              <option value="nursing">Мейіргерлік іс</option>
-            </optgroup>
-            <optgroup label="Педагогика">
-              <option value="primary_edu">Бастауыш білім беру</option>
-              <option value="math_teacher">Математика мұғалімі</option>
-              <option value="physics_teacher">Физика мұғалімі</option>
-              <option value="chem_teacher">Химия мұғалімі</option>
-              <option value="english_teacher">Ағылшын тілі мұғалімі</option>
-              <option value="kazakh_teacher">Қазақ тілі мұғалімі</option>
-              <option value="history_teacher">Тарих мұғалімі</option>
-            </optgroup>
-            <optgroup label="Заңтану">
-              <option value="law">Юриспруденция</option>
-              <option value="intl_law">Халықаралық құқық</option>
-              <option value="criminal">Криминалистика</option>
-            </optgroup>
-            <optgroup label="Экономика / Бизнес">
-              <option value="economics">Экономика</option>
-              <option value="finance">Қаржы</option>
-              <option value="management">Менеджмент</option>
-              <option value="marketing">Маркетинг</option>
-              <option value="accounting">Бухгалтерлік есеп</option>
-              <option value="banking">Банк ісі</option>
-            </optgroup>
-            <optgroup label="Гуманитарлық">
-              <option value="journalism">Журналистика</option>
-              <option value="translation">Аударма ісі</option>
-              <option value="history">Тарих</option>
-              <option value="psychology">Психология</option>
-              <option value="sociology">Социология</option>
-              <option value="philosophy">Философия</option>
-            </optgroup>
-            <optgroup label="Жаратылыстану">
-              <option value="biology">Биология</option>
-              <option value="chemistry_sci">Химия</option>
-              <option value="physics_sci">Физика</option>
-              <option value="mathematics">Математика</option>
-            </optgroup>
-            <optgroup label="Инженерлік">
-              <option value="civil_eng">Құрылыс</option>
-              <option value="oil_gas">Мұнай-газ ісі</option>
-              <option value="mining">Тау-кен ісі</option>
-              <option value="mech_eng">Машина жасау</option>
-              <option value="architecture">Сәулет</option>
-              <option value="ecology">Экология</option>
-            </optgroup>
-          </select>
-          <div id="specThreshHint" style="margin-top:8px;font-size:.82rem;color:var(--text-muted);display:flex;gap:12px;flex-wrap:wrap"></div>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Қала / облыс</label>
-          <select class="form-input form-select" id="citySelect" onchange="calculate(false)">
-            <optgroup label="Республикалық маңызды қалалар">
-              <option value="almaty">Алматы қаласы</option>
-              <option value="astana">Астана қаласы</option>
-              <option value="shymkent">Шымкент қаласы</option>
-            </optgroup>
-            <optgroup label="Облыстар">
-              <option value="akmola">Ақмола обл. (Көкшетау)</option>
-              <option value="aktobe">Ақтөбе обл.</option>
-              <option value="almaty_obl">Алматы обл. (Қонаев)</option>
-              <option value="atyrau">Атырау обл.</option>
-              <option value="bko">Батыс Қазақстан обл. (Орал)</option>
-              <option value="zhambyl">Жамбыл обл. (Тараз)</option>
-              <option value="zhetisu">Жетісу обл. (Талдықорған)</option>
-              <option value="karagandy">Қарағанды обл.</option>
-              <option value="kostanai">Қостанай обл.</option>
-              <option value="kyzylorda">Қызылорда обл.</option>
-              <option value="mangystau">Маңғыстау обл. (Ақтау)</option>
-              <option value="pavlodar">Павлодар обл.</option>
-              <option value="sko">Солтүстік Қазақстан обл. (Петропавл)</option>
-              <option value="turkestan">Түркістан обл.</option>
-              <option value="ulytau">Ұлытау обл. (Жезқазған)</option>
-              <option value="abai">Абай обл. (Семей)</option>
-              <option value="shko">Шығыс Қазақстан обл. (Өскемен)</option>
-            </optgroup>
-          </select>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Университет</label>
-          <select class="form-input form-select" id="universitySelect" onchange="calculate(false)">
-            <option value="any">Кез келген университет</option>
-            <optgroup label="IT / Техникалық">
-              <option value="aitu">AITU (Astana IT University)</option>
-              <option value="satbayev">ҚазҰТЗУ / Satbayev University</option>
-              <option value="kbtu">КБТУ (Қазақ-Британ техникалық)</option>
-              <option value="muит">МУИТ</option>
-            </optgroup>
-            <optgroup label="Классикалық / Ірі">
-              <option value="kaznu">ҚазҰУ аль-Фараби (Алматы)</option>
-              <option value="enu">ЕҰУ Л.Гумилев (Астана)</option>
-              <option value="sdu">SDU University (Қаскелен)</option>
-              <option value="narxoz">Нархоз (Алматы)</option>
-              <option value="kimep">КИМЭП (Алматы)</option>
-            </optgroup>
-            <optgroup label="Медицина">
-              <option value="kaznmu">ҚазҰМУ С.Ж.Асфендияров (Алматы)</option>
-              <option value="astana_med">Астана медициналық университеті</option>
-              <option value="semei_med">Семей медициналық университеті</option>
-            </optgroup>
-            <optgroup label="Педагогика">
-              <option value="kaznpu">ҚазҰПУ / Абай университеті (Алматы)</option>
-              <option value="enu_ped">ЕҰУ педагогика (Астана)</option>
-            </optgroup>
-            <optgroup label="Заңтану / Гуманитарлық">
-              <option value="kazgyu">ҚазГЮИ / КазГЮУ (Астана)</option>
-              <option value="ablaikhan">Абылай хан атындағы ҚазХҚ және ӘТУ</option>
-            </optgroup>
-            <optgroup label="Өңірлік ЖОО">
-              <option value="karu">ҚарМУ (Қарағанды)</option>
-              <option value="shku">ШҚТУ / Шәкәрім (Семей)</option>
-              <option value="regional">Басқа өңірлік университет</option>
-            </optgroup>
-          </select>
-        </div>
-      </div>
+    </main>
 
-      <label class="w-check" style="display:flex;align-items:center;gap:10px;margin:4px 0 12px;color:var(--text-muted)">
-        <input type="checkbox" id="confirmData" style="width:18px;height:18px;accent-color:var(--navy)" />
-        Деректерді дұрыс енгіздім
-      </label>
-      <div class="quota-note"><strong>Ескерту:</strong> квота ҰБТ балына қосымша балл қоспайды. Ол тек грант конкурсында арнайы санат ретінде ескеріледі.</div>
-      <div class="error-text" id="grantError">Деректерді растаңыз және ҰБТ баллын дұрыс енгізіңіз.</div>
+    <script>
+        // Gauge needle: maps score (0..max) across a 180° sweep.
+        // needle base points straight up (rotate 0 = top, i.e. score = max/2).
+        // score 0   -> rotate -90deg (points left)
+        // score max -> rotate +90deg (points right)
+        function setGauge(score, max) {
+            const clamped = Math.max(0, Math.min(max, score));
+            const angle = (clamped / max) * 180 - 90;
+            const needle = document.querySelector('.gauge-svg .needle');
+            if (needle) needle.style.transform = `rotate(${angle}deg)`;
+        }
 
-      <button class="btn btn-primary btn-full btn-lg" onclick="calculate(true)">
-        Есептеуді бастау
-      </button>
-      <a href="universities.html" class="btn btn-ghost btn-full" style="justify-content:center;margin-top:10px">Ары қарай қарау</a>
-    </div>
+        window.addEventListener('DOMContentLoaded', () => {
+            const score = parseInt(document.getElementById('scoreValue').textContent, 10) || 0;
+            requestAnimationFrame(() => setGauge(score, 140));
 
-    <!-- RESULT -->
-    <div class="grant-result" id="grantResult">
-      <h3 style="color:var(--navy);margin-bottom:16px">Нәтиже</h3>
-
-      <!-- Meter -->
-      <div class="level-grid" id="levelGrid">
-        <div class="level-indicator active-emerald">
-          <div class="level-dot" style="background:#10B981"></div>
-          <div class="level-copy">
-            <strong>Жоғары</strong>
-            <span>100–140 балл</span>
-          </div>
-        </div>
-        <div class="level-indicator">
-          <div class="level-dot" style="background:#F2B84B"></div>
-          <div class="level-copy">
-            <strong>Орташа</strong>
-            <span>75–99 балл</span>
-          </div>
-        </div>
-        <div class="level-indicator">
-          <div class="level-dot" style="background:#F97316"></div>
-          <div class="level-copy">
-            <strong>Тәуекел</strong>
-            <span>58–74 балл</span>
-          </div>
-        </div>
-        <div class="level-indicator">
-          <div class="level-dot" style="background:#EF4444"></div>
-          <div class="level-copy">
-            <strong>Төмен</strong>
-            <span>0–57 балл</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Main result card -->
-      <div id="mainResultCard" style="background:var(--emerald-light);border:2px solid var(--emerald);border-radius:var(--radius-xl);padding:24px;margin-bottom:20px;text-align:center">
-        <div style="font-size:2.5rem;margin-bottom:10px" id="resultEmoji">✓</div>
-        <div style="font-family:var(--font-display);font-size:1.4rem;font-weight:800;color:var(--navy);margin-bottom:8px" id="resultLevel">Орташа мүмкіндік</div>
-        <p style="color:var(--text-muted);font-size:0.9rem;line-height:1.7" id="resultMsg">Грант мүмкіндігің бар. Бірнеше ЖОО-ға тіркелу ұсынылады.</p>
-        <div class="result-details">
-          <div class="result-detail"><span>Сіздің балыңыз</span><strong id="resultScore">92</strong></div>
-          <div class="result-detail"><span>Грант түрі</span><strong id="resultGrantType">Жалпы мемлекеттік грант</strong></div>
-          <div class="result-detail"><span>Квота түрі</span><strong id="resultQuotaType">Квота жоқ</strong></div>
-          <div class="result-detail"><span>Мамандық</span><strong id="resultSpecialty">Жалпы</strong></div>
-          <div class="result-detail"><span>Қала / облыс</span><strong id="resultCity">Алматы</strong></div>
-          <div class="result-detail"><span>Университет</span><strong id="resultUniversity">Кез келген университет</strong></div>
-        </div>
-      </div>
-
-      <div class="grant-stats-grid" aria-label="Қысқа көрсеткіштер">
-        <div class="grant-stat-card">
-          <span class="grant-stat-icon grant-stat-blue">⌁</span>
-          <div class="grant-stat-value" id="workStat">94%</div>
-          <div class="grant-stat-label">Жұмыспен қамту</div>
-        </div>
-        <div class="grant-stat-card">
-          <span class="grant-stat-icon grant-stat-green">✓</span>
-          <div class="grant-stat-value" id="grantStat">3 421</div>
-          <div class="grant-stat-label">Бөлінген грант</div>
-        </div>
-        <div class="grant-stat-card">
-          <span class="grant-stat-icon grant-stat-gold">₸</span>
-          <div class="grant-stat-value" id="salaryStat">450к ₸</div>
-          <div class="grant-stat-label">Бастапқы жалақы</div>
-        </div>
-        <div class="grant-stat-card">
-          <span class="grant-stat-icon grant-stat-pink">↗</span>
-          <div class="grant-stat-value" id="growthStat">Жоғары</div>
-          <div class="grant-stat-label">Сұраныс деңгейі</div>
-        </div>
-        <div class="grant-stat-card">
-          <span class="grant-stat-icon grant-stat-cyan">◎</span>
-          <div class="grant-stat-value" id="mobilityStat">45+ ел</div>
-          <div class="grant-stat-label">Академиялық ұтқырлық</div>
-        </div>
-      </div>
-
-      <!-- Score breakdown -->
-      <div style="background:#F8FAFC;border-radius:var(--radius-lg);padding:18px;margin-bottom:20px">
-        <div style="font-weight:700;color:var(--navy);margin-bottom:14px;font-size:0.9rem">Балл көрсеткіші</div>
-        <div style="display:flex;flex-direction:column;gap:10px">
-          <div style="display:flex;justify-content:space-between;align-items:center">
-            <span style="font-size:0.875rem;color:var(--text-muted)">Сенің баллың</span>
-            <span style="font-weight:800;color:var(--navy);font-size:1.1rem" id="scoreVal">92</span>
-          </div>
-          <div class="progress-wrap">
-            <div class="progress-bar emerald" id="scoreProgressBar" style="width:66%"></div>
-          </div>
-          <div style="display:flex;justify-content:space-between;font-size:0.75rem;color:var(--text-muted)">
-            <span>0</span><span>Орташа: 75</span><span>Максимум: 140</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Tips -->
-      <div id="tipsContainer">
-        <div style="font-weight:700;color:var(--navy);margin-bottom:12px;font-size:0.9rem">Кеңестер</div>
-        <div class="tip-card">
-          <div class="tip-icon">•</div>
-          <div>
-            <div style="font-weight:600;color:var(--text);font-size:0.875rem;margin-bottom:4px">Квота балл қоспайды</div>
-            <p style="font-size:0.82rem;color:var(--text-muted)">Таңдалған квота тек грант конкурсында арнайы санат ретінде ескеріледі.</p>
-          </div>
-        </div>
-        <div class="tip-card">
-          <div class="tip-icon">•</div>
-          <div>
-            <div style="font-weight:600;color:var(--text);font-size:0.875rem;margin-bottom:4px">Бірнеше ЖОО қарастыр</div>
-            <p style="font-size:0.82rem;color:var(--text-muted)">Қала, университет және мамандықты салыстыру грант мүмкіндігін нақтырақ бағалауға көмектеседі.</p>
-          </div>
-        </div>
-        <div class="tip-card">
-          <div class="tip-icon">•</div>
-          <div>
-            <div style="font-weight:600;color:var(--text);font-size:0.875rem;margin-bottom:4px">Өңірлік университеттер</div>
-            <p style="font-size:0.82rem;color:var(--text-muted)">Астана мен Алматы ЖОО-ларынан басқа өңірлік ЖОО-ларда конкурс төмен.</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Universities suggestion -->
-      <div style="margin-top:20px;padding-top:20px;border-top:1px solid var(--border)">
-        <div style="font-weight:700;color:var(--navy);margin-bottom:12px;font-size:0.9rem">Ұсынылатын университеттер</div>
-        <div id="suggestedUnis" style="display:flex;flex-wrap:wrap;gap:8px"></div>
-        <a href="universities.html" class="btn btn-outline btn-sm" style="margin-top:12px">Барлық университеттерді көру →</a>
-      </div>
-
-      <!-- Premium lock for unlimited -->
-      <div style="margin-top:20px;background:var(--gold-pale);border:1px dashed var(--gold);border-radius:var(--radius-lg);padding:14px;text-align:center">
-        <p style="font-size:0.82rem;color:#92400E;margin-bottom:8px">🔒 Premium-де шексіз есептеу, барлық мамандықтар мен университеттер бойынша нақты анализ</p>
-        <a href="pricing.html" class="btn btn-gold btn-sm">Premium алу</a>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="modal-backdrop" id="infoModal" role="dialog" aria-modal="true" aria-labelledby="infoModalTitle">
-  <div class="info-modal">
-    <div class="info-modal-head">
-      <div class="info-modal-title" id="infoModalTitle">Ақпарат</div>
-      <button class="modal-close" type="button" onclick="closeInfo()" aria-label="Жабу">×</button>
-    </div>
-    <div class="info-modal-body" id="infoModalBody"></div>
-  </div>
-</div>
-
-<script src="js/universities-data.js"></script>
-<script src="js/main.js"></script>
-<script src="js/auth-guard.js"></script>
-<script>
-/* ── Мамандықтар: балл шектері + ЖОО ұсыныстары ── */
-const GRANT_SPECS = {
-  /* IT */
-  cs:          { label:'Информатика / CS',             group:'IT / Техникалық',  thresh:{high:102,med:80,low:64},  unis:{high:['AITU','SDU University','ҚазҰТЗУ (Satbayev)','КБТУ'],         med:['МУИТ','ҚазҰУ аль-Фараби','Нархоз','ЕҰУ'],           low:['АТУ','ИнЕУ','ҚарМУ','Өңірлік ЖОО'],      vlow:['Өңірлік ЖОО','Ақылы оқу','Колледж']} },
-  software:    { label:'Бағдарламалық жасақтама',      group:'IT / Техникалық',  thresh:{high:100,med:78,low:62},  unis:{high:['AITU','SDU University','ҚазҰТЗУ','КБТУ'],                     med:['МУИТ','ҚазҰУ','Нархоз IT','ЕҰУ'],           low:['АТУ','ИнЕУ','ШҚТУ','Өңірлік ЖОО'],       vlow:['Өңірлік ЖОО','Ақылы оқу','Колледж']} },
-  comp_eng:    { label:'Компьютерлік инженерия',       group:'IT / Техникалық',  thresh:{high:100,med:78,low:62},  unis:{high:['AITU','ҚазҰТЗУ (Satbayev)','КБТУ','SDU University'],          med:['МУИТ','ЕҰУ','ҚарМУ','ШҚТУ'],               low:['АТУ','ИнЕУ','Өңірлік техникалық ЖОО'],   vlow:['Өңірлік ЖОО','Ақылы оқу','Колледж']} },
-  info_sys:    { label:'Ақпараттық жүйелер',           group:'IT / Техникалық',  thresh:{high:95,med:74,low:58},   unis:{high:['AITU','SDU University','Нархоз','ҚазЭУ'],                     med:['МУИТ','ЕҰУ','ҚазҰУ','ҚарМУ'],              low:['АТУ','ИнЕУ','Өңірлік ЖОО'],             vlow:['Өңірлік ЖОО','Ақылы оқу']} },
-  cybersec:    { label:'Киберқауіпсіздік',             group:'IT / Техникалық',  thresh:{high:104,med:82,low:66},  unis:{high:['AITU','ҚазҰТЗУ (Satbayev)','SDU University'],                 med:['МУИТ','ЕҰУ','КБТУ'],                        low:['АТУ','ИнЕУ','Өңірлік ЖОО'],             vlow:['Өңірлік ЖОО','Ақылы оқу']} },
-  data_sci:    { label:'Деректер ғылымы (Data Science)',group:'IT / Техникалық', thresh:{high:102,med:80,low:64},  unis:{high:['AITU','SDU University','ҚазҰТЗУ','Нархоз'],                   med:['МУИТ','ҚазҰУ','ЕҰУ'],                       low:['АТУ','ИнЕУ','Өңірлік ЖОО'],             vlow:['Өңірлік ЖОО','Ақылы оқу']} },
-  telecom:     { label:'Телекоммуникация',              group:'IT / Техникалық', thresh:{high:92,med:70,low:55},   unis:{high:['ҚазҰТЗУ (Satbayev)','AITU','КБТУ'],                           med:['ЕҰУ','МУИТ','ҚарМУ'],                       low:['ШҚТУ','ИнЕУ','Өңірлік ЖОО'],            vlow:['Өңірлік ЖОО','Ақылы оқу']} },
-  electronics: { label:'Электроника, Робототехника',   group:'IT / Техникалық',  thresh:{high:90,med:68,low:52},   unis:{high:['ҚазҰТЗУ (Satbayev)','AITU','КБТУ','SDU University'],          med:['ЕҰУ','ҚазҰУ','ШҚТУ'],                       low:['ҚарМУ','ИнЕУ','Өңірлік ЖОО'],           vlow:['Өңірлік ЖОО','Ақылы оқу']} },
-  /* Медицина */
-  gen_medicine:{ label:'Жалпы медицина',               group:'Медицина',          thresh:{high:110,med:90,low:72},  unis:{high:['ҚазҰМУ (С.Ж.Асфендияров)','Астана медициналық','Семей медициналық'], med:['ЗКМУ','Шымкент медициналық','ОҚМФиФА'],      low:['Өңірлік медициналық ЖОО','Ақылы оқу'], vlow:['Медициналық колледж','Ақылы оқу']} },
-  dentistry:   { label:'Стоматология',                 group:'Медицина',          thresh:{high:106,med:86,low:68},  unis:{high:['ҚазҰМУ','Астана медициналық','ЗКМУ'],                         med:['Семей медициналық','ОҚМФиФА','Шымкент медициналық'], low:['Өңірлік медициналық ЖОО','Ақылы оқу'], vlow:['Медициналық колледж','Ақылы оқу']} },
-  pharmacy:    { label:'Фармация',                     group:'Медицина',          thresh:{high:96,med:76,low:60},   unis:{high:['ҚазҰМУ','Астана медициналық','SDU University'],               med:['Семей медициналық','ЗКМУ','ОҚМФиФА'],       low:['Өңірлік медициналық ЖОО','Ақылы оқу'], vlow:['Медициналық колледж','Ақылы оқу']} },
-  pediatrics:  { label:'Педиатрия',                    group:'Медицина',          thresh:{high:108,med:88,low:70},  unis:{high:['ҚазҰМУ','Астана медициналық','Семей медициналық'],             med:['ЗКМУ','ОҚМФиФА','Шымкент медициналық'],     low:['Өңірлік медициналық ЖОО','Ақылы оқу'], vlow:['Медициналық колледж','Ақылы оқу']} },
-  nursing:     { label:'Мейіргерлік іс',               group:'Медицина',          thresh:{high:76,med:58,low:44},   unis:{high:['ҚазҰМУ','Астана медициналық','ЗКМУ'],                         med:['Семей медициналық','Шымкент медициналық','Өңірлік мед. ЖОО'], low:['Медициналық колледж','Өңірлік ЖОО'], vlow:['Медициналық колледж','Ақылы оқу']} },
-  /* Педагогика */
-  primary_edu: { label:'Бастауыш білім беру',          group:'Педагогика',        thresh:{high:78,med:58,low:43},   unis:{high:['ҚазҰПУ','ЕҰУ','ҚарМУ педагогика'],                            med:['ҚарМУ','ОҚПУ','АПУ'],                        low:['Өңірлік пед. ЖОО','Пед. колледж'],       vlow:['Пед. колледж','Ақылы оқу']} },
-  math_teacher:{ label:'Математика мұғалімі',          group:'Педагогика',        thresh:{high:82,med:62,low:46},   unis:{high:['ҚазҰПУ','ЕҰУ','ҚарМУ'],                                       med:['ОҚПУ','Өңірлік пед. ЖОО','АПУ'],            low:['Өңірлік пед. ЖОО','Пед. колледж'],       vlow:['Пед. колледж','Ақылы оқу']} },
-  physics_teacher:{label:'Физика мұғалімі',            group:'Педагогика',        thresh:{high:80,med:60,low:45},   unis:{high:['ҚазҰПУ','ЕҰУ','ҚазҰУ'],                                       med:['ҚарМУ','ОҚПУ','Өңірлік пед. ЖОО'],          low:['Пед. колледж','Өңірлік ЖОО'],            vlow:['Пед. колледж','Ақылы оқу']} },
-  chem_teacher:{ label:'Химия мұғалімі',               group:'Педагогика',        thresh:{high:78,med:58,low:43},   unis:{high:['ҚазҰПУ','ЕҰУ','ҚазҰУ'],                                       med:['ҚарМУ','ОҚПУ','Өңірлік пед. ЖОО'],          low:['Пед. колледж','Өңірлік ЖОО'],            vlow:['Пед. колледж','Ақылы оқу']} },
-  english_teacher:{label:'Ағылшын тілі мұғалімі',     group:'Педагогика',        thresh:{high:84,med:64,low:48},   unis:{high:['ҚазҰПУ','SDU University','ЕҰУ'],                               med:['ҚарМУ','ОҚПУ','АПУ'],                        low:['Өңірлік пед. ЖОО','Пед. колледж'],       vlow:['Пед. колледж','Ақылы оқу']} },
-  kazakh_teacher:{label:'Қазақ тілі мұғалімі',        group:'Педагогика',        thresh:{high:76,med:56,low:42},   unis:{high:['ҚазҰПУ','ЕҰУ','ҚазҰУ'],                                       med:['ҚарМУ','ОҚПУ','Өңірлік пед. ЖОО'],          low:['Пед. колледж','Өңірлік ЖОО'],            vlow:['Пед. колледж','Ақылы оқу']} },
-  history_teacher:{label:'Тарих мұғалімі',            group:'Педагогика',        thresh:{high:78,med:58,low:43},   unis:{high:['ҚазҰПУ','ЕҰУ','ҚарМУ'],                                       med:['ОҚПУ','Өңірлік пед. ЖОО'],                  low:['Пед. колледж','Өңірлік ЖОО'],            vlow:['Пед. колледж','Ақылы оқу']} },
-  /* Заңтану */
-  law:         { label:'Юриспруденция',                group:'Заңтану',           thresh:{high:106,med:84,low:66},  unis:{high:['ҚазГЮИ (КазГЮИУ)','ҚазҰУ аль-Фараби','ЕҰУ'],                med:['ҚарМУ','АЮА','ШҚТУ'],                        low:['Өңірлік ЖОО','Ақылы оқу'],              vlow:['Юридикалық колледж','Ақылы оқу']} },
-  intl_law:    { label:'Халықаралық құқық',            group:'Заңтану',           thresh:{high:108,med:86,low:68},  unis:{high:['ҚазГЮИ','ҚазҰУ','ЕҰУ'],                                       med:['Нархоз','SDU University','ҚарМУ'],           low:['Өңірлік ЖОО','Ақылы оқу'],              vlow:['Ақылы оқу']} },
-  criminal:    { label:'Криминалистика',               group:'Заңтану',           thresh:{high:102,med:80,low:62},  unis:{high:['ҚазГЮИ','ЕҰУ','ҰҰА Академиясы'],                              med:['ҚарМУ','Өңірлік ЖОО'],                       low:['Өңірлік ЖОО','Ақылы оқу'],              vlow:['Ақылы оқу']} },
-  /* Экономика / Бизнес */
-  economics:   { label:'Экономика',                   group:'Экономика / Бизнес',thresh:{high:96,med:74,low:58},   unis:{high:['Нархоз','КИМЭП','SDU University','ҚазЭУ'],                    med:['ЕҰУ','ҚазҰУ','ҚарМУ','Болашақ'],           low:['Өңірлік ЖОО','АТУ'],                     vlow:['Өңірлік ЖОО','Ақылы оқу']} },
-  finance:     { label:'Қаржы',                       group:'Экономика / Бизнес',thresh:{high:98,med:76,low:60},   unis:{high:['Нархоз','КИМЭП','SDU University','ҚазЭУ'],                    med:['ЕҰУ','ҚазҰУ','ҚарМУ'],                      low:['Өңірлік ЖОО','АТУ'],                     vlow:['Өңірлік ЖОО','Ақылы оқу']} },
-  management:  { label:'Менеджмент',                  group:'Экономика / Бизнес',thresh:{high:92,med:70,low:55},   unis:{high:['КИМЭП','SDU University','Нархоз'],                             med:['ҚазЭУ','ЕҰУ','ҚарМУ'],                      low:['АТУ','Өңірлік ЖОО'],                     vlow:['Өңірлік ЖОО','Ақылы оқу']} },
-  marketing:   { label:'Маркетинг',                   group:'Экономика / Бизнес',thresh:{high:90,med:68,low:52},   unis:{high:['КИМЭП','SDU University','Нархоз'],                             med:['ҚазЭУ','ЕҰУ','ҚарМУ'],                      low:['АТУ','Өңірлік ЖОО'],                     vlow:['Өңірлік ЖОО','Ақылы оқу']} },
-  accounting:  { label:'Бухгалтерлік есеп',           group:'Экономика / Бизнес',thresh:{high:88,med:66,low:50},   unis:{high:['ҚазЭУ','Нархоз','ЕҰУ'],                                       med:['ҚарМУ','АТУ','Өңірлік ЖОО'],                low:['Өңірлік ЖОО','Ақылы оқу'],              vlow:['Колледж','Ақылы оқу']} },
-  banking:     { label:'Банк ісі',                    group:'Экономика / Бизнес',thresh:{high:94,med:72,low:56},   unis:{high:['Нархоз','ҚазЭУ','КИМЭП'],                                     med:['ЕҰУ','ҚарМУ','SDU University'],              low:['АТУ','Өңірлік ЖОО'],                     vlow:['Өңірлік ЖОО','Ақылы оқу']} },
-  /* Гуманитарлық */
-  journalism:  { label:'Журналистика',                group:'Гуманитарлық',      thresh:{high:90,med:68,low:52},   unis:{high:['ҚазҰУ аль-Фараби','ЕҰУ','АҚШУ'],                              med:['ҚарМУ','Болашақ','Өңірлік ЖОО'],            low:['Өңірлік ЖОО','Ақылы оқу'],              vlow:['Ақылы оқу']} },
-  translation: { label:'Аударма ісі',                 group:'Гуманитарлық',      thresh:{high:92,med:70,low:54},   unis:{high:['ҚазҰУ','SDU University','ЕҰУ'],                               med:['ҚарМУ','ОҚПУ','АПУ'],                        low:['Өңірлік ЖОО','Ақылы оқу'],              vlow:['Ақылы оқу']} },
-  history:     { label:'Тарих',                       group:'Гуманитарлық',      thresh:{high:84,med:62,low:47},   unis:{high:['ҚазҰУ','ЕҰУ','ҚарМУ'],                                       med:['ОҚПУ','Өңірлік ЖОО'],                        low:['Өңірлік ЖОО','Ақылы оқу'],              vlow:['Ақылы оқу']} },
-  psychology:  { label:'Психология',                  group:'Гуманитарлық',      thresh:{high:90,med:68,low:52},   unis:{high:['ҚазҰУ','SDU University','ЕҰУ'],                               med:['ҚарМУ','Болашақ','ОҚПУ'],                    low:['Өңірлік ЖОО','Ақылы оқу'],              vlow:['Ақылы оқу']} },
-  sociology:   { label:'Социология',                  group:'Гуманитарлық',      thresh:{high:85,med:63,low:47},   unis:{high:['ҚазҰУ','ЕҰУ','SDU University'],                               med:['ҚарМУ','Өңірлік ЖОО'],                       low:['Өңірлік ЖОО','Ақылы оқу'],              vlow:['Ақылы оқу']} },
-  philosophy:  { label:'Философия',                   group:'Гуманитарлық',      thresh:{high:80,med:60,low:45},   unis:{high:['ҚазҰУ','ЕҰУ'],                                                med:['ҚарМУ','Өңірлік ЖОО'],                       low:['Өңірлік ЖОО','Ақылы оқу'],              vlow:['Ақылы оқу']} },
-  /* Жаратылыстану */
-  biology:     { label:'Биология',                    group:'Жаратылыстану',     thresh:{high:88,med:66,low:50},   unis:{high:['ҚазҰУ','ЕҰУ','SDU University'],                               med:['ҚарМУ','ОҚПУ','Өңірлік ЖОО'],               low:['Өңірлік ЖОО','Ақылы оқу'],              vlow:['Ақылы оқу']} },
-  chemistry_sci:{label:'Химия',                       group:'Жаратылыстану',     thresh:{high:86,med:64,low:48},   unis:{high:['ҚазҰУ','ЕҰУ','ҚазҰТЗУ'],                                     med:['ҚарМУ','ОҚПУ','Өңірлік ЖОО'],               low:['Өңірлік ЖОО','Ақылы оқу'],              vlow:['Ақылы оқу']} },
-  physics_sci: { label:'Физика',                      group:'Жаратылыстану',     thresh:{high:88,med:66,low:50},   unis:{high:['ҚазҰУ','ЕҰУ','ҚазҰТЗУ'],                                     med:['ҚарМУ','ОҚПУ','Өңірлік ЖОО'],               low:['Өңірлік ЖОО','Ақылы оқу'],              vlow:['Ақылы оқу']} },
-  mathematics: { label:'Математика',                  group:'Жаратылыстану',     thresh:{high:90,med:68,low:52},   unis:{high:['ҚазҰУ','ЕҰУ','AITU'],                                         med:['ҚарМУ','ҚазҰПУ','Өңірлік ЖОО'],             low:['Өңірлік ЖОО','Ақылы оқу'],              vlow:['Ақылы оқу']} },
-  /* Инженерлік */
-  civil_eng:   { label:'Құрылыс',                     group:'Инженерлік',        thresh:{high:88,med:66,low:50},   unis:{high:['ҚазҰТЗУ (Satbayev)','ЕҰУ','SDU University'],                  med:['ҚарМУ','ШҚТУ','АТУ'],                        low:['Өңірлік ЖОО','Ақылы оқу'],              vlow:['Техникалық колледж','Ақылы оқу']} },
-  oil_gas:     { label:'Мұнай-газ ісі',               group:'Инженерлік',        thresh:{high:90,med:68,low:52},   unis:{high:['ҚазҰТЗУ (Satbayev)','КБТУ','AITU'],                           med:['ЕҰУ','ҚарМУ','АГУ'],                         low:['Өңірлік ЖОО','Ақылы оқу'],              vlow:['Техникалық колледж','Ақылы оқу']} },
-  mining:      { label:'Тау-кен ісі',                 group:'Инженерлік',        thresh:{high:85,med:63,low:47},   unis:{high:['ҚазҰТЗУ (Satbayev)','ҚарМУ','ЕҰУ'],                          med:['ШҚТУ','Өңірлік техникалық ЖОО'],             low:['Өңірлік ЖОО','Ақылы оқу'],              vlow:['Техникалық колледж','Ақылы оқу']} },
-  mech_eng:    { label:'Машина жасау',                group:'Инженерлік',        thresh:{high:86,med:64,low:48},   unis:{high:['ҚазҰТЗУ','ЕҰУ','ҚарМУ'],                                     med:['ШҚТУ','АТУ','Өңірлік техникалық ЖОО'],       low:['Өңірлік ЖОО','Ақылы оқу'],              vlow:['Техникалық колледж','Ақылы оқу']} },
-  architecture:{ label:'Сәулет',                      group:'Инженерлік',        thresh:{high:92,med:70,low:54},   unis:{high:['ҚазҰТЗУ','КазАСА (Архитектура акад.)','ЕҰУ'],                 med:['ҚарМУ','АТУ','Өңірлік ЖОО'],                low:['Өңірлік ЖОО','Ақылы оқу'],              vlow:['Ақылы оқу']} },
-  ecology:     { label:'Экология',                    group:'Инженерлік',        thresh:{high:82,med:62,low:46},   unis:{high:['ҚазҰУ','ҚазҰТЗУ','ЕҰУ'],                                     med:['ҚарМУ','ШҚТУ','Өңірлік ЖОО'],               low:['Өңірлік ЖОО','Ақылы оқу'],              vlow:['Ақылы оқу']} },
-};
-
-const LABELS = {
-  grant: {
-    state: 'Жалпы мемлекеттік грант',
-    target: 'Нысаналы грант',
-    serpin: 'Серпін гранты',
-    akimat: 'Әкімдік гранты',
-    university: 'Университет гранты / ішкі жеңілдік',
-  },
-  quota: {
-    none: 'Квота жоқ',
-    rural: 'Ауылдық квота',
-    orphan: 'Жетім балаларға арналған квота',
-    disability: 'Мүгедектігі бар адамдарға арналған квота',
-    large_family: 'Көпбалалы отбасы квотасы',
-    single_parent: 'Толық емес отбасы квотасы',
-    disabled_child_family: 'Мүгедектігі бар бала тәрбиелеп отырған отбасы квотасы',
-  },
-  city: {
-    almaty: 'Алматы қаласы',
-    astana: 'Астана қаласы',
-    shymkent: 'Шымкент қаласы',
-    akmola: 'Ақмола облысы',
-    aktobe: 'Ақтөбе облысы',
-    almaty_obl: 'Алматы облысы',
-    atyrau: 'Атырау облысы',
-    bko: 'Батыс Қазақстан облысы',
-    zhambyl: 'Жамбыл облысы',
-    zhetisu: 'Жетісу облысы',
-    karagandy: 'Қарағанды облысы',
-    kostanai: 'Қостанай облысы',
-    kyzylorda: 'Қызылорда облысы',
-    mangystau: 'Маңғыстау облысы',
-    pavlodar: 'Павлодар облысы',
-    sko: 'Солтүстік Қазақстан облысы',
-    turkestan: 'Түркістан облысы',
-    ulytau: 'Ұлытау облысы',
-    abai: 'Абай облысы',
-    shko: 'Шығыс Қазақстан облысы',
-  },
-  university: {
-    any: 'Кез келген университет',
-    aitu: 'AITU (Astana IT University)',
-    satbayev: 'ҚазҰТЗУ / Satbayev University',
-    kbtu: 'КБТУ',
-    муит: 'МУИТ',
-    kaznu: 'ҚазҰУ аль-Фараби',
-    enu: 'ЕҰУ Л.Гумилев',
-    sdu: 'SDU University',
-    narxoz: 'Нархоз',
-    kimep: 'КИМЭП',
-    kaznmu: 'ҚазҰМУ С.Ж.Асфендияров',
-    astana_med: 'Астана медициналық университеті',
-    semei_med: 'Семей медициналық университеті',
-    kaznpu: 'ҚазҰПУ / Абай университеті',
-    enu_ped: 'ЕҰУ педагогика',
-    kazgyu: 'ҚазГЮИ / КазГЮУ',
-    ablaikhan: 'ҚазХҚ және ӘТУ',
-    karu: 'ҚарМУ',
-    shku: 'ШҚТУ / Шәкәрім',
-    regional: 'Өңірлік университет',
-  },
-};
-
-const INFO_CONTENT = {
-  stateGrant: {
-    title: 'Грант түрлері',
-    body: `<p><strong>Грант</strong> — оқу ақысын мемлекет, әкімдік, университет немесе басқа ұйым төлейтін қаржыландыру түрі.</p>
-      <ul>
-        <li><strong>Жалпы мемлекеттік грант:</strong> республикалық конкурс арқылы бөлінеді.</li>
-        <li><strong>Нысаналы грант:</strong> белгілі өңір немесе ұйым қажеттілігіне қарай бөлінуі мүмкін.</li>
-        <li><strong>Серпін гранты:</strong> белгілі өңір түлектеріне басқа аймақта оқу мүмкіндігін береді.</li>
-        <li><strong>Әкімдік гранты:</strong> жергілікті әкімдік қолдауымен беріледі.</li>
-        <li><strong>Университет гранты / ішкі жеңілдік:</strong> ЖОО-ның өз бағдарламасы бойынша беріледі.</li>
-      </ul>`,
-  },
-  targetGrant: {
-    title: 'Нысаналы грант',
-    body: `<p>Нысаналы грант белгілі бір өңірдің, сала немесе ұйымның қажеттілігіне қарай бөлінуі мүмкін.</p>
-      <p>Бұл грант түрінде оқу аяқталғаннан кейін еңбек ету міндеттемесі немесе қосымша шарттар болуы мүмкін.</p>`,
-  },
-  serpin: {
-    title: 'Серпін гранты',
-    body: `<p>Серпін бағдарламасы белгілі бір өңірлердің түлектеріне басқа аймақтардағы жоғары оқу орындарында білім алуға мүмкіндік береді.</p>
-      <p>Бағдарлама көбіне педагогикалық, техникалық, IT және ауыл шаруашылығы бағыттарындағы мамандықтарға беріледі.</p>
-      <p><strong>Серпін гранты ҰБТ балына қосымша балл қоспайды.</strong> Бұл — бөлек грант түрі.</p>`,
-  },
-  akimatGrant: {
-    title: 'Әкімдік гранты',
-    body: `<p>Әкімдік гранты жергілікті атқарушы органның қолдауымен бөлінеді.</p>
-      <p>Шарттары өңірге, мамандыққа және сол жылғы қабылдау ережесіне байланысты өзгеруі мүмкін.</p>`,
-  },
-  universityGrant: {
-    title: 'Университет гранты / ішкі жеңілдік',
-    body: `<p>Университет гранты немесе ішкі жеңілдік ЖОО-ның өз ережесі бойынша беріледі.</p>
-      <p>Ол академиялық нәтиже, конкурс, әлеуметтік жағдай немесе арнайы бағдарлама негізінде ұсынылуы мүмкін.</p>`,
-  },
-  noQuota: {
-    title: 'Квота жоқ',
-    body: `<p>Бұл таңдауда талапкер жалпы конкурс бойынша қарастырылады.</p>
-      <p>Квота таңдалмаса да, грант мүмкіндігі ҰБТ балы, мамандық, университет және конкурс деңгейі бойынша алдын ала бағаланады.</p>`,
-  },
-  rural: {
-    title: 'Ауылдық квота',
-    body: `<p><strong>Ауылдық квота ҰБТ-да қосымша балл бермейді.</strong></p>
-      <p>Бұл квота ауыл мектептерін бітірген талапкерлерге кейбір мамандықтар бойынша грант конкурсында бөлек мүмкіндік береді.</p>
-      <p>Көбіне педагогика, ауыл шаруашылығы, ветеринария, медицина және басқа өңірге қажет бағыттарда қолданылады.</p>
-      <p><strong>Маңызды:</strong> ауылдық квота барлық мамандыққа берілмейді.</p>`,
-  },
-  orphan: {
-    title: 'Жетім балаларға арналған квота',
-    body: `<p>Бұл квота жетім балаларға және ата-анасының қамқорлығынсыз қалған балаларға арналған.</p>
-      <p><strong>Квота ҰБТ балына қосымша балл қоспайды.</strong> Ол грант конкурсында арнайы санат ретінде ескеріледі.</p>
-      <p>Құжаттар: туу туралы куәлік, ата-анасының қайтыс болуы туралы куәлік, қамқоршылық немесе қорғаншылық туралы құжат, қажет болса қосымша анықтамалар.</p>`,
-  },
-  disability: {
-    title: 'Мүгедектігі бар адамдарға арналған квота',
-    body: `<p>Бұл квота мүгедектігі бар талапкерлерге арналған.</p>
-      <p><strong>Квота ҰБТ балына қосымша балл қоспайды.</strong> Ол грант конкурсында арнайы санат ретінде қарастырылады.</p>
-      <p>Қатыса алатындар: бала кезінен мүгедектігі бар талапкерлер, I немесе II топтағы мүгедектігі бар талапкерлер, мүгедектігі бар балалар арасынан шыққан талапкерлер.</p>
-      <p>Құжаттар: мәртебесін растайтын анықтама, медициналық-әлеуметтік сараптама құжаты және қажет болса қосымша құжаттар.</p>`,
-  },
-  large_family: {
-    title: 'Көпбалалы отбасы квотасы',
-    body: `<p>Көпбалалы отбасы квотасы кәмелетке толмаған төрт және одан көп бала тәрбиелеп отырған отбасынан шыққан талапкерлерге арналған.</p>
-      <p><strong>Бұл квота ҰБТ балына қосымша балл қоспайды.</strong> Ол грант конкурсында арнайы санат ретінде ескеріледі.</p>
-      <p>Құжаттар: талапкердің туу туралы куәлігі, ата-анасының жеке куәлігі, отбасында төрт және одан көп бала бар екенін растайтын құжаттар.</p>`,
-  },
-  single_parent: {
-    title: 'Толық емес отбасы квотасы',
-    body: `<p>Толық емес отбасы квотасы кемінде үш жыл толық емес отбасы мәртебесі бар отбасындағы балаларға арналған.</p>
-      <p><strong>Бұл квота ҰБТ балына қосымша балл қоспайды.</strong> Ол грант конкурсында арнайы санат ретінде қарастырылады.</p>
-      <p>Маңызды шарттар: талапкер 18 жасқа толмаған болуы керек; ата-анасы ажырасқан болса, кемінде 3 жыл өткен болуы керек; қажет құжаттармен расталады.</p>`,
-  },
-  disabled_child_family: {
-    title: 'Мүгедектігі бар бала тәрбиелеп отырған отбасы квотасы',
-    body: `<p>Бұл квота мүгедектігі бар бала тәрбиелеп отырған отбасынан шыққан талапкерлерге арналған.</p>
-      <p><strong>Квота ҰБТ балына қосымша балл қоспайды.</strong> Ол грант конкурсында арнайы санат ретінде ескеріледі.</p>
-      <p>Құжаттар: талапкердің туу туралы куәлігі, отбасында мүгедектігі бар бала бар екенін растайтын анықтама, медициналық-әлеуметтік сараптама құжаты және қажет болса қосымша құжаттар.</p>`,
-  },
-};
-
-function updateScore(val) {
-  val = parseInt(val);
-  document.getElementById('scoreDisplay').textContent = val;
-  const pct = (val / 140 * 100).toFixed(1);
-  document.getElementById('scoreSlider').style.setProperty('--val', pct + '%');
-  calculate(false);
-}
-
-function onSpecialtyChange() {
-  const key = document.getElementById('specialtySelect').value;
-  const spec = GRANT_SPECS[key];
-  const hint = document.getElementById('specThreshHint');
-  hint.replaceChildren();
-  if (spec) {
-    [
-      { color: '#10B981', text: `✓ Жоғары: ${spec.thresh.high}+ балл` },
-      { color: '#F2B84B', text: `• Орташа: ${spec.thresh.med}–${spec.thresh.high - 1}` },
-      { color: '#F97316', text: `! Тәуекел: ${spec.thresh.low}–${spec.thresh.med - 1}` },
-    ].forEach(({ color, text }) => {
-      const s = document.createElement('span');
-      s.style.cssText = `color:${color};font-weight:700`;
-      s.textContent = text;
-      hint.appendChild(s);
-    });
-  }
-  calculate(false);
-}
-
-function updateGrantStats(score) {
-  const stats = {
-    work: document.getElementById('workStat'),
-    grant: document.getElementById('grantStat'),
-    salary: document.getElementById('salaryStat'),
-    growth: document.getElementById('growthStat'),
-    mobility: document.getElementById('mobilityStat')
-  };
-  if (!stats.work) return;
-
-  if (score >= 100) {
-    stats.work.textContent = '98%';
-    stats.grant.textContent = '3 421';
-    stats.salary.textContent = '600к ₸';
-    stats.growth.textContent = 'Өте жоғары';
-    stats.mobility.textContent = '45+ ел';
-  } else if (score >= 75) {
-    stats.work.textContent = '94%';
-    stats.grant.textContent = '2 180';
-    stats.salary.textContent = '450к ₸';
-    stats.growth.textContent = 'Жоғары';
-    stats.mobility.textContent = '30+ ел';
-  } else if (score >= 58) {
-    stats.work.textContent = '88%';
-    stats.grant.textContent = '1 240';
-    stats.salary.textContent = '350к ₸';
-    stats.growth.textContent = 'Орташа';
-    stats.mobility.textContent = '18+ ел';
-  } else {
-    stats.work.textContent = '80%';
-    stats.grant.textContent = '600+';
-    stats.salary.textContent = '280к ₸';
-    stats.growth.textContent = 'Дайындық керек';
-    stats.mobility.textContent = '10+ ел';
-  }
-}
-
-function calculate(requireConfirm = false) {
-  const score = parseInt(document.getElementById('scoreSlider').value);
-  const grantType = document.getElementById('grantTypeSelect').value;
-  const specialtyKey = document.getElementById('specialtySelect').value;
-  const quota = document.getElementById('quotaSelect').value;
-  const city = document.getElementById('citySelect').value;
-  const university = document.getElementById('universitySelect').value;
-
-  const spec = GRANT_SPECS[specialtyKey] || GRANT_SPECS.cs;
-  const thresh = spec.thresh;
-  const error = document.getElementById('grantError');
-
-  if (requireConfirm && !document.getElementById('confirmData').checked) {
-    error.style.display = 'block';
-    return;
-  }
-  error.style.display = 'none';
-
-  if (requireConfirm && window.ShyraqGate && !isPremium()) {
-    const uses = ShyraqGate.getGrantUses();
-    if (uses >= ShyraqGate.FREE_LIMITS.grantUses) {
-      showToast('Free нұсқада грант калькулятор 1 рет қолжетімді. Шексіз есептеу үшін Premium қосыңыз.', 'error');
-      setTimeout(() => { window.location.href = 'pricing.html'; }, 900);
-      return;
-    }
-    ShyraqGate.incGrantUses();
-  }
-
-  let level, emoji, msg, uniKey;
-
-  if (score >= thresh.high) {
-    level = 'Қауіпсіз таңдау'; emoji = '✓'; uniKey = 'high';
-    msg = `Балыңыз «${spec.label}» мамандығы бойынша жоғары. ТОП университеттерге тіркелуге болады.`;
-  } else if (score >= thresh.med) {
-    level = 'Орташа мүмкіндік'; emoji = '•'; uniKey = 'med';
-    msg = `«${spec.label}» бойынша грант мүмкіндігі бар. Бірнеше университетке өтінім беру ұсынылады.`;
-  } else if (score >= thresh.low) {
-    level = 'Тәуекел'; emoji = '!'; uniKey = 'low';
-    msg = `«${spec.label}» бойынша мүмкіндік тәуекелді (${thresh.low}+ керек). Өңірлік ЖОО-ларды қарастырыңыз.`;
-  } else {
-    level = 'Мүмкіндігі төмен'; emoji = '!'; uniKey = 'vlow';
-    msg = `«${spec.label}» бойынша грантқа кемінде ${thresh.low} балл қажет. Баллды арттыру жоспарын жасаңыз.`;
-  }
-
-  if (quota !== 'none') {
-    msg += ' ' + (LABELS.quota[quota] || '') + ' грант конкурсында арнайы санат ретінде ескерілуі мүмкін.';
-  }
-
-  // Update result UI
-  document.getElementById('resultEmoji').textContent = emoji;
-  document.getElementById('resultLevel').textContent = level;
-  document.getElementById('resultMsg').textContent = msg;
-  document.getElementById('scoreVal').textContent = score;
-  document.getElementById('resultScore').textContent = score;
-  document.getElementById('resultGrantType').textContent = LABELS.grant[grantType] || LABELS.grant.state;
-  document.getElementById('resultQuotaType').textContent = LABELS.quota[quota] || LABELS.quota.none;
-  document.getElementById('resultSpecialty').textContent = spec.label;
-  document.getElementById('resultCity').textContent = LABELS.city[city] || LABELS.city.almaty;
-  document.getElementById('resultUniversity').textContent = LABELS.university[university] || LABELS.university.any;
-  document.getElementById('scoreProgressBar').style.width = (score / 140 * 100) + '%';
-
-  const card = document.getElementById('mainResultCard');
-  card.className = '';
-  card.style.cssText = '';
-  card.dataset.level = uniKey;
-  updateGrantStats(score);
-
-  // Level indicators
-  document.querySelectorAll('.level-indicator').forEach(el => el.className = 'level-indicator');
-  const indicators = document.querySelectorAll('.level-indicator');
-  if (uniKey === 'high' && indicators[0]) indicators[0].classList.add('active-emerald');
-  else if (uniKey === 'med' && indicators[1]) indicators[1].classList.add('active-gold');
-  else if (uniKey === 'low' && indicators[2]) indicators[2].classList.add('active-orange');
-  else if (indicators[3]) indicators[3].classList.add('active-red');
-
-  // Level indicator score ranges — update dynamically for this specialty
-  const labels = [
-    { el: indicators[0], text: `${thresh.high}–140 балл` },
-    { el: indicators[1], text: `${thresh.med}–${thresh.high - 1} балл` },
-    { el: indicators[2], text: `${thresh.low}–${thresh.med - 1} балл` },
-    { el: indicators[3], text: `0–${thresh.low - 1} балл` },
-  ];
-  labels.forEach(({ el, text }) => { if (el) { const s = el.querySelector('.level-copy span'); if (s) s.textContent = text; } });
-
-  // University suggestions — specific to this specialty
-  const unis = document.getElementById('suggestedUnis');
-  unis.replaceChildren();
-  (spec.unis[uniKey] || []).forEach(uni => {
-    const tag = document.createElement('span');
-    tag.className = 'badge badge-navy';
-    tag.textContent = uni;
-    unis.appendChild(tag);
-  });
-}
-
-// Init hint on load
-(function() { onSpecialtyChange(); })();
-
-function openInfo(key) {
-  const data = INFO_CONTENT[key] || INFO_CONTENT.stateGrant;
-  document.getElementById('infoModalTitle').textContent = data.title;
-  document.getElementById('infoModalBody').innerHTML = data.body;
-  document.getElementById('infoModal').classList.add('open');
-}
-
-function openSelectedQuotaInfo() {
-  const key = document.getElementById('quotaSelect').value;
-  if (key === 'none') {
-    openInfo('noQuota');
-    return;
-  }
-  openInfo(key);
-}
-
-function openSelectedGrantInfo() {
-  const map = {
-    state: 'stateGrant',
-    target: 'targetGrant',
-    serpin: 'serpin',
-    akimat: 'akimatGrant',
-    university: 'universityGrant',
-  };
-  const key = document.getElementById('grantTypeSelect').value;
-  openInfo(map[key] || 'stateGrant');
-}
-
-function closeInfo() {
-  document.getElementById('infoModal').classList.remove('open');
-}
-
-document.getElementById('infoModal').addEventListener('click', (event) => {
-  if (event.target.id === 'infoModal') closeInfo();
-});
-
-document.addEventListener('keydown', (event) => {
-  if (event.key === 'Escape') closeInfo();
-});
-
-/* БББТ коды → калькулятор мамандығы (specialtySelect value) */
-var SPEC_CODE_TO_KEY = {
-  B057:'cs', B058:'cybersec', B059:'telecom', B157:'data_sci', B158:'cybersec',
-  B062:'electronics', B063:'electronics',
-  BM086:'gen_medicine', BM087:'dentistry', B085:'pharmacy', BM088:'pediatrics', B084:'nursing',
-  B003:'primary_edu', B009:'math_teacher', B010:'physics_teacher', B012:'chem_teacher',
-  B018:'english_teacher', B016:'kazakh_teacher', B015:'history_teacher', B001:'primary_edu', B011:'math_teacher',
-  B049:'law', B140:'intl_law',
-  B046:'finance', B044:'management', B047:'marketing', B045:'accounting', B048:'management', B141:'economics',
-  B042:'journalism', B036:'translation', B034:'history', B041:'psychology', B038:'sociology', B032:'philosophy',
-  B050:'biology', B053:'chemistry_sci', B054:'physics_sci', B055:'mathematics', B013:'biology',
-  B074:'civil_eng', B271:'oil_gas', B071:'mining', B064:'mech_eng', B073:'architecture', B051:'ecology',
-};
-
-function applySpecFromURL() {
-  var params = new URLSearchParams(window.location.search);
-  var code = params.get('spec');
-  if (!code) return;
-  var key = SPEC_CODE_TO_KEY[code.toUpperCase()];
-  var sel = document.getElementById('specialtySelect');
-  if (key && sel && sel.querySelector('option[value="'+key+'"]')) {
-    sel.value = key;
-    onSpecialtyChange();
-  }
-  // калькуляторға скролл жасау
-  var card = document.querySelector('.grant-form-card');
-  if (card) setTimeout(function(){ card.scrollIntoView({behavior:'smooth', block:'start'}); }, 200);
-}
-
-document.addEventListener('DOMContentLoaded', () => { ShyraqGate.guardPage('Грант калькуляторды пайдалану үшін тіркелу керек.');
-  calculate(false);
-  document.getElementById('scoreSlider').style.setProperty('--val', '65.7%');
-  applySpecFromURL();
-});
-</script>
-  <script src="js/icons.js"></script>
-
+            // visual-only tab highlight
+            document.querySelectorAll('.tab-link').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    document.querySelectorAll('.tab-link').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                });
+            });
+        });
+    </script>
 </body>
 </html>
