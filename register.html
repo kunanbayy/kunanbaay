@@ -118,11 +118,21 @@
       border:1px solid var(--border-2);color:var(--text);padding:13px 20px;border-radius:12px;font-size:.9rem;opacity:0;pointer-events:none;transition:.3s;z-index:50;box-shadow:0 14px 36px rgba(0,0,0,.5)}
     .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
     .toast.error{border-color:rgba(248,113,113,.55)}
+
+    .back-home{
+      position:fixed;top:22px;left:24px;z-index:5;display:inline-flex;align-items:center;gap:8px;
+      padding:10px 16px;border-radius:999px;font-size:.86rem;font-weight:600;text-decoration:none;
+      color:var(--text);background:rgba(255,255,255,.05);border:1px solid var(--border);
+      backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);transition:background .2s,border-color .2s,transform .15s}
+    .back-home:hover{background:rgba(255,255,255,.1);border-color:var(--border-2);transform:translateX(-2px)}
+    @media (max-width:560px){.back-home{top:14px;left:14px;padding:8px 13px;font-size:.8rem}}
   </style>
 </head>
 <body>
   <div class="bg-shapes"><span class="blob blob-1"></span><span class="blob blob-2"></span></div>
   <div class="grid"></div>
+
+  <a href="index.html" class="back-home">← Басты бет</a>
 
   <main class="page">
     <div class="shell">
