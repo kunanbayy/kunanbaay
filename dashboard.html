@@ -80,54 +80,59 @@
 <div class="dashboard-page">
   <!-- SIDEBAR -->
   <aside class="sidebar" id="sidebar">
-    <a href="index.html" class="sidebar-logo">
-      <div class="sidebar-logo-icon">☀</div>
-      Shyraq
-    </a>
+    <div class="sidebar-head">
+      <a href="index.html" class="sidebar-logo">
+        <div class="sidebar-logo-icon">☀</div>
+        <span class="sidebar-logo-text">Shyraq</span>
+      </a>
+      <button class="sidebar-burger" id="navToggle" type="button" aria-label="Менюді жию/ашу" title="Менюді жию/ашу">
+        <svg viewBox="0 0 24 24"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
+      </button>
+    </div>
 
     <div class="sidebar-section-title">Негізгі</div>
     <a href="dashboard.html" class="sidebar-link active">
-      <span class="icon"><span class="ui-icon"><svg viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10.5V20h14v-9.5"/><path d="M9 20v-6h6v6"/></svg></span></span> Басты бет
+      <span class="icon"><span class="ui-icon"><svg viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10.5V20h14v-9.5"/><path d="M9 20v-6h6v6"/></svg></span></span><span class="nav-label">Басты бет</span><span class="nav-tip">Басты бет</span>
     </a>
     <a href="test.html" class="sidebar-link">
-      <span class="icon"><span class="ui-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><path d="M12 12l7-7"/><path d="M16 5h3v3"/></svg></span></span> Мамандық тесті
+      <span class="icon"><span class="ui-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><path d="M12 12l7-7"/><path d="M16 5h3v3"/></svg></span></span><span class="nav-label">Мамандық тесті</span><span class="nav-tip">Мамандық тесті</span>
     </a>
     <a href="results.html" class="sidebar-link">
-      <span class="icon"><span class="ui-icon"><svg viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8L19 15z"/></svg></span></span> Нәтижем
+      <span class="icon"><span class="ui-icon"><svg viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8L19 15z"/></svg></span></span><span class="nav-label">Нәтижем</span><span class="nav-tip">Нәтижем</span>
     </a>
 
     <div class="sidebar-section-title">Зерттеу</div>
     <a href="specialties.html" class="sidebar-link">
-      <span class="icon"><span class="ui-icon"><svg viewBox="0 0 24 24"><path d="M5 4h9a3 3 0 0 1 3 3v13H8a3 3 0 0 0-3-3V4z"/><path d="M5 17a3 3 0 0 1 3-3h9"/></svg></span></span> Мамандықтар
+      <span class="icon"><span class="ui-icon"><svg viewBox="0 0 24 24"><path d="M5 4h9a3 3 0 0 1 3 3v13H8a3 3 0 0 0-3-3V4z"/><path d="M5 17a3 3 0 0 1 3-3h9"/></svg></span></span><span class="nav-label">Мамандықтар</span><span class="nav-tip">Мамандықтар</span>
     </a>
     <a href="universities.html" class="sidebar-link">
-      <span class="icon"><span class="ui-icon"><svg viewBox="0 0 24 24"><path d="M4 10h16"/><path d="M6 10v8"/><path d="M10 10v8"/><path d="M14 10v8"/><path d="M18 10v8"/><path d="M3 20h18"/><path d="M12 4 4 8h16l-8-4z"/></svg></span></span> Университеттер
+      <span class="icon"><span class="ui-icon"><svg viewBox="0 0 24 24"><path d="M4 10h16"/><path d="M6 10v8"/><path d="M10 10v8"/><path d="M14 10v8"/><path d="M18 10v8"/><path d="M3 20h18"/><path d="M12 4 4 8h16l-8-4z"/></svg></span></span><span class="nav-label">Университеттер</span><span class="nav-tip">Университеттер</span>
     </a>
     <a href="grant.html" class="sidebar-link">
-      <span class="icon"><span class="ui-icon"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14" rx="3"/><path d="M8 9h8"/><path d="M8 13h3"/><path d="M15 13h1"/><path d="M8 16h1"/><path d="M12 16h1"/><path d="M16 16h1"/></svg></span></span> Грант калькулятор
+      <span class="icon"><span class="ui-icon"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14" rx="3"/><path d="M8 9h8"/><path d="M8 13h3"/><path d="M15 13h1"/><path d="M8 16h1"/><path d="M12 16h1"/><path d="M16 16h1"/></svg></span></span><span class="nav-label">Грант калькулятор</span><span class="nav-tip">Грант калькулятор</span>
     </a>
 
     <div class="sidebar-section-title">Менің</div>
     <a href="#" class="sidebar-link">
-      <span class="icon"><span class="ui-icon"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="3"/><path d="M8 3v4"/><path d="M16 3v4"/><path d="M4 10h16"/><path d="M8 14h4"/></svg></span></span> Менің жоспарым
+      <span class="icon"><span class="ui-icon"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="3"/><path d="M8 3v4"/><path d="M16 3v4"/><path d="M4 10h16"/><path d="M8 14h4"/></svg></span></span><span class="nav-label">Менің жоспарым</span><span class="nav-tip">Менің жоспарым</span>
     </a>
     <a href="#" class="sidebar-link">
-      <span class="icon"><span class="ui-icon"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-8.5-9A4.7 4.7 0 0 1 12 6a4.7 4.7 0 0 1 8.5 5c-1.5 4.6-8.5 9-8.5 9z"/></svg></span></span> Таңдаулылар
+      <span class="icon"><span class="ui-icon"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-8.5-9A4.7 4.7 0 0 1 12 6a4.7 4.7 0 0 1 8.5 5c-1.5 4.6-8.5 9-8.5 9z"/></svg></span></span><span class="nav-label">Таңдаулылар</span><span class="nav-tip">Таңдаулылар</span>
     </a>
     <a href="#" class="sidebar-link ai-link" style="color:var(--gold)">
-      <span class="icon"><span class="ui-icon"><svg viewBox="0 0 24 24"><rect x="5" y="8" width="14" height="10" rx="3"/><path d="M12 8V5"/><path d="M9 13h.01"/><path d="M15 13h.01"/><path d="M9 18v2"/><path d="M15 18v2"/><path d="M3 12h2"/><path d="M19 12h2"/></svg></span></span> AI кеңесші
-      <span class="badge badge-gold" style="margin-left:auto;font-size:0.7rem">Premium</span>
+      <span class="icon"><span class="ui-icon"><svg viewBox="0 0 24 24"><rect x="5" y="8" width="14" height="10" rx="3"/><path d="M12 8V5"/><path d="M9 13h.01"/><path d="M15 13h.01"/><path d="M9 18v2"/><path d="M15 18v2"/><path d="M3 12h2"/><path d="M19 12h2"/></svg></span></span><span class="nav-label">AI кеңесші</span>
+      <span class="badge badge-gold" style="margin-left:auto;font-size:0.7rem">Premium</span><span class="nav-tip">AI кеңесші</span>
     </a>
 
     <div class="sidebar-section-title">Аккаунт</div>
     <a href="pricing.html" class="sidebar-link">
-      <span class="icon"><span class="ui-icon"><svg viewBox="0 0 24 24"><path d="M12 3l2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 17.2 6.4 20.2 7.5 14 3 9.6l6.2-.9L12 3z"/></svg></span></span> Тарифтер
+      <span class="icon"><span class="ui-icon"><svg viewBox="0 0 24 24"><path d="M12 3l2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 17.2 6.4 20.2 7.5 14 3 9.6l6.2-.9L12 3z"/></svg></span></span><span class="nav-label">Тарифтер</span><span class="nav-tip">Тарифтер</span>
     </a>
     <a href="profile.html" class="sidebar-link">
-      <span class="icon"><span class="ui-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span></span> Профиль
+      <span class="icon"><span class="ui-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span></span><span class="nav-label">Профиль</span><span class="nav-tip">Профиль</span>
     </a>
     <a href="index.html" class="sidebar-link" onclick="localStorage.removeItem('shyraq_user')">
-      <span class="icon"><span class="ui-icon"><svg viewBox="0 0 24 24"><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/><path d="M21 4v16h-7"/></svg></span></span> Шығу
+      <span class="icon"><span class="ui-icon"><svg viewBox="0 0 24 24"><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/><path d="M21 4v16h-7"/></svg></span></span><span class="nav-label">Шығу</span><span class="nav-tip">Шығу</span>
     </a>
 
     <div class="sidebar-premium">
@@ -313,6 +318,19 @@
 <script src="js/main.js"></script>
 <script src="js/auth-guard.js"></script>
 <script>
+  // ── Collapsible sidebar (burger toggle, persisted) ──
+  (function () {
+    const page = document.querySelector('.dashboard-page');
+    const btn = document.getElementById('navToggle');
+    if (!page || !btn) return;
+    if (localStorage.getItem('shyraq_nav') === 'collapsed') page.classList.add('nav-collapsed');
+    btn.addEventListener('click', () => {
+      // on mobile the burger isn't shown; this only runs on desktop
+      const collapsed = page.classList.toggle('nav-collapsed');
+      localStorage.setItem('shyraq_nav', collapsed ? 'collapsed' : 'open');
+    });
+  })();
+
   document.addEventListener('DOMContentLoaded', () => {
     const user = JSON.parse(localStorage.getItem('shyraq_user'));
     if (!user) { window.location.href = 'login.html'; return; }
