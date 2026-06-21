@@ -78,6 +78,25 @@
     .btn-o { background:#fff; color:var(--gp); border:1.5px solid var(--gp); border-radius:14px; padding:14px 26px; font-weight:800; text-decoration:none; }
 
     @media (max-width:760px){ .dir-grid,.price-grid,.spec-list{ grid-template-columns:1fr; } }
+
+    /* Inter for full Kazakh letter support */
+    body, .sec-h, .trigger h1, .trigger .eyebrow, .rs-logo, .price .amt, .ability .ab-pct, .ability .ab-name { font-family:'Inter','Golos Text','Noto Sans',sans-serif; }
+
+    /* grouped direction cards (clearer than a flat scattered list) */
+    .gcard { border:1px solid var(--g-line); border-radius:16px; padding:18px 20px; margin-bottom:14px; background:#fff; }
+    .gcard:last-child { margin-bottom:0; }
+    .gcard-head { display:flex; align-items:center; gap:12px; margin-bottom:14px; }
+    .gcard-ic { width:42px; height:42px; flex:0 0 auto; border-radius:12px; background:var(--gp-soft); color:var(--gp); display:flex; align-items:center; justify-content:center; font-size:1.1rem; }
+    .gcard-nm { font-weight:800; color:var(--ink); font-size:1.02rem; }
+    .gcard-pc { font-size:.8rem; color:var(--gp); font-weight:700; }
+    .gcard-label { font-size:.74rem; font-weight:800; text-transform:uppercase; letter-spacing:.04em; color:#94A3B8; margin:12px 0 7px; }
+    .gchips { display:flex; flex-wrap:wrap; gap:7px; }
+    .gchip { background:#F4F5FA; border:1px solid #EEF0F6; border-radius:10px; padding:7px 12px; font-size:.84rem; color:var(--ink); font-weight:600; }
+    .gmeta { display:grid; grid-template-columns:1fr; gap:8px; margin-top:12px; padding-top:12px; border-top:1px dashed #EEF0F6; }
+    .gmeta .row { display:flex; gap:8px; font-size:.84rem; }
+    .gmeta .row .k { color:var(--text-muted); flex:0 0 130px; font-weight:600; }
+    .gmeta .row .v { color:var(--ink); font-weight:700; }
+    @media (max-width:560px){ .gmeta .row { flex-direction:column; gap:2px; } .gmeta .row .k { flex:none; } }
   </style>
 </head>
 <body>
@@ -206,27 +225,30 @@
       dg.appendChild(d);
     });
 
+    // free: top direction's 5 specialties (coherent, not mixed)
     const sf = document.getElementById('specFree'); sf.innerHTML = '';
-    allSpecs.slice(0, 5).forEach((s, i) => {
+    CL[top[0]].specs.slice(0, 5).forEach((s, i) => {
       const d = document.createElement('div');
       d.className = 'spec';
       d.innerHTML = '<span class="num">' + (i+1) + '</span>' + s;
       sf.appendChild(d);
     });
 
+    // locked: one clean grouped card per top direction
     const sl = document.getElementById('specLocked');
-    let html = '<div class="spec-list">';
-    allSpecs.slice(5).forEach((s, i) => { html += '<div class="spec"><span class="num">' + (i+6) + '</span>' + s + '</div>'; });
-    html += '</div>';
-    const unis = [];
-    top.forEach(k => CL[k].unis.forEach(u => { if(unis.indexOf(u)<0) unis.push(u); }));
-    html += '<div class="prem-block" style="margin-top:16px"><h4>🎓 Ұсынылатын университеттер</h4><div class="prem-row">' +
-      unis.map(u => '<span class="chip">' + u + '</span>').join('') + '</div></div>';
-    html += '<div class="prem-block"><h4>📘 Қажетті ҰБТ пәндері</h4><div class="prem-row">' +
-      top.map(k => '<span class="chip">' + CL[k].label + ': ' + CL[k].subjects + '</span>').join('') + '</div></div>';
-    html += '<div class="prem-block"><h4>💰 Болашақ жалақы диапазоны</h4><div class="prem-row">' +
-      top.map(k => '<span class="chip">' + CL[k].label + ': ' + CL[k].salary + '</span>').join('') + '</div></div>';
-    sl.innerHTML = html;
+    sl.innerHTML = top.map(k => {
+      const c = CL[k];
+      return '<div class="gcard">' +
+        '<div class="gcard-head"><div class="gcard-ic"><i class="fas ' + c.icon + '"></i></div>' +
+        '<div><div class="gcard-nm">' + c.label + '</div><div class="gcard-pc">Сәйкестік: ' + pct[k] + '%</div></div></div>' +
+        '<div class="gcard-label">Мамандықтар</div>' +
+        '<div class="gchips">' + c.specs.map(s => '<span class="gchip">' + s + '</span>').join('') + '</div>' +
+        '<div class="gmeta">' +
+          '<div class="row"><span class="k">🎓 Университеттер</span><span class="v">' + c.unis.join(', ') + '</span></div>' +
+          '<div class="row"><span class="k">📘 ҰБТ пәндері</span><span class="v">' + c.subjects + '</span></div>' +
+          '<div class="row"><span class="k">💰 Жалақы</span><span class="v">' + c.salary + '</span></div>' +
+        '</div></div>';
+    }).join('');
 
     document.getElementById('lkTitle').textContent = '🔒 Сізге сәйкес келетін ' + totalSpecs + ' мамандықты ашу';
 
