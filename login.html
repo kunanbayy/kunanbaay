@@ -224,6 +224,16 @@
       const contact = document.getElementById('loginContact').value.trim();
       const pw = document.getElementById('loginPw').value;
       if (!contact || !pw){ toast('Email/телефон және парольді енгізіңіз', 'error'); return; }
+
+      // ── Админ кіруі ──
+      if (contact.toLowerCase() === 'admin@shyraq.edu.kz' && pw === 'admin123'){
+        const admin = { name: 'Админ', email: contact, role: 'admin', plan: 'admin' };
+        localStorage.setItem('shyraq_admin', '1');
+        localStorage.setItem('shyraq_user', JSON.stringify(admin));
+        window.location.href = 'admin.html';
+        return;
+      }
+
       const user = { name: 'Ержан', email: contact, classYear: '11', city: 'Алматы', plan: 'free' };
       localStorage.setItem('shyraq_user', JSON.stringify(user));
       window.location.href = 'dashboard.html';

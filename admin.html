@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Админ панель — Shyraq Education</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Unbounded:wght@600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root{
+      --navy:#1E3A5F; --navy-2:#2D5491; --ink:#0F1B2D;
+      --gold:#F2B84B; --gold-deep:#D99A2B;
+      --bg:#F4F7FB; --card:#fff; --border:#E5EBF2;
+      --text:#1E293B; --muted:#7A8AA0; --light:#A8B4C6;
+      --green:#10B981; --red:#EF4444; --blue:#3B82F6; --purple:#7C3AED;
+      --fd:'Unbounded',sans-serif; --fb:'Inter',system-ui,sans-serif;
+      --rail:78px; --side:248px;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:var(--fb);background:var(--bg);color:var(--text);min-height:100vh}
+    a{text-decoration:none;color:inherit}
+
+    .admin{display:flex;min-height:100vh}
+
+    /* ── SIDEBAR ── */
+    .a-side{
+      width:var(--side);background:var(--ink);color:#fff;position:fixed;top:0;left:0;height:100vh;
+      display:flex;flex-direction:column;padding:20px 14px;z-index:90;overflow-y:auto;
+      transition:width .26s cubic-bezier(.4,0,.2,1),padding .26s;
+    }
+    .a-side-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:24px}
+    .a-logo{display:flex;align-items:center;gap:10px;font-family:var(--fd);font-weight:800;font-size:1.1rem;padding:6px 8px;white-space:nowrap}
+    .a-logo .mk{width:36px;height:36px;border-radius:11px;background:linear-gradient(145deg,var(--navy),var(--navy-2));display:grid;place-items:center;font-size:1rem;flex-shrink:0}
+    .a-logo .tag{font-size:.6rem;font-weight:700;color:var(--gold);letter-spacing:.12em;display:block;margin-top:-2px}
+    .a-burger{width:38px;height:38px;border:none;border-radius:10px;background:rgba(255,255,255,.08);color:#fff;cursor:pointer;display:grid;place-items:center;flex-shrink:0}
+    .a-burger:hover{background:rgba(255,255,255,.16)}
+    .a-burger svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round}
+    .a-sec-lbl{font-size:.66rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.34);padding:0 12px;margin:16px 0 6px;white-space:nowrap}
+    .a-link{
+      display:flex;align-items:center;gap:13px;padding:11px 12px;border-radius:13px;margin-bottom:3px;
+      font-size:.9rem;font-weight:600;color:rgba(255,255,255,.72);cursor:pointer;transition:.15s;position:relative;white-space:nowrap;
+    }
+    .a-link:hover{background:rgba(255,255,255,.07);color:#fff}
+    .a-link.active{background:linear-gradient(135deg,var(--navy),var(--navy-2));color:#fff}
+    .a-link .ic{width:34px;height:34px;border-radius:10px;background:rgba(255,255,255,.08);display:grid;place-items:center;flex-shrink:0}
+    .a-link.active .ic{background:rgba(242,184,75,.22);color:var(--gold)}
+    .a-link .ic svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .a-link .badge{margin-left:auto;background:var(--gold);color:var(--ink);font-size:.66rem;font-weight:800;padding:2px 8px;border-radius:999px}
+    .a-side-foot{margin-top:auto;padding-top:16px}
+    .a-link .tip{display:none}
+
+    /* collapsed rail */
+    .admin.collapsed .a-side{width:var(--rail);padding-left:10px;padding-right:10px}
+    .admin.collapsed .a-logo .txt,.admin.collapsed .a-sec-lbl,.admin.collapsed .a-link .lbl,.admin.collapsed .a-link .badge{display:none}
+    .admin.collapsed .a-side-head{flex-direction:column-reverse;gap:12px}
+    .admin.collapsed .a-link{justify-content:center;padding:11px}
+    .admin.collapsed .a-logo{justify-content:center;padding:6px}
+    .admin.collapsed .a-link:hover .tip{display:block;position:absolute;left:calc(100% + 10px);top:50%;transform:translateY(-50%);background:var(--ink);color:#fff;padding:6px 11px;border-radius:8px;font-size:.78rem;white-space:nowrap;z-index:120;box-shadow:0 10px 24px rgba(0,0,0,.3)}
+    .admin.collapsed .a-main{margin-left:var(--rail)}
+
+    /* ── MAIN ── */
+    .a-main{margin-left:var(--side);flex:1;padding:26px 30px;transition:margin-left .26s cubic-bezier(.4,0,.2,1);min-width:0}
+    .a-top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:24px;flex-wrap:wrap}
+    .a-top h1{font-family:var(--fd);font-size:1.5rem;font-weight:800;color:var(--ink)}
+    .a-top .sub{color:var(--muted);font-size:.88rem;margin-top:3px}
+    .a-top-right{display:flex;align-items:center;gap:12px}
+    .a-search{padding:10px 15px;border:1px solid var(--border);border-radius:12px;font-family:inherit;font-size:.88rem;background:#fff;outline:none;width:230px;max-width:46vw}
+    .a-search:focus{border-color:var(--navy-2);box-shadow:0 0 0 3px rgba(45,84,145,.12)}
+    .a-avatar{width:42px;height:42px;border-radius:50%;background:linear-gradient(145deg,var(--navy),var(--navy-2));color:#fff;display:grid;place-items:center;font-weight:700;flex-shrink:0}
+
+    /* stat cards */
+    .a-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+    .a-stat{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:20px;transition:.2s}
+    .a-stat:hover{box-shadow:0 14px 30px rgba(30,58,95,.08);transform:translateY(-2px)}
+    .a-stat .row{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+    .a-stat .ic{width:46px;height:46px;border-radius:13px;display:grid;place-items:center}
+    .a-stat .ic svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .a-stat .delta{font-size:.74rem;font-weight:700;padding:3px 8px;border-radius:999px}
+    .a-stat .delta.up{background:#E7F8F1;color:var(--green)}
+    .a-stat .val{font-family:var(--fd);font-size:1.9rem;font-weight:800;color:var(--ink);line-height:1}
+    .a-stat .lbl{color:var(--muted);font-size:.85rem;margin-top:6px}
+
+    /* card / panel */
+    .a-card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:22px;margin-bottom:20px}
+    .a-card-hd{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+    .a-card-hd h3{font-size:1.05rem;font-weight:800;color:var(--ink)}
+    .a-grid2{display:grid;grid-template-columns:1.6fr 1fr;gap:20px}
+
+    /* table */
+    table.a-tbl{width:100%;border-collapse:collapse}
+    .a-tbl th{text-align:left;font-size:.74rem;text-transform:uppercase;letter-spacing:.05em;color:var(--light);font-weight:700;padding:10px 12px;border-bottom:1px solid var(--border)}
+    .a-tbl td{padding:13px 12px;border-bottom:1px solid #F1F5F9;font-size:.88rem;vertical-align:middle}
+    .a-tbl tr:last-child td{border-bottom:none}
+    .a-tbl tr:hover td{background:#FAFCFF}
+    .pill{display:inline-flex;align-items:center;gap:6px;padding:4px 11px;border-radius:999px;font-size:.76rem;font-weight:700}
+    .pill.free{background:#EEF2F7;color:#64748B}
+    .pill.premium{background:#FEF6E2;color:var(--gold-deep)}
+    .pill.admin{background:#EAF0F8;color:var(--navy)}
+    .pill.paid{background:#E7F8F1;color:var(--green)}
+    .pill.pending{background:#FFF4E5;color:#C2410C}
+    .u-cell{display:flex;align-items:center;gap:11px}
+    .u-av{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:.82rem;color:#fff;flex-shrink:0}
+    .u-name{font-weight:700;color:var(--ink)}
+    .u-mail{font-size:.78rem;color:var(--muted)}
+    .row-act{display:flex;gap:6px}
+    .ibtn{width:32px;height:32px;border:1px solid var(--border);background:#fff;border-radius:9px;cursor:pointer;display:grid;place-items:center;color:var(--muted);transition:.15s}
+    .ibtn:hover{border-color:var(--red);color:var(--red);background:#FEF2F2}
+    .ibtn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+    /* buttons */
+    .btn{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:12px;font-family:inherit;font-size:.88rem;font-weight:700;cursor:pointer;border:none;transition:.18s}
+    .btn-primary{background:linear-gradient(135deg,var(--navy),var(--navy-2));color:#fff}
+    .btn-primary:hover{filter:brightness(1.08);box-shadow:0 10px 22px rgba(30,58,95,.25)}
+    .btn-gold{background:linear-gradient(135deg,var(--gold),var(--gold-deep));color:var(--ink)}
+    .btn-gold:hover{filter:brightness(1.05)}
+    .btn-ghost{background:#fff;border:1px solid var(--border);color:var(--text)}
+    .btn-ghost:hover{border-color:var(--navy-2);color:var(--navy)}
+    .btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round}
+
+    /* bars chart */
+    .bars{display:flex;align-items:flex-end;gap:12px;height:170px;padding-top:10px}
+    .bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;height:100%;justify-content:flex-end}
+    .bar{width:100%;max-width:38px;border-radius:8px 8px 0 0;background:linear-gradient(180deg,var(--navy-2),var(--navy));animation:grow .6s ease both}
+    @keyframes grow{from{height:0}}
+    .bar-x{font-size:.74rem;color:var(--muted);font-weight:600}
+
+    /* category chips */
+    .cat-list{display:flex;flex-direction:column;gap:12px}
+    .cat-row{display:flex;align-items:center;gap:12px}
+    .cat-row .nm{width:120px;font-size:.84rem;font-weight:600;color:var(--text);text-transform:capitalize}
+    .cat-track{flex:1;height:9px;background:#EEF2F7;border-radius:6px;overflow:hidden}
+    .cat-fill{height:100%;border-radius:6px;background:linear-gradient(90deg,var(--gold),var(--gold-deep))}
+    .cat-n{font-size:.82rem;font-weight:800;color:var(--ink);width:34px;text-align:right}
+
+    /* activity */
+    .act{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid #F1F5F9}
+    .act:last-child{border-bottom:none}
+    .act .dot{width:9px;height:9px;border-radius:50%;margin-top:5px;flex-shrink:0}
+    .act .t{font-size:.86rem;font-weight:600;color:var(--text)}
+    .act .m{font-size:.76rem;color:var(--muted);margin-top:2px}
+
+    .section{display:none}
+    .section.active{display:block;animation:fade .35s ease both}
+    @keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+    .empty{text-align:center;padding:40px;color:var(--muted)}
+
+    /* settings */
+    .field{margin-bottom:16px}
+    .field label{display:block;font-size:.82rem;font-weight:600;color:var(--muted);margin-bottom:7px}
+    .field input{width:100%;max-width:380px;padding:12px 14px;border:1px solid var(--border);border-radius:11px;font-family:inherit;font-size:.9rem;outline:none}
+    .field input:focus{border-color:var(--navy-2);box-shadow:0 0 0 3px rgba(45,84,145,.12)}
+
+    /* modal */
+    .ov{position:fixed;inset:0;background:rgba(15,27,45,.55);backdrop-filter:blur(3px);display:none;align-items:center;justify-content:center;z-index:200;padding:20px}
+    .ov.open{display:flex}
+    .modal{background:#fff;border-radius:20px;padding:26px;width:100%;max-width:420px;box-shadow:0 30px 70px rgba(0,0,0,.3)}
+    .modal h3{font-family:var(--fd);font-size:1.2rem;font-weight:800;margin-bottom:18px;color:var(--ink)}
+    .modal .field input,.modal .field select{max-width:none}
+    .modal .field select{width:100%;padding:12px 14px;border:1px solid var(--border);border-radius:11px;font-family:inherit;font-size:.9rem;background:#fff}
+    .modal-foot{display:flex;gap:10px;margin-top:22px}
+    .modal-foot .btn{flex:1;justify-content:center}
+
+    /* toast */
+    .toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:13px 22px;border-radius:12px;font-size:.88rem;font-weight:600;opacity:0;pointer-events:none;transition:.3s;z-index:300;box-shadow:0 16px 40px rgba(0,0,0,.3)}
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+    .a-mobile-bar{display:none}
+    @media(max-width:900px){
+      .a-stats{grid-template-columns:1fr 1fr}
+      .a-grid2{grid-template-columns:1fr}
+    }
+    @media(max-width:760px){
+      .a-side{transform:translateX(-100%);width:var(--side);transition:transform .26s}
+      .admin.nav-open .a-side{transform:translateX(0)}
+      .admin.collapsed .a-side{width:var(--side)}
+      .admin.collapsed .a-logo .txt,.admin.collapsed .a-sec-lbl,.admin.collapsed .a-link .lbl,.admin.collapsed .a-link .badge{display:revert}
+      .admin.collapsed .a-link{justify-content:flex-start}
+      .a-main,.admin.collapsed .a-main{margin-left:0}
+      .a-burger{display:none}
+      .a-mobile-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+      .a-mobile-bar button{width:42px;height:42px;border:1px solid var(--border);background:#fff;border-radius:11px;font-size:1.3rem;cursor:pointer}
+      .a-main{padding:18px 16px}
+      .a-search{display:none}
+    }
+    @media(max-width:520px){ .a-stats{grid-template-columns:1fr} }
+  </style>
+</head>
+<body>
+<div class="admin" id="admin">
+  <!-- SIDEBAR -->
+  <aside class="a-side" id="aSide">
+    <div class="a-side-head">
+      <a href="index.html" class="a-logo"><span class="mk">🔆</span><span class="txt">Shyraq<span class="tag">ADMIN</span></span></a>
+      <button class="a-burger" id="aBurger" type="button" aria-label="Жию/ашу">
+        <svg viewBox="0 0 24 24"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
+      </button>
+    </div>
+
+    <div class="a-sec-lbl">Басқару</div>
+    <div class="a-link active" data-sec="overview">
+      <span class="ic"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg></span>
+      <span class="lbl">Шолу</span><span class="tip">Шолу</span>
+    </div>
+    <div class="a-link" data-sec="users">
+      <span class="ic"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 20a5.5 5.5 0 0 1 11 0"/><path d="M16 5.5a3 3 0 0 1 0 5.8"/><path d="M18 20a5 5 0 0 0-3-4.6"/></svg></span>
+      <span class="lbl">Қолданушылар</span><span class="badge" id="navUsers">0</span><span class="tip">Қолданушылар</span>
+    </div>
+    <div class="a-link" data-sec="payments">
+      <span class="ic"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3 10h18"/><path d="M7 15h4"/></svg></span>
+      <span class="lbl">Төлемдер</span><span class="tip">Төлемдер</span>
+    </div>
+
+    <div class="a-sec-lbl">Мазмұн</div>
+    <div class="a-link" data-sec="unis">
+      <span class="ic"><svg viewBox="0 0 24 24"><path d="M12 4 4 8h16l-8-4z"/><path d="M6 10v8"/><path d="M10 10v8"/><path d="M14 10v8"/><path d="M18 10v8"/><path d="M3 20h18"/></svg></span>
+      <span class="lbl">Университеттер</span><span class="tip">Университеттер</span>
+    </div>
+    <div class="a-link" data-sec="specs">
+      <span class="ic"><svg viewBox="0 0 24 24"><path d="M5 4h9a3 3 0 0 1 3 3v13H8a3 3 0 0 0-3-3V4z"/></svg></span>
+      <span class="lbl">Мамандықтар</span><span class="tip">Мамандықтар</span>
+    </div>
+    <div class="a-link" data-sec="reviews">
+      <span class="ic"><svg viewBox="0 0 24 24"><path d="M21 11.5a8 8 0 0 1-8 8H7l-4 2V11.5a8 8 0 0 1 8-8 8 8 0 0 1 10 8z"/></svg></span>
+      <span class="lbl">Пікірлер</span><span class="tip">Пікірлер</span>
+    </div>
+
+    <div class="a-sec-lbl">Жүйе</div>
+    <div class="a-link" data-sec="settings">
+      <span class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.13-1.3l2-1.5-2-3.4-2.3 1a7 7 0 0 0-2.27-1.3L13.7 2h-3.4l-.33 2.5a7 7 0 0 0-2.27 1.3l-2.3-1-2 3.4 2 1.5A7 7 0 0 0 5 12c0 .44.05.87.13 1.3l-2 1.5 2 3.4 2.3-1a7 7 0 0 0 2.27 1.3l.33 2.5h3.4l.33-2.5a7 7 0 0 0 2.27-1.3l2.3 1 2-3.4-2-1.5c.08-.43.13-.86.13-1.3z"/></svg></span>
+      <span class="lbl">Параметрлер</span><span class="tip">Параметрлер</span>
+    </div>
+
+    <div class="a-side-foot">
+      <div class="a-link" id="logoutBtn">
+        <span class="ic"><svg viewBox="0 0 24 24"><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/><path d="M21 4v16h-7"/></svg></span>
+        <span class="lbl">Шығу</span><span class="tip">Шығу</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="a-main">
+    <div class="a-mobile-bar">
+      <button id="mOpen">☰</button>
+      <span style="font-family:var(--fd);font-weight:800">Shyraq Admin</span>
+      <span class="a-avatar" style="width:38px;height:38px">А</span>
+    </div>
+
+    <div class="a-top">
+      <div>
+        <h1 id="pageTitle">Шолу</h1>
+        <div class="sub" id="pageSub">Платформаның жалпы көрсеткіштері</div>
+      </div>
+      <div class="a-top-right">
+        <input class="a-search" id="globalSearch" type="text" placeholder="Іздеу..." />
+        <span class="a-avatar">А</span>
+      </div>
+    </div>
+
+    <!-- ══ OVERVIEW ══ -->
+    <section class="section active" id="sec-overview">
+      <div class="a-stats">
+        <div class="a-stat">
+          <div class="row"><span class="ic" style="background:#EAF0F8;color:var(--navy)"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 20a5.5 5.5 0 0 1 11 0"/><path d="M16 5.5a3 3 0 0 1 0 5.8"/></svg></span><span class="delta up">+12%</span></div>
+          <div class="val" id="stUsers">0</div><div class="lbl">Қолданушылар</div>
+        </div>
+        <div class="a-stat">
+          <div class="row"><span class="ic" style="background:#FEF6E2;color:var(--gold-deep)"><svg viewBox="0 0 24 24"><path d="M12 3l2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 17.2 6.4 20.2 7.5 14 3 9.6l6.2-.9z"/></svg></span><span class="delta up">+8%</span></div>
+          <div class="val" id="stPremium">0</div><div class="lbl">Premium қолданушы</div>
+        </div>
+        <div class="a-stat">
+          <div class="row"><span class="ic" style="background:#E7F8F1;color:var(--green)"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3 10h18"/></svg></span><span class="delta up">+23%</span></div>
+          <div class="val" id="stRevenue">0 ₸</div><div class="lbl">Жалпы түсім</div>
+        </div>
+        <div class="a-stat">
+          <div class="row"><span class="ic" style="background:#F1ECFE;color:var(--purple)"><svg viewBox="0 0 24 24"><path d="M12 4 4 8h16l-8-4z"/><path d="M6 10v8M10 10v8M14 10v8M18 10v8M3 20h18"/></svg></span></div>
+          <div class="val" id="stUnis">0</div><div class="lbl">Университет базада</div>
+        </div>
+      </div>
+
+      <div class="a-grid2">
+        <div class="a-card">
+          <div class="a-card-hd"><h3>Тіркелулер динамикасы</h3><span class="pill premium">Соңғы 7 ай</span></div>
+          <div class="bars" id="bars"></div>
+        </div>
+        <div class="a-card">
+          <div class="a-card-hd"><h3>Категория бойынша ЖОО</h3></div>
+          <div class="cat-list" id="catList"></div>
+        </div>
+      </div>
+
+      <div class="a-grid2">
+        <div class="a-card">
+          <div class="a-card-hd"><h3>Соңғы қолданушылар</h3><span class="pill admin" style="cursor:pointer" onclick="go('users')">Барлығы →</span></div>
+          <table class="a-tbl"><tbody id="recentUsers"></tbody></table>
+        </div>
+        <div class="a-card">
+          <div class="a-card-hd"><h3>Соңғы белсенділік</h3></div>
+          <div id="activity"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ USERS ══ -->
+    <section class="section" id="sec-users">
+      <div class="a-card">
+        <div class="a-card-hd">
+          <h3>Қолданушылар тізімі</h3>
+          <button class="btn btn-primary" onclick="openUserModal()"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg> Қосу</button>
+        </div>
+        <table class="a-tbl">
+          <thead><tr><th>Қолданушы</th><th>Жоспар</th><th>Қала</th><th>Тіркелген</th><th></th></tr></thead>
+          <tbody id="usersBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ══ PAYMENTS ══ -->
+    <section class="section" id="sec-payments">
+      <div class="a-card">
+        <div class="a-card-hd"><h3>Төлемдер</h3><span class="pill paid" id="payTotal">0 ₸</span></div>
+        <table class="a-tbl">
+          <thead><tr><th>Қолданушы</th><th>Жоспар</th><th>Сома</th><th>Статус</th><th>Күні</th></tr></thead>
+          <tbody id="paymentsBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ══ UNIVERSITIES ══ -->
+    <section class="section" id="sec-unis">
+      <div class="a-card">
+        <div class="a-card-hd"><h3>Университеттер базасы</h3><span class="pill admin" id="uniCount">0 ЖОО</span></div>
+        <table class="a-tbl">
+          <thead><tr><th>Университет</th><th>Қала</th><th>Категория</th><th>Мамандық</th><th>Статус</th></tr></thead>
+          <tbody id="unisBody"></tbody>
+        </table>
+        <div style="text-align:center;margin-top:16px"><button class="btn btn-ghost" id="uniMore">Тағы көрсету</button></div>
+      </div>
+    </section>
+
+    <!-- ══ SPECIALTIES ══ -->
+    <section class="section" id="sec-specs">
+      <div class="a-card">
+        <div class="a-card-hd"><h3>Мамандықтар</h3><span class="pill premium" id="specCount">0</span></div>
+        <table class="a-tbl">
+          <thead><tr><th>Код</th><th>Мамандық</th><th>ЖОО саны</th><th>Орт. шекті балл</th></tr></thead>
+          <tbody id="specsBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ══ REVIEWS ══ -->
+    <section class="section" id="sec-reviews">
+      <div class="a-card">
+        <div class="a-card-hd">
+          <h3>Пікірлер</h3>
+          <button class="btn btn-gold" onclick="openReviewModal()"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg> Пікір қосу</button>
+        </div>
+        <table class="a-tbl">
+          <thead><tr><th>Автор</th><th>Пікір</th><th>Баға</th><th></th></tr></thead>
+          <tbody id="reviewsBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ══ SETTINGS ══ -->
+    <section class="section" id="sec-settings">
+      <div class="a-card" style="max-width:560px">
+        <div class="a-card-hd"><h3>Платформа параметрлері</h3></div>
+        <div class="field"><label>Premium бағасы (₸/ай)</label><input type="number" id="setPrice" value="990" /></div>
+        <div class="field"><label>AI Premium бағасы (₸/ай)</label><input type="number" id="setPriceAi" value="1990" /></div>
+        <div class="field"><label>Қаспи қабылдаушы (чек)</label><input type="text" id="setReceiver" value="Мадина Е." /></div>
+        <button class="btn btn-primary" onclick="saveSettings()"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> Сақтау</button>
+      </div>
+      <div class="a-card" style="max-width:560px">
+        <div class="a-card-hd"><h3>Админ аккаунты</h3></div>
+        <div class="field"><label>Email</label><input type="text" value="admin@shyraq.edu.kz" readonly /></div>
+        <div class="field"><label>Рөл</label><input type="text" value="Супер админ" readonly /></div>
+        <button class="btn btn-ghost" id="logoutBtn2"><svg viewBox="0 0 24 24"><path d="M10 17l5-5-5-5M15 12H3M21 4v16h-7"/></svg> Шығу</button>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- USER MODAL -->
+<div class="ov" id="userModal">
+  <div class="modal">
+    <h3>Жаңа қолданушы</h3>
+    <div class="field"><label>Аты-жөні</label><input type="text" id="umName" placeholder="Ержан Сейтқали" /></div>
+    <div class="field"><label>Email</label><input type="text" id="umEmail" placeholder="email@gmail.com" /></div>
+    <div class="field"><label>Қала</label><input type="text" id="umCity" placeholder="Алматы" /></div>
+    <div class="field"><label>Жоспар</label>
+      <select id="umPlan"><option value="free">Free</option><option value="premium">Premium</option></select>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('userModal')">Болдырмау</button>
+      <button class="btn btn-primary" onclick="addUser()">Қосу</button>
+    </div>
+  </div>
+</div>
+
+<!-- REVIEW MODAL -->
+<div class="ov" id="reviewModal">
+  <div class="modal">
+    <h3>Жаңа пікір</h3>
+    <div class="field"><label>Автор</label><input type="text" id="rmName" placeholder="Аяулым · SDU" /></div>
+    <div class="field"><label>Пікір мәтіні</label><input type="text" id="rmText" placeholder="Shyraq маған көмектесті..." /></div>
+    <div class="field"><label>Баға (1-5)</label>
+      <select id="rmStars"><option>5</option><option>4</option><option>3</option><option>2</option><option>1</option></select>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('reviewModal')">Болдырмау</button>
+      <button class="btn btn-gold" onclick="addReview()">Қосу</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="js/universities-data.js"></script>
+<script>
+/* ════ AUTH GUARD ════ */
+if (localStorage.getItem('shyraq_admin') !== '1') {
+  window.location.href = 'login.html';
+}
+
+/* ════ HELPERS ════ */
+const $ = id => document.getElementById(id);
+function toast(m){ const t=$('toast'); t.textContent=m; t.className='toast show'; clearTimeout(window.__t); window.__t=setTimeout(()=>t.className='toast',2400); }
+function avColor(s){ const c=['#1E3A5F','#0E7490','#065F46','#7C3AED','#DC2626','#D97706','#2D5491','#9333EA']; let h=0; for(const ch of (s||'A')) h=(h*31+ch.charCodeAt(0))%c.length; return c[h]; }
+function initial(s){ return (s||'?').trim()[0].toUpperCase(); }
+const uniName = u => (window.kazifyUni ? window.kazifyUni(u.name_kz || u.name_ru || u.short_name || '') : (u.name_kz||u.short_name||'')) ;
+function nf(n){ return n.toLocaleString('ru-RU'); }
+
+/* ════ SEED DATA (localStorage) ════ */
+function seed(k,v){ if(!localStorage.getItem(k)) localStorage.setItem(k, JSON.stringify(v)); }
+seed('shyraq_admin_users', [
+  {name:'Аяулым Бекова', email:'ayaulym@gmail.com', city:'Алматы', plan:'premium', date:'2026-06-18'},
+  {name:'Дәурен Сатыбалдин', email:'dauren@gmail.com', city:'Астана', plan:'free', date:'2026-06-17'},
+  {name:'Зарина Нұрланова', email:'zarina@mail.ru', city:'Шымкент', plan:'premium', date:'2026-06-15'},
+  {name:'Нұрислам Қайрат', email:'nurislam@gmail.com', city:'Қарағанды', plan:'free', date:'2026-06-14'},
+  {name:'Мадина Әбен', email:'madina@gmail.com', city:'Атырау', plan:'premium', date:'2026-06-12'},
+  {name:'Ерасыл Тұрсын', email:'erasyl@gmail.com', city:'Тараз', plan:'free', date:'2026-06-10'}
+]);
+seed('shyraq_admin_payments', [
+  {name:'Аяулым Бекова', plan:'Premium', amount:990, status:'paid', date:'2026-06-18'},
+  {name:'Зарина Нұрланова', plan:'AI Premium', amount:1990, status:'paid', date:'2026-06-15'},
+  {name:'Мадина Әбен', plan:'Premium', amount:990, status:'paid', date:'2026-06-12'},
+  {name:'Бекжан О.', plan:'Premium', amount:990, status:'pending', date:'2026-06-20'}
+]);
+seed('shyraq_admin_reviews', [
+  {name:'Аяулым · SDU University', text:'Маркетинг мамандығына грант алдым!', stars:5},
+  {name:'Дәурен · AITU', text:'IT-ға бағыт алдым, қазір AITU-да оқимын.', stars:5},
+  {name:'Зарина · ҚазҰУ', text:'Аударма ісін таңдадым, ата-анам сенді.', stars:4}
+]);
+
+const getUsers = () => JSON.parse(localStorage.getItem('shyraq_admin_users')||'[]');
+const setUsers = a => localStorage.setItem('shyraq_admin_users', JSON.stringify(a));
+const getPays = () => JSON.parse(localStorage.getItem('shyraq_admin_payments')||'[]');
+const getReviews = () => JSON.parse(localStorage.getItem('shyraq_admin_reviews')||'[]');
+const setReviews = a => localStorage.setItem('shyraq_admin_reviews', JSON.stringify(a));
+
+const UNIS = window.UNIVERSITIES_SEED || [];
+
+/* ════ NAV ════ */
+const TITLES = {
+  overview:['Шолу','Платформаның жалпы көрсеткіштері'],
+  users:['Қолданушылар','Барлық тіркелген оқушылар'],
+  payments:['Төлемдер','Қаспи және карта төлемдері'],
+  unis:['Университеттер','Базадағы ЖОО тізімі'],
+  specs:['Мамандықтар','ҰБТ мамандық бағыттары'],
+  reviews:['Пікірлер','Оқушылардың пікірлерін басқару'],
+  settings:['Параметрлер','Жүйе баптаулары']
+};
+function go(sec){
+  document.querySelectorAll('.a-link[data-sec]').forEach(l=>l.classList.toggle('active', l.dataset.sec===sec));
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  $('sec-'+sec).classList.add('active');
+  $('pageTitle').textContent = TITLES[sec][0];
+  $('pageSub').textContent = TITLES[sec][1];
+  $('admin').classList.remove('nav-open');
+  if(sec==='unis') renderUnis(true);
+  if(sec==='specs') renderSpecs();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+document.querySelectorAll('.a-link[data-sec]').forEach(l=> l.addEventListener('click', ()=>go(l.dataset.sec)));
+
+/* burger collapse */
+$('aBurger').addEventListener('click', ()=>{
+  const a=$('admin'); const c=a.classList.toggle('collapsed');
+  localStorage.setItem('shyraq_admin_nav', c?'collapsed':'open');
+});
+if(localStorage.getItem('shyraq_admin_nav')==='collapsed') $('admin').classList.add('collapsed');
+$('mOpen').addEventListener('click', ()=>$('admin').classList.toggle('nav-open'));
+
+/* logout */
+function logout(){ localStorage.removeItem('shyraq_admin'); localStorage.removeItem('shyraq_user'); window.location.href='login.html'; }
+$('logoutBtn').addEventListener('click', logout);
+$('logoutBtn2').addEventListener('click', logout);
+
+/* ════ OVERVIEW ════ */
+function renderOverview(){
+  const users=getUsers(), pays=getPays();
+  const premium = users.filter(u=>u.plan!=='free').length;
+  const revenue = pays.filter(p=>p.status==='paid').reduce((s,p)=>s+p.amount,0);
+  $('stUsers').textContent = nf(users.length + 87000);
+  $('stPremium').textContent = nf(premium + 1240);
+  $('stRevenue').textContent = nf(revenue + 1228600)+' ₸';
+  $('stUnis').textContent = UNIS.length;
+  $('navUsers').textContent = users.length;
+
+  // bars (mock growth)
+  const data=[{x:'Қаң',v:42},{x:'Ақп',v:58},{x:'Нау',v:71},{x:'Сәу',v:64},{x:'Мам',v:88},{x:'Мау',v:96},{x:'Шіл',v:74}];
+  const max=Math.max(...data.map(d=>d.v));
+  $('bars').innerHTML = data.map(d=>`<div class="bar-col"><div class="bar" style="height:${d.v/max*100}%"></div><div class="bar-x">${d.x}</div></div>`).join('');
+
+  // categories
+  const cats={};
+  UNIS.forEach(u=>{ const c=(u.category||'басқа'); cats[c]=(cats[c]||0)+1; });
+  const sorted=Object.entries(cats).sort((a,b)=>b[1]-a[1]).slice(0,6);
+  const cmax=sorted[0]?sorted[0][1]:1;
+  $('catList').innerHTML = sorted.map(([n,v])=>`<div class="cat-row"><span class="nm">${n}</span><div class="cat-track"><div class="cat-fill" style="width:${v/cmax*100}%"></div></div><span class="cat-n">${v}</span></div>`).join('');
+
+  // recent users
+  $('recentUsers').innerHTML = users.slice(0,5).map(u=>`<tr><td><div class="u-cell"><span class="u-av" style="background:${avColor(u.name)}">${initial(u.name)}</span><div><div class="u-name">${u.name}</div><div class="u-mail">${u.email}</div></div></div></td><td><span class="pill ${u.plan}">${u.plan}</span></td></tr>`).join('');
+
+  // activity
+  const acts=[
+    ['#10B981','Жаңа Premium төлем','Аяулым Бекова · 990 ₸ · бүгін'],
+    ['#3B82F6','Жаңа тіркелу','Ерасыл Тұрсын · Тараз · бүгін'],
+    ['#F2B84B','Грант есептелді','Нұрислам · 112 балл · кеше'],
+    ['#7C3AED','Тест тапсырылды','Мадина Әбен · Медицина · кеше']
+  ];
+  $('activity').innerHTML = acts.map(a=>`<div class="act"><span class="dot" style="background:${a[0]}"></span><div><div class="t">${a[1]}</div><div class="m">${a[2]}</div></div></div>`).join('');
+}
+
+/* ════ USERS ════ */
+function renderUsers(){
+  const users=getUsers();
+  $('navUsers').textContent=users.length;
+  $('usersBody').innerHTML = users.map((u,i)=>`<tr>
+    <td><div class="u-cell"><span class="u-av" style="background:${avColor(u.name)}">${initial(u.name)}</span><div><div class="u-name">${u.name}</div><div class="u-mail">${u.email}</div></div></div></td>
+    <td><span class="pill ${u.plan}">${u.plan}</span></td>
+    <td>${u.city||'—'}</td>
+    <td>${u.date||'—'}</td>
+    <td><div class="row-act"><button class="ibtn" onclick="delUser(${i})" title="Жою"><svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></button></div></td>
+  </tr>`).join('') || '<tr><td colspan="5" class="empty">Қолданушылар жоқ</td></tr>';
+}
+function openUserModal(){ $('userModal').classList.add('open'); }
+function closeModal(id){ $(id).classList.remove('open'); }
+function addUser(){
+  const name=$('umName').value.trim(), email=$('umEmail').value.trim();
+  if(!name||!email){ toast('Аты мен email керек'); return; }
+  const users=getUsers();
+  users.unshift({name,email,city:$('umCity').value.trim()||'—',plan:$('umPlan').value,date:new Date().toISOString().slice(0,10)});
+  setUsers(users);
+  $('umName').value=$('umEmail').value=$('umCity').value='';
+  closeModal('userModal'); renderUsers(); renderOverview(); toast('Қолданушы қосылды ✓');
+}
+function delUser(i){ const u=getUsers(); u.splice(i,1); setUsers(u); renderUsers(); renderOverview(); toast('Жойылды'); }
+
+/* ════ PAYMENTS ════ */
+function renderPayments(){
+  const pays=getPays();
+  const total=pays.filter(p=>p.status==='paid').reduce((s,p)=>s+p.amount,0);
+  $('payTotal').textContent=nf(total)+' ₸';
+  $('paymentsBody').innerHTML = pays.map(p=>`<tr>
+    <td><div class="u-cell"><span class="u-av" style="background:${avColor(p.name)}">${initial(p.name)}</span><div class="u-name">${p.name}</div></div></td>
+    <td>${p.plan}</td><td><b>${nf(p.amount)} ₸</b></td>
+    <td><span class="pill ${p.status}">${p.status==='paid'?'Төленді':'Күтілуде'}</span></td>
+    <td>${p.date}</td></tr>`).join('');
+}
+
+/* ════ UNIVERSITIES ════ */
+let uniShown=12;
+function renderUnis(reset){
+  if(reset) uniShown=12;
+  const q=($('globalSearch').value||'').toLowerCase();
+  let list=UNIS;
+  if(q) list=UNIS.filter(u=>(uniName(u)+' '+(u.city||'')+' '+(u.category||'')).toLowerCase().includes(q));
+  $('uniCount').textContent=list.length+' ЖОО';
+  $('unisBody').innerHTML = list.slice(0,uniShown).map(u=>`<tr>
+    <td><div class="u-cell"><span class="u-av" style="background:${avColor(uniName(u))};font-size:.7rem">${(u.short_name||uniName(u)).slice(0,3).toUpperCase()}</span><div><div class="u-name">${uniName(u)}</div><div class="u-mail">${u.short_name||''}</div></div></div></td>
+    <td>${u.city||'—'}</td><td style="text-transform:capitalize">${u.category||'—'}</td>
+    <td>${(u.specialties||[]).length}</td>
+    <td><span class="pill ${u.status==='active'?'paid':'pending'}">${u.status==='active'?'Белсенді':u.status||'—'}</span></td>
+  </tr>`).join('') || '<tr><td colspan="5" class="empty">Табылмады</td></tr>';
+  $('uniMore').style.display = uniShown>=list.length ? 'none':'inline-flex';
+}
+$('uniMore').addEventListener('click', ()=>{ uniShown+=12; renderUnis(false); });
+
+/* ════ SPECIALTIES ════ */
+function renderSpecs(){
+  const map={};
+  UNIS.forEach(u=>(u.specialties||[]).forEach(s=>{
+    if(!map[s.code]) map[s.code]={code:s.code,name:s.name,unis:0,sum:0,n:0};
+    map[s.code].unis++;
+    if(s.thresholdScore){ map[s.code].sum+=s.thresholdScore; map[s.code].n++; }
+  }));
+  let arr=Object.values(map).sort((a,b)=>b.unis-a.unis);
+  const q=($('globalSearch').value||'').toLowerCase();
+  if(q) arr=arr.filter(s=>(s.name+' '+s.code).toLowerCase().includes(q));
+  $('specCount').textContent=arr.length+' мамандық';
+  $('specsBody').innerHTML = arr.slice(0,60).map(s=>`<tr>
+    <td><b>${s.code}</b></td><td>${s.name}</td><td>${s.unis} ЖОО</td>
+    <td>${s.n?Math.round(s.sum/s.n):'—'}</td></tr>`).join('');
+}
+
+/* ════ REVIEWS ════ */
+function renderReviews(){
+  const rv=getReviews();
+  $('reviewsBody').innerHTML = rv.map((r,i)=>`<tr>
+    <td><div class="u-cell"><span class="u-av" style="background:${avColor(r.name)}">${initial(r.name)}</span><div class="u-name">${r.name}</div></div></td>
+    <td style="max-width:340px;color:var(--muted)">${r.text}</td>
+    <td style="color:var(--gold);letter-spacing:2px">${'★'.repeat(r.stars)}${'☆'.repeat(5-r.stars)}</td>
+    <td><button class="ibtn" onclick="delReview(${i})"><svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></button></td>
+  </tr>`).join('') || '<tr><td colspan="4" class="empty">Пікір жоқ</td></tr>';
+}
+function openReviewModal(){ $('reviewModal').classList.add('open'); }
+function addReview(){
+  const name=$('rmName').value.trim(), text=$('rmText').value.trim();
+  if(!name||!text){ toast('Автор мен мәтін керек'); return; }
+  const rv=getReviews(); rv.unshift({name,text,stars:parseInt($('rmStars').value)});
+  setReviews(rv); $('rmName').value=$('rmText').value='';
+  closeModal('reviewModal'); renderReviews(); toast('Пікір қосылды ✓');
+}
+function delReview(i){ const rv=getReviews(); rv.splice(i,1); setReviews(rv); renderReviews(); toast('Жойылды'); }
+
+/* ════ SETTINGS ════ */
+function saveSettings(){
+  localStorage.setItem('shyraq_settings', JSON.stringify({
+    price:$('setPrice').value, priceAi:$('setPriceAi').value, receiver:$('setReceiver').value
+  }));
+  toast('Параметрлер сақталды ✓');
+}
+(function(){ const s=JSON.parse(localStorage.getItem('shyraq_settings')||'null'); if(s){ $('setPrice').value=s.price; $('setPriceAi').value=s.priceAi; $('setReceiver').value=s.receiver; } })();
+
+/* global search reacts on active section */
+$('globalSearch').addEventListener('input', ()=>{
+  const active=document.querySelector('.section.active').id.replace('sec-','');
+  if(active==='unis') renderUnis(true);
+  else if(active==='specs') renderSpecs();
+});
+
+/* close modal on backdrop */
+document.querySelectorAll('.ov').forEach(o=>o.addEventListener('click',e=>{ if(e.target===o) o.classList.remove('open'); }));
+
+/* ════ INIT ════ */
+renderOverview(); renderUsers(); renderPayments(); renderReviews();
+</script>
+</body>
+</html>
