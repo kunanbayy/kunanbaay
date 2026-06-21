@@ -23,6 +23,9 @@
       if (o.city != null && o.city !== '') seed[i].city = o.city;
       if (o.category != null && o.category !== '') seed[i].category = o.category;
       if (o.status != null && o.status !== '') seed[i].status = o.status;
+      if (o.phone != null && o.phone !== '') seed[i].phone = o.phone;
+      if (o.official_website != null && o.official_website !== '') seed[i].official_website = o.official_website;
+      if (o.description != null && o.description !== '') seed[i].description = o.description;
     }
   }
 
@@ -42,6 +45,14 @@
     }
     add.forEach(s => { if (!arr.some(x => x.code === s.code)) arr.unshift(s); });
     return arr;
+  };
+
+  /* Бір мамандықтың толық override-ы (name, subject, threshold, grant, desc) */
+  window.getSpecFullOverride = function (code) {
+    const ov = read('shyraq_spec_overrides', {});
+    const add = read('shyraq_spec_added', []);
+    const a = add.find(s => s.code === code);
+    return Object.assign({}, a || {}, ov[code] || {});
   };
 
   /* ── 3) Пікірлер (homepage testimonials) ── */

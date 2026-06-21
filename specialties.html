@@ -1041,11 +1041,19 @@ window.setCat=setCat;
 /* ════ GRANT STATS ════ */
 function grantStats(code) {
   var d=(window.SPECIALTIES_GRANTS||[]).find(function(x){return x.code===code;});
-  if(!d)return{count:null,minPt:null,year:null,unis:20+Math.floor(Math.random()*20)};
+  if(!d){var r0={count:null,minPt:null,year:null,unis:20+Math.floor(Math.random()*20)};
+    if(window.getSpecFullOverride){var oo=window.getSpecFullOverride(code)||{};
+      if(oo.grant!=null&&oo.grant!=='')r0.count=+oo.grant;
+      if(oo.threshold!=null&&oo.threshold!=='')r0.minPt=+oo.threshold;}
+    return r0;}
   var gen=(d.general||[]).filter(function(g){return g.count>0;}).sort(function(a,b){return b.year-a.year;});
   var sc=(d.general||[]).filter(function(g){return g.minPoint>0;}).sort(function(a,b){return b.year-a.year;});
   var uCnt=(d.pedagogical||[]).length+(d.target||[]).length+(d.serpin||[]).length;
-  return{count:gen[0]?gen[0].count:null,minPt:sc[0]?sc[0].minPoint:null,year:gen[0]?gen[0].year:null,unis:uCnt||20+Math.floor(Math.random()*20)};
+  var r={count:gen[0]?gen[0].count:null,minPt:sc[0]?sc[0].minPoint:null,year:gen[0]?gen[0].year:null,unis:uCnt||20+Math.floor(Math.random()*20)};
+  if(window.getSpecFullOverride){var o=window.getSpecFullOverride(code)||{};
+    if(o.grant!=null&&o.grant!=='')r.count=+o.grant;
+    if(o.threshold!=null&&o.threshold!=='')r.minPt=+o.threshold;}
+  return r;
 }
 
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
@@ -1112,6 +1120,7 @@ function scSelect(code) {
   var prog=MAJOR_PROGRAMS.find(function(p){return p.code===code;});
   if(!prog)return;
   var m=getProgramMeta(prog), st=grantStats(code);
+  if(window.getSpecFullOverride){var _sfo=window.getSpecFullOverride(code)||{}; if(_sfo.desc)m.desc=_sfo.desc;}
   var grData=(window.SPECIALTIES_GRANTS||[]).find(function(d){return d.code===code;});
   var uniList=getUniList(code);
   if(uniList.length) st.unis=uniList.length;
