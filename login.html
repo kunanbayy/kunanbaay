@@ -6,234 +6,172 @@
   <title>Кіру — Shyraq Education</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Unbounded:wght@500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
     :root{
-      --bg-1:#07111f;
-      --bg-2:#0e1a2f;
-      --accent-1:#5eead4;
-      --accent-2:#60a5fa;
-      --accent-3:#a78bfa;
-      --text:#e8eefb;
-      --muted:#93a4c2;
-      --glass:rgba(255,255,255,.055);
-      --glass-border:rgba(255,255,255,.10);
-      --font-display:'Unbounded',sans-serif;
-      --font-body:'Inter',sans-serif;
+      --bg-0:#05070e;
+      --bg-1:#0a0f1c;
+      --bg-2:#0e1426;
+      --grad-a:#3b5bfd;
+      --grad-b:#8b3df6;
+      --text:#eef2fb;
+      --muted:#8c98b3;
+      --glass:rgba(255,255,255,.035);
+      --glass-2:rgba(255,255,255,.05);
+      --border:rgba(255,255,255,.09);
+      --border-2:rgba(255,255,255,.14);
+      --font:'Inter',system-ui,sans-serif;
     }
     *{box-sizing:border-box;margin:0;padding:0}
     html,body{height:100%}
     body{
-      font-family:var(--font-body);
-      color:var(--text);
-      background:radial-gradient(120% 120% at 0% 0%, var(--bg-2) 0%, var(--bg-1) 55%);
-      min-height:100vh;
-      overflow-x:hidden;
+      font-family:var(--font);color:var(--text);min-height:100vh;overflow-x:hidden;
+      background:
+        radial-gradient(60% 50% at 12% 6%, rgba(59,91,253,.20), transparent 60%),
+        radial-gradient(55% 55% at 88% 96%, rgba(139,61,246,.16), transparent 60%),
+        linear-gradient(160deg, var(--bg-1), var(--bg-0) 70%);
     }
-
-    /* ── animated background ── */
-    .page{position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px 20px;overflow:hidden}
-    .bg-shapes{position:fixed;inset:0;z-index:0;pointer-events:none}
-    .blob{position:absolute;border-radius:50%;filter:blur(70px);opacity:.55}
-    .blob-1{width:480px;height:480px;left:-120px;top:-100px;background:radial-gradient(circle, var(--accent-1), transparent 70%);animation:floatBlob1 18s ease-in-out infinite}
-    .blob-2{width:520px;height:520px;right:-140px;top:-60px;background:radial-gradient(circle, var(--accent-2), transparent 70%);animation:floatBlob2 22s ease-in-out infinite}
-    .blob-3{width:420px;height:420px;left:10%;bottom:-160px;background:radial-gradient(circle, var(--accent-3), transparent 70%);animation:floatBlob3 20s ease-in-out infinite}
-    .blob-4{width:360px;height:360px;right:8%;bottom:-120px;background:radial-gradient(circle, var(--accent-1), transparent 70%);animation:floatBlob4 26s ease-in-out infinite}
-    @keyframes floatBlob1{0%,100%{transform:translate(0,0)}50%{transform:translate(60px,40px)}}
-    @keyframes floatBlob2{0%,100%{transform:translate(0,0)}50%{transform:translate(-50px,50px)}}
-    @keyframes floatBlob3{0%,100%{transform:translate(0,0)}50%{transform:translate(40px,-50px)}}
-    @keyframes floatBlob4{0%,100%{transform:translate(0,0)}50%{transform:translate(-40px,-40px)}}
+    .bg-shapes{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+    .blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.5}
+    .blob-1{width:520px;height:520px;left:-160px;top:-140px;background:radial-gradient(circle,#3b5bfd,transparent 70%);animation:floatBlob1 20s ease-in-out infinite}
+    .blob-2{width:540px;height:540px;right:-180px;bottom:-160px;background:radial-gradient(circle,#8b3df6,transparent 70%);animation:floatBlob2 24s ease-in-out infinite}
+    @keyframes floatBlob1{0%,100%{transform:translate(0,0)}50%{transform:translate(60px,50px)}}
+    @keyframes floatBlob2{0%,100%{transform:translate(0,0)}50%{transform:translate(-50px,-40px)}}
     .grid{
-      position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.35;
-      background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),
-                       linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px);
-      background-size:46px 46px;
-      animation:moveGrid 24s linear infinite;
-      mask-image:radial-gradient(120% 120% at 50% 30%, #000 30%, transparent 75%);
-      -webkit-mask-image:radial-gradient(120% 120% at 50% 30%, #000 30%, transparent 75%);
+      position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.25;
+      background-image:linear-gradient(rgba(255,255,255,.045) 1px,transparent 1px),
+                       linear-gradient(90deg,rgba(255,255,255,.045) 1px,transparent 1px);
+      background-size:52px 52px;animation:moveGrid 28s linear infinite;
+      mask-image:radial-gradient(120% 110% at 50% 20%, #000 25%, transparent 75%);
+      -webkit-mask-image:radial-gradient(120% 110% at 50% 20%, #000 25%, transparent 75%);
     }
-    @keyframes moveGrid{from{background-position:0 0,0 0}to{background-position:46px 46px,46px 46px}}
+    @keyframes moveGrid{from{background-position:0 0,0 0}to{background-position:52px 52px,52px 52px}}
 
-    /* ── shell ── */
-    .login-shell{
-      position:relative;z-index:1;width:100%;max-width:980px;
-      display:grid;grid-template-columns:1fr 1fr;
-      border-radius:28px;overflow:hidden;
-      background:var(--glass);
-      border:1px solid var(--glass-border);
-      box-shadow:0 30px 80px rgba(0,0,0,.45);
-      backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+    .page{position:relative;z-index:1;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px 20px}
+    .shell{
+      width:100%;max-width:1040px;display:grid;grid-template-columns:1fr 1fr;
+      border-radius:26px;overflow:hidden;background:var(--glass);
+      border:1px solid var(--border);box-shadow:0 40px 100px rgba(0,0,0,.55);
+      backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);
       animation:cardEnter .8s cubic-bezier(.2,.8,.2,1) both;
     }
-    @keyframes cardEnter{from{opacity:0;transform:translateY(24px) scale(.98)}to{opacity:1;transform:none}}
-    .panel{padding:48px 44px}
+    @keyframes cardEnter{from{opacity:0;transform:translateY(26px) scale(.985)}to{opacity:1;transform:none}}
+    .panel{padding:54px 50px;display:flex;flex-direction:column}
 
-    /* ── intro panel ── */
-    .intro-panel{
-      background:linear-gradient(160deg, rgba(94,234,212,.10), rgba(96,165,250,.08) 45%, rgba(167,139,250,.10));
-      border-right:1px solid var(--glass-border);
-      display:flex;flex-direction:column;
+    /* intro */
+    .intro{
+      background:linear-gradient(165deg, rgba(59,91,253,.10), rgba(139,61,246,.06));
+      border-right:1px solid var(--border);position:relative;
     }
-    .intro-badge{
-      display:inline-flex;align-items:center;gap:8px;align-self:flex-start;
-      padding:8px 14px;border-radius:999px;font-size:.78rem;font-weight:600;
-      color:var(--accent-1);background:rgba(94,234,212,.10);
-      border:1px solid rgba(94,234,212,.28);
+    .badge{
+      align-self:flex-start;display:inline-flex;align-items:center;gap:8px;
+      padding:9px 16px;border-radius:999px;font-size:.72rem;font-weight:600;letter-spacing:.14em;
+      color:#bcd0ff;background:rgba(255,255,255,.05);border:1px solid var(--border-2);
     }
-    .intro-panel h2{
-      font-family:var(--font-display);font-weight:700;font-size:1.9rem;line-height:1.2;
-      margin:22px 0 14px;
-      background:linear-gradient(90deg,#fff,#cfe0ff);-webkit-background-clip:text;background-clip:text;color:transparent;
-    }
-    .intro-panel p{color:var(--muted);font-size:.95rem;line-height:1.7;max-width:34ch}
-    .stats{margin-top:auto;display:grid;grid-template-columns:1fr 1fr;gap:12px;padding-top:34px}
-    .stat-card{
-      padding:16px;border-radius:16px;background:rgba(255,255,255,.04);
-      border:1px solid var(--glass-border);
-    }
-    .stat-card .num{font-family:var(--font-display);font-weight:700;font-size:1.35rem;
-      background:linear-gradient(90deg,var(--accent-1),var(--accent-2));-webkit-background-clip:text;background-clip:text;color:transparent}
-    .stat-card .lbl{color:var(--muted);font-size:.78rem;margin-top:4px}
+    .intro h2{font-weight:800;font-size:2.55rem;line-height:1.08;margin:26px 0 18px;letter-spacing:-.02em}
+    .intro p{color:var(--muted);font-size:1rem;line-height:1.7;max-width:36ch}
+    .stats{margin-top:auto;display:grid;grid-template-columns:1fr 1fr;gap:14px;padding-top:48px}
+    .stat{padding:18px 20px;border-radius:16px;background:rgba(255,255,255,.035);border:1px solid var(--border)}
+    .stat .num{font-weight:800;font-size:1.5rem}
+    .stat .lbl{color:var(--muted);font-size:.82rem;margin-top:5px}
 
-    /* ── form panel ── */
-    .form-panel{display:flex;flex-direction:column;justify-content:center}
-    .brand{display:inline-flex;align-items:center;gap:10px;font-weight:700;font-size:1.05rem;margin-bottom:26px;text-decoration:none;color:var(--text)}
-    .brand .ic{
-      width:38px;height:38px;border-radius:12px;display:grid;place-items:center;font-size:1.1rem;
-      background:linear-gradient(135deg,var(--accent-1),var(--accent-2));color:#06121f;
-    }
-    .form-panel h1{font-family:var(--font-display);font-weight:700;font-size:1.55rem;margin-bottom:6px}
-    .form-panel .sub{color:var(--muted);font-size:.92rem;margin-bottom:28px}
-
-    .login-form{display:flex;flex-direction:column;gap:22px}
+    /* form */
+    .form-panel{justify-content:center}
+    .eyebrow{font-size:.74rem;font-weight:600;letter-spacing:.22em;color:var(--muted);margin-bottom:14px}
+    .form-panel h1{font-weight:800;font-size:2.1rem;letter-spacing:-.02em;margin-bottom:8px}
+    .form-panel .sub{color:var(--muted);font-size:.96rem;margin-bottom:30px}
+    form{display:flex;flex-direction:column;gap:18px}
     .field{position:relative}
-    .field input{
-      width:100%;padding:16px 44px 14px 4px;background:transparent;border:none;
-      border-bottom:1.5px solid rgba(255,255,255,.16);
-      color:var(--text);font-size:.98rem;outline:none;transition:border-color .25s;
+    .field>.cap{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+    .field label{font-size:.86rem;color:var(--muted)}
+    .input-box{
+      width:100%;padding:17px 18px;border-radius:14px;font-size:.98rem;color:var(--text);
+      background:rgba(255,255,255,.04);border:1px solid var(--border);outline:none;
+      transition:border-color .2s, box-shadow .2s, background .2s;
     }
-    .field input::placeholder{color:transparent}
-    .field label{
-      position:absolute;left:4px;top:16px;color:var(--muted);font-size:.98rem;
-      pointer-events:none;transition:all .2s ease;
-    }
-    .field input:focus + label,
-    .field input:not(:placeholder-shown) + label{
-      top:-10px;font-size:.74rem;color:var(--accent-1);
-    }
-    .field .line{
-      position:absolute;left:0;bottom:0;height:1.5px;width:0;
-      background:linear-gradient(90deg,var(--accent-1),var(--accent-2),var(--accent-3));
-      transition:width .3s ease;
-    }
-    .field input:focus ~ .line{width:100%}
-    .toggle-password{
-      position:absolute;right:6px;top:12px;background:none;border:none;cursor:pointer;
-      font-size:1.05rem;color:var(--muted);padding:4px;
-    }
+    .input-box::placeholder{color:#5d6a86}
+    .input-box:focus{border-color:rgba(123,146,255,.7);background:rgba(255,255,255,.06);box-shadow:0 0 0 4px rgba(59,91,253,.14)}
+    .show-pw{background:none;border:none;color:#7b92ff;font-size:.84rem;font-weight:600;cursor:pointer;padding:0}
+    .show-pw:hover{color:#a9bbff}
 
-    .row{display:flex;align-items:center;justify-content:space-between;margin-top:-4px}
-    .checkbox{display:inline-flex;align-items:center;gap:8px;color:var(--muted);font-size:.85rem;cursor:pointer;user-select:none}
-    .checkbox input{accent-color:var(--accent-1);width:15px;height:15px}
-    .link{color:var(--accent-2);font-size:.85rem;text-decoration:none}
-    .link:hover{text-decoration:underline}
+    .row{display:flex;align-items:center;justify-content:space-between;margin:2px 0}
+    .checkbox{display:inline-flex;align-items:center;gap:9px;color:var(--muted);font-size:.88rem;cursor:pointer;user-select:none}
+    .checkbox input{width:16px;height:16px;accent-color:var(--grad-a)}
+    .link{color:#7b92ff;font-size:.88rem;text-decoration:none;font-weight:600}
+    .link:hover{color:#a9bbff}
 
     .submit-btn{
-      position:relative;overflow:hidden;border:none;cursor:pointer;
-      padding:15px 20px;border-radius:14px;color:#06121f;font-weight:700;font-size:1rem;
-      background:linear-gradient(90deg,var(--accent-1),var(--accent-2),var(--accent-3));
-      background-size:200% 100%;transition:transform .2s, box-shadow .2s, background-position .6s;
-      box-shadow:0 12px 30px rgba(96,165,250,.28);
+      position:relative;overflow:hidden;border:none;cursor:pointer;margin-top:4px;
+      padding:17px;border-radius:14px;color:#fff;font-weight:700;font-size:1.02rem;font-family:inherit;
+      background:linear-gradient(90deg,var(--grad-a),var(--grad-b));
+      box-shadow:0 16px 40px rgba(91,71,253,.40);
+      transition:transform .18s, box-shadow .18s;
     }
-    .submit-btn:hover{transform:translateY(-2px);background-position:100% 0;box-shadow:0 16px 40px rgba(96,165,250,.40)}
+    .submit-btn:hover{transform:translateY(-2px);box-shadow:0 22px 52px rgba(91,71,253,.55)}
     .submit-btn:active{transform:translateY(0)}
-    .btn-glow{
-      position:absolute;top:0;left:-60%;width:50%;height:100%;
-      background:linear-gradient(120deg,transparent,rgba(255,255,255,.55),transparent);
-      transform:skewX(-20deg);animation:shine 3.2s ease-in-out infinite;
-    }
-    @keyframes shine{0%{left:-60%}45%,100%{left:140%}}
+    .btn-glow{position:absolute;top:0;left:-60%;width:45%;height:100%;
+      background:linear-gradient(120deg,transparent,rgba(255,255,255,.45),transparent);
+      transform:skewX(-20deg);animation:shine 3.6s ease-in-out infinite}
+    @keyframes shine{0%{left:-60%}50%,100%{left:150%}}
 
-    .divider{display:flex;align-items:center;gap:14px;color:var(--muted);font-size:.82rem;margin:4px 0}
-    .divider::before,.divider::after{content:"";flex:1;height:1px;background:rgba(255,255,255,.12)}
-
-    .socials{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .divider{display:flex;align-items:center;gap:14px;color:var(--muted);font-size:.84rem;margin:8px 0 4px}
+    .divider::before,.divider::after{content:"";flex:1;height:1px;background:var(--border)}
+    .socials{display:grid;grid-template-columns:1fr 1fr;gap:14px}
     .socials button{
-      display:inline-flex;align-items:center;justify-content:center;gap:9px;
-      padding:12px;border-radius:12px;cursor:pointer;font-size:.9rem;font-weight:500;
-      color:var(--text);background:rgba(255,255,255,.04);border:1px solid var(--glass-border);
-      transition:background .2s,border-color .2s,transform .15s;
+      display:inline-flex;align-items:center;justify-content:center;gap:9px;font-family:inherit;
+      padding:14px;border-radius:13px;cursor:pointer;font-size:.92rem;font-weight:600;color:var(--text);
+      background:rgba(255,255,255,.04);border:1px solid var(--border);transition:background .2s,border-color .2s,transform .15s;
     }
-    .socials button:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.22);transform:translateY(-1px)}
+    .socials button:hover{background:var(--glass-2);border-color:var(--border-2);transform:translateY(-1px)}
+    .foot{text-align:center;color:var(--muted);font-size:.92rem;margin-top:6px}
+    .foot a{color:#7b92ff;font-weight:700;text-decoration:none}
+    .foot a:hover{color:#a9bbff}
 
-    .signup{text-align:center;color:var(--muted);font-size:.9rem;margin-top:4px}
-    .signup a{color:var(--accent-1);font-weight:600;text-decoration:none}
-    .signup a:hover{text-decoration:underline}
+    @media (max-width:940px){.shell{grid-template-columns:1fr;max-width:480px}.intro{display:none}}
+    @media (max-width:560px){.page{padding:18px 12px}.panel{padding:34px 26px}.socials{grid-template-columns:1fr}.form-panel h1{font-size:1.8rem}}
 
-    /* ── responsive ── */
-    @media (max-width:980px){
-      .login-shell{grid-template-columns:1fr;max-width:460px}
-      .intro-panel{display:none}
-    }
-    @media (max-width:640px){
-      .page{padding:20px 14px}
-      .panel{padding:34px 26px}
-      .socials{grid-template-columns:1fr}
-    }
-
-    /* toast */
-    .toast{
-      position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);
-      background:rgba(15,25,42,.96);border:1px solid var(--glass-border);
-      color:var(--text);padding:13px 20px;border-radius:12px;font-size:.9rem;
-      opacity:0;pointer-events:none;transition:.3s;z-index:50;box-shadow:0 14px 36px rgba(0,0,0,.45)
-    }
+    .toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);
+      background:rgba(14,20,38,.97);border:1px solid var(--border-2);color:var(--text);
+      padding:13px 20px;border-radius:12px;font-size:.9rem;opacity:0;pointer-events:none;transition:.3s;z-index:50;box-shadow:0 14px 36px rgba(0,0,0,.5)}
     .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-    .toast.error{border-color:rgba(248,113,113,.5)}
+    .toast.error{border-color:rgba(248,113,113,.55)}
   </style>
 </head>
 <body>
-  <div class="bg-shapes">
-    <span class="blob blob-1"></span>
-    <span class="blob blob-2"></span>
-    <span class="blob blob-3"></span>
-    <span class="blob blob-4"></span>
-  </div>
+  <div class="bg-shapes"><span class="blob blob-1"></span><span class="blob blob-2"></span></div>
   <div class="grid"></div>
 
   <main class="page">
-    <div class="login-shell">
+    <div class="shell">
       <!-- INTRO -->
-      <section class="panel intro-panel">
-        <span class="intro-badge">🔆 Shyraq Education</span>
-        <h2>Қайта оралдың!<br/>Жолыңды жалғастыр.</h2>
-        <p>Кіріп, мамандық нәтижеңді, грант мүмкіндігіңді және жеке дайындық жоспарыңды бір кабинеттен басқар.</p>
+      <section class="panel intro">
+        <span class="badge">🔆 PREMIUM ACCESS</span>
+        <h2>Болашағыңды<br/>осы жерден баста</h2>
+        <p>Мамандық тестің, грант мүмкіндігің және жеке дайындық жоспарың — бәрі бір кабинетте, glass-таза интерфейспен.</p>
         <div class="stats">
-          <div class="stat-card"><div class="num">99+</div><div class="lbl">Университет</div></div>
-          <div class="stat-card"><div class="num">25</div><div class="lbl">Сұрақ тест</div></div>
-          <div class="stat-card"><div class="num">10</div><div class="lbl">Бағыт кластері</div></div>
-          <div class="stat-card"><div class="num">AI</div><div class="lbl">Кеңесші</div></div>
+          <div class="stat"><div class="num">99+</div><div class="lbl">Университет</div></div>
+          <div class="stat"><div class="num">24/7</div><div class="lbl">Қолжетімді</div></div>
         </div>
       </section>
 
       <!-- FORM -->
       <section class="panel form-panel">
-        <a href="index.html" class="brand"><span class="ic">🔆</span> Shyraq Education</a>
+        <div class="eyebrow">SHYRAQ EDUCATION</div>
         <h1>Кіру</h1>
-        <p class="sub">Аккаунтыңа кіріп, жалғастыр</p>
+        <p class="sub">Қайта оралдың! Аккаунтыңа кіріп, жалғастыр.</p>
 
-        <form class="login-form" onsubmit="doLogin(event)">
+        <form onsubmit="doLogin(event)">
           <div class="field">
-            <input id="loginContact" type="text" placeholder=" " autocomplete="username" />
-            <label for="loginContact">Email немесе телефон</label>
-            <span class="line"></span>
+            <div class="cap"><label for="loginContact">Email немесе телефон</label></div>
+            <input id="loginContact" class="input-box" type="text" placeholder="email@gmail.com немесе +7 700 123 4567" autocomplete="username" />
           </div>
 
           <div class="field">
-            <input id="loginPw" type="password" placeholder=" " autocomplete="current-password" />
-            <label for="loginPw">Пароль</label>
-            <button class="toggle-password" type="button" onclick="togglePw()" aria-label="Парольді көрсету">👁</button>
-            <span class="line"></span>
+            <div class="cap">
+              <label for="loginPw">Пароль</label>
+              <button class="show-pw" type="button" onclick="togglePw()">Көрсету</button>
+            </div>
+            <input id="loginPw" class="input-box" type="password" placeholder="Паролыңды енгіз" autocomplete="current-password" />
           </div>
 
           <div class="row">
@@ -241,19 +179,16 @@
             <a href="#" class="link">Парольді ұмыттың ба?</a>
           </div>
 
-          <button type="submit" class="submit-btn">
-            Кіру <span class="btn-glow"></span>
-          </button>
+          <button type="submit" class="submit-btn">Кіру<span class="btn-glow"></span></button>
         </form>
 
         <div class="divider">немесе</div>
-
         <div class="socials">
           <button type="button" onclick="demoLogin()">👤 Демо аккаунт</button>
-          <button type="button" onclick="demoLogin()"><span style="font-weight:700">G</span> Google</button>
+          <button type="button" onclick="demoLogin()"><b>G</b> Google</button>
         </div>
 
-        <p class="signup">Аккаунтыңыз жоқ па? <a href="register.html">Тіркелу</a></p>
+        <p class="foot">Аккаунтыңыз жоқ па? <a href="register.html">Тіркелу</a></p>
       </section>
     </div>
   </main>
@@ -263,11 +198,10 @@
   <script>
     function togglePw(){
       const inp = document.getElementById('loginPw');
-      const btn = document.querySelector('.toggle-password');
+      const btn = document.querySelector('.show-pw');
       inp.type = inp.type === 'password' ? 'text' : 'password';
-      btn.textContent = inp.type === 'password' ? '👁' : '🙈';
+      btn.textContent = inp.type === 'password' ? 'Көрсету' : 'Жасыру';
     }
-
     function toast(msg, type){
       const t = document.getElementById('toast');
       t.textContent = msg;
@@ -275,20 +209,15 @@
       clearTimeout(window.__tt);
       window.__tt = setTimeout(()=> t.className = 'toast', 2600);
     }
-
     function doLogin(e){
       if (e) e.preventDefault();
       const contact = document.getElementById('loginContact').value.trim();
       const pw = document.getElementById('loginPw').value;
-      if (!contact || !pw){
-        toast('Email/телефон және парольді енгізіңіз', 'error');
-        return;
-      }
+      if (!contact || !pw){ toast('Email/телефон және парольді енгізіңіз', 'error'); return; }
       const user = { name: 'Ержан', email: contact, classYear: '11', city: 'Алматы', plan: 'free' };
       localStorage.setItem('shyraq_user', JSON.stringify(user));
       window.location.href = 'dashboard.html';
     }
-
     function demoLogin(){
       const user = { name: 'Ержан', email: 'demo@shyraq.edu.kz', classYear: '11', city: 'Алматы', plan: 'free' };
       localStorage.setItem('shyraq_user', JSON.stringify(user));
