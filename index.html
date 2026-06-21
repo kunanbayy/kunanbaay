@@ -1270,6 +1270,31 @@ tick(); setInterval(tick, 30000);
   const track = document.getElementById('testiTrack');
   const dotsWrap = document.getElementById('testiDots');
   if (!track || !dotsWrap) return;
+
+  // Админ панельде қосылған пікірлерді алдыға қосу
+  try {
+    const rv = JSON.parse(localStorage.getItem('shyraq_admin_reviews') || 'null');
+    if (Array.isArray(rv) && rv.length) {
+      const colors = ['#1E3A5F','#0E7490','#065F46','#7C3AED','#DC2626','#D97706'];
+      const esc = s => String(s||'').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+      const frag = document.createDocumentFragment();
+      rv.forEach((r,i) => {
+        const parts = String(r.name||'').split('·');
+        const nm = (parts[0]||'Оқушы').trim();
+        const meta = (parts[1]||'Shyraq қолданушысы').trim();
+        const st = Math.max(1, Math.min(5, r.stars||5));
+        const div = document.createElement('div');
+        div.className = 'tc';
+        div.innerHTML = '<div class="tc-stars">'+'★'.repeat(st)+'☆'.repeat(5-st)+'</div>'+
+          '<p class="tc-text">"'+esc(r.text)+'"</p>'+
+          '<div class="tc-author"><div class="tc-av" style="background:'+colors[i%colors.length]+'">'+esc(nm[0]||'О').toUpperCase()+'</div>'+
+          '<div><div class="tc-name">'+esc(nm)+'</div><div class="tc-meta">'+esc(meta)+'</div></div></div>';
+        frag.appendChild(div);
+      });
+      track.insertBefore(frag, track.firstChild);
+    }
+  } catch (e) {}
+
   const cards = Array.from(track.children);
   const step = () => cards[0].getBoundingClientRect().width + 18;
   const current = () => Math.round(track.scrollLeft / step());

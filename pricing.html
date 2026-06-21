@@ -280,7 +280,7 @@
   <div class="price-card featured">
     <span class="ribbon">Ең танымал</span>
     <span class="pbadge b-prem">Premium</span>
-    <div class="pamt" data-m="990 ₸" data-a="792 ₸">990 ₸ <small>/ ай</small></div>
+    <div class="pamt" data-plan="premium" data-m="990 ₸" data-a="792 ₸">990 ₸ <small>/ ай</small></div>
     <div class="pstrike" data-a-show="990 ₸/ай">&nbsp;</div>
     <div class="psub" data-m="Кез келген кезде тоқтат" data-a="9 504 ₸ жылына">Кез келген кезде тоқтат</div>
     <button class="pcta pcta-gold" onclick="handlePremium('premium')">Premium алу</button>
@@ -297,7 +297,7 @@
   <!-- AI PREMIUM -->
   <div class="price-card">
     <span class="pbadge b-ai">AI Premium</span>
-    <div class="pamt" data-m="1 990 ₸" data-a="1 592 ₸">1 990 ₸ <small>/ ай</small></div>
+    <div class="pamt" data-plan="ai" data-m="1 990 ₸" data-a="1 592 ₸">1 990 ₸ <small>/ ай</small></div>
     <div class="pstrike" data-a-show="1 990 ₸/ай">&nbsp;</div>
     <div class="psub" data-m="Барлық мүмкіндіктер" data-a="19 104 ₸ жылына">Барлық мүмкіндіктер</div>
     <button class="pcta pcta-dark" onclick="handlePremium('ai')">AI Premium алу</button>
@@ -313,7 +313,7 @@
   <!-- CAREER REPORT (one-time) -->
   <div class="price-card">
     <span class="pbadge b-report">Бір рет</span>
-    <div class="pamt">1 490 ₸</div>
+    <div class="pamt" data-plan="report">1 490 ₸</div>
     <div class="pstrike">&nbsp;</div>
     <div class="psub">Бір реттік төлем</div>
     <button class="pcta pcta-outline" onclick="handlePremium('report')">PDF алу</button>
@@ -430,8 +430,12 @@
 </footer>
 
 <script src="js/universities-data.js"></script>
+<script src="js/admin-overrides.js"></script>
 <script src="js/main.js"></script>
 <script>
+/* админ тарифтер өзгерістерін қолдану */
+if (window.applyPricing) window.applyPricing(false);
+
 /* ── BILLING TOGGLE ── */
 let annual = false;
 function toggleBilling() {

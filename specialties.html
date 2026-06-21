@@ -678,6 +678,7 @@
 </div>
 
 <script src="js/universities-data.js"></script>
+<script src="js/admin-overrides.js"></script>
 <script src="js/main.js"></script>
 <script src="js/auth-guard.js"></script>
 <script src="js/specialties-grants-data.js"></script>
@@ -808,6 +809,7 @@ var MAJOR_PROGRAMS = [
   {code:"B265",name:"Темір жол көлігі және технология",subject:"Математика – Физика"},
   {code:"B271",name:"Мұнай-газ ісі",subject:"Математика – Физика"},
 ];
+if (window.applySpecOverrides) window.applySpecOverrides(MAJOR_PROGRAMS);
 
 var SECTOR = {
   pedagogy:{color:'#8B5CF6',bg:'linear-gradient(135deg,#8B5CF6,#6366F1)',emoji:'📚',demand:'Жоғары',years:4,
