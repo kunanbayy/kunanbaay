@@ -232,6 +232,9 @@
 
   <div class="toast" id="toast"></div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/supabase-auth.js"></script>
   <script>
     function toast(msg, type){
       const t = document.getElementById('toast');
@@ -277,16 +280,23 @@
     function show(id){
       ['step1','step2','step3'].forEach(s => document.getElementById(s).style.display = s === id ? '' : 'none');
     }
-    function completeRegister(){
-      const user = {
-        name: document.getElementById('firstName').value.trim() || 'Ержан',
-        lastName: document.getElementById('lastName').value.trim(),
-        classYear: document.getElementById('classYear').value || '11',
-        city: document.getElementById('city').value || 'Алматы',
-        plan: 'free'
-      };
-      localStorage.setItem('shyraq_user', JSON.stringify(user));
-      window.location.href = 'test.html';
+    async function completeRegister(){
+      const first = document.getElementById('firstName').value.trim();
+      const last = document.getElementById('lastName').value.trim();
+      const fullName = (first + ' ' + last).trim() || 'Оқушы';
+      const email = document.getElementById('contact').value.trim();
+      const password = document.getElementById('password').value;
+      const classYear = document.getElementById('classYear').value || '11';
+      const city = document.getElementById('city').value || 'Алматы';
+      localStorage.removeItem('shyraq_admin');
+      localStorage.removeItem('shyraq_demo_premium');
+      try {
+        await window.ShyraqAuth.register({ name: fullName, email, password, classYear, city });
+        window.location.href = 'test.html';
+      } catch (err) {
+        toast(err.message || 'Тіркелу кезінде қате', 'error');
+        // егер email бұрыннан бар болса — кіру бетіне
+      }
     }
   </script>
 </body>

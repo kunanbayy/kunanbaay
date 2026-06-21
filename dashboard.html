@@ -342,10 +342,14 @@
     const user = JSON.parse(localStorage.getItem('shyraq_user'));
     if (!user) { window.location.href = 'login.html'; return; }
 
-    const nameEl = document.getElementById('userName');
-    if (nameEl) nameEl.textContent = user.name || 'Оқушы';
+    // Админ «Оқушы кабинеті» арқылы қараса — нақты оқушы аты жоқ, демо көрсетеміз
+    const isAdminPreview = localStorage.getItem('shyraq_admin') === '1' && location.search.includes('as=student');
+    const displayName = isAdminPreview ? 'Демо оқушы' : (user.name || 'Оқушы');
 
-    const initials = (user.name || 'О')[0].toUpperCase();
+    const nameEl = document.getElementById('userName');
+    if (nameEl) nameEl.textContent = displayName;
+
+    const initials = (displayName || 'О')[0].toUpperCase();
     document.querySelectorAll('#navAvatar, #mobileAvatar').forEach(el => el.textContent = initials);
 
     const results = JSON.parse(localStorage.getItem('shyraq_results'));

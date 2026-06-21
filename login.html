@@ -205,6 +205,9 @@
 
   <div class="toast" id="toast"></div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/supabase-auth.js"></script>
   <script>
     function togglePw(){
       const inp = document.getElementById('loginPw');
@@ -219,7 +222,7 @@
       clearTimeout(window.__tt);
       window.__tt = setTimeout(()=> t.className = 'toast', 2600);
     }
-    function doLogin(e){
+    async function doLogin(e){
       if (e) e.preventDefault();
       const contact = document.getElementById('loginContact').value.trim();
       const pw = document.getElementById('loginPw').value;
@@ -231,22 +234,25 @@
         const admin = { name: 'Админ', email: contact, role: 'admin', plan: 'admin' };
         localStorage.setItem('shyraq_admin', '1');
         localStorage.setItem('shyraq_user', JSON.stringify(admin));
-        localStorage.setItem('shyraq_demo_premium', 'off'); // демо қабатын өшіру
+        localStorage.setItem('shyraq_demo_premium', 'off');
         window.location.href = 'admin.html';
         return;
       }
 
-      // ── Қарапайым оқушы ──
+      // ── Оқушы кіруі (Supabase немесе localStorage) ──
       localStorage.removeItem('shyraq_admin');
       localStorage.removeItem('shyraq_demo_premium');
-      const user = { name: 'Ержан', email: contact, classYear: '11', city: 'Алматы', plan: 'free' };
-      localStorage.setItem('shyraq_user', JSON.stringify(user));
-      window.location.href = 'dashboard.html';
+      try {
+        await window.ShyraqAuth.login(contact, pw);
+        window.location.href = 'dashboard.html';
+      } catch (err) {
+        toast(err.message || 'Кіру кезінде қате', 'error');
+      }
     }
     function demoLogin(){
       localStorage.removeItem('shyraq_admin');
       localStorage.removeItem('shyraq_demo_premium');
-      const user = { name: 'Ержан', email: 'demo@shyraq.edu.kz', classYear: '11', city: 'Алматы', plan: 'free' };
+      const user = { name: 'Демо оқушы', email: 'demo@shyraq.edu.kz', classYear: '11', city: 'Алматы', plan: 'free' };
       localStorage.setItem('shyraq_user', JSON.stringify(user));
       window.location.href = 'dashboard.html';
     }
