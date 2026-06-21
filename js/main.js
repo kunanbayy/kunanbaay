@@ -73,6 +73,8 @@ const UBT_SUBJECTS = [
 // ── AUTH SYSTEM ────────────────────────────────────────────────────────────
 function getUser() {
   const savedUser = JSON.parse(localStorage.getItem('shyraq_user') || 'null');
+  // Нақты админ сессиясы демо қабаттан басым
+  if (localStorage.getItem('shyraq_admin') === '1' && savedUser) return savedUser;
   if (localStorage.getItem('shyraq_demo_premium') !== 'off') {
     if (savedUser) return { ...savedUser, plan: 'premium' };
     return {

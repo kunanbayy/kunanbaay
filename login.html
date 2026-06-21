@@ -226,19 +226,26 @@
       if (!contact || !pw){ toast('Email/телефон және парольді енгізіңіз', 'error'); return; }
 
       // ── Админ кіруі ──
-      if (contact.toLowerCase() === 'admin@shyraq.edu.kz' && pw === 'admin123'){
+      if (contact.toLowerCase() === 'admin@shyraq.edu.kz'){
+        if (pw !== 'admin123'){ toast('Админ паролі қате', 'error'); return; }
         const admin = { name: 'Админ', email: contact, role: 'admin', plan: 'admin' };
         localStorage.setItem('shyraq_admin', '1');
         localStorage.setItem('shyraq_user', JSON.stringify(admin));
+        localStorage.setItem('shyraq_demo_premium', 'off'); // демо қабатын өшіру
         window.location.href = 'admin.html';
         return;
       }
 
+      // ── Қарапайым оқушы ──
+      localStorage.removeItem('shyraq_admin');
+      localStorage.removeItem('shyraq_demo_premium');
       const user = { name: 'Ержан', email: contact, classYear: '11', city: 'Алматы', plan: 'free' };
       localStorage.setItem('shyraq_user', JSON.stringify(user));
       window.location.href = 'dashboard.html';
     }
     function demoLogin(){
+      localStorage.removeItem('shyraq_admin');
+      localStorage.removeItem('shyraq_demo_premium');
       const user = { name: 'Ержан', email: 'demo@shyraq.edu.kz', classYear: '11', city: 'Алматы', plan: 'free' };
       localStorage.setItem('shyraq_user', JSON.stringify(user));
       window.location.href = 'dashboard.html';

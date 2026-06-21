@@ -1223,7 +1223,7 @@
 
   const logout = document.getElementById('menuLogout');
   if (logout) logout.addEventListener('click', () => {
-    try { localStorage.removeItem('shyraq_auth'); localStorage.removeItem('shyraq_user'); } catch (_) {}
+    try { localStorage.removeItem('shyraq_auth'); localStorage.removeItem('shyraq_user'); localStorage.removeItem('shyraq_admin'); } catch (_) {}
     window.location.href = 'login.html';
   });
 })();
