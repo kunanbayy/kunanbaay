@@ -376,6 +376,27 @@
     .testi-wrap { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
     .testi-header { text-align: center; margin-bottom: 40px; }
     .testi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    /* carousel */
+    .testi-carousel { position: relative; }
+    .testi-track {
+      display: flex; gap: 18px; overflow-x: auto; scroll-snap-type: x mandatory;
+      scroll-behavior: smooth; padding: 6px 2px 8px; scrollbar-width: none;
+    }
+    .testi-track::-webkit-scrollbar { display: none; }
+    .testi-track .tc { flex: 0 0 calc((100% - 36px) / 3); scroll-snap-align: start; }
+    .testi-arrow {
+      position: absolute; top: 50%; transform: translateY(-50%); z-index: 6;
+      width: 46px; height: 46px; border-radius: 50%; border: 1px solid var(--border);
+      background: #fff; color: var(--ink); font-size: 1.6rem; line-height: 1; cursor: pointer;
+      box-shadow: 0 10px 26px rgba(15,23,42,.14); display: flex; align-items: center; justify-content: center;
+      transition: background .18s, color .18s, transform .15s;
+    }
+    .testi-arrow:hover { background: var(--navy); color: #fff; transform: translateY(-50%) scale(1.06); }
+    .testi-arrow.prev { left: -18px; }
+    .testi-arrow.next { right: -18px; }
+    .testi-dots { display: flex; justify-content: center; gap: 8px; margin-top: 22px; }
+    .testi-dots button { width: 8px; height: 8px; border-radius: 50%; border: none; background: #CBD5E1; cursor: pointer; padding: 0; transition: all .25s; }
+    .testi-dots button.active { background: var(--navy); width: 24px; border-radius: 6px; }
     .tc { background: #fff; border-radius: 18px; padding: 24px; border: 1px solid var(--border); }
     .tc-stars { color: var(--gold); margin-bottom: 12px; font-size: 0.9rem; letter-spacing: 2px; }
     .tc-text { font-size: 0.875rem; color: var(--muted); line-height: 1.75; margin-bottom: 16px; font-style: italic; }
@@ -458,6 +479,9 @@
       .adv-card { cursor: default; }
       .flow-card { cursor: default; }
       .testi-grid { grid-template-columns: 1fr; }
+      .testi-track .tc { flex-basis: calc((100% - 18px) / 2); }
+      .testi-arrow.prev { left: -6px; }
+      .testi-arrow.next { right: -6px; }
       .cd-row { gap: 8px; }
       .cd-box { min-width: 80px; padding: 14px 18px; }
       .cd-num { font-size: 2.2rem; }
@@ -475,6 +499,8 @@
       .hero-btns .btn { width: 100%; }
       .unis-grid { gap: 8px; }
       .uni-logo-card { flex-direction: column; text-align: center; padding: 10px; }
+      .testi-track .tc { flex-basis: 100%; }
+      .testi-arrow { display: none; }
     }
 
     @keyframes fadeUpA { from { opacity:0; transform:translateY(18px); } to { opacity:1; transform:translateY(0); } }
@@ -938,8 +964,8 @@
 <!-- ═══ COUNTDOWN ═══ -->
 <section class="countdown">
   <div class="cd-inner">
-    <div class="cd-lbl" id="cdLabel">20.06.2026</div>
-    <h2 class="cd-title" id="cdTitle">Грант конкурсына қалған уақыт</h2>
+    <div class="cd-lbl" id="cdLabel">13.07.2026</div>
+    <h2 class="cd-title" id="cdTitle">Грант конкурсының басталуына дейін</h2>
     <div class="cd-row">
       <div class="cd-box"><div class="cd-num" id="cdM">00</div><div class="cd-unit">Ай</div></div>
       <div class="cd-sep">:</div>
@@ -1014,32 +1040,61 @@
       <span class="section-tag">Пікірлер</span>
       <h2 class="section-h2" style="margin-top:10px">Оқушылар не дейді?</h2>
     </div>
-    <div class="testi-grid">
-      <div class="tc" data-reveal>
-        <div class="tc-stars">★★★★★</div>
-        <p class="tc-text">"Маркетинг мамандығы маған сәйкес екенін Shyraq арқылы білдім. Грант калькулятор арқылы SDU-ға мүмкіндігім барын көрдім. 96 балл жинап грант алдым!"</p>
-        <div class="tc-author">
-          <div class="tc-av" style="background:#1E3A5F">А</div>
-          <div><div class="tc-name">Аяулым Бекова</div><div class="tc-meta">SDU University · Маркетинг, 1-курс</div></div>
+    <div class="testi-carousel">
+      <button class="testi-arrow prev" type="button" onclick="testiMove(-1)" aria-label="Алдыңғы">‹</button>
+      <div class="testi-track" id="testiTrack">
+        <div class="tc">
+          <div class="tc-stars">★★★★★</div>
+          <p class="tc-text">"Маркетинг мамандығы маған сәйкес екенін Shyraq арқылы білдім. Грант калькулятор арқылы SDU-ға мүмкіндігім барын көрдім. 96 балл жинап грант алдым!"</p>
+          <div class="tc-author">
+            <div class="tc-av" style="background:#1E3A5F">А</div>
+            <div><div class="tc-name">Аяулым Бекова</div><div class="tc-meta">SDU University · Маркетинг, 1-курс</div></div>
+          </div>
+        </div>
+        <div class="tc">
+          <div class="tc-stars">★★★★★</div>
+          <p class="tc-text">"Математика мен физика жақсы болса да қандай мамандық таңдасам болатынын білмедім. Shyraq арқылы IT-ға бардым. Қазір AITU-да оқимын!"</p>
+          <div class="tc-author">
+            <div class="tc-av" style="background:#0E7490">Д</div>
+            <div><div class="tc-name">Дәурен Сатыбалдин</div><div class="tc-meta">AITU · IT мамандығы, 1-курс</div></div>
+          </div>
+        </div>
+        <div class="tc">
+          <div class="tc-stars">★★★★☆</div>
+          <p class="tc-text">"Тарих пен ағылшын жақсы оқитынмын. Сайт аударма ісін ұсынды. ҚазҰУ-да аударма ісін оқимын. Ата-анама PDF есепті берген кезде олар сенді!"</p>
+          <div class="tc-author">
+            <div class="tc-av" style="background:#065F46">З</div>
+            <div><div class="tc-name">Зарина Нұрланова</div><div class="tc-meta">ҚазҰУ · Аударма ісі, 1-курс</div></div>
+          </div>
+        </div>
+        <div class="tc">
+          <div class="tc-stars">★★★★★</div>
+          <p class="tc-text">"11-сыныпта пәндерімді дұрыс таңдай алмай жүргем. Тест нәтижесі инженерия екенін көрсетті. Қазір Назарбаев Университетінде грантпен оқимын!"</p>
+          <div class="tc-author">
+            <div class="tc-av" style="background:#7C3AED">Н</div>
+            <div><div class="tc-name">Нұрислам Қайрат</div><div class="tc-meta">Nazarbayev University · Инженерия, 1-курс</div></div>
+          </div>
+        </div>
+        <div class="tc">
+          <div class="tc-stars">★★★★★</div>
+          <p class="tc-text">"Медицинаға бару арманым еді, бірақ балым жетпейді деп қорқатынмын. Шекті балдарды көріп, дұрыс ЖОО таңдадым. Грантқа ілікдім!"</p>
+          <div class="tc-author">
+            <div class="tc-av" style="background:#DC2626">М</div>
+            <div><div class="tc-name">Мадина Әбен</div><div class="tc-meta">ҚазҰМУ · Жалпы медицина, 1-курс</div></div>
+          </div>
+        </div>
+        <div class="tc">
+          <div class="tc-stars">★★★★★</div>
+          <p class="tc-text">"Ауылдан келген балаға бәрі түсініксіз еді. Shyraq қазақша бәрін түсіндірді — қай пән, қай мамандық, қай университет. Экономикаға түстім!"</p>
+          <div class="tc-author">
+            <div class="tc-av" style="background:#D97706">Е</div>
+            <div><div class="tc-name">Ерасыл Тұрсын</div><div class="tc-meta">КИМЭП · Экономика, 1-курс</div></div>
+          </div>
         </div>
       </div>
-      <div class="tc" data-reveal>
-        <div class="tc-stars">★★★★★</div>
-        <p class="tc-text">"Математика мен физика жақсы болса да қандай мамандық таңдасам болатынын білмедім. Shyraq арқылы IT-ға бардым. Қазір AITU-да оқимын!"</p>
-        <div class="tc-author">
-          <div class="tc-av" style="background:#0E7490">Д</div>
-          <div><div class="tc-name">Дәурен Сатыбалдин</div><div class="tc-meta">AITU · IT мамандығы, 1-курс</div></div>
-        </div>
-      </div>
-      <div class="tc" data-reveal>
-        <div class="tc-stars">★★★★☆</div>
-        <p class="tc-text">"Тарих пен ағылшын жақсы оқитынмын. Сайт аударма ісін ұсынды. ҚазҰУ-да аударма ісін оқимын. Ата-анама PDF есепті берген кезде олар сенді!"</p>
-        <div class="tc-author">
-          <div class="tc-av" style="background:#065F46">З</div>
-          <div><div class="tc-name">Зарина Нұрланова</div><div class="tc-meta">ҚазҰУ · Аударма ісі, 1-курс</div></div>
-        </div>
-      </div>
+      <button class="testi-arrow next" type="button" onclick="testiMove(1)" aria-label="Келесі">›</button>
     </div>
+    <div class="testi-dots" id="testiDots"></div>
   </div>
 </section>
 
@@ -1173,10 +1228,9 @@
   });
 })();
 
-/* ── COUNTDOWN ── */
+/* ── COUNTDOWN (13 шілдеге дейін) ── */
 function tick() {
-  const start = new Date('2026-06-20T00:00:00+05:00');
-  const end = new Date('2026-08-25T23:59:59+05:00');
+  const target = new Date('2026-07-13T00:00:00+05:00');
   const now = new Date();
   const title = document.getElementById('cdTitle');
   const label = document.getElementById('cdLabel');
@@ -1190,27 +1244,18 @@ function tick() {
     document.getElementById('cdMin').textContent = '00';
   };
 
-  if (now >= start && now <= end) {
-    title.textContent = 'Грант конкурсы жүріп жатыр';
-    label.textContent = '20.06.2026 — 25.08.2026';
-    note.textContent = 'Грант конкурсы жүріп жатыр. Уақытыңды өткізіп алма — мүмкіндігіңді қазір тексер.';
+  if (now >= target) {
+    title.textContent = 'Грант конкурсы басталды';
+    label.textContent = '13.07.2026';
+    note.textContent = 'Грант конкурсы басталды. Уақытыңды өткізіп алма — мүмкіндігіңді қазір тексер.';
     button.textContent = 'Мүмкіндігімді қазір тексеру';
     setZeros();
     return;
   }
 
-  if (now > end) {
-    title.textContent = 'Биылғы грант конкурсы аяқталды';
-    label.textContent = 'Келесі қабылдау кезеңі';
-    note.textContent = 'Биылғы грант конкурсы аяқталды. Келесі қабылдау кезеңіне дайындалу үшін платформа мүмкіндіктерін пайдаланып көр.';
-    button.textContent = 'Дайындықты бастау';
-    setZeros();
-    return;
-  }
-
-  const diff = start - now;
-  title.textContent = 'Грант конкурсына қалған уақыт';
-  label.textContent = '20.06.2026';
+  const diff = target - now;
+  title.textContent = 'Грант конкурсының басталуына дейін';
+  label.textContent = '13.07.2026';
   note.textContent = 'Платформа арқылы өз мүмкіндігіңді алдын ала тексеріп көр.';
   button.textContent = 'Мүмкіндігімді тексеру';
   document.getElementById('cdM').textContent = pad(Math.floor(diff / (1000*60*60*24*30.44)));
@@ -1219,6 +1264,44 @@ function tick() {
   document.getElementById('cdMin').textContent = pad(Math.floor((diff % (1000*60*60)) / (1000*60)));
 }
 tick(); setInterval(tick, 30000);
+
+/* ── TESTIMONIALS CAROUSEL ── */
+(function () {
+  const track = document.getElementById('testiTrack');
+  const dotsWrap = document.getElementById('testiDots');
+  if (!track || !dotsWrap) return;
+  const cards = Array.from(track.children);
+  const step = () => cards[0].getBoundingClientRect().width + 18;
+  const current = () => Math.round(track.scrollLeft / step());
+  const maxIndex = () => Math.max(0, cards.length - 1);
+
+  cards.forEach((_, i) => {
+    const b = document.createElement('button');
+    b.setAttribute('aria-label', (i + 1) + '-пікір');
+    b.addEventListener('click', () => track.scrollTo({ left: i * step(), behavior: 'smooth' }));
+    dotsWrap.appendChild(b);
+  });
+
+  window.testiMove = function (dir) {
+    let next = current() + dir;
+    if (next < 0) next = maxIndex();
+    if (next > maxIndex()) next = 0;
+    track.scrollTo({ left: next * step(), behavior: 'smooth' });
+  };
+
+  function updateDots() {
+    const cur = current();
+    Array.from(dotsWrap.children).forEach((d, i) => d.classList.toggle('active', i === cur));
+  }
+  track.addEventListener('scroll', () => requestAnimationFrame(updateDots));
+  updateDots();
+
+  // auto-advance (пауза hover кезінде)
+  let timer = setInterval(() => window.testiMove(1), 5500);
+  const carousel = track.closest('.testi-carousel');
+  carousel.addEventListener('mouseenter', () => clearInterval(timer));
+  carousel.addEventListener('mouseleave', () => { timer = setInterval(() => window.testiMove(1), 5500); });
+})();
 
 /* ── MARQUEE ── */
 (function() {

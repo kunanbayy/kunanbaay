@@ -288,11 +288,16 @@
     .sc-desc-toggle { display: flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 600; cursor: pointer; background: none; border: none; padding: 0; }
 
     /* Professions */
-    .sc-profs { display: flex; gap: 10px; overflow-x: auto; scrollbar-width: none; padding-bottom: 4px; }
+    .sc-profs { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px 14px; padding: 4px 4px 2px; }
     .sc-profs::-webkit-scrollbar { display: none; }
-    .sc-prof { display: flex; flex-direction: column; align-items: center; gap: 7px; flex: 0 0 72px; text-align: center; }
-    .sc-prof-ico { width: 52px; height: 52px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 24px; }
-    .sc-prof-name { font-size: 11px; color: #475569; font-weight: 500; line-height: 1.3; }
+    .sc-prof { display: flex; flex-direction: column; align-items: center; gap: 8px; flex: 0 0 84px; text-align: center; }
+    .sc-prof-ico { width: 56px; height: 56px; border-radius: 17px; display: flex; align-items: center; justify-content: center; font-size: 25px; }
+    .sc-prof-name { font-size: 11.5px; color: #475569; font-weight: 500; line-height: 1.3; }
+    @media (max-width: 560px) {
+      .sc-profs { gap: 14px 10px; }
+      .sc-prof { flex-basis: 72px; }
+      .sc-prof-ico { width: 50px; height: 50px; font-size: 22px; }
+    }
 
     /* ── ГРАНТ СТАТИСТИКАСЫ (детальдегі БББТ) ── */
     .sc-grant-card { background:#fff; border-radius:18px; padding:20px; display:grid; grid-template-columns:1fr 1fr; gap:26px; }
