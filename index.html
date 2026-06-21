@@ -1406,7 +1406,11 @@ function widgetGrant() {
     showToast('Деректерді растаңыз', 'error');
     return;
   }
-  window.location.href = 'grant.html';
+  var score = document.getElementById('wSlider').value;
+  var subjMap = { '': 0, 'math_physics': 1, 'geo_math': 2, 'bio_chem': 3, 'hist_eng': 7 };
+  var subj = subjMap[document.getElementById('wSubject').value] || 0;
+  // hand off to the grant analyzer (result → paywall → payment → grant cabinet)
+  window.location.href = 'grant.html?score=' + encodeURIComponent(score) + '&subj=' + subj + '#results';
 }
 </script>
   <script src="js/icons.js"></script>

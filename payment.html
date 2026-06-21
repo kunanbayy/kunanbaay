@@ -414,14 +414,17 @@
       document.getElementById('successScreen').classList.add('visible');
       document.getElementById('uploadZone').style.display = 'none';
       var next = params.get('next');
-      if (next === 'grant') {
+      var dest = (next === 'results') ? { href:'results.html?paid=1', label:'← Толық тест нәтижесін ашу' }
+               : (next === 'grant')  ? { href:'grant.html?paid=1', label:'← Грант талдауын ашу' }
+               : null;
+      if (dest) {
         var back = document.getElementById('successScreen');
         if (back) {
           var a = document.createElement('a');
-          a.href = 'grant.html?paid=1';
+          a.href = dest.href;
           a.className = 'pay-submit';
           a.style.cssText = 'display:flex;align-items:center;justify-content:center;text-decoration:none;margin-top:14px;';
-          a.textContent = '← Грант талдауын ашу';
+          a.textContent = dest.label;
           back.appendChild(a);
         }
       }

@@ -854,10 +854,23 @@
   const d1=document.getElementById('demoUnlock'); if(d1) d1.addEventListener('click', doUnlock);
   const d2=document.getElementById('demoUnlock2'); if(d2) d2.addEventListener('click', doUnlock);
 
+  // prefill from URL (e.g. coming from the homepage widget: ?score=92&subj=1)
+  (function(){
+    const q = new URLSearchParams(location.search);
+    const sc = parseInt(q.get('score'), 10);
+    if(!isNaN(sc)){ slider.value = Math.max(0, Math.min(140, sc)); }
+    const sj = parseInt(q.get('subj'), 10);
+    if(!isNaN(sj) && SUBJECTS[sj]){ document.getElementById('subjSel').value = sj; }
+  })();
+
   syncSlider();
   fillProgramSelects();
   renderMode1();
   applyLockUI();
+  if(location.hash === '#results'){
+    const r = document.getElementById('results');
+    if(r) setTimeout(()=>r.scrollIntoView({behavior:'smooth', block:'start'}), 200);
+  }
 </script>
 </body>
 </html>

@@ -3,297 +3,246 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Нәтижем — Shyraq Education</title>
+  <title>Тест нәтижесі — Shyraq Education</title>
   <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
   <style>
-    .result-bar-row { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
-    .result-bar-label { font-size: 0.875rem; font-weight: 500; color: var(--text); width: 160px; flex-shrink: 0; }
-    .result-bar-wrap { flex: 1; background: var(--border); border-radius: 4px; height: 10px; overflow: hidden; }
-    .result-bar-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--navy), var(--navy-light)); transition: width 1s ease; }
-    .result-bar-val { font-size: 0.8rem; font-weight: 700; color: var(--navy); width: 36px; text-align: right; }
+    :root { --gp:#6D5DFC; --gp-dark:#5848e0; --gp-soft:#EEEBFF; --g-line:#ECECF3; }
+    body { background:#FBFBFE; }
+    body::before, body::after { display:none; }
+    .rs-wrap { max-width:1000px; margin:0 auto; padding:30px 24px 80px; }
+    .rs-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; }
+    .rs-logo { font-family:var(--font-display); font-weight:800; color:var(--gp); font-size:1.25rem; text-decoration:none; display:flex; gap:8px; align-items:center; }
+    .rs-top a.back { color:var(--text-muted); font-weight:600; font-size:.9rem; }
+
+    .trigger { background:linear-gradient(135deg, var(--gp), #8B5CF6); color:#fff; border-radius:24px; padding:34px 32px; position:relative; overflow:hidden; box-shadow:0 22px 50px -18px rgba(109,93,252,.6); }
+    .trigger::after { content:''; position:absolute; right:-60px; top:-70px; width:240px; height:240px; border-radius:50%; background:radial-gradient(circle,rgba(255,255,255,.18),transparent 70%); }
+    .trigger .eyebrow { font-size:.82rem; font-weight:800; text-transform:uppercase; letter-spacing:.08em; opacity:.9; }
+    .trigger h1 { color:#fff; font-size:clamp(1.6rem,3.2vw,2.3rem); margin:10px 0 8px; position:relative; z-index:1; }
+    .trigger p { color:rgba(255,255,255,.9); font-size:1.02rem; position:relative; z-index:1; }
+    .trigger .big { font-weight:900; }
+
+    .sec-h { font-family:var(--font-display); font-size:1.35rem; color:var(--ink); margin:38px 0 16px; }
+    .card { background:#fff; border:1px solid var(--g-line); border-radius:20px; padding:24px; box-shadow:0 8px 26px rgba(20,20,50,.04); }
+
+    .ability { display:flex; align-items:center; gap:16px; padding:16px 0; border-bottom:1px solid #F1F2F7; }
+    .ability:last-child { border-bottom:none; }
+    .ability .medal { font-size:1.7rem; flex:0 0 auto; }
+    .ability .ab-body { flex:1; min-width:0; }
+    .ability .ab-top { display:flex; justify-content:space-between; align-items:baseline; gap:10px; }
+    .ability .ab-name { font-weight:800; color:var(--ink); font-size:1.02rem; }
+    .ability .ab-pct { font-family:var(--font-display); font-weight:800; color:var(--gp); font-size:1.3rem; }
+    .ability .ab-desc { color:var(--text-muted); font-size:.88rem; margin-top:3px; line-height:1.5; }
+    .ab-bar { height:9px; border-radius:999px; background:#F1F2F7; overflow:hidden; margin-top:9px; }
+    .ab-bar > span { display:block; height:100%; border-radius:999px; background:linear-gradient(90deg,var(--gp),#8B5CF6); }
+
+    .dir-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+    .dir { background:#fff; border:1px solid var(--g-line); border-radius:16px; padding:18px; text-align:center; }
+    .dir .ic { width:46px; height:46px; margin:0 auto 10px; border-radius:14px; background:var(--gp-soft); color:var(--gp); display:flex; align-items:center; justify-content:center; font-size:1.2rem; }
+    .dir .nm { font-weight:800; color:var(--ink); font-size:.95rem; }
+    .dir .pc { color:var(--text-muted); font-size:.8rem; margin-top:3px; }
+
+    .spec-list { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; }
+    .spec { display:flex; align-items:center; gap:10px; background:#F8FAFC; border:1px solid #EEF0F6; border-radius:12px; padding:12px 14px; font-size:.9rem; color:var(--ink); font-weight:600; }
+    .spec .num { width:22px; height:22px; flex:0 0 auto; border-radius:7px; background:var(--gp); color:#fff; font-size:.72rem; font-weight:800; display:flex; align-items:center; justify-content:center; }
+
+    .locked { position:relative; margin-top:14px; border-radius:20px; overflow:hidden; border:1px solid var(--g-line); }
+    .locked-blur { filter:blur(7px); pointer-events:none; user-select:none; padding:24px; background:#fff; }
+    .locked-blur.unlocked { filter:none; pointer-events:auto; user-select:auto; }
+    .lk-ov { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:13px; text-align:center; padding:24px; background:linear-gradient(180deg,rgba(255,255,255,.5),rgba(255,255,255,.85)); }
+    .lk-ov.hidden { display:none; }
+    .lk-ic { width:60px; height:60px; border-radius:50%; background:var(--gp); color:#fff; display:flex; align-items:center; justify-content:center; font-size:1.4rem; box-shadow:0 12px 30px rgba(109,93,252,.4); }
+    .lk-ov h3 { font-size:1.35rem; color:var(--ink); }
+    .lk-ov p { color:var(--text-muted); max-width:440px; }
+    .lk-feats { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; max-width:560px; }
+    .lk-feat { background:#fff; border:1px solid var(--g-line); border-radius:999px; padding:6px 13px; font-size:.8rem; color:var(--text); font-weight:600; }
+    .lk-feat i { color:#10B981; margin-right:5px; }
+    .pw-demo { font-size:.78rem; color:var(--text-light); }
+    .pw-demo a { color:var(--gp); font-weight:700; text-decoration:underline; cursor:pointer; }
+
+    .prem-block { margin-bottom:14px; }
+    .prem-block h4 { font-size:.95rem; color:var(--ink); margin-bottom:8px; }
+    .prem-row { display:flex; flex-wrap:wrap; gap:8px; }
+    .chip { background:#F1F2F7; border-radius:999px; padding:6px 12px; font-size:.82rem; color:var(--text); font-weight:600; }
+
+    .price-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+    .price { background:#fff; border:1px solid var(--g-line); border-radius:20px; padding:24px; text-align:center; position:relative; }
+    .price.feat { border-color:var(--gp); box-shadow:0 16px 40px rgba(109,93,252,.16); }
+    .price .badge { position:absolute; top:-12px; left:50%; transform:translateX(-50%); background:var(--gp); color:#fff; font-size:.72rem; font-weight:800; padding:5px 14px; border-radius:999px; }
+    .price .amt { font-family:var(--font-display); font-weight:800; font-size:1.9rem; color:var(--ink); margin:4px 0 6px; }
+    .price .dsc { font-size:.82rem; color:var(--text-muted); min-height:2.4em; }
+    .price a { display:block; margin-top:14px; padding:12px; border-radius:12px; font-weight:800; text-decoration:none; border:1.5px solid var(--gp); color:var(--gp); }
+    .price.feat a { background:var(--gp); color:#fff; }
+    .actions { display:flex; gap:12px; flex-wrap:wrap; margin-top:24px; }
+    .btn-p { background:var(--gp); color:#fff; border:none; border-radius:14px; padding:14px 26px; font-weight:800; font-family:var(--font-body); cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; gap:8px; }
+    .btn-o { background:#fff; color:var(--gp); border:1.5px solid var(--gp); border-radius:14px; padding:14px 26px; font-weight:800; text-decoration:none; }
+
+    @media (max-width:760px){ .dir-grid,.price-grid,.spec-list{ grid-template-columns:1fr; } }
   </style>
 </head>
-<body style="background:#F8FAFC">
+<body>
+<div class="rs-wrap">
+  <div class="rs-top">
+    <a href="index.html" class="rs-logo">🔆 Shyraq</a>
+    <a href="test.html" class="back">↻ Қайта тапсыру</a>
+  </div>
 
-<!-- NAV -->
-<nav class="nav">
-  <div class="nav-inner">
-    <a href="dashboard.html" class="nav-logo">
-      <div class="nav-logo-icon">🔆</div>
-      Shyraq
-    </a>
-    <div class="nav-actions">
-      <a href="dashboard.html" class="btn btn-ghost btn-sm">← Кабинет</a>
-      <a href="pricing.html" class="btn btn-gold btn-sm">⭐ Premium</a>
+  <div class="trigger">
+    <div class="eyebrow">🧭 Қабілет тесті нәтижесі</div>
+    <h1 id="trigTitle">—</h1>
+    <p id="trigSub">—</p>
+  </div>
+
+  <h2 class="sec-h">Сіздің қабілет профиліңіз</h2>
+  <div class="card" id="abilityCard"></div>
+
+  <h2 class="sec-h">Сізге ең сәйкес 3 бағыт</h2>
+  <div class="dir-grid" id="dirGrid"></div>
+
+  <h2 class="sec-h">Ұсынылатын мамандықтар</h2>
+  <div class="card">
+    <div class="spec-list" id="specFree"></div>
+    <div class="locked" style="margin-top:16px;">
+      <div class="locked-blur" id="specLocked"></div>
+      <div class="lk-ov" id="lkOv">
+        <div class="lk-ic"><i class="fas fa-lock"></i></div>
+        <h3 id="lkTitle">🔒 Толық тізімді ашу</h3>
+        <p id="lkSub">Толық тұлғалық және кәсіби профильді ашыңыз.</p>
+        <div class="lk-feats">
+          <span class="lk-feat"><i class="fas fa-check"></i>20+ мамандық</span>
+          <span class="lk-feat"><i class="fas fa-check"></i>Университеттер</span>
+          <span class="lk-feat"><i class="fas fa-check"></i>ҰБТ пәндері</span>
+          <span class="lk-feat"><i class="fas fa-check"></i>Жалақы диапазоны</span>
+          <span class="lk-feat"><i class="fas fa-check"></i>Грантқа түсу мүмкіндігі</span>
+          <span class="lk-feat"><i class="fas fa-check"></i>Карьералық жол картасы</span>
+        </div>
+        <a href="payment.html?plan=test&next=results" class="btn-p"><i class="fas fa-lock-open"></i> Толық есепті ашу</a>
+        <div class="pw-demo">Тек көру үшін: <a id="demoUnlock">демо режимде ашу</a></div>
+      </div>
     </div>
   </div>
-</nav>
 
-<div class="results-page">
-  <div class="container-sm">
-
-    <!-- HERO -->
-    <div class="results-hero">
-      <div class="results-emoji" id="resultEmoji">🎓</div>
-      <div class="results-profile" id="resultProfile">Гуманитарлық бағыт</div>
-      <h1 class="results-title" id="resultTitle">Сенің бағытың анықталды!</h1>
-      <p class="results-subtitle" id="resultDesc">Саған адамдармен сөйлесу, түсіндіру, жазу, ұйымдастыру және зерттеу жақын.</p>
-
-      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
-        <button class="btn btn-orange" onclick="window.location='test.html'">🔄 Қайта тапсыру</button>
-        <button class="btn btn-primary" onclick="window.location='specialties.html'">Мамандықтарды көру →</button>
-        <button class="btn btn-ghost" onclick="window.print()">🖨 Басып шығару</button>
-      </div>
+  <h2 class="sec-h">Толық есеп бағасы</h2>
+  <div class="price-grid">
+    <div class="price">
+      <div class="amt">990 ₸</div>
+      <div class="dsc">Толық мамандықтар тізімі мен бағыттар</div>
+      <a href="payment.html?plan=test990&next=results">Таңдау</a>
     </div>
-
-    <!-- TOP 3 DIRECTIONS -->
-    <div class="card mb-24" style="text-align:center">
-      <div style="font-size:0.82rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);margin-bottom:20px">ТОП БАҒЫТТАРЫҢ</div>
-      <div class="directions-grid" id="directionsGrid">
-        <div class="direction-card">
-          <div class="direction-num">01</div>
-          <div class="direction-name" id="dir1">Гуманитарлық</div>
-        </div>
-        <div class="direction-card">
-          <div class="direction-num">02</div>
-          <div class="direction-name" id="dir2">Бизнес</div>
-        </div>
-        <div class="direction-card">
-          <div class="direction-num">03</div>
-          <div class="direction-name" id="dir3">Шығармашылық</div>
-        </div>
-      </div>
+    <div class="price feat">
+      <div class="badge">⭐ Танымал</div>
+      <div class="amt">1 990 ₸</div>
+      <div class="dsc">+ Университеттер, ҰБТ пәндері, грант мүмкіндігі</div>
+      <a href="payment.html?plan=test1990&next=results">Таңдау</a>
     </div>
-
-    <!-- PROFILE CHART -->
-    <div class="card mb-24">
-      <h3 style="color:var(--navy);margin-bottom:20px">📊 Профиль анализі</h3>
-      <div id="profileChart"></div>
+    <div class="price">
+      <div class="amt">2 990 ₸</div>
+      <div class="dsc">+ Жалақы диапазоны және толық карьералық жол картасы</div>
+      <a href="payment.html?plan=test2990&next=results">Таңдау</a>
     </div>
+  </div>
 
-    <!-- SUGGESTED SPECIALTIES -->
-    <div class="specialties-results mb-24">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
-        <h3 style="color:var(--navy)">✨ Ұсынылған мамандықтар</h3>
-        <a href="specialties.html" class="btn btn-ghost btn-sm">Барлығын көру →</a>
-      </div>
-      <div id="specialtiesList"></div>
-    </div>
-
-    <!-- NEXT STEPS -->
-    <div class="card mb-24" style="background:var(--navy);border-color:var(--navy)">
-      <h3 style="color:white;margin-bottom:16px">🚀 Келесі қадамдар</h3>
-      <div style="display:flex;flex-direction:column;gap:12px">
-        <a href="specialties.html#catalogFilters" style="display:flex;align-items:center;gap:14px;background:rgba(255,255,255,0.08);border-radius:var(--radius);padding:14px;text-decoration:none;transition:var(--transition)" onmouseover="this.style.background='rgba(255,255,255,0.14)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'">
-          <span style="font-size:1.4rem">📝</span>
-          <div>
-            <div style="color:white;font-weight:600;font-size:0.9rem">ҰБТ пәндерін нақтыла</div>
-            <div style="color:rgba(255,255,255,0.6);font-size:0.8rem">Таңдаған бағытыңа сай пән таңда</div>
-          </div>
-          <span style="margin-left:auto;color:rgba(255,255,255,0.4)">→</span>
-        </a>
-        <a href="universities.html" style="display:flex;align-items:center;gap:14px;background:rgba(255,255,255,0.08);border-radius:var(--radius);padding:14px;text-decoration:none;transition:var(--transition)" onmouseover="this.style.background='rgba(255,255,255,0.14)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'">
-          <span style="font-size:1.4rem">🏛️</span>
-          <div>
-            <div style="color:white;font-weight:600;font-size:0.9rem">Университеттерді зерттеу</div>
-            <div style="color:rgba(255,255,255,0.6);font-size:0.8rem">45+ ЖОО тізімін қара</div>
-          </div>
-          <span style="margin-left:auto;color:rgba(255,255,255,0.4)">→</span>
-        </a>
-        <a href="grant.html" style="display:flex;align-items:center;gap:14px;background:rgba(255,255,255,0.08);border-radius:var(--radius);padding:14px;text-decoration:none;transition:var(--transition)" onmouseover="this.style.background='rgba(255,255,255,0.14)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'">
-          <span style="font-size:1.4rem">💰</span>
-          <div>
-            <div style="color:white;font-weight:600;font-size:0.9rem">Грант мүмкіндігін есепте</div>
-            <div style="color:rgba(255,255,255,0.6);font-size:0.8rem">Болжамды баллыңды енгіз</div>
-          </div>
-          <span style="margin-left:auto;color:rgba(255,255,255,0.4)">→</span>
-        </a>
-      </div>
-    </div>
-
-    <!-- PREMIUM LOCK -->
-    <div class="premium-lock">
-      <div style="font-size:3rem;margin-bottom:12px">🔒</div>
-      <h3>Толық анализді көру үшін Premium қосыңыз</h3>
-      <p>Әр мамандық бойынша толық сипаттама, ҰБТ пәндері, университеттер, жалақы, кімге сәйкес келетіні — Premium-де бар!</p>
-      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
-        <a href="pricing.html" class="btn btn-gold btn-lg">⭐ Premium — 990 ₸/ай</a>
-        <a href="pricing.html" class="btn btn-outline btn-lg">PDF Career Report — 1490 ₸</a>
-      </div>
-    </div>
-
+  <div class="actions">
+    <a href="grant.html" class="btn-p"><i class="fas fa-graduation-cap"></i> Грант мүмкіндігін есепте</a>
+    <a href="specialties.html" class="btn-o">Мамандықтарды қарау</a>
   </div>
 </div>
 
-<script src="js/universities-data.js"></script>
-<script src="js/main.js"></script>
-<script src="js/auth-guard.js"></script>
 <script>
-const DIRECTION_DATA = {
-  'Гуманитарлық + Коммуникациялық': {
-    emoji: '📖',
-    desc: 'Саған адамдармен сөйлесу, түсіндіру, жазу, ұйымдастыру жақын.',
-    dirs: ['Гуманитарлық', 'Коммуникациялық', 'Бизнес'],
-    specialties: [
-      { name: 'Маркетинг', icon: '📊', match: 92 },
-      { name: 'Психология', icon: '🧠', match: 88 },
-      { name: 'Журналистика', icon: '📰', match: 85 },
-      { name: 'HR менеджмент', icon: '👥', match: 82 },
-      { name: 'Аударма ісі', icon: '🗣️', match: 79 },
-    ],
-  },
-  'Техникалық + IT': {
-    emoji: '💻',
-    desc: 'Саған логика, математика, бағдарламалау және техникалық шешімдер жақын.',
-    dirs: ['IT / Технология', 'Инженерия', 'Жаратылыстану'],
-    specialties: [
-      { name: 'IT / Бағдарламалау', icon: '💻', match: 95 },
-      { name: 'Инженерия', icon: '⚙️', match: 88 },
-      { name: 'Деректер ғылымы', icon: '📈', match: 85 },
-      { name: 'Кибербезопасность', icon: '🔐', match: 80 },
-      { name: 'Робототехника', icon: '🤖', match: 76 },
-    ],
-  },
-  'Шығармашылық + Дизайн': {
-    emoji: '🎨',
-    desc: 'Саған өнер, дизайн, шығармашылық жобалар және эстетика жақын.',
-    dirs: ['Дизайн', 'Шығармашылық', 'Маркетинг'],
-    specialties: [
-      { name: 'Графикалық дизайн', icon: '🎨', match: 93 },
-      { name: 'UI/UX Дизайн', icon: '📱', match: 89 },
-      { name: 'Маркетинг', icon: '📊', match: 82 },
-      { name: 'Журналистика', icon: '📰', match: 78 },
-      { name: '3D / Анимация', icon: '🎬', match: 75 },
-    ],
-  },
-  'Бизнес + Халықаралық': {
-    emoji: '🌍',
-    desc: 'Саған бизнес, кәсіпкерлік, халықаралық байланыстар және қаржы жақын.',
-    dirs: ['Бизнес', 'Халықаралық', 'Қаржы'],
-    specialties: [
-      { name: 'Бизнес-басқару', icon: '💼', match: 91 },
-      { name: 'Халықаралық қатынастар', icon: '🌍', match: 87 },
-      { name: 'Маркетинг', icon: '📊', match: 84 },
-      { name: 'Қаржы / Экономика', icon: '💰', match: 80 },
-      { name: 'Аударма ісі', icon: '🗣️', match: 76 },
-    ],
-  },
-  'Жаратылыстану + Медицина': {
-    emoji: '🏥',
-    desc: 'Саған медицина, биология, химия және адам денсаулығы жақын.',
-    dirs: ['Медицина', 'Биология', 'Жаратылыстану'],
-    specialties: [
-      { name: 'Жалпы медицина', icon: '🏥', match: 94 },
-      { name: 'Фармация', icon: '💊', match: 88 },
-      { name: 'Биология', icon: '🌱', match: 83 },
-      { name: 'Стоматология', icon: '🦷', match: 79 },
-      { name: 'Психология', icon: '🧠', match: 74 },
-    ],
-  },
-};
+  const CL = {
+    IT:  { label:'IT және бағдарламалау', ability:'Технологиялық қызығушылық', icon:'fa-laptop-code', desc:'Жаңа технологияларды тез меңгересіз және цифрлық ортада жұмыс істеуге бейімсіз.', subjects:'Математика + Информатика', salary:'350 000 – 1 500 000 ₸', specs:['Информатика','Ақпараттық жүйелер','Software Engineering','Ақпараттық қауіпсіздік','Деректер ғылымы (Data Science)','Жасанды интеллект','Компьютерлік инженерия','Веб-технологиялар'], unis:['Astana IT University','Satbayev University','ҚБТУ','ҚазҰУ','ЕҰУ'] },
+    ENG: { label:'Инженерия', ability:'Техникалық ойлау', icon:'fa-gears', desc:'Жүйелер мен механизмдердің жұмысын түсініп, құрастыруға бейімсіз.', subjects:'Математика + Физика', salary:'250 000 – 900 000 ₸', specs:['Электроэнергетика','Машина жасау','Құрылыс','Робототехника','Мұнай-газ ісі','Автоматтандыру','Металлургия','Көлік инженериясы'], unis:['Satbayev University','ЕҰУ','ҚБТУ','Торайғыров университеті'] },
+    MED: { label:'Медицина', ability:'Эмпатия мен мейірім', icon:'fa-heart-pulse', desc:'Адамдарға көмектесуге және денсаулық сақтау саласына бейімсіз.', subjects:'Биология + Химия', salary:'250 000 – 1 200 000 ₸', specs:['Жалпы медицина','Стоматология','Фармация','Педиатрия','Мейіргер ісі','Қоғамдық денсаулық','Ветеринария'], unis:['Астана медицина университеті','ҚазҰМУ','Семей медицина университеті'] },
+    PED: { label:'Педагогика', ability:'Ұйымдастырушылық қабілет', icon:'fa-chalkboard-user', desc:'Білім беруге және басқаларды дамытуға қабілеттісіз.', subjects:'Таңдау пәндері + Арнаулы', salary:'180 000 – 500 000 ₸', specs:['Бастауышта оқыту','Математика мұғалімі','Информатика мұғалімі','Шетел тілі мұғалімі','Дефектология','Мектепке дейінгі тәрбие'], unis:['Абай университеті','ЕҰУ','Қыздар университеті'] },
+    PSY: { label:'Психология', ability:'Адамды түсіну', icon:'fa-brain', desc:'Адамдардың мінез-құлқын талдап, қолдау көрсетуге бейімсіз.', subjects:'Биология + География', salary:'200 000 – 700 000 ₸', specs:['Психология','Әлеуметтік жұмыс','Логопедия','Педагогика-психология','Девиантология'], unis:['ҚазҰУ','Абай университеті','ЕҰУ'] },
+    BUS: { label:'Бизнес және менеджмент', ability:'Көшбасшылық пен кәсіпкерлік', icon:'fa-briefcase', desc:'Ұйымдастыру, басқару және бастама көтеру қабілетіңіз күшті.', subjects:'Математика + География', salary:'300 000 – 1 200 000 ₸', specs:['Менеджмент','Қаржы және экономика','Маркетинг','Есеп және аудит','Халықаралық қатынастар','Туризм','Логистика'], unis:['Narxoz University','КИМЭП','ҚБТУ','ҚазҰУ'] },
+    LAW: { label:'Құқық және қауіпсіздік', ability:'Әділдік сезімі', icon:'fa-scale-balanced', desc:'Заң, тәртіп және әділдік мәселелеріне бейімсіз.', subjects:'Дүниежүзі тарихы + Құқық', salary:'250 000 – 1 000 000 ₸', specs:['Құқықтану','Халықаралық құқық','Кеден ісі','Сот сараптамасы','Қауіпсіздік'], unis:['ҚазҰУ','ЕҰУ','Нархоз'] },
+    HUM: { label:'Гуманитарлық ғылымдар', ability:'Тілдер мен қарым-қатынас', icon:'fa-language', desc:'Тіл, тарих және коммуникацияға қабілеттісіз.', subjects:'Шетел тілі + Тарих', salary:'200 000 – 800 000 ₸', specs:['Аударма ісі','Филология','Тарих','Журналистика','Шығыстану','Халықаралық қатынастар'], unis:['ҚазҰУ','Абылай хан ат. ХҚжӘТУ','ЕҰУ'] },
+    SCI: { label:'Ғылым және зерттеу', ability:'Зерттеушілік қабілет', icon:'fa-flask', desc:'Сұрақ қоюды, себеп-салдарды іздеуді және жаңа білім алуды ұнатасыз.', subjects:'Математика + Физика / Химия', salary:'250 000 – 900 000 ₸', specs:['Математика','Физика','Химия','Биология','Экология','Геология','Статистика'], unis:['ҚазҰУ','ЕҰУ','Satbayev University'] },
+    ART: { label:'Өнер және дизайн', ability:'Шығармашылық', icon:'fa-palette', desc:'Идея, дизайн және өнерде өзіңізді еркін сезінесіз.', subjects:'Шығармашылық емтихан', salary:'200 000 – 900 000 ₸', specs:['Дизайн','Сәулет','Бейнелеу өнері','Музыка','Медиа және кино','Сән дизайны'], unis:['Т.Жүргенов ат. ҰӨА','ҚазБСҚА','SDU'] }
+  };
+  const MEDALS = ['🥇','🥈','🥉','4️⃣','5️⃣'];
 
-const PROFILE_LABELS = {
-  social: 'Әлеуметтік', analytic: 'Аналитикалық', humanit: 'Гуманитарлық',
-  science: 'Жаратылыстану', creative: 'Шығармашылық', business: 'Бизнес',
-  tech: 'Техникалық', it: 'IT', medicine: 'Медицина', teach: 'Педагогика',
-};
+  let PREMIUM = false;
+  (function(){
+    const q = new URLSearchParams(location.search);
+    if(q.get('premium')==='1' || q.get('paid')==='1') localStorage.setItem('shyraq_premium','1');
+    PREMIUM = localStorage.getItem('shyraq_premium')==='1';
+  })();
 
-document.addEventListener('DOMContentLoaded', () => {
-  const results = JSON.parse(localStorage.getItem('shyraq_results'));
-  if (!results) { window.location.href = 'test.html'; return; }
+  const results = JSON.parse(localStorage.getItem('shyraq_results') || 'null');
+  if(!results || results.type !== 'aptitude'){ window.location.href = 'test.html'; }
 
-  const data = DIRECTION_DATA[results.direction] || DIRECTION_DATA['Гуманитарлық + Коммуникациялық'];
+  function render(){
+    const pct = results.clusters, top = results.top;
+    const topKey = top[0], topPct = pct[topKey];
 
-  document.getElementById('resultEmoji').textContent = data.emoji;
-  document.getElementById('resultProfile').textContent = results.direction;
-  document.getElementById('resultTitle').textContent = 'Сенің бағытың: ' + results.direction;
-  document.getElementById('resultDesc').textContent = data.desc;
+    const allSpecs = [];
+    top.forEach(k => CL[k].specs.forEach(s => { if(allSpecs.indexOf(s)<0) allSpecs.push(s); }));
+    const totalSpecs = allSpecs.length;
 
-  // Directions
-  ['dir1','dir2','dir3'].forEach((id, i) => {
-    const el = document.getElementById(id);
-    if (el) el.textContent = data.dirs[i] || '—';
+    document.getElementById('trigTitle').innerHTML = 'Сізде <span class="big">' + CL[topKey].label + '</span> бағыты өте жоғары (' + topPct + '%)';
+    document.getElementById('trigSub').textContent = 'Сізге сәйкес келетін ' + totalSpecs + ' мамандық анықталды.';
+
+    const ac = document.getElementById('abilityCard'); ac.innerHTML = '';
+    top.forEach((k, i) => {
+      const d = document.createElement('div');
+      d.className = 'ability';
+      d.innerHTML =
+        '<div class="medal">' + MEDALS[i] + '</div>' +
+        '<div class="ab-body">' +
+          '<div class="ab-top"><span class="ab-name">' + CL[k].ability + '</span><span class="ab-pct">' + pct[k] + '%</span></div>' +
+          '<div class="ab-bar"><span style="width:' + pct[k] + '%"></span></div>' +
+          '<div class="ab-desc">' + CL[k].desc + '</div>' +
+        '</div>';
+      ac.appendChild(d);
+    });
+
+    const dg = document.getElementById('dirGrid'); dg.innerHTML = '';
+    top.forEach(k => {
+      const d = document.createElement('div');
+      d.className = 'dir';
+      d.innerHTML = '<div class="ic"><i class="fas ' + CL[k].icon + '"></i></div><div class="nm">' + CL[k].label + '</div><div class="pc">Сәйкестік: ' + pct[k] + '%</div>';
+      dg.appendChild(d);
+    });
+
+    const sf = document.getElementById('specFree'); sf.innerHTML = '';
+    allSpecs.slice(0, 5).forEach((s, i) => {
+      const d = document.createElement('div');
+      d.className = 'spec';
+      d.innerHTML = '<span class="num">' + (i+1) + '</span>' + s;
+      sf.appendChild(d);
+    });
+
+    const sl = document.getElementById('specLocked');
+    let html = '<div class="spec-list">';
+    allSpecs.slice(5).forEach((s, i) => { html += '<div class="spec"><span class="num">' + (i+6) + '</span>' + s + '</div>'; });
+    html += '</div>';
+    const unis = [];
+    top.forEach(k => CL[k].unis.forEach(u => { if(unis.indexOf(u)<0) unis.push(u); }));
+    html += '<div class="prem-block" style="margin-top:16px"><h4>🎓 Ұсынылатын университеттер</h4><div class="prem-row">' +
+      unis.map(u => '<span class="chip">' + u + '</span>').join('') + '</div></div>';
+    html += '<div class="prem-block"><h4>📘 Қажетті ҰБТ пәндері</h4><div class="prem-row">' +
+      top.map(k => '<span class="chip">' + CL[k].label + ': ' + CL[k].subjects + '</span>').join('') + '</div></div>';
+    html += '<div class="prem-block"><h4>💰 Болашақ жалақы диапазоны</h4><div class="prem-row">' +
+      top.map(k => '<span class="chip">' + CL[k].label + ': ' + CL[k].salary + '</span>').join('') + '</div></div>';
+    sl.innerHTML = html;
+
+    document.getElementById('lkTitle').textContent = '🔒 Сізге сәйкес келетін ' + totalSpecs + ' мамандықты ашу';
+
+    applyLock();
+  }
+
+  function applyLock(){
+    document.getElementById('specLocked').classList.toggle('unlocked', PREMIUM);
+    document.getElementById('lkOv').classList.toggle('hidden', PREMIUM);
+  }
+
+  document.getElementById('demoUnlock').addEventListener('click', function(e){
+    e.preventDefault(); localStorage.setItem('shyraq_premium','1'); PREMIUM=true; applyLock();
   });
 
-  // Profile chart
-  const chart = document.getElementById('profileChart');
-  const catScores = results.catScores || {};
-  const maxVal = Math.max(...Object.values(catScores), 1);
-  chart.replaceChildren();
-  Object.entries(catScores).forEach(([cat, score]) => {
-    const label = PROFILE_LABELS[cat];
-    if (!label) return;
-    const pct = Math.round((score / (maxVal * 1.1)) * 100);
-
-    const row = document.createElement('div');
-    row.className = 'result-bar-row';
-
-    const lbl = document.createElement('div');
-    lbl.className = 'result-bar-label';
-    lbl.textContent = label;
-
-    const wrap = document.createElement('div');
-    wrap.className = 'result-bar-wrap';
-
-    const fill = document.createElement('div');
-    fill.className = 'result-bar-fill';
-    fill.style.width = '0%';
-    setTimeout(() => { fill.style.width = pct + '%'; }, 100);
-
-    wrap.appendChild(fill);
-
-    const val = document.createElement('div');
-    val.className = 'result-bar-val';
-    val.textContent = pct + '%';
-
-    row.appendChild(lbl);
-    row.appendChild(wrap);
-    row.appendChild(val);
-    chart.appendChild(row);
-  });
-
-  // Specialties list
-  const list = document.getElementById('specialtiesList');
-  list.replaceChildren();
-  data.specialties.forEach((spec, i) => {
-    const item = document.createElement('div');
-    item.className = 'specialty-result-item';
-
-    const icon = document.createElement('div');
-    icon.className = 'spec-icon';
-    icon.textContent = spec.icon;
-
-    const info = document.createElement('div');
-    info.style.cssText = 'flex:1';
-
-    const name = document.createElement('div');
-    name.className = 'spec-name';
-    name.textContent = spec.name;
-
-    const match = document.createElement('div');
-    match.className = 'spec-match';
-    match.textContent = 'Сәйкестік ' + spec.match + '%';
-
-    info.appendChild(name);
-    info.appendChild(match);
-
-    const scoreWrap = document.createElement('div');
-    scoreWrap.className = 'spec-score';
-
-    const badge = document.createElement('span');
-    badge.className = i === 0 ? 'badge badge-emerald' : 'badge badge-navy';
-    badge.textContent = i === 0 ? '★ ТОП' : '#' + (i + 1);
-
-    scoreWrap.appendChild(badge);
-
-    item.appendChild(icon);
-    item.appendChild(info);
-    item.appendChild(scoreWrap);
-    list.appendChild(item);
-  });
-});
+  if(results && results.type === 'aptitude') render();
 </script>
-  <script src="js/icons.js"></script>
-
 </body>
 </html>

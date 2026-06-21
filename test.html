@@ -7,194 +7,158 @@
   <link rel="stylesheet" href="css/style.css" />
   <style>
     body { background: #F8FAFC; }
-    .test-exit {
-      background: none; border: none; color: var(--text-muted); font-size: 0.875rem;
-      display: flex; align-items: center; gap: 6px; cursor: pointer; padding: 8px 12px;
-      border-radius: var(--radius); transition: var(--transition);
-    }
-    .test-exit:hover { background: #F8FAFC; color: var(--navy); }
+    .test-exit { background: none; border: none; color: var(--text-muted); font-size: 0.875rem; display: flex; align-items: center; gap: 6px; cursor: pointer; padding: 8px 12px; border-radius: var(--radius); transition: var(--transition); }
+    .test-exit:hover { background: #EFEFF6; color: var(--navy); }
     .question-enter { animation: slideIn 0.3s ease both; }
     @keyframes slideIn { from { opacity:0; transform: translateX(20px); } to { opacity:1; transform:translateX(0); } }
+    .scale-opts { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
+    .scale-btn { display: flex; align-items: center; gap: 14px; width: 100%; text-align: left; padding: 15px 18px; border-radius: 14px; border: 1.5px solid var(--border); background: #fff; cursor: pointer; transition: .15s; font-family: var(--font-body); font-size: 0.96rem; color: var(--text); }
+    .scale-btn:hover { border-color: #C7CDFB; background: #FAFAFF; }
+    .scale-btn.selected { border-color: #6D5DFC; background: #F2F0FF; color: #1B1340; font-weight: 700; }
+    .scale-dot { width: 26px; height: 26px; flex: 0 0 26px; border-radius: 50%; border: 2px solid #CBD0E0; display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 800; color: #94A3B8; }
+    .scale-btn.selected .scale-dot { border-color: #6D5DFC; background: #6D5DFC; color: #fff; }
   </style>
 </head>
 <body>
 <div class="test-page">
-  <!-- TOP BAR -->
   <div class="test-topbar">
     <a href="index.html" class="test-topbar-logo">🔆 Shyraq</a>
     <div class="test-progress-wrap">
-      <div class="test-progress-label">
-        <span id="progressLabel">Сұрақ 1 / 20</span>
-      </div>
-      <div class="progress-wrap">
-        <div class="progress-bar" id="progressBar" style="width:5%"></div>
-      </div>
+      <div class="test-progress-label"><span id="progressLabel">Сұрақ 1 / 25</span></div>
+      <div class="progress-wrap"><div class="progress-bar" id="progressBar" style="width:4%"></div></div>
     </div>
-    <button class="test-exit" onclick="if(confirm('Тестті тоқтатасыз ба? Прогресс сақталмайды.'))window.location.href='dashboard.html'">
-      ✕ Шығу
-    </button>
+    <button class="test-exit" onclick="if(confirm('Тестті тоқтатасыз ба? Прогресс сақталмайды.'))window.location.href='index.html'">✕ Шығу</button>
   </div>
 
-  <!-- TEST BODY -->
   <div class="test-body">
     <div class="test-card" id="testCard">
       <div class="question-num" id="qNum">СҰРАҚ 1</div>
       <div class="question-text" id="qText">Жүктелуде...</div>
-      <div class="answer-options" id="answerOptions"></div>
+      <div class="scale-opts" id="answerOptions"></div>
       <div class="test-actions">
         <button class="btn btn-ghost" id="prevBtn" onclick="prevQuestion()" style="display:none">← Алдыңғы</button>
-        <div id="skipInfo" style="font-size:0.8rem;color:var(--text-light)">Жауапты таңда</div>
+        <div id="skipInfo" style="font-size:0.8rem;color:var(--text-light)">Бір жауапты таңдаңыз</div>
         <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()" disabled>Келесі →</button>
       </div>
     </div>
   </div>
 </div>
 
-<script src="js/universities-data.js"></script>
 <script src="js/main.js"></script>
-<script src="js/auth-guard.js"></script>
 <script>
+/* 25 questions, each adds weighted points to ability clusters */
 const QUESTIONS = [
-  { id: 1, text: 'Адамдармен сөйлесу, жаңа танысу ұнай ма?', category: 'social' },
-  { id: 2, text: 'Математика немесе логикалық есептер ұнай ма?', category: 'analytic' },
-  { id: 3, text: 'Тарих, қоғам, тіл саласы қызықты ма?', category: 'humanit' },
-  { id: 4, text: 'Жаратылыстану (физика, химия, биология) ұнай ма?', category: 'science' },
-  { id: 5, text: 'Болашақта кабинетте (офиста) жұмыс ұнай ма?', category: 'office' },
-  { id: 6, text: 'Креативті жобалар жасау (дизайн, суреттеу) ұнай ма?', category: 'creative' },
-  { id: 7, text: 'Балалармен немесе жастармен жұмыс ұнай ма?', category: 'edu' },
-  { id: 8, text: 'Бизнес, кәсіпкерлік немесе стартап ашқың келе ме?', category: 'business' },
-  { id: 9, text: 'Техника, машина, механизм туралы білу ұнай ма?', category: 'tech' },
-  { id: 10, text: 'Бір нәрсені басқаларға түсіндіру ұнай ма?', category: 'teach' },
-  { id: 11, text: 'Зерттеу жүргізу, мақала жазу, талдау ұнай ма?', category: 'research' },
-  { id: 12, text: 'Музыка, театр, өнер саласы қызықты ма?', category: 'art' },
-  { id: 13, text: 'Шет елдерге саяхат жасау, тілдер үйрену ұнай ма?', category: 'intl' },
-  { id: 14, text: 'Компьютер, бағдарлама жасау ұнай ма?', category: 'it' },
-  { id: 15, text: 'Адамдар денсаулығы, медицина саласы қызықты ма?', category: 'medicine' },
-  { id: 16, text: 'Әділеттілік, заң, саясат туралы ойлану ұнай ма?', category: 'law' },
-  { id: 17, text: 'Табиғат, экология, ауыл шаруашылығы ұнай ма?', category: 'nature' },
-  { id: 18, text: 'Есеп, қаржы, сандармен жұмыс ұнай ма?', category: 'finance' },
-  { id: 19, text: 'Жарнама, маркетинг, брендинг саласы қызықты ма?', category: 'marketing' },
-  { id: 20, text: 'Үлкен мақсатқа жету үшін ұзақ уақыт дайындалуға дайынсың ба?', category: 'ambition' },
+  { t:'Күрделі мәселенің шешімін іздеу маған қызық.', w:{IT:2,SCI:2,ENG:1} },
+  { t:'Жаңа технологиялар мен цифрлық құралдарды тез меңгеремін.', w:{IT:3,ENG:1} },
+  { t:'Адамдарға бағыт беріп, ұйымдастыру маған ұнайды.', w:{BUS:2,PED:2,LAW:1} },
+  { t:'Басқалардың мәселесін тыңдап, көмектесуге тырысамын.', w:{PSY:3,MED:2,PED:1} },
+  { t:'Өз идеяларымды ұсынудан қорықпаймын.', w:{BUS:2,ART:2} },
+  { t:'Сандық деректермен және кестелермен жұмыс жасау қызықты.', w:{IT:2,SCI:2,BUS:1} },
+  { t:'Құрылғылардың немесе жүйелердің қалай жұмыс істейтінін білгім келеді.', w:{ENG:3,IT:2} },
+  { t:'Болашақта өз кәсібімді ашқым келеді.', w:{BUS:3,LAW:1} },
+  { t:'Ғылыми жаңалықтар мен зерттеулерді оқығанды ұнатамын.', w:{SCI:3,MED:1} },
+  { t:'Балаларға немесе басқа адамдарға бір нәрсе үйреткен ұнайды.', w:{PED:3,PSY:1} },
+  { t:'Көпшілік алдында сөйлеу маған қиын емес.', w:{BUS:2,LAW:2,PED:1} },
+  { t:'Сурет салу, дизайн жасау немесе шығармашылық жұмыстар қызықтырады.', w:{ART:3} },
+  { t:'Қиын жағдайда тез шешім қабылдай аламын.', w:{LAW:2,BUS:2,MED:1} },
+  { t:'Адамдардың мінез-құлқын түсіну қызықты.', w:{PSY:3,PED:1} },
+  { t:'Денсаулық сақтау немесе медицина тақырыптары қызықтырады.', w:{MED:3} },
+  { t:'Математикалық есептерді шығарудан ләззат аламын.', w:{SCI:2,IT:2,ENG:1} },
+  { t:'Табиғат, экология немесе қоршаған орта мәселелері қызықтырады.', w:{SCI:2,MED:2} },
+  { t:'Заңдар мен әділдік мәселелері туралы ойланамын.', w:{LAW:3} },
+  { t:'Тарих пен қоғамның дамуы туралы білгім келеді.', w:{HUM:2,LAW:1} },
+  { t:'Шет тілдерін үйрену маған оңай.', w:{HUM:2,BUS:1} },
+  { t:'Жоба немесе іс-шара ұйымдастыру тәжірибем бар.', w:{BUS:2,PED:2} },
+  { t:'Зерттеу жүргізіп, ақпарат жинағанды ұнатамын.', w:{SCI:3,HUM:1} },
+  { t:'Мен үшін тұрақты табыс емес, қызықты жұмыс маңыздырақ.', w:{ART:2,SCI:1} },
+  { t:'Жауапкершілігі жоғары жұмыстардан қорықпаймын.', w:{MED:2,LAW:2,BUS:1} },
+  { t:'Болашақ мамандығым арқылы қоғамға пайда әкелгім келеді.', w:{PED:2,MED:2,PSY:1} },
 ];
 
-const ANSWERS = [
-  { label: 'А', text: 'Иә, өте ұнайды' },
-  { label: 'Б', text: 'Жақсы ұнайды' },
-  { label: 'В', text: 'Аздап ұнайды' },
-  { label: 'Г', text: 'Ұнамайды' },
+const SCALE = [
+  { v:0, label:'Мүлдем келіспеймін' },
+  { v:1, label:'Келіспеймін' },
+  { v:2, label:'Бейтараппын' },
+  { v:3, label:'Келісемін' },
+  { v:4, label:'Толық келісемін' },
 ];
 
 let current = 0;
-const scores = {};
+const answers = {}; // qIndex -> points 0..4
 
 function renderQuestion() {
   const q = QUESTIONS[current];
   const total = QUESTIONS.length;
   const pct = Math.round(((current + 1) / total) * 100);
-
   document.getElementById('progressLabel').textContent = `Сұрақ ${current + 1} / ${total}`;
   document.getElementById('progressBar').style.width = pct + '%';
   document.getElementById('qNum').textContent = `СҰРАҚ ${current + 1}`;
-  document.getElementById('qText').textContent = q.text;
+  document.getElementById('qText').textContent = q.t;
   document.getElementById('qNum').className = 'question-num question-enter';
 
   const opts = document.getElementById('answerOptions');
-  opts.replaceChildren();
-  ANSWERS.forEach((a, i) => {
+  opts.innerHTML = '';
+  SCALE.forEach((a) => {
     const btn = document.createElement('button');
-    btn.className = 'answer-btn';
-    if (scores[q.id] === i) btn.classList.add('selected');
-
-    const letter = document.createElement('span');
-    letter.className = 'answer-letter';
-    letter.textContent = a.label;
-
+    btn.className = 'scale-btn';
+    if (answers[current] === a.v) btn.classList.add('selected');
+    const dot = document.createElement('span');
+    dot.className = 'scale-dot';
+    dot.textContent = a.v + 1;
     const label = document.createElement('span');
-    label.textContent = a.text;
-
-    btn.appendChild(letter);
-    btn.appendChild(label);
-
-    btn.addEventListener('click', () => selectAnswer(i, btn));
+    label.textContent = a.label;
+    btn.appendChild(dot); btn.appendChild(label);
+    btn.addEventListener('click', () => selectAnswer(a.v, btn));
     opts.appendChild(btn);
   });
 
   document.getElementById('prevBtn').style.display = current > 0 ? '' : 'none';
-  document.getElementById('nextBtn').disabled = scores[q.id] === undefined;
+  document.getElementById('nextBtn').disabled = answers[current] === undefined;
   document.getElementById('nextBtn').textContent = current === total - 1 ? 'Нәтижені көру ✓' : 'Келесі →';
 }
 
-function selectAnswer(idx, btn) {
-  const q = QUESTIONS[current];
-  scores[q.id] = idx;
-  document.querySelectorAll('.answer-btn').forEach(b => b.classList.remove('selected'));
+function selectAnswer(v, btn) {
+  answers[current] = v;
+  document.querySelectorAll('.scale-btn').forEach(b => b.classList.remove('selected'));
   btn.classList.add('selected');
   document.getElementById('nextBtn').disabled = false;
   document.getElementById('skipInfo').textContent = '';
+  setTimeout(() => { if (current < QUESTIONS.length - 1) { current++; renderQuestion(); } }, 220);
 }
 
-function nextQuestion() {
-  if (current < QUESTIONS.length - 1) {
-    current++;
-    renderQuestion();
-  } else {
-    finishTest();
-  }
-}
-
-function prevQuestion() {
-  if (current > 0) { current--; renderQuestion(); }
-}
+function nextQuestion() { if (current < QUESTIONS.length - 1) { current++; renderQuestion(); } else finishTest(); }
+function prevQuestion() { if (current > 0) { current--; renderQuestion(); } }
 
 function finishTest() {
-  // Tally scores by category
-  const catScores = {};
-  QUESTIONS.forEach(q => {
-    const ans = scores[q.id] ?? 3;
-    const points = [3, 2, 1, 0][ans];
-    catScores[q.category] = (catScores[q.category] || 0) + points;
+  const CLUSTERS = ['IT','ENG','MED','PED','PSY','BUS','LAW','HUM','SCI','ART'];
+  const raw = {}, max = {};
+  CLUSTERS.forEach(c => { raw[c] = 0; max[c] = 0; });
+  QUESTIONS.forEach((q, i) => {
+    const p = (answers[i] !== undefined) ? answers[i] : 2; // default neutral
+    Object.keys(q.w).forEach(c => {
+      raw[c] += p * q.w[c];
+      max[c] += 4 * q.w[c];
+    });
   });
+  const pct = {};
+  CLUSTERS.forEach(c => { pct[c] = max[c] ? Math.round((raw[c] / max[c]) * 100) : 0; });
+  const ranked = CLUSTERS.slice().sort((a, b) => pct[b] - pct[a]);
 
-  // Determine direction
-  const humanitScore = (catScores.humanit||0) + (catScores.social||0) + (catScores.teach||0) + (catScores.law||0);
-  const techScore = (catScores.analytic||0) + (catScores.tech||0) + (catScores.it||0) + (catScores.science||0);
-  const creativeScore = (catScores.creative||0) + (catScores.art||0) + (catScores.marketing||0);
-  const businessScore = (catScores.business||0) + (catScores.finance||0) + (catScores.intl||0);
-  const scienceScore = (catScores.medicine||0) + (catScores.nature||0) + (catScores.research||0);
-
-  const maxScore = Math.max(humanitScore, techScore, creativeScore, businessScore, scienceScore);
-  let direction, topSpec, grant;
-
-  if (maxScore === humanitScore) {
-    direction = 'Гуманитарлық + Коммуникациялық';
-    topSpec = 'Маркетинг, Психология, Журналистика';
-    grant = 'Орташа';
-  } else if (maxScore === techScore) {
-    direction = 'Техникалық + IT';
-    topSpec = 'IT, Инженерия, Физика';
-    grant = 'Жоғары';
-  } else if (maxScore === creativeScore) {
-    direction = 'Шығармашылық + Дизайн';
-    topSpec = 'Дизайн, Маркетинг, Журналистика';
-    grant = 'Орташа';
-  } else if (maxScore === businessScore) {
-    direction = 'Бизнес + Халықаралық';
-    topSpec = 'Бизнес, Маркетинг, Аударма';
-    grant = 'Орташа';
-  } else {
-    direction = 'Жаратылыстану + Медицина';
-    topSpec = 'Медицина, Биология, Химия';
-    grant = 'Жоғары';
-  }
-
-  const results = { direction, topSpec, grant, catScores, date: new Date().toISOString() };
+  const results = {
+    type: 'aptitude',
+    clusters: pct,
+    ranked: ranked,
+    top: ranked.slice(0, 3),
+    // legacy fields for dashboard preview compatibility
+    direction: ranked[0],
+    grant: pct[ranked[0]] >= 70 ? 'Жоғары' : 'Орташа',
+    date: new Date().toISOString()
+  };
   localStorage.setItem('shyraq_results', JSON.stringify(results));
   window.location.href = 'results.html';
 }
 
-document.addEventListener('DOMContentLoaded', () => renderQuestion());
+document.addEventListener('DOMContentLoaded', renderQuestion);
 </script>
-  <script src="js/icons.js"></script>
-
 </body>
 </html>
