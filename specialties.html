@@ -149,7 +149,7 @@
 
     /* List body */
     .sc-left-body {
-      flex: 1; overflow-y: auto; padding: 14px 18px 20px;
+      flex: 1; overflow-y: auto; padding: 16px 20px 24px;
       scrollbar-width: thin; scrollbar-color: rgba(0,0,0,.1) transparent;
     }
     .sc-left-body::-webkit-scrollbar { width: 4px; }
@@ -173,8 +173,8 @@
 
     /* ── SPECIALTY CARD ── */
     .sc-card {
-      background: #fff; border-radius: 20px; padding: 16px;
-      margin-bottom: 10px;
+      background: #fff; border-radius: 20px; padding: 17px;
+      margin-bottom: 13px;
       box-shadow: 0 3px 16px rgba(0,0,0,.05);
       cursor: pointer; transition: all .18s;
       border: 2px solid transparent;
@@ -226,7 +226,7 @@
 
     /* Hero */
     .sc-hero {
-      margin: 20px 20px 0; border-radius: 24px; padding: 26px;
+      margin: 26px 26px 0; border-radius: 24px; padding: 28px;
       position: relative; overflow: hidden; min-height: 190px;
       display: flex; flex-direction: column;
     }
@@ -261,7 +261,7 @@
       display: grid; grid-template-columns: repeat(4,1fr);
       background: #fff; border-radius: 20px;
       box-shadow: 0 3px 16px rgba(0,0,0,.05);
-      margin: 16px 20px 0; overflow: hidden;
+      margin: 22px 26px 0; overflow: hidden;
     }
     .sc-qstat {
       display: flex; flex-direction: column; align-items: center;
@@ -277,7 +277,7 @@
     .sc-qstat-val { font-size: 12.5px; font-weight: 800; text-align: center; }
 
     /* Section */
-    .sc-section { margin: 20px 20px 0; }
+    .sc-section { margin: 26px 26px 0; }
     .sc-section-hdr { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
     .sc-section-title { font-size: 17px; font-weight: 800; color: #1E293B; }
     .sc-section-link { font-size: 13px; font-weight: 600; cursor: pointer; text-decoration: none; }
@@ -499,6 +499,42 @@
       .step-content h3 { font-size: 17px; }
       .chance-ring { font-size: 40px; }
     }
+
+    /* ════ ТІЗІМДІ ЖИЮ/АШУ (collapsible left panel) ════ */
+    .sc-collapse-btn {
+      width: 36px; height: 36px; border: none; border-radius: 11px;
+      background: #fff; box-shadow: 0 2px 10px rgba(0,0,0,.06);
+      display: inline-flex; align-items: center; justify-content: center;
+      cursor: pointer; color: #64748B; flex: 0 0 auto;
+      transition: background .15s, color .15s;
+    }
+    .sc-collapse-btn:hover { background: #EEF2F7; color: #1E293B; }
+    .sc-collapse-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+
+    .sc-reopen-btn {
+      display: none; position: fixed; top: 84px; left: 18px; z-index: 60;
+      align-items: center; gap: 8px; padding: 11px 16px;
+      border: none; border-radius: 13px; cursor: pointer;
+      background: #3B82F6; color: #fff; font-family: inherit;
+      font-size: 13px; font-weight: 700;
+      box-shadow: 0 10px 26px rgba(59,130,246,.38);
+      transition: filter .15s, transform .15s;
+    }
+    .sc-reopen-btn:hover { filter: brightness(1.06); transform: translateY(-1px); }
+    .sc-reopen-btn svg { width: 17px; height: 17px; stroke: currentColor; fill: none; stroke-width: 2.3; stroke-linecap: round; stroke-linejoin: round; }
+
+    @media (min-width: 921px) {
+      .sc-wrap { transition: grid-template-columns .32s cubic-bezier(.4,0,.2,1); }
+      .sc-left { transition: opacity .25s ease, transform .3s ease; }
+      .sc-wrap.left-collapsed { grid-template-columns: 0 1fr; }
+      .sc-wrap.left-collapsed .sc-left { opacity: 0; transform: translateX(-14px); pointer-events: none; }
+      .sc-reopen-btn.show { display: inline-flex; }
+    }
+    /* mobile: single column already, no collapse */
+    @media (max-width: 920px) {
+      .sc-collapse-btn { display: none; }
+      .sc-reopen-btn { display: none !important; }
+    }
   </style>
 </head>
 <body>
@@ -550,6 +586,9 @@
     <div class="sc-left-head">
       <div class="sc-title-row">
         <span class="sc-page-title">Мамандықтар</span>
+        <button class="sc-collapse-btn" id="scCollapse" type="button" onclick="toggleScLeft()" title="Тізімді жию" aria-label="Тізімді жию">
+          <svg viewBox="0 0 24 24"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
+        </button>
       </div>
       <div class="sc-search-row">
         <div class="sc-search-wrap">
@@ -582,6 +621,12 @@
   </div>
 
 </div>
+
+<!-- floating «тізімді ашу» button (көрінеді тек тізім жиналғанда) -->
+<button class="sc-reopen-btn" id="scReopen" type="button" onclick="toggleScLeft()" title="Тізімді ашу">
+  <svg viewBox="0 0 24 24"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
+  Тізім
+</button>
 
 <!-- ══════════════ «ӨЗ МҮМКІНДІГІҢДІ ТЕКСЕРУ» МОДАЛЬ ══════════════ -->
 <div class="modal-overlay" id="checkModal">
@@ -632,6 +677,24 @@
 <script src="js/auth-guard.js"></script>
 <script src="js/specialties-grants-data.js"></script>
 <script>
+/* ── Тізімді жию/ашу (collapsible left panel) ── */
+function toggleScLeft() {
+  var wrap = document.querySelector('.sc-wrap');
+  var reopen = document.getElementById('scReopen');
+  if (!wrap) return;
+  var collapsed = wrap.classList.toggle('left-collapsed');
+  if (reopen) reopen.classList.toggle('show', collapsed);
+  try { localStorage.setItem('shyraq_speclist', collapsed ? 'collapsed' : 'open'); } catch (e) {}
+}
+document.addEventListener('DOMContentLoaded', function () {
+  if (window.innerWidth > 920 && localStorage.getItem('shyraq_speclist') === 'collapsed') {
+    var wrap = document.querySelector('.sc-wrap');
+    var reopen = document.getElementById('scReopen');
+    if (wrap) wrap.classList.add('left-collapsed');
+    if (reopen) reopen.classList.add('show');
+  }
+});
+
 /* ════════════════════════════════════════════
    DATA
 ════════════════════════════════════════════ */
