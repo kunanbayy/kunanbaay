@@ -390,45 +390,82 @@
   });
 
   /* ── Жіберу ── */
-  submitBtn.addEventListener('click', function () {
+  var API = (typeof window !== 'undefined' && window.SHYRAQ_API) ? String(window.SHYRAQ_API).replace(/\/$/, '') : '';
+  function getUserId() {
+    try { var u = JSON.parse(localStorage.getItem('shyraq_user') || 'null'); if (u && u.id) return u.id; } catch (e) {}
+    return window.SHYRAQ_USER_ID || '';
+  }
+  function paySuccess() {
+    submitBtn.classList.add('sent');
+    submitBtn.textContent = '✓ Расталды';
+    try { localStorage.setItem('shyraq_premium', '1'); } catch (e) {}
+    document.getElementById('successScreen').classList.add('visible');
+    document.getElementById('uploadZone').style.display = 'none';
+    var next = params.get('next');
+    var dest = (next === 'results') ? { href: 'results.html?paid=1', label: '← Толық тест нәтижесін ашу' }
+             : (next === 'grant')  ? { href: 'grant.html?paid=1',  label: '← Грант талдауын ашу' }
+             : null;
+    if (dest) {
+      var back = document.getElementById('successScreen');
+      if (back) {
+        var a = document.createElement('a');
+        a.href = dest.href;
+        a.className = 'pay-submit';
+        a.style.cssText = 'display:flex;align-items:center;justify-content:center;text-decoration:none;margin-top:14px;';
+        a.textContent = dest.label;
+        back.appendChild(a);
+      }
+    }
+  }
+  function payError(msg) {
+    submitBtn.disabled = false;
+    submitBtn.classList.remove('sent');
+    submitBtn.textContent = 'Чекті жіберу';
+    var box = document.getElementById('payError');
+    if (!box) {
+      box = document.createElement('div');
+      box.id = 'payError';
+      box.style.cssText = 'margin-top:12px;padding:12px 14px;border-radius:12px;background:#FEF2F2;border:1px solid #FECACA;color:#B91C1C;font-size:0.9rem;line-height:1.45;';
+      submitBtn.parentNode.insertBefore(box, submitBtn.nextSibling);
+    }
+    box.textContent = '⚠️ ' + msg;
+  }
+
+  submitBtn.addEventListener('click', async function () {
     const file = fileInput.files[0];
     if (!file) return;
-
-    /*
-     * Нақты жобада FormData арқылы backend-ке жіберіледі:
-     * const fd = new FormData();
-     * fd.append('receipt', file);
-     * fd.append('comment', commentText);
-     * fd.append('plan', planKey);
-     * await fetch('/api/upload-receipt', { method: 'POST', body: fd });
-     */
-
-    this.textContent = '⏳ Жіберілуде...';
+    var pe = document.getElementById('payError'); if (pe) pe.remove();
     this.disabled = true;
+    this.textContent = API ? '⏳ Чек тексерілуде...' : '⏳ Жіберілуде...';
 
-    setTimeout(() => {
-      this.classList.add('sent');
-      this.textContent = '✓ Чек жіберілді';
-      // unlock premium features (grant analyzer full results)
-      try { localStorage.setItem('shyraq_premium', '1'); } catch (e) {}
-      document.getElementById('successScreen').classList.add('visible');
-      document.getElementById('uploadZone').style.display = 'none';
-      var next = params.get('next');
-      var dest = (next === 'results') ? { href:'results.html?paid=1', label:'← Толық тест нәтижесін ашу' }
-               : (next === 'grant')  ? { href:'grant.html?paid=1', label:'← Грант талдауын ашу' }
-               : null;
-      if (dest) {
-        var back = document.getElementById('successScreen');
-        if (back) {
-          var a = document.createElement('a');
-          a.href = dest.href;
-          a.className = 'pay-submit';
-          a.style.cssText = 'display:flex;align-items:center;justify-content:center;text-decoration:none;margin-top:14px;';
-          a.textContent = dest.label;
-          back.appendChild(a);
-        }
+    // Automated OCR verification when a backend (window.SHYRAQ_API) is configured
+    if (API) {
+      try {
+        const userId = getUserId();
+        if (!userId) { payError('Авто-растау үшін алдымен жүйеге кіріңіз (тіркелу қажет).'); return; }
+        const oRes = await fetch(API + '/api/payment/create-order', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId: userId, plan: params.get('plan') || 'premium_1m' })
+        });
+        const oJson = await oRes.json().catch(() => ({}));
+        if (!oRes.ok || !oJson.ok) { payError('Тапсырыс жасалмады. Қайталап көріңіз.'); return; }
+
+        const fd = new FormData();
+        fd.append('orderId', oJson.orderId);
+        fd.append('userId', userId);
+        fd.append('file', file);
+        const vRes = await fetch(API + '/api/payment/verify-receipt', { method: 'POST', body: fd });
+        const vJson = await vRes.json().catch(() => ({}));
+        if (vRes.ok && vJson.ok) paySuccess();
+        else payError(vJson.message || 'Чек расталмады. Дұрыс Kaspi чегін жүктеңіз.');
+      } catch (e) {
+        payError('Желі қатесі. Кейінірек қайталаңыз.');
       }
-    }, 1000);
+      return;
+    }
+
+    // Fallback: no backend configured → manual review
+    setTimeout(paySuccess, 1000);
   });
 })();
 </script>
