@@ -5,8 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Менің кабинетім — Shyraq Education</title>
   <script>
-    /* Админ аккаунт болса — оқушы кабинетін көрсетпей, админ панельге бағыттау */
-    if (localStorage.getItem('shyraq_admin') === '1') {
+    /* Админ аккаунт болса — оқушы кабинетін көрсетпей, админ панельге бағыттау.
+       Бірақ админ «Оқушы кабинеті» сілтемесімен (?as=student) қараса — рұқсат. */
+    if (localStorage.getItem('shyraq_admin') === '1' && !location.search.includes('as=student')) {
       window.location.replace('admin.html');
     }
   </script>
