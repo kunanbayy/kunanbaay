@@ -1006,3 +1006,69 @@ p { color: var(--text-muted); }
   *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
   html { scroll-behavior: auto; }
 }
+
+/* ===== COLLAPSIBLE RAIL SIDEBAR (desktop) ===== */
+/* Icon-only rail by default; expands to reveal labels on hover.
+   Main content stays at the rail width so the expanded panel overlays. */
+:root { --sidebar-rail: 88px; }
+@media (min-width: 769px) {
+  .sidebar {
+    width: var(--sidebar-rail);
+    padding: 24px 16px;
+    overflow-x: hidden; overflow-y: auto;
+    transition: width .3s cubic-bezier(.4,0,.2,1), box-shadow .3s, padding .3s;
+  }
+  .sidebar:hover,
+  .sidebar:focus-within {
+    width: var(--sidebar-w);
+    padding: 24px 18px;
+    box-shadow: 18px 0 60px -24px rgba(30,58,95,.35);
+  }
+  .dashboard-main { margin-left: var(--sidebar-rail); transition: margin-left .3s cubic-bezier(.4,0,.2,1); }
+
+  /* keep every row on one line so labels clip cleanly while collapsed */
+  .sidebar-logo,
+  .sidebar-link { white-space: nowrap; }
+
+  /* logo text + link labels + premium badge: fade out when collapsed */
+  .sidebar-logo > :not(.sidebar-logo-icon),
+  .sidebar-link > :not(.icon),
+  .sidebar-link .badge {
+    opacity: 0; transform: translateX(-6px);
+    transition: opacity .18s ease, transform .25s ease;
+  }
+  .sidebar:hover .sidebar-logo > :not(.sidebar-logo-icon),
+  .sidebar:hover .sidebar-link > :not(.icon),
+  .sidebar:hover .sidebar-link .badge,
+  .sidebar:focus-within .sidebar-logo > :not(.sidebar-logo-icon),
+  .sidebar:focus-within .sidebar-link > :not(.icon),
+  .sidebar:focus-within .sidebar-link .badge {
+    opacity: 1; transform: none;
+    transition-delay: .06s;
+  }
+  .sidebar-link:hover { transform: none; }
+
+  /* section titles become slim divider lines while collapsed */
+  .sidebar-section-title {
+    overflow: hidden; white-space: nowrap;
+    transition: color .18s ease;
+  }
+  .sidebar:not(:hover):not(:focus-within) .sidebar-section-title {
+    color: transparent; position: relative; margin: 16px 6px 8px;
+  }
+  .sidebar:not(:hover):not(:focus-within) .sidebar-section-title::after {
+    content: ""; position: absolute; left: 0; right: 0; top: 50%;
+    height: 1px; background: var(--border);
+  }
+
+  /* premium upsell card: hidden in rail, revealed on expand */
+  .sidebar-premium {
+    opacity: 0; max-height: 0; padding-top: 0; padding-bottom: 0;
+    overflow: hidden; pointer-events: none;
+    transition: opacity .2s ease, max-height .3s ease, padding .3s ease, margin .3s ease;
+  }
+  .sidebar:hover .sidebar-premium,
+  .sidebar:focus-within .sidebar-premium {
+    opacity: 1; max-height: 260px; padding: 20px 18px; pointer-events: auto;
+  }
+}
