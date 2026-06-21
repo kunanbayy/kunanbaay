@@ -4,6 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Менің кабинетім — Shyraq Education</title>
+  <script>
+    /* Админ аккаунт болса — оқушы кабинетін көрсетпей, админ панельге бағыттау */
+    if (localStorage.getItem('shyraq_admin') === '1') {
+      window.location.replace('admin.html');
+    }
+  </script>
   <link rel="stylesheet" href="css/style.css" />
   <style>
     .quick-action {
