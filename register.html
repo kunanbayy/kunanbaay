@@ -223,8 +223,8 @@
             <div class="name" id="summaryName"></div>
             <div class="meta" id="summaryMeta"></div>
           </div>
-          <button class="submit-btn" style="width:100%" onclick="completeRegister()">🎯 Мамандық тестінен өту<span class="btn-glow"></span></button>
-          <a href="dashboard.html" class="ghost-btn" style="margin-top:12px;width:100%">Кабинетке өту</a>
+          <button class="submit-btn" style="width:100%" onclick="completeRegister('test.html')">🎯 Мамандық тестінен өту<span class="btn-glow"></span></button>
+          <a href="#" class="ghost-btn" style="margin-top:12px;width:100%" onclick="completeRegister('dashboard.html');return false;">Кабинетке өту</a>
         </div>
       </section>
     </div>
@@ -280,7 +280,7 @@
     function show(id){
       ['step1','step2','step3'].forEach(s => document.getElementById(s).style.display = s === id ? '' : 'none');
     }
-    async function completeRegister(){
+    async function completeRegister(dest){
       const first = document.getElementById('firstName').value.trim();
       const last = document.getElementById('lastName').value.trim();
       const fullName = (first + ' ' + last).trim() || 'Оқушы';
@@ -292,7 +292,7 @@
       localStorage.removeItem('shyraq_demo_premium');
       try {
         await window.ShyraqAuth.register({ name: fullName, email, password, classYear, city });
-        window.location.href = 'test.html';
+        window.location.href = dest || 'test.html';
       } catch (err) {
         toast(err.message || 'Тіркелу кезінде қате', 'error');
         // егер email бұрыннан бар болса — кіру бетіне
