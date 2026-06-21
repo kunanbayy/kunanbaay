@@ -91,6 +91,19 @@
     .scale-row .sl-track { height: 10px; border-radius: 999px; background: #F1F2F7; overflow: hidden; }
     .scale-row .sl-fill { height: 100%; border-radius: 999px; width: 0; transition: width 1s cubic-bezier(.4,0,.2,1); }
     .scale-row .sl-range { font-size: .72rem; color: var(--text-light); font-weight: 600; text-align: right; }
+    /* cutoff comparison (real previous-year grant scores) */
+    .cutoff-box { margin-top: 6px; }
+    .cf-scale { position: relative; height: 44px; margin: 14px 0 10px; }
+    .cf-track { position: absolute; top: 22px; left: 0; right: 0; height: 8px; border-radius: 999px; background: linear-gradient(90deg,#FCA5A5,#FCD34D,#86EFAC); }
+    .cf-marker { position: absolute; top: 8px; width: 3px; height: 30px; background: var(--ink); border-radius: 2px; }
+    .cf-marker::after { content: attr(data-v); position: absolute; top: -17px; left: 50%; transform: translateX(-50%); font-size: .7rem; font-weight: 800; color: var(--ink); white-space: nowrap; }
+    .cf-ends { display: flex; justify-content: space-between; font-size: .7rem; color: var(--text-light); font-weight: 600; }
+    .cf-rows { display: flex; flex-direction: column; gap: 2px; margin-top: 14px; }
+    .cf-row { display: flex; justify-content: space-between; align-items: center; font-size: .9rem; padding: 9px 0; border-bottom: 1px dashed #EEF0F6; }
+    .cf-row:last-child { border-bottom: none; }
+    .cf-row .k { color: var(--text-muted); }
+    .cf-row .v { font-weight: 800; color: var(--ink); }
+    .cf-row .v.ok { color: var(--g-green); } .cf-row .v.no { color: var(--g-red); }
 
     .sec-title { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 46px 0 18px; flex-wrap: wrap; }
     .sec-title h2 { font-size: 1.5rem; color: var(--ink); display: flex; align-items: center; gap: 10px; }
@@ -350,12 +363,7 @@
         </div>
         <div class="prob-bar"><div class="prob-bar-fill" id="probBar"></div></div>
         <p class="prob-desc" id="probDesc">Сіздің нәтижеңіз бойынша грантқа түсу мүмкіндігі жақсы.</p>
-        <div class="scale-rows" id="scaleRows">
-          <div class="scale-row" data-band="low"><span class="sl-name">Төмен</span><div class="sl-track"><div class="sl-fill" style="background:var(--g-red)"></div></div><span class="sl-range">0–63</span></div>
-          <div class="scale-row" data-band="risk"><span class="sl-name">Тәуекел</span><div class="sl-track"><div class="sl-fill" style="background:var(--g-orange)"></div></div><span class="sl-range">64–79</span></div>
-          <div class="scale-row" data-band="med"><span class="sl-name">Орташа</span><div class="sl-track"><div class="sl-fill" style="background:var(--g-gold)"></div></div><span class="sl-range">80–101</span></div>
-          <div class="scale-row" data-band="high"><span class="sl-name">Жоғары</span><div class="sl-track"><div class="sl-fill" style="background:var(--g-green)"></div></div><span class="sl-range">102–140</span></div>
-        </div>
+        <div class="cutoff-box" id="cutoffBox"></div>
       </div>
     </div>
 
@@ -568,18 +576,51 @@
     if(diff>=-8) return "Сәл жетпейді, бірақ мүмкіндік бар.";
     return "Балл айтарлықтай жетпейді.";
   }
-  function scoreToPct(s){
-    const bands=[{lo:0,hi:63,plo:5,phi:34},{lo:64,hi:79,plo:35,phi:54},{lo:80,hi:101,plo:55,phi:84},{lo:102,hi:140,plo:85,phi:99}];
-    const b=bands.find(b=>s>=b.lo&&s<=b.hi)||bands[3];
-    return Math.round(b.plo+(s-b.lo)/(b.hi-b.lo)*(b.phi-b.plo));
+  // Grant chance from REAL previous-year cutoff (өту) scores only — no fixed score bands.
+  // Compares the student's score against the actual cutoffs of matching programs.
+  function grantChance(all, score){
+    const cutoffs = all.map(x => x.sp.thresholdScore).filter(n => n != null).sort((a,b) => a-b);
+    const total = cutoffs.length;
+    if(!total){
+      return { pct:0, label:'⚪ Дерек жоқ', color:'var(--text-muted)', bg:'#F1F2F7', bar:'#CBD5E1',
+        desc:'Бұл таңдау бойынша бағдарлама табылмады. Пәндерді немесе қаланы өзгертіңіз.',
+        min:null, med:null, max:null, qual:0, total:0 };
+    }
+    const minC = cutoffs[0], maxC = cutoffs[total-1], medC = cutoffs[Math.floor(total/2)];
+    const qual = cutoffs.filter(c => score >= c).length;
+    const ratio = qual / total;
+    let pct, label, color, bg, bar, desc;
+    if(qual === 0){
+      // even the lowest cutoff is out of reach
+      pct = Math.max(2, Math.min(15, Math.round(15 - (minC - score) * 0.6)));
+      label = '🔴 Төмен мүмкіндік'; color='var(--g-red)'; bg='var(--g-red-bg)'; bar='var(--g-red)';
+      desc = 'Таңдау бойынша ең төмен өту шегі ' + minC + ' балл, ал сіздің балыңыз ' + score + '. Балл жетпейді — бәсекелестігі төмен өңірлік ЖОО-ларды немесе талабы төмендеу мамандықтарды қарастырыңыз.';
+    } else {
+      pct = Math.max(20, Math.round(ratio * 100));
+      if(ratio >= 0.6){ label='🟢 Жоғары мүмкіндік'; color='var(--g-green)'; bg='var(--g-green-bg)'; bar='var(--g-green)'; }
+      else if(ratio >= 0.3){ label='🟡 Орташа мүмкіндік'; color='var(--g-gold)'; bg='var(--g-gold-bg)'; bar='var(--g-gold)'; }
+      else { label='🟠 Тәуекелді мүмкіндік'; color='var(--g-orange)'; bg='var(--g-orange-bg)'; bar='var(--g-orange)'; }
+      desc = 'Өткен жылғы соңғы грант балы бойынша ' + total + ' бағдарламаның ' + qual + '-іне балыңыз жетеді.' +
+        (ratio < 0.6 ? ' Мүмкіндікті арттыру үшін бәсекелестігі төмен ЖОО-ларды да қарастырыңыз.' : ' Бірнеше университетке құжат тапсыру ұсынылады.');
+    }
+    return { pct, label, color, bg, bar, desc, min:minC, med:medC, max:maxC, qual, total };
   }
-  function bandOf(s){ if(s>=102)return'high'; if(s>=80)return'med'; if(s>=64)return'risk'; return'low'; }
-  const BAND_TEXT={
-    high:{nm:'🟢 Жоғары мүмкіндік',color:'var(--g-green)',bg:'var(--g-green-bg)',bar:'var(--g-green)',desc:'Грантқа түсу мүмкіндігіңіз өте жоғары. Таңдаған университеттеріңізге сеніммен құжат тапсырыңыз.'},
-    med:{nm:'🟡 Орташа мүмкіндік',color:'var(--g-gold)',bg:'var(--g-gold-bg)',bar:'var(--g-gold)',desc:'Сіздің нәтижеңіз бойынша грантқа түсу мүмкіндігі жақсы. Бірнеше университетке құжат тапсыру ұсынылады.'},
-    risk:{nm:'🟠 Тәуекелді мүмкіндік',color:'var(--g-orange)',bg:'var(--g-orange-bg)',bar:'var(--g-orange)',desc:'Мүмкіндік бар, бірақ тәуекел жоғары. Өткен жылғы балы төмен ЖОО мен мамандықтарды қарастырыңыз.'},
-    low:{nm:'🔴 Төмен мүмкіндік',color:'var(--g-red)',bg:'var(--g-red-bg)',bar:'var(--g-red)',desc:'Грантқа түсу мүмкіндігі төмен. Балл талабы аз мамандықтар мен өңірлік университеттерді қарастырыңыз.'}
-  };
+  function renderCutoffBox(score, gc){
+    const box = document.getElementById('cutoffBox');
+    if(!box) return;
+    if(!gc.total){ box.innerHTML = ''; return; }
+    const range = Math.max(1, gc.max - gc.min);
+    const pos = Math.max(0, Math.min(100, Math.round((score - gc.min) / range * 100)));
+    box.innerHTML =
+      '<div class="cf-scale"><div class="cf-track"></div><div class="cf-marker" style="left:' + pos + '%" data-v="Сіз: ' + score + '"></div></div>' +
+      '<div class="cf-ends"><span>Ең төмен өту шегі: ' + gc.min + '</span><span>Ең жоғары: ' + gc.max + '</span></div>' +
+      '<div class="cf-rows">' +
+        '<div class="cf-row"><span class="k">Сіздің балл</span><span class="v">' + score + ' балл</span></div>' +
+        '<div class="cf-row"><span class="k">Ең төмен өту шегі (өткен жыл)</span><span class="v ' + (score >= gc.min ? 'ok' : 'no') + '">' + gc.min + ' балл</span></div>' +
+        '<div class="cf-row"><span class="k">Орташа өту шегі</span><span class="v ' + (score >= gc.med ? 'ok' : 'no') + '">' + gc.med + ' балл</span></div>' +
+        '<div class="cf-row"><span class="k">Балыңыз жететін бағдарламалар</span><span class="v">' + gc.qual + ' / ' + gc.total + '</span></div>' +
+      '</div>';
+  }
 
   function cityOk(u, city){ if(city==='__other') return MAIN_CITIES.indexOf(u.city)<0; if(city) return u.city===city; return true; }
 
@@ -636,15 +677,16 @@
     document.getElementById('resCity').textContent=f.cityText;
     document.getElementById('resUni').textContent=f.uniText;
 
-    const pct=scoreToPct(f.score), band=bandOf(f.score), bt=BAND_TEXT[band];
-    document.getElementById('probPct').textContent=pct;
-    const lv=document.getElementById('probLevel'); lv.textContent=bt.nm; lv.style.color=bt.color; lv.style.background=bt.bg;
-    document.getElementById('probDesc').textContent=bt.desc;
-    const bar=document.getElementById('probBar'); bar.style.width=pct+'%'; bar.style.background=bt.bar;
-    const fills={low:25,risk:50,med:75,high:100};
-    document.querySelectorAll('#scaleRows .scale-row').forEach(row=>{ const b=row.dataset.band; row.classList.toggle('active',b===band); row.querySelector('.sl-fill').style.width=(b===band?Math.max(30,pct):fills[b])+'%'; });
-
     const all=matchAll(f.score,f.tokens,f.city,f.uniId);
+
+    // grant chance — based purely on real previous-year cutoff (өту) scores
+    const gc = grantChance(all, f.score);
+    document.getElementById('probPct').textContent = gc.pct;
+    const lv=document.getElementById('probLevel'); lv.textContent=gc.label; lv.style.color=gc.color; lv.style.background=gc.bg;
+    document.getElementById('probDesc').textContent = gc.desc;
+    const bar=document.getElementById('probBar'); bar.style.width=gc.pct+'%'; bar.style.background=gc.bar;
+    renderCutoffBox(f.score, gc);
+
     const picks=pick4(all);
 
     // priority cascade — grant is secured at the first (highest-priority) choice the score clears
@@ -706,9 +748,9 @@
       const list=names.length>1?names.slice(0,-1).join(', ')+' және '+names[names.length-1]:names[0];
       ai=`${f.score} балл нәтижесі бойынша сізге ${list} университеттері сәйкес келеді. `;
       if(firstClear>=0) ai+=`Болжам бойынша грант ${firstClear+1}-ші таңдауыңызда ілінеді — оны жоғары приоритетке қойыңыз. `;
-      if(band==='high') ai+='Мүмкіндігіңіз жоғары.';
-      else if(band==='med') ai+=`Қосымша «${f.subjText}» бойынша өңірлік университеттерді де қарастырыңыз.`;
-      else ai+='Балл талабы төмендеу мамандықтарды таңдасаңыз, мүмкіндігіңіз артады.';
+      if(gc.total && gc.qual/gc.total >= 0.6) ai+='Өткен жылғы өту балдары бойынша мүмкіндігіңіз жоғары.';
+      else if(gc.total && gc.qual>0) ai+=`Қосымша «${f.subjText}» бойынша бәсекелестігі төмен ЖОО-ларды да қарастырыңыз.`;
+      else ai+='Балл талабы төмендеу мамандықтарды немесе өңірлік ЖОО-ларды таңдасаңыз, мүмкіндігіңіз артады.';
     } else { ai='Бұл пәндер тіркесімі бойынша нұсқа табылмады. Басқа тіркесімді таңдап көріңіз.'; }
     document.getElementById('aiText').textContent=ai;
 
