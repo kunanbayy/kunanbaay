@@ -273,6 +273,20 @@
       </div>
     </div>
 
+    <!-- Kaspi QR — automatic payment (shown when a gateway is configured) -->
+    <button id="qrPayBtn" style="display:none;width:100%;min-height:54px;border:none;border-radius:14px;background:#F2B84B;color:#0B1E33;font-weight:800;font-size:0.98rem;cursor:pointer;margin-bottom:14px;display:none;align-items:center;justify-content:center;gap:8px;">
+      📲 Kaspi QR — автоматты төлеу
+    </button>
+    <div id="qrBox" style="display:none;text-align:center;border:1px solid var(--border);border-radius:16px;padding:22px;margin-bottom:14px;">
+      <div style="font-weight:800;color:var(--navy);margin-bottom:4px;">Kaspi QR-ды сканерлеңіз</div>
+      <div style="font-size:0.82rem;color:var(--text-muted);margin-bottom:14px;">Kaspi қолданбасымен оқыңыз — төлемнен кейін Premium автоматты қосылады.</div>
+      <div id="qrCanvas" style="display:flex;justify-content:center;"></div>
+      <a id="qrLink" href="#" target="_blank" rel="noopener" style="display:inline-block;margin-top:14px;color:var(--gold-deep);font-weight:700;">Kaspi қолданбасында ашу →</a>
+      <div id="qrStatus" style="margin-top:12px;font-size:0.88rem;color:var(--text-muted);">⏳ Төлемді күтудеміз...</div>
+    </div>
+
+    <div id="payOrSep" style="display:none;text-align:center;color:var(--text-light);font-size:0.8rem;margin-bottom:12px;">— немесе чек арқылы —</div>
+
     <!-- Upload zone -->
     <div class="pay-upload" id="uploadZone">
       <input type="file" id="receiptInput" accept=".jpg,.jpeg,.png,.pdf"/>
@@ -467,6 +481,71 @@
     // Fallback: no backend configured → manual review
     setTimeout(paySuccess, 1000);
   });
+
+  // ─── Kaspi QR — automatic payment (uses kaspi-pos-automation gateway) ───
+  var qrBtn = document.getElementById('qrPayBtn');
+  if (API && getUserId() && qrBtn) {
+    qrBtn.style.display = 'flex';
+    document.getElementById('payOrSep').style.display = 'block';
+
+    function loadQrLib() {
+      return new Promise(function (resolve) {
+        if (window.QRCode) return resolve();
+        var s = document.createElement('script');
+        s.src = 'https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js';
+        s.onload = resolve; s.onerror = resolve;
+        document.head.appendChild(s);
+      });
+    }
+
+    qrBtn.addEventListener('click', async function () {
+      qrBtn.disabled = true; qrBtn.textContent = '⏳ QR жасалуда...';
+      try {
+        const userId = getUserId();
+        const res = await fetch(API + '/api/payment/create-qr', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId: userId, plan: params.get('plan') || 'premium_1m' })
+        });
+        const j = await res.json().catch(() => ({}));
+        if (!res.ok || !j.ok) { qrBtn.disabled = false; qrBtn.textContent = '📲 Kaspi QR — автоматты төлеу'; payError('QR жасалмады. Қайталап көріңіз.'); return; }
+
+        qrBtn.style.display = 'none';
+        document.getElementById('payOrSep').style.display = 'none';
+        document.getElementById('uploadZone').style.display = 'none';
+        submitBtn.style.display = 'none';
+        var box = document.getElementById('qrBox'); box.style.display = 'block';
+        document.getElementById('qrLink').href = j.qrToken;
+
+        await loadQrLib();
+        var holder = document.getElementById('qrCanvas'); holder.innerHTML = '';
+        if (window.QRCode) { new window.QRCode(holder, { text: j.qrToken, width: 200, height: 200 }); }
+        else { holder.innerHTML = '<a href="' + j.qrToken + '" target="_blank">Kaspi-де ашу</a>'; }
+
+        // poll status until paid / expired
+        var tries = 0;
+        var poll = setInterval(async function () {
+          tries++;
+          try {
+            const sRes = await fetch(API + '/api/payment/status?orderId=' + encodeURIComponent(j.orderId));
+            const sJson = await sRes.json().catch(() => ({}));
+            if (sJson.status === 'paid') {
+              clearInterval(poll);
+              document.getElementById('qrStatus').textContent = '✅ Төлем расталды!';
+              try { localStorage.setItem('shyraq_premium', '1'); } catch (e) {}
+              box.style.display = 'none';
+              paySuccess();
+            } else if (sJson.status === 'expired' || sJson.status === 'failed' || tries > 200) {
+              clearInterval(poll);
+              document.getElementById('qrStatus').textContent = '⌛ QR мерзімі бітті. Бетті жаңартып қайталаңыз.';
+            }
+          } catch (e) { /* keep polling */ }
+        }, 3000);
+      } catch (e) {
+        qrBtn.disabled = false; qrBtn.textContent = '📲 Kaspi QR — автоматты төлеу';
+        payError('Желі қатесі. Кейінірек қайталаңыз.');
+      }
+    });
+  }
 })();
 </script>
 </body>

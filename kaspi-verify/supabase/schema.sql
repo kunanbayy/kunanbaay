@@ -22,6 +22,9 @@ create table if not exists public.payment_orders (
   amount      integer not null default 990,
   plan        text not null default 'premium_1m',
   status      public.payment_status not null default 'pending',
+  provider    text not null default 'kaspi_qr',     -- 'kaspi_qr' | 'receipt_ocr'
+  qr_operation_id text,                              -- Kaspi Pay QR operation id
+  qr_token    text,                                  -- pay.kaspi.kz link for the QR
   created_at  timestamptz not null default now(),
   updated_at  timestamptz not null default now()
 );
@@ -52,6 +55,7 @@ create table if not exists public.verification_logs (
 
 create index if not exists idx_orders_user   on public.payment_orders(user_id);
 create index if not exists idx_orders_status on public.payment_orders(status);
+create index if not exists idx_orders_qrop   on public.payment_orders(qr_operation_id);
 create index if not exists idx_tx_receipt    on public.payment_transactions(receipt_number);
 create index if not exists idx_logs_user     on public.verification_logs(user_id);
 

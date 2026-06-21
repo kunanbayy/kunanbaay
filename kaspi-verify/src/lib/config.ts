@@ -19,6 +19,13 @@ export const config = {
   minOcrConfidence: Number(process.env.MIN_OCR_CONFIDENCE || 0.75),
   premiumDays: Number(process.env.PREMIUM_DAYS || 30),
 
+  // ── Kaspi Pay gateway (tapter-dev/kaspi-pos-automation) ──
+  kaspiGatewayUrl: process.env.KASPI_GATEWAY_URL || '',
+  kaspiTokenSn: process.env.KASPI_TOKEN_SN || '',
+  kaspiVtokenSecret: process.env.KASPI_VTOKEN_SECRET || '',
+  kaspiProfileId: process.env.KASPI_PROFILE_ID || '',
+  kaspiWebhookSecret: process.env.KASPI_WEBHOOK_SECRET || '',
+
   allowedOrigin: process.env.ALLOWED_ORIGIN || '*',
 } as const;
 

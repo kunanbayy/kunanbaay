@@ -62,6 +62,35 @@ window.SHYRAQ_API = 'https://your-vercel-app.vercel.app';
 When set, the receipt upload auto-verifies via this API; if empty, it falls back to
 manual review.
 
+## Recommended: real Kaspi QR auto-confirm (no OCR guesswork)
+
+Instead of reading a receipt screenshot, use the **Kaspi Pay API** via
+[`tapter-dev/kaspi-pos-automation`](https://github.com/tapter-dev/kaspi-pos-automation).
+This confirms the actual payment — far more reliable than OCR.
+
+**Flow**
+1. Deploy `kaspi-pos-automation` (its own Node server) and authenticate once
+   (`/api/auth/*`) to obtain the session headers.
+2. Set `KASPI_GATEWAY_URL`, `KASPI_TOKEN_SN`, `KASPI_VTOKEN_SECRET`,
+   `KASPI_PROFILE_ID`, `KASPI_WEBHOOK_SECRET` in this backend's env.
+3. In the gateway's `webhooks.json`, add:
+   ```json
+   [{ "url": "https://YOUR-BACKEND/api/payment/kaspi-webhook",
+      "events": ["payment.success","payment.failed","payment.expired"],
+      "secret": "your-webhook-secret" }]
+   ```
+4. Frontend: `POST /api/payment/create-qr { userId }` → returns `qrToken` (a
+   pay.kaspi.kz link) + `orderId`. Render the QR, the user pays in Kaspi.
+5. The gateway polls Kaspi and fires `payment.success` → `/api/payment/kaspi-webhook`
+   (HMAC-verified) → Premium is activated automatically.
+6. Frontend polls `GET /api/payment/status?orderId=…` until `status: "paid"`.
+
+`payment.html` already implements this: when `window.SHYRAQ_API` is set and the user
+is signed in, a **«Kaspi QR — автоматты төлеу»** button appears.
+
+Endpoints added for the QR flow:
+`POST /api/payment/create-qr` · `POST /api/payment/kaspi-webhook` · `GET /api/payment/status`
+
 ## Note on the OCR provider
 The spec asks for OpenAI Vision (implemented in `services/ocr.ts`). The OCR call is
 isolated behind `extractReceipt()`, so swapping in Anthropic Claude Vision, Google
