@@ -50,7 +50,7 @@
     .nav-link { padding: 7px 13px; border-radius: 999px; font-size: 0.875rem; font-weight: 500; color: var(--muted); transition: .16s; }
     .nav-link:hover, .nav-link.active { color: var(--navy); background: var(--gray2); }
     .nav-actions { display: flex; align-items: center; gap: 8px; }
-    .nav-mobile-btn { display: none; background: none; border: none; cursor: pointer; color: var(--navy); padding: 6px; }
+    .nav-mobile-btn { display: none !important; background: none; border: none; cursor: pointer; color: var(--navy); padding: 6px; }
 
     /* ── ACCOUNT DROPDOWN MENU ── */
     .menu-wrap { position: relative; display: flex; flex-direction: column; align-items: center; }
@@ -477,8 +477,9 @@
       .cta-right { justify-content: center; }
     }
     @media (max-width: 768px) {
-      .nav-links, .nav-actions, .menu-wrap { display: none; }
-      .nav-mobile-btn { display: flex; align-items: center; }
+      .nav-links, .menu-wrap { display: none; }
+      .nav-actions { display: flex; margin-left: auto; }
+      .nav-mobile-btn { display: none !important; }
       .bento-grid { grid-template-columns: 1fr; }
       .steps-grid { grid-template-columns: 1fr 1fr; }
       .steps-line { display: none; }
