@@ -330,18 +330,15 @@
   var PRICING = {}; try { PRICING = JSON.parse(localStorage.getItem('shyraq_pricing') || '{}'); } catch (e) {}
   function pp(k, d) { return (PRICING[k] != null && PRICING[k] !== '') ? +PRICING[k] : d; }
   const PLANS = {
-    free:     { name: 'Free',            desc: 'Free — тегін',                  amount: 0 },
-    premium:  { name: 'Premium',         desc: 'Premium — 1 ай',                amount: pp('premium', 990) },
-    premium_y:{ name: 'Premium',         desc: 'Premium — 12 ай (жылдық)',      amount: Math.round(pp('premium', 990) * 12 * 0.8) },
-    ai:       { name: 'AI Premium',      desc: 'AI Premium — 1 ай',             amount: pp('ai', 1990) },
-    ai_y:     { name: 'AI Premium',      desc: 'AI Premium — 12 ай (жылдық)',   amount: Math.round(pp('ai', 1990) * 12 * 0.8) },
-    report:   { name: 'Бір реттік есеп', desc: 'Бір реттік есеп — 1 рет',       amount: pp('report', 499) },
-    career:   { name: 'Бір реттік есеп', desc: 'Бір реттік есеп — 1 рет',       amount: pp('report', 499) },
-    once:     { name: 'Бір реттік есеп', desc: 'Бір реттік есеп — 1 рет',       amount: pp('report', 499) },
-    test:     { name: 'Толық есеп',      desc: 'Толық есеп — 1 рет',            amount: pp('report', 499) },
-    test990:  { name: 'Premium',         desc: 'Premium — 1 ай',                amount: pp('premium', 990) },
-    test1990: { name: 'AI Premium',      desc: 'AI Premium — 1 ай',             amount: pp('ai', 1990) },
-    test2990: { name: 'AI Premium+',     desc: 'AI Premium+ — 1 ай',            amount: 2990 },
+    free:     { name: 'Free',            desc: 'Free — тегін',                       amount: 0,                      energy: 0 },
+    standard: { name: 'Standard',        desc: 'Standard — 1 Career Energy',         amount: pp('standard', 2990),   energy: 1 },
+    career:   { name: 'Career Report',   desc: 'Career Report — 3 Career Energy',    amount: pp('career', 4990),     energy: 3 },
+    once:     { name: 'Standard',        desc: 'Standard — 1 Career Energy',         amount: pp('standard', 2990),   energy: 1 },
+    report:   { name: 'Career Report',   desc: 'Career Report — 3 Career Energy',    amount: pp('career', 4990),     energy: 3 },
+    test:     { name: 'Standard',        desc: 'Standard — 1 Career Energy',         amount: pp('standard', 2990),   energy: 1 },
+    test990:  { name: 'Standard',        desc: 'Standard — 1 Career Energy',         amount: pp('standard', 2990),   energy: 1 },
+    test1990: { name: 'Career Report',   desc: 'Career Report — 3 Career Energy',    amount: pp('career', 4990),     energy: 3 },
+    test2990: { name: 'Career Report',   desc: 'Career Report — 3 Career Energy',    amount: pp('career', 4990),     energy: 3 },
   };
 
   /* ── URL-параметрлер ── */
@@ -518,6 +515,8 @@
     var planName = plan.name;
     var amt = plan.amount;
     var receiptUrl = '';
+    // Энергияны "күтуде" сақтаймыз — админ растағанда (access-sync) есепке қосылады
+    try { localStorage.setItem('shyraq_pending_energy', String(plan.energy || 1)); } catch (e) {}
     try {
       if (window.ShyraqDB && window.ShyraqDB.ready()) {
         receiptUrl = await window.ShyraqDB.uploadReceipt(file);

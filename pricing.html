@@ -248,13 +248,8 @@
 
 <!-- PRICING HEAD -->
 <section class="price-head" id="plans">
-  <h2>Бір баға, шексіз мүмкіндік</h2>
-  <p>Тегін бастап, қажетіңе қарай жоғарыла. Ай сайын төле немесе жылдық жоспармен үнемде.</p>
-  <div class="billing">
-    <div class="switch" id="billSwitch" onclick="toggleBilling()"></div>
-    <span>Жылдық төлем</span>
-    <span class="save-pill">20% үнем</span>
-  </div>
+  <h2>Career Energy жүйесі</h2>
+  <p>Тегін көр, керек болса энергия сатып ал. Әр энергиямен бір толық мамандық талдауын ашасың.</p>
 </section>
 
 <!-- PRICING CARDS -->
@@ -262,68 +257,50 @@
 
   <!-- FREE -->
   <div class="price-card">
-    <span class="pbadge b-free">Тегін</span>
-    <div class="pamt">0 ₸ <small>/ ай</small></div>
+    <span class="pbadge b-free">🆓 Free</span>
+    <div class="pamt">0 ₸</div>
     <div class="pstrike">&nbsp;</div>
-    <div class="psub">Мәңгілік тегін</div>
+    <div class="psub">Сайтпен танысу үшін</div>
     <a href="register.html" class="pcta pcta-outline">Тегін бастау</a>
     <p class="pinc">Кіретіндер:</p>
-    <div class="pfeat"><span class="pf-ic">✓</span> 1 мамандық тесті</div>
-    <div class="pfeat"><span class="pf-ic">✓</span> 3 мамандық ұсынысы</div>
-    <div class="pfeat"><span class="pf-ic">✓</span> 1 грант есептеу</div>
-    <div class="pfeat"><span class="pf-ic">✓</span> 3 университет карточкасы</div>
-    <div class="pfeat"><span class="pf-ic">✓</span> Бейінді пәндер</div>
-    <a href="#full" class="seeall pcta-foot" onclick="document.getElementById('full').scrollIntoView({behavior:'smooth'});return false;">Барлық мүмкіндік →</a>
+    <div class="pfeat"><span class="pf-ic">✓</span> Барлық мамандықтарды көру</div>
+    <div class="pfeat"><span class="pf-ic">✓</span> Барлық университеттерді көру</div>
+    <div class="pfeat"><span class="pf-ic">✓</span> Гранттар туралы ақпарат</div>
+    <div class="pfeat"><span class="pf-ic">✓</span> Демо нәтиже</div>
+    <div class="pfeat" style="font-weight:800;color:var(--text-light)"><span class="pf-ic">⚡</span> 0 Career Energy</div>
   </div>
 
-  <!-- PREMIUM (featured) -->
-  <div class="price-card featured">
-    <span class="ribbon">Ең танымал</span>
-    <span class="pbadge b-prem">Premium</span>
-    <div class="pamt" data-plan="premium" data-m="990 ₸" data-a="792 ₸">990 ₸ <small>/ ай</small></div>
-    <div class="pstrike" data-a-show="990 ₸/ай">&nbsp;</div>
-    <div class="psub" data-m="Кез келген кезде тоқтат" data-a="9 504 ₸ жылына">Кез келген кезде тоқтат</div>
-    <button class="pcta pcta-gold" onclick="handlePremium('premium')">Premium алу</button>
-    <p class="pinc">Free-дегінің бәрі, әрі:</p>
-    <div class="pfeat"><span class="pf-ic">✓</span> Шексіз мамандық тесті</div>
-    <div class="pfeat"><span class="pf-ic">✓</span> 120+ мамандық анализі</div>
-    <div class="pfeat"><span class="pf-ic">✓</span> Барлық 104 университет</div>
-    <div class="pfeat"><span class="pf-ic">✓</span> Шексіз грант есептеу</div>
-    <div class="pfeat"><span class="pf-ic">✓</span> Жеке дайындық жоспары</div>
-    <div class="pfeat"><span class="pf-ic">✓</span> Таңдаулыларға сақтау</div>
-    <a href="#full" class="seeall pcta-foot" onclick="document.getElementById('full').scrollIntoView({behavior:'smooth'});return false;">Барлық мүмкіндік →</a>
-  </div>
-
-  <!-- AI PREMIUM -->
+  <!-- STANDARD -->
   <div class="price-card">
-    <span class="pbadge b-ai">AI Premium</span>
-    <div class="pamt" data-plan="ai" data-m="1 990 ₸" data-a="1 592 ₸">1 990 ₸ <small>/ ай</small></div>
-    <div class="pstrike" data-a-show="1 990 ₸/ай">&nbsp;</div>
-    <div class="psub" data-m="Барлық мүмкіндіктер" data-a="19 104 ₸ жылына">Барлық мүмкіндіктер</div>
-    <button class="pcta pcta-dark" onclick="handlePremium('ai')">AI Premium алу</button>
-    <p class="pinc">Premium-дегінің бәрі, әрі:</p>
-    <div class="pfeat"><span class="pf-ic">✓</span> AI кеңесші (шексіз)</div>
-    <div class="pfeat"><span class="pf-ic">✓</span> PDF Career Report</div>
-    <div class="pfeat"><span class="pf-ic">✓</span> Ата-анаға есеп</div>
-    <div class="pfeat"><span class="pf-ic">✓</span> Жеке оқу жоспары</div>
-    <div class="pfeat"><span class="pf-ic">✓</span> Priority қолдау</div>
-    <a href="#full" class="seeall pcta-foot" onclick="document.getElementById('full').scrollIntoView({behavior:'smooth'});return false;">Барлық мүмкіндік →</a>
-  </div>
-
-  <!-- CAREER REPORT (one-time) -->
-  <div class="price-card">
-    <span class="pbadge b-report">Бір рет</span>
-    <div class="pamt" data-plan="report">1 490 ₸</div>
+    <span class="pbadge b-prem">⭐ Standard</span>
+    <div class="pamt" data-plan="standard">2 990 ₸</div>
     <div class="pstrike">&nbsp;</div>
     <div class="psub">Бір реттік төлем</div>
-    <button class="pcta pcta-outline" onclick="handlePremium('report')">PDF алу</button>
+    <button class="pcta pcta-gold" onclick="handlePremium('standard')">Сатып алу</button>
     <p class="pinc">Не кіреді:</p>
-    <div class="pfeat"><span class="pf-ic">✓</span> Толық кәсіби анализ</div>
-    <div class="pfeat"><span class="pf-ic">✓</span> ТОП-10 мамандық</div>
+    <div class="pfeat" style="font-weight:800;color:#B7791F"><span class="pf-ic">⚡</span> 1 Career Energy</div>
+    <div class="pfeat"><span class="pf-ic">✓</span> 1 толық мамандық анализі</div>
+    <div class="pfeat"><span class="pf-ic">✓</span> ТОП мамандық ұсыныстары</div>
     <div class="pfeat"><span class="pf-ic">✓</span> Сәйкес университеттер</div>
-    <div class="pfeat"><span class="pf-ic">✓</span> Дайындық жоспары</div>
-    <div class="pfeat"><span class="pf-ic">✓</span> 10–15 беттік PDF</div>
-    <span class="seeall pcta-foot" style="color:var(--text-light);cursor:default">Жазылымсыз</span>
+    <div class="pfeat"><span class="pf-ic">✓</span> Грант ықтималдығы</div>
+    <div class="pfeat"><span class="pf-ic">✓</span> Дайындық бойынша ұсыныстар</div>
+  </div>
+
+  <!-- CAREER REPORT (featured) -->
+  <div class="price-card featured">
+    <span class="ribbon">⭐ Ең танымал</span>
+    <span class="pbadge b-report">🚀 Career Report</span>
+    <div class="pamt" data-plan="career">4 990 ₸</div>
+    <div class="pstrike">&nbsp;</div>
+    <div class="psub">Бір реттік төлем</div>
+    <button class="pcta pcta-dark" onclick="handlePremium('career')">Сатып алу</button>
+    <p class="pinc">Standard-тың бәрі, әрі:</p>
+    <div class="pfeat" style="font-weight:800;color:#6D5DFC"><span class="pf-ic">⚡</span> 3 Career Energy</div>
+    <div class="pfeat"><span class="pf-ic">✓</span> 3 толық мамандық анализі</div>
+    <div class="pfeat"><span class="pf-ic">✓</span> Толық PDF Career Report</div>
+    <div class="pfeat"><span class="pf-ic">✓</span> Жеке даму жоспары</div>
+    <div class="pfeat"><span class="pf-ic">✓</span> Басым (priority) ұсыныстар</div>
+    <div class="pfeat"><span class="pf-ic">✓</span> Толық аналитика</div>
   </div>
 </div>
 
@@ -530,8 +507,8 @@ const FAQS = [
 
 /* ── CHECKOUT ── */
 function handlePremium(type) {
-  const planMap = { premium: 'premium', ai: 'ai', report: 'career' };
-  const plan = planMap[type] || 'premium';
+  const planMap = { standard: 'standard', career: 'career' };
+  const plan = planMap[type] || 'standard';
   const user = JSON.parse(localStorage.getItem('shyraq_user') || 'null');
   const email = user ? encodeURIComponent(user.email || '') : '';
   window.location.href = 'payment.html?plan=' + plan + (email ? '&email=' + email : '');

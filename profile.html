@@ -76,6 +76,21 @@
       <a href="pricing.html" class="btn btn-gold btn-sm"><span class="ui-icon"><svg viewBox="0 0 24 24"><path d="m12 3 2.7 5.47 6.03.88-4.36 4.25 1.03 6-5.4-2.84-5.4 2.84 1.03-6-4.36-4.25 6.03-.88L12 3z"/></svg></span> Premium алу</a>
     </div>
 
+    <!-- Career Energy -->
+    <div class="card" style="margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;background:linear-gradient(135deg,#F3F0FF,#EEF4FF);border:1px solid #DCD6FB">
+      <div style="display:flex;align-items:center;gap:14px">
+        <div style="width:52px;height:52px;border-radius:16px;background:linear-gradient(135deg,#6D5DFC,#8B5CF6);display:grid;place-items:center;font-size:1.6rem">⚡</div>
+        <div>
+          <div style="font-weight:800;color:var(--navy);font-size:1.05rem">Career Energy</div>
+          <div style="font-size:.85rem;color:var(--text-muted)">Әр энергиямен 1 толық мамандық талдауын ашасың</div>
+        </div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-family:var(--font-display,'Golos Text');font-weight:800;font-size:1.8rem;color:#6D5DFC"><span id="energyLeft">0</span><span style="font-size:1rem;color:var(--text-light)" id="energyTotal"></span></div>
+        <a href="pricing.html" class="btn btn-primary btn-sm" style="margin-top:4px">Энергия алу</a>
+      </div>
+    </div>
+
     <div class="profile-grid">
       <!-- Edit Profile -->
       <div class="card">
@@ -208,6 +223,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const initials = (user.name || 'О')[0].toUpperCase();
   document.getElementById('profileAvatar').textContent = initials;
+
+  // Career Energy
+  const eLeft = parseInt(localStorage.getItem('shyraq_energy') || '0', 10);
+  const eTotal = parseInt(localStorage.getItem('shyraq_energy_total') || '0', 10);
+  document.getElementById('energyLeft').textContent = eLeft;
+  document.getElementById('energyTotal').textContent = eTotal ? (' / ' + eTotal) : '';
   document.getElementById('profileName').textContent = (user.name || '') + ' ' + (user.lastName || '');
 
   const classYear = user.classYear || '11';

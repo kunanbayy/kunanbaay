@@ -31,6 +31,14 @@
     if (nowPremium) {
       localStorage.setItem('shyraq_premium', '1');
       if (acc.premium_until) localStorage.setItem('shyraq_premium_until', acc.premium_until);
+      // Төлем расталды → күтудегі Career Energy-ді есепке қосамыз (бір рет)
+      var pend = parseInt(localStorage.getItem('shyraq_pending_energy') || '0', 10);
+      if (pend > 0) {
+        var cur = parseInt(localStorage.getItem('shyraq_energy') || '0', 10);
+        localStorage.setItem('shyraq_energy', String(cur + pend));
+        localStorage.setItem('shyraq_energy_total', String((parseInt(localStorage.getItem('shyraq_energy_total') || '0', 10)) + pend));
+        localStorage.removeItem('shyraq_pending_energy');
+      }
     } else {
       localStorage.removeItem('shyraq_premium');
       localStorage.removeItem('shyraq_premium_until');
