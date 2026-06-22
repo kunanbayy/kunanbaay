@@ -369,13 +369,11 @@
 
     <!-- ══ USERS ══ -->
     <section class="section" id="sec-users">
-      <div class="a-card">
-        <div class="a-card-hd">
-          <h3>Қолданушылар тізімі</h3>
-          <button class="btn btn-primary" onclick="openUserModal()"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg> Қосу</button>
-        </div>
-        <div class="u-grid" id="usersGrid"></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:12px">
+        <h3 style="font-size:1.1rem;font-weight:800;color:var(--ink)">Қолданушылар тізімі</h3>
+        <button class="btn btn-primary" onclick="openUserModal()"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg> Қосу</button>
       </div>
+      <div class="u-grid" id="usersGrid"></div>
     </section>
 
     <!-- ══ PAYMENTS ══ -->
@@ -391,11 +389,12 @@
 
     <!-- ══ UNIVERSITIES ══ -->
     <section class="section" id="sec-unis">
-      <div class="a-card">
-        <div class="a-card-hd"><h3>Университеттер базасы</h3><span class="pill admin" id="uniCount">0 ЖОО</span></div>
-        <div class="u-grid" id="unisGrid"></div>
-        <div style="text-align:center;margin-top:16px"><button class="btn btn-ghost" id="uniMore">Тағы көрсету</button></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:12px">
+        <h3 style="font-size:1.1rem;font-weight:800;color:var(--ink)">Университеттер базасы</h3>
+        <span class="pill admin" id="uniCount">0 ЖОО</span>
       </div>
+      <div class="u-grid" id="unisGrid"></div>
+      <div style="text-align:center;margin-top:16px"><button class="btn btn-ghost" id="uniMore">Тағы көрсету</button></div>
     </section>
 
     <!-- ══ SPECIALTIES ══ -->
