@@ -20,6 +20,29 @@
   const accounts = () => { try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) { return {}; } };
   const saveAccounts = a => localStorage.setItem(KEY, JSON.stringify(a));
 
+  async function recordRegistration(user, action) {
+    if (!sb || !user || !user.email) return;
+    try {
+      const email = String(user.email).toLowerCase();
+      const { data } = await sb.from('settings').select('value').eq('key', 'registrations').maybeSingle();
+      const list = Array.isArray(data && data.value) ? data.value : [];
+      const idx = list.findIndex(x => String(x.email || '').toLowerCase() === email);
+      const now = new Date().toISOString();
+      const row = Object.assign({}, idx >= 0 ? list[idx] : {}, {
+        name: user.name || email.split('@')[0],
+        email,
+        classYear: user.classYear || user.class_year || '',
+        city: user.city || '',
+        plan: user.plan || 'free',
+        createdAt: (idx >= 0 && list[idx].createdAt) ? list[idx].createdAt : now,
+        lastLoginAt: action === 'login' ? now : ((idx >= 0 && list[idx].lastLoginAt) ? list[idx].lastLoginAt : now)
+      });
+      if (idx >= 0) list[idx] = row;
+      else list.unshift(row);
+      await sb.from('settings').upsert({ key: 'registrations', value: list, updated_at: now });
+    } catch (e) { /* admin статистикасы үшін жазу user flow-ды тоқтатпасын */ }
+  }
+
   function setSession(user) {
     localStorage.setItem('shyraq_user', JSON.stringify(user));
     // Жаңа сессия — премиумды тазалаймыз. Премиум тек DB access арқылы беріледі
@@ -69,6 +92,7 @@
 
     const user = { name, email: p.email, classYear: p.classYear || '', city: p.city || '', plan: 'free' };
     setSession(user);
+    await recordRegistration(user, 'register');
     return user;
   }
 
@@ -88,6 +112,7 @@
           } catch (e) {}
           const user = { name, email, classYear, city, plan: 'free' };
           setSession(user);
+          await recordRegistration(user, 'login');
           return user;
         }
       } catch (e) { /* fallback-қа өтеміз */ }
@@ -98,6 +123,7 @@
     if (u.blocked) throw new Error('Аккаунт бұғатталған. Әкімшіге хабарласыңыз.');
     const user = { name: u.name, email: u.email, classYear: u.classYear, city: u.city, plan: u.plan || 'free', blocked: false };
     setSession(user);
+    await recordRegistration(user, 'login');
     return user;
   }
 
