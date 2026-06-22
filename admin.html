@@ -785,8 +785,9 @@ function openUserDetail(src, ref){
   _ud={src,ref};
   $('udAv').textContent=initial(u.name); $('udAv').style.background=avColor(u.name);
   $('udName').textContent=u.name||'—'; $('udEmail').textContent=u.email||'';
-  $('udPlan').textContent=planLabel(u);
-  $('udStatus').textContent=u.blocked?'🔒 Бұғатталған':'✅ Белсенді';
+  var _pl=planLabel(u);
+  $('udPlan').innerHTML='<span class="pill '+_pl+'">'+_pl+'</span>';
+  $('udStatus').innerHTML=u.blocked?'<span class="pill pending">🔒 Бұғатталған</span>':'<span class="pill paid">✅ Белсенді</span>';
   $('udUntil').textContent=isActivePremium(u)?fmtDate(u.premiumUntil):'—';
   $('udCity').textContent=u.city||'—';
   $('udBlockBtn').innerHTML=u.blocked?'🔓 Босату':'🔒 Бұғаттау';
