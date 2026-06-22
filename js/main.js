@@ -72,27 +72,22 @@ const UBT_SUBJECTS = [
 
 // ── AUTH SYSTEM ────────────────────────────────────────────────────────────
 function getUser() {
-  const savedUser = JSON.parse(localStorage.getItem('shyraq_user') || 'null');
-  // Нақты админ сессиясы демо қабаттан басым
-  if (localStorage.getItem('shyraq_admin') === '1' && savedUser) return savedUser;
-  if (localStorage.getItem('shyraq_demo_premium') !== 'off') {
-    if (savedUser) return { ...savedUser, plan: 'premium' };
-    return {
-      name: 'Ержан',
-      email: 'demo@shyraq.edu.kz',
-      classYear: '11',
-      city: 'Алматы',
-      plan: 'premium'
-    };
-  }
-  if (savedUser) return savedUser;
-  return null;
+  return JSON.parse(localStorage.getItem('shyraq_user') || 'null');
 }
 function getPlan() { return getUser()?.plan || 'guest'; }
 function isLoggedIn() { return !!getUser(); }
 function isPremium() {
-  // Demo preview: keep Premium unlocked locally so all updated university cards/logos are visible.
-  if (localStorage.getItem('shyraq_demo_premium') !== 'off') return true;
+  // Премиум — тек нақты төлем расталғанда (admin доступ берген кезде access-sync қояды),
+  // немесе ?premium=1 / ?paid=1 сілтемесі арқылы.
+  try {
+    const until = localStorage.getItem('shyraq_premium_until');
+    if (until && new Date(until) < new Date()) {
+      localStorage.removeItem('shyraq_premium');
+      localStorage.removeItem('shyraq_premium_until');
+      return false;
+    }
+  } catch (e) {}
+  if (localStorage.getItem('shyraq_premium') === '1') return true;
   const p = getPlan();
   return p === 'premium' || p === 'ai_premium';
 }

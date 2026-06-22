@@ -118,15 +118,19 @@
     .u-av{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:.82rem;color:#fff;flex-shrink:0}
     .u-logo{width:36px;height:36px;border-radius:9px;object-fit:cover;background:#EEF2F7;flex-shrink:0;border:1px solid var(--border)}
 
-    /* card grids (users / unis) */
-    .u-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px}
-    .u-card{border:1px solid var(--border);border-radius:16px;padding:16px;background:#fff;transition:.18s;cursor:pointer;position:relative}
-    .u-card:hover{box-shadow:0 12px 28px rgba(30,58,95,.10);transform:translateY(-2px);border-color:#DCE6F2}
-    .u-card-top{display:flex;align-items:center;gap:12px;margin-bottom:13px}
-    .u-card-pills{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
-    .u-card-foot{display:flex;gap:7px;border-top:1px solid #F1F5F9;padding-top:12px}
-    .u-card-foot .ibtn{flex:1}
-    .u-meta{font-size:.78rem;color:var(--muted);display:flex;align-items:center;gap:5px}
+    /* compact list (users / unis) */
+    .u-grid{display:flex;flex-direction:column;gap:8px}
+    .u-card{display:flex;align-items:center;gap:14px;border:1px solid var(--border);border-radius:13px;padding:11px 16px;background:#fff;transition:.15s;cursor:pointer;position:relative}
+    .u-card:hover{box-shadow:0 6px 18px rgba(30,58,95,.08);border-color:#DCE6F2}
+    .u-card-top{display:flex;align-items:center;gap:12px;flex:1;min-width:0}
+    .u-card-pills{display:flex;flex-wrap:wrap;gap:6px;flex-shrink:0}
+    .u-card-foot{display:flex;gap:7px;flex-shrink:0}
+    .u-meta{font-size:.8rem;color:var(--muted);display:flex;align-items:center;gap:5px;flex-shrink:0;min-width:86px}
+    @media(max-width:720px){
+      .u-card{flex-wrap:wrap;gap:10px}
+      .u-card-top{flex:1 1 100%}
+      .u-meta{min-width:0}
+    }
     /* detail modal */
     .ud-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #F1F5F9;font-size:.9rem}
     .ud-row:last-child{border-bottom:none}
@@ -735,9 +739,18 @@ function findUser(src, ref){
   return getUsers()[ref]||null;
 }
 function _mutate(src, ref, fn){
-  if(src==='real'){ const a=getAcc(); if(a[ref]){ fn(a[ref]); setAcc(a); } }
-  else { const u=getUsers(); if(u[ref]){ fn(u[ref]); setUsers(u); } }
+  let updated=null;
+  if(src==='real'){ const a=getAcc(); if(a[ref]){ fn(a[ref]); setAcc(a); updated=a[ref]; } }
+  else { const u=getUsers(); if(u[ref]){ fn(u[ref]); setUsers(u); updated=u[ref]; } }
+  if(updated) syncAccess(updated);
   renderUsers(); renderOverview();
+}
+// Қолданушының премиум/бұғат күйін Supabase 'access' кестесіне жазу
+// (сонда сол қолданушының құрылғысында сайт ашылады/жабылады)
+function syncAccess(u){
+  if(!u || !u.email || !(window.ShyraqDB && window.ShyraqDB.ready())) return;
+  const prem = isActivePremium(u) || ((u.plan==='premium'||u.plan==='report') && !u.premiumUntil);
+  window.ShyraqDB.setAccess(u.email, { premium: !!prem, premium_until: u.premiumUntil||null, blocked: !!u.blocked });
 }
 function openUserModal(){ $('userModal').classList.add('open'); }
 function closeModal(id){ $(id).classList.remove('open'); }
@@ -831,9 +844,18 @@ function renderPayments(){
 }
 async function approvePay(i){
   var p=_pays[i]; if(!p) return;
-  if(p.src==='sb'){ await window.ShyraqDB.updatePayment(p.id,{status:'paid'}); p.status='paid'; renderPayments(); renderOverview(); }
-  else { const d=getPays(); if(d[p.idx]){ d[p.idx].status='paid'; setPays(d); } await loadPayments(); }
-  toast('Төлем расталды ✓');
+  if(p.src==='sb'){ await window.ShyraqDB.updatePayment(p.id,{status:'paid'}); p.status='paid'; }
+  else { const d=getPays(); if(d[p.idx]){ d[p.idx].status='paid'; setPays(d); } }
+  // Растағанда — сол қолданушыға Premium доступ беру (30 күн)
+  if(p.email && window.ShyraqDB && window.ShyraqDB.ready()){
+    var until = new Date(Date.now()+30*86400000).toISOString();
+    await window.ShyraqDB.setAccess(p.email, { premium:true, premium_until:until, blocked:false });
+    // егер жергілікті аккаунт болса — оны да жаңарту
+    var acc=getAcc(), k=(p.email||'').toLowerCase();
+    if(acc[k]){ acc[k].plan='premium'; acc[k].premiumUntil=until; acc[k].blocked=false; setAcc(acc); }
+  }
+  await loadPayments(); renderUsers();
+  toast('Төлем расталды ✓ Premium доступ берілді');
 }
 async function delPay(i){
   var p=_pays[i]; if(!p) return;

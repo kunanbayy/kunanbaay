@@ -446,6 +446,17 @@
       }
     }
   }
+  function payPending() {
+    // Чек қабылданды, бірақ Premium әлі ҚОСЫЛМАЙДЫ (админ растағанша)
+    submitBtn.classList.add('sent');
+    submitBtn.textContent = '✓ Жіберілді';
+    submitBtn.disabled = true;
+    var ss = document.getElementById('successScreen');
+    ss.classList.add('visible');
+    var h = ss.querySelector('h2'); if (h) h.textContent = 'Чек тексеруге жіберілді!';
+    var p = ss.querySelector('p'); if (p) p.innerHTML = 'Чегіңіз админге жіберілді.<br><b>Premium админ растағаннан кейін қосылады.</b><br>Әдетте 1–24 сағат ішінде.';
+    document.getElementById('uploadZone').style.display = 'none';
+  }
   function payError(msg) {
     submitBtn.disabled = false;
     submitBtn.classList.remove('sent');
@@ -510,8 +521,8 @@
       }
     } catch (e) { /* демо режим — елемейміз */ }
 
-    // Manual review (чек админ панельде расталады)
-    setTimeout(paySuccess, 1000);
+    // Manual review — Premium АВТОМАТТЫ ҚОСЫЛМАЙДЫ. Админ чекті тексеріп растайды.
+    setTimeout(payPending, 900);
   });
 
   // ─── Kaspi QR — automatic payment (uses kaspi-pos-automation gateway) ───

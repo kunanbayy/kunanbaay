@@ -63,11 +63,33 @@
     catch (e) { return false; }
   }
 
+  async function getAccess(email) {
+    const c = sb(); if (!c || !email) return null;
+    try {
+      const { data, error } = await c.from('access').select('*').eq('email', email.toLowerCase()).maybeSingle();
+      if (error) return null;
+      return data || null;
+    } catch (e) { return null; }
+  }
+  async function setAccess(email, patch) {
+    const c = sb(); if (!c || !email) return false;
+    try {
+      const row = Object.assign({ email: email.toLowerCase(), updated_at: new Date().toISOString() }, patch);
+      const { error } = await c.from('access').upsert(row);
+      return !error;
+    } catch (e) { return false; }
+  }
+  async function listAccess() {
+    const c = sb(); if (!c) return null;
+    try { const { data, error } = await c.from('access').select('*'); if (error) return null; return data || []; }
+    catch (e) { return null; }
+  }
+
   async function deletePayment(id) {
     const c = sb(); if (!c) return false;
     try { const { error } = await c.from('payments').delete().eq('id', id); return !error; }
     catch (e) { return false; }
   }
 
-  window.ShyraqDB = { getSettings, saveSettings, uploadReceipt, createPayment, listPayments, updatePayment, deletePayment, ready: () => !!sb() };
+  window.ShyraqDB = { getSettings, saveSettings, uploadReceipt, createPayment, listPayments, updatePayment, deletePayment, getAccess, setAccess, listAccess, ready: () => !!sb() };
 })();
