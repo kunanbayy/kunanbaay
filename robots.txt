@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /admin.html
+Disallow: /dashboard.html
+Disallow: /login.html
+Disallow: /register.html
+Disallow: /profile.html
+Disallow: /payment.html
+
+Sitemap: https://shyraq.asia/sitemap.xml
