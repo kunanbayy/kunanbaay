@@ -557,6 +557,10 @@
 
 <script src="js/universities-data.js"></script>
 <script src="js/specialties-kk.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-config.js"></script>
+<script src="js/supabase-auth.js"></script>
+<script src="js/supabase-db.js"></script>
 <script>
 /* ════ AUTH GUARD ════ */
 if (localStorage.getItem('shyraq_admin') !== '1') {
@@ -628,6 +632,7 @@ function go(sec){
   $('admin').classList.remove('nav-open');
   if(sec==='unis') renderUnis(true);
   if(sec==='specs') renderSpecs();
+  if(sec==='payments') loadPayments();
   window.scrollTo({top:0,behavior:'smooth'});
 }
 document.querySelectorAll('.a-link[data-sec]').forEach(l=> l.addEventListener('click', ()=>go(l.dataset.sec)));
@@ -647,7 +652,7 @@ $('logoutBtn2').addEventListener('click', logout);
 
 /* ════ OVERVIEW ════ */
 function renderOverview(){
-  const users=getUsers(), pays=getPays();
+  const users=allUsers(), pays=(_pays&&_pays.length)?_pays:getPays();
   const premium = users.filter(u=>u.plan!=='free').length;
   const revenue = pays.filter(p=>p.status==='paid').reduce((s,p)=>s+p.amount,0);
   $('stUsers').textContent = nf(users.length);
@@ -794,15 +799,27 @@ function udExtend(days){
 function udRevoke(){ if(!_ud)return; udRevokeRef(_ud.src,_ud.ref); refreshDetail(); toast('Доступ алынды (free)'); }
 function udToggleBlock(){ if(!_ud)return; _mutate(_ud.src,_ud.ref,u=>{u.blocked=!u.blocked;}); refreshDetail(); toast('Қолжетімділік жаңартылды ✓'); }
 
-/* ════ PAYMENTS ════ */
+/* ════ PAYMENTS (Supabase + демо біріктірілген) ════ */
+var _pays = [];
+async function loadPayments(){
+  var demo = getPays().map((p,idx)=>({ name:p.name, email:p.email, plan:p.plan, amount:p.amount, status:p.status, receipt:p.receipt, date:p.date, src:'demo', idx:idx }));
+  var sbp = [];
+  if (window.ShyraqDB && window.ShyraqDB.ready()){
+    var rows = await window.ShyraqDB.listPayments();
+    if (rows) sbp = rows.map(r=>({ id:r.id, name:r.name, email:r.email, plan:r.plan, amount:r.amount, status:r.status, receipt:r.receipt_url, date:(r.created_at||'').slice(0,10), src:'sb' }));
+  }
+  _pays = sbp.concat(demo);
+  renderPayments(); renderOverview();
+}
 function renderPayments(){
-  const pays=getPays();
-  const total=pays.filter(p=>p.status==='paid').reduce((s,p)=>s+p.amount,0);
+  const pays=_pays.length?_pays:getPays();
+  const total=pays.filter(p=>p.status==='paid').reduce((s,p)=>s+(p.amount||0),0);
   $('payTotal').textContent=nf(total)+' ₸';
+  $('navPays').textContent=pays.length;
   const q=($('globalSearch').value||'').toLowerCase();
-  var list = q ? pays.filter(p=>((p.name||'')+' '+(p.plan||'')).toLowerCase().includes(q)) : pays;
-  $('paymentsBody').innerHTML = list.map((p,i)=>`<tr>
-    <td><div class="u-cell"><span class="u-av" style="background:${avColor(p.name)}">${initial(p.name)}</span><div class="u-name">${esc(p.name||'—')}</div></div></td>
+  var list = pays.map((p,i)=>({p,i})).filter(x=> !q || ((x.p.name||'')+' '+(x.p.plan||'')).toLowerCase().includes(q));
+  $('paymentsBody').innerHTML = list.map(({p,i})=>`<tr>
+    <td><div class="u-cell"><span class="u-av" style="background:${avColor(p.name)}">${initial(p.name)}</span><div><div class="u-name">${esc(p.name||'—')}</div>${p.src==='sb'?'<div class="u-mail">☁️ дерекқор</div>':''}</div></div></td>
     <td>${esc(p.plan||'—')}</td><td><b>${nf(p.amount||0)} ₸</b></td>
     <td><span class="pill ${p.status}">${p.status==='paid'?'Төленді':'Күтілуде'}</span></td>
     <td>${p.receipt?'<a class="lk" href="'+esc(p.receipt)+'" target="_blank" style="color:#3B82F6;font-weight:700">Чекті көру</a>':'<span style="color:var(--light);font-size:.8rem">чек жоқ</span>'}</td>
@@ -812,8 +829,19 @@ function renderPayments(){
       <button class="ibtn" onclick="delPay(${i})" title="Жою"><svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></button>
     </div></td></tr>`).join('') || '<tr><td colspan="7" class="empty">Төлемдер жоқ</td></tr>';
 }
-function approvePay(i){ const p=getPays(); p[i].status='paid'; setPays(p); renderPayments(); renderOverview(); toast('Төлем расталды ✓'); }
-function delPay(i){ const p=getPays(); p.splice(i,1); setPays(p); renderPayments(); renderOverview(); toast('Жойылды'); }
+async function approvePay(i){
+  var p=_pays[i]; if(!p) return;
+  if(p.src==='sb'){ await window.ShyraqDB.updatePayment(p.id,{status:'paid'}); p.status='paid'; renderPayments(); renderOverview(); }
+  else { const d=getPays(); if(d[p.idx]){ d[p.idx].status='paid'; setPays(d); } await loadPayments(); }
+  toast('Төлем расталды ✓');
+}
+async function delPay(i){
+  var p=_pays[i]; if(!p) return;
+  if(!confirm('Төлемді жою керек пе?')) return;
+  if(p.src==='sb'){ await window.ShyraqDB.deletePayment(p.id); }
+  else { const d=getPays(); d.splice(p.idx,1); setPays(d); }
+  await loadPayments(); toast('Жойылды');
+}
 
 /* ════ UNIVERSITIES ════ */
 const getUniOv = () => JSON.parse(localStorage.getItem('shyraq_uni_overrides')||'{}');
@@ -987,16 +1015,24 @@ function addReview(){
 function delReview(i){ const rv=getReviews(); rv.splice(i,1); setReviews(rv); renderReviews(); toast('Жойылды'); }
 
 /* ════ SETTINGS ════ */
-function saveSettings(){
+async function saveSettings(){
   const price=+$('setPrice').value||0, priceAi=+$('setPriceAi').value||0, priceReport=+$('setPriceReport').value||0;
-  localStorage.setItem('shyraq_settings', JSON.stringify({
-    price, priceAi, priceReport, receiver:$('setReceiver').value
-  }));
-  // тарифтер бетіне көрінетін бағалар
-  localStorage.setItem('shyraq_pricing', JSON.stringify({ premium:price, ai:priceAi, report:priceReport }));
+  const pricing={ premium:price, ai:priceAi, report:priceReport };
+  localStorage.setItem('shyraq_settings', JSON.stringify({ price, priceAi, priceReport, receiver:$('setReceiver').value }));
+  localStorage.setItem('shyraq_pricing', JSON.stringify(pricing));
+  // Supabase settings кестесіне де жазу (бапталса) — барлық құрылғыда көрінеді
+  if(window.ShyraqDB && window.ShyraqDB.ready()){ await window.ShyraqDB.saveSettings('pricing', pricing); }
   toast('Сақталды ✓ Тарифтер бетінде көрінеді');
 }
-(function(){ const s=JSON.parse(localStorage.getItem('shyraq_settings')||'null'); if(s){ if(s.price!=null)$('setPrice').value=s.price; if(s.priceAi!=null)$('setPriceAi').value=s.priceAi; if(s.priceReport!=null)$('setPriceReport').value=s.priceReport; if(s.receiver)$('setReceiver').value=s.receiver; } })();
+(async function(){
+  // Supabase-тен жүктеп көру (бар болса), әйтпесе localStorage
+  let p=null;
+  if(window.ShyraqDB && window.ShyraqDB.ready()){ p=await window.ShyraqDB.getSettings('pricing'); }
+  const s=JSON.parse(localStorage.getItem('shyraq_settings')||'null');
+  if(p){ $('setPrice').value=p.premium; $('setPriceAi').value=p.ai; $('setPriceReport').value=p.report; localStorage.setItem('shyraq_pricing', JSON.stringify(p)); }
+  else if(s){ if(s.price!=null)$('setPrice').value=s.price; if(s.priceAi!=null)$('setPriceAi').value=s.priceAi; if(s.priceReport!=null)$('setPriceReport').value=s.priceReport; }
+  if(s&&s.receiver)$('setReceiver').value=s.receiver;
+})();
 
 function exportData(){
   const data={ users:getUsers(), payments:getPays(), reviews:getReviews(), settings:JSON.parse(localStorage.getItem('shyraq_settings')||'null'), exportedAt:new Date().toISOString() };
@@ -1022,7 +1058,7 @@ $('globalSearch').addEventListener('input', ()=>{
 document.querySelectorAll('.ov').forEach(o=>o.addEventListener('click',e=>{ if(e.target===o) o.classList.remove('open'); }));
 
 /* ════ INIT ════ */
-renderOverview(); renderUsers(); renderPayments(); renderReviews();
+renderOverview(); renderUsers(); renderReviews(); loadPayments();
 </script>
 </body>
 </html>
