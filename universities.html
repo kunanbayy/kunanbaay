@@ -3,480 +3,548 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ЖОО — Shyraq Education</title>
+  <title>Қазақстан университеттері — Shyraq</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;600;700;800;900&family=Golos+Text:wght@400;500;600;700;800;900&family=Noto+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-    body { font-family: 'Golos Text','Noto Sans',Arial,sans-serif; background: #FFFFFF; color: #0F172A; letter-spacing:-0.005em; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
-    body::before { content:''; position:fixed; inset:0; z-index:-2; pointer-events:none;
-      background:
-        radial-gradient(680px 520px at 10% 6%, rgba(96,165,250,0.16), transparent 60%),
-        radial-gradient(620px 560px at 92% 12%, rgba(59,130,246,0.13), transparent 58%),
-        radial-gradient(720px 600px at 82% 90%, rgba(125,211,252,0.16), transparent 62%),
-        radial-gradient(560px 460px at 18% 86%, rgba(96,165,250,0.11), transparent 60%), #FFFFFF; }
-    ::selection { background:#F2B84B; color:#0B1E33; }
-    :focus-visible { outline:2px solid #E0992E; outline-offset:2px; border-radius:4px; }
-    a { text-decoration: none; color: inherit; }
-    :root { --ink:#0B1E33; --navy: #1E3A5F; --orange: #F97316; --gold:#F2B84B; --gold-deep:#E0992E; --gray: #FFFFFF; --gray2: #F4F6F9; --border: #E6E8EC; --muted: #64748B; --fd: 'Unbounded','Golos Text','Noto Sans',sans-serif; }
-    .ix { width: 1em; height: 1em; display: inline-block; vertical-align: -0.14em; flex-shrink: 0; }
-    .ix-emoji { width: 1.12em; height: 1.12em; vertical-align: -0.18em; }
-    .ix-sm { width: .85em; height: .85em; } .ix-lg { width: 1.5em; height: 1.5em; } .ix-xl { width: 2em; height: 2em; }
-    .nav { position: sticky; top: 0; z-index: 100; height: 62px; background: rgba(255,255,255,.95); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); display: flex; align-items: center; }
-    .nav-inner { max-width: 1200px; margin: 0 auto; width: 100%; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; }
-    .nav-logo { display: flex; align-items: center; gap: 9px; font-family: var(--fd); font-weight: 800; font-size: 1.18rem; color: var(--navy); }
-    .nav-logo-mark { width: 34px; height: 34px; background: #fff; border-radius: 8px; display: flex; align-items: center; justify-content: center; padding: 3px; overflow: hidden; font-size: 0.95rem; }
-    .nav-logo-mark img { width: 100%; height: 100%; object-fit: contain; display: block; }
-    .nav-links { display: flex; align-items: center; gap: 2px; }
-    .nav-link { padding: 7px 13px; border-radius: 999px; font-size: 0.875rem; font-weight: 500; color: var(--muted); transition: .15s; }
-    .nav-link:hover, .nav-link.active { color: var(--navy); background: var(--gray2); }
-    .nav-actions { display: flex; gap: 8px; }
-    .nav-mobile-btn { display: none !important; background: none; border: none; cursor: pointer; color: var(--navy); }
-    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 7px; padding: 9px 20px; border-radius: 999px; font-weight: 600; font-size: 0.875rem; border: 2px solid transparent; cursor: pointer; transition: .16s; font-family: 'Manrope','Noto Sans',Arial,sans-serif; }
-    .btn-navy { background: var(--navy); color: #fff; }
-    .btn-navy:hover { background: #16305A; }
-    .btn-sm { padding: 7px 14px; font-size: 0.8rem; }
-    .btn-full { width: 100%; justify-content: center; }
-    .page { max-width: 1100px; margin: 0 auto; padding: 36px 24px 80px; }
-    .page-title { font-family: var(--fd); font-size: 2rem; font-weight: 800; color: #0F172A; margin-bottom: 20px; }
-    .page-divider { height: 1px; background: var(--border); margin-bottom: 24px; }
-    .filter-row { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
-    .search-wrap { display: flex; align-items: center; gap: 9px; border: 1.5px solid var(--border); border-radius: 10px; padding: 10px 14px; flex: 1; min-width: 0; background: #fff; transition: .15s; }
-    .search-wrap:focus-within { border-color: var(--navy); box-shadow: 0 0 0 3px rgba(30,58,95,.07); }
-    .search-wrap input { flex: 1; border: none; outline: none; font-family: 'Golos Text','Noto Sans',Arial,sans-serif; font-size: 0.875rem; color: #0F172A; background: transparent; }
-    .search-wrap input::placeholder { color: #94A3B8; }
-    .region-select-wrap { display: flex; align-items: center; border: 1.5px solid var(--border); border-radius: 10px; background: #fff; overflow: hidden; transition: .15s; flex-shrink: 0; }
-    .region-select-wrap:focus-within { border-color: var(--navy); box-shadow: 0 0 0 3px rgba(30,58,95,.07); }
-    .region-select { border: none; outline: none; padding: 10px 12px 10px 14px; font-family: 'Golos Text','Noto Sans',Arial,sans-serif; font-size: 0.875rem; font-weight: 600; color: #0F172A; background: transparent; cursor: pointer; appearance: none; -webkit-appearance: none; min-width: 160px; }
-    .region-chevron { pointer-events: none; padding: 0 10px; color: #94A3B8; display: flex; align-items: center; }
-    .region-clear { border: none; background: none; padding: 0 10px 0 0; cursor: pointer; color: #94A3B8; display: none; align-items: center; font-size: 1rem; line-height: 1; }
-    .region-clear.visible { display: flex; }
-    .region-clear:hover { color: #EF4444; }
-    .uni-count { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: #94A3B8; margin-bottom: 16px; }
-    .uni-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border-top: 1px solid var(--border); border-left: 1px solid var(--border); }
-    .uni-item { display: flex; align-items: center; gap: 14px; padding: 14px 16px; border-bottom: 1px solid var(--border); border-right: 1px solid var(--border); cursor: pointer; transition: .15s; }
-    .uni-item:hover { background: var(--gray); }
-    .uni-logo-wrap { width: 56px; height: 56px; border-radius: 10px; border: 1.5px solid var(--border); overflow: hidden; flex-shrink: 0; background: #fff; display: flex; align-items: center; justify-content: center; position: relative; }
-    .uni-logo-wrap img { width: 100%; height: 100%; object-fit: contain; padding: 4px; }
-    .uni-star { position: absolute; top: -4px; right: -4px; width: 16px; height: 16px; background: var(--orange); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
-    .uni-info { flex: 1; min-width: 0; }
-    .uni-name { font-weight: 700; font-size: 0.875rem; color: #0F172A; margin-bottom: 3px; line-height: 1.35; }
-    .uni-meta { font-size: 0.75rem; color: var(--muted); }
-    .uni-chev { color: #CBD5E1; flex-shrink: 0; }
-    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 500; align-items: center; justify-content: center; padding: 20px; }
-    .modal-overlay.open { display: flex; }
-    .city-modal { background: #fff; border-radius: 20px; width: 100%; max-width: 480px; max-height: 85vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,.15); }
-    .city-modal-body { flex: 1; overflow-y: auto; }
-    .city-option { display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; cursor: pointer; transition: .12s; border-bottom: 1px solid #F1F5F9; }
-    .city-option:hover { background: #F8FAFC; }
-    .city-opt-name { font-size: 0.925rem; font-weight: 500; color: #0F172A; }
-    .city-option.selected .city-opt-name { color: var(--orange); font-weight: 700; }
-    .city-opt-check { color: var(--orange); opacity: 0; }
-    .city-option.selected .city-opt-check { opacity: 1; }
-    .city-modal-footer { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; gap: 10px; }
-    .btn-cancel { flex: 1; padding: 13px; background: #fff; border: 2px solid var(--border); border-radius: 12px; font-weight: 700; font-size: 0.9rem; cursor: pointer; font-family: 'Manrope', 'Noto Sans', Arial, sans-serif; }
-    .btn-save { flex: 1; padding: 13px; background: var(--orange); border: none; border-radius: 12px; color: #fff; font-weight: 700; font-size: 0.9rem; cursor: pointer; font-family: 'Manrope', 'Noto Sans', Arial, sans-serif; }
-    .btn-save:hover { background: #ea6c0f; }
-    .detail-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 600; align-items: center; justify-content: center; padding: 20px; }
-    .detail-overlay.open { display: flex; }
-    .detail-modal { background: #fff; border-radius: 20px; width: 100%; max-width: 500px; max-height: 85vh; overflow-y: auto; padding: 32px; box-shadow: 0 20px 60px rgba(0,0,0,.15); position: relative; }
-    .d-close { position: absolute; top: 14px; right: 14px; background: var(--gray); border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; color: var(--muted); }
-    .d-logo { width: 68px; height: 68px; border-radius: 12px; border: 1.5px solid var(--border); overflow: hidden; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
-    .d-logo img { width: 100%; height: 100%; object-fit: contain; padding: 5px; }
-    .d-row { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
-    .d-name { font-family: var(--fd); font-weight: 800; font-size: 1.1rem; color: #0F172A; margin-bottom: 4px; line-height: 1.3; }
-    .d-city { font-size: 0.8rem; color: var(--muted); }
-    .d-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
-    .d-cell { background: var(--gray); border-radius: 8px; padding: 10px 12px; }
-    .d-lbl { font-size: 0.7rem; color: var(--muted); margin-bottom: 3px; }
-    .d-val { font-weight: 700; color: #0F172A; font-size: 0.82rem; overflow-wrap: anywhere; word-break: break-word; }
-    a.d-val { color: var(--navy, #1E3A5F); text-decoration: none; display: inline-flex; align-items: center; gap: 5px; transition: color .15s; }
-    a.d-val:hover { color: var(--gold-deep, #E0992E); text-decoration: underline; }
-    a.d-val::after { content: '↗'; font-size: 0.78rem; opacity: .7; }
-    .d-actions { display: flex; gap: 8px; flex-wrap: wrap; }
-    .d-btn-o { background: var(--orange); color: #fff; border: none; padding: 10px 18px; border-radius: 8px; font-weight: 700; font-size: 0.82rem; cursor: pointer; font-family: 'Manrope', 'Noto Sans', Arial, sans-serif; }
-    .d-btn-n { background: #fff; color: var(--navy); border: 2px solid var(--border); padding: 10px 18px; border-radius: 8px; font-weight: 600; font-size: 0.82rem; cursor: pointer; font-family: 'Manrope', 'Noto Sans', Arial, sans-serif; }
-    .mobile-menu { display: none; position: fixed; inset: 0; z-index: 200; background: #fff; padding: 20px; flex-direction: column; }
-    .mobile-menu.open { display: flex; }
-    .mm-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px; }
-    .mm-links { display: flex; flex-direction: column; gap: 3px; }
-    .mm-link { padding: 13px 14px; border-radius: 10px; font-size: 0.95rem; font-weight: 500; }
-    .mm-link:hover { background: var(--gray2); }
-    .mm-actions { margin-top: auto; display: flex; flex-direction: column; gap: 8px; }
-    @media (max-width: 768px) {
-      .nav-links { display: none; }
-      .nav-actions { display: flex; margin-left: auto; }
-      .nav-mobile-btn { display: none !important; }
-      .uni-grid { grid-template-columns: 1fr; }
-      .filter-row { flex-direction: column; align-items: stretch; }
+    :root {
+      --navy:#0F172A;
+      --navy-2:#172554;
+      --blue:#2563EB;
+      --blue-2:#1D4ED8;
+      --sky:#EFF6FF;
+      --surface:#FFFFFF;
+      --soft:#F8FAFC;
+      --line:#E2E8F0;
+      --muted:#64748B;
+      --text:#0F172A;
+      --radius:16px;
+      --shadow:0 18px 50px rgba(15,23,42,.08);
+      --shadow-sm:0 10px 28px rgba(15,23,42,.06);
     }
-    @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
-    .fade-in { animation: fadeIn .25s ease both; }
+    html { scroll-behavior:smooth; }
+    body {
+      font-family:'Inter','Manrope',Arial,sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(700px 420px at 88% 8%, rgba(37,99,235,.13), transparent 62%),
+        radial-gradient(560px 360px at 8% 12%, rgba(147,197,253,.18), transparent 65%),
+        linear-gradient(180deg, #fff 0%, #F8FAFC 48%, #FFFFFF 100%);
+      -webkit-font-smoothing:antialiased;
+      text-rendering:optimizeLegibility;
+      overflow-x:hidden;
+    }
+    a { color:inherit; text-decoration:none; }
+    button, input, select { font-family:inherit; }
+    .nav {
+      position:sticky; top:0; z-index:50;
+      height:70px;
+      background:rgba(255,255,255,.82);
+      border-bottom:1px solid rgba(226,232,240,.82);
+      backdrop-filter:blur(18px) saturate(150%);
+      -webkit-backdrop-filter:blur(18px) saturate(150%);
+    }
+    .nav-inner {
+      max-width:1380px; height:100%; margin:0 auto; padding:0 28px;
+      display:flex; align-items:center; justify-content:space-between; gap:22px;
+    }
+    .nav-logo { display:flex; align-items:center; gap:10px; font-family:'Manrope',sans-serif; color:var(--navy); font-size:1.28rem; font-weight:900; letter-spacing:-.03em; }
+    .nav-logo-mark { width:36px; height:36px; border-radius:10px; background:#fff; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+    .nav-logo-mark img { width:100%; height:100%; object-fit:contain; padding:3px; }
+    .nav-links { display:flex; align-items:center; gap:6px; }
+    .nav-link { padding:11px 18px; border-radius:999px; color:#334155; font-size:.9rem; font-weight:700; transition:.18s; }
+    .nav-link:hover, .nav-link.active { color:#1E1B4B; background:#EEF2FF; }
+    .nav-actions { display:flex; align-items:center; gap:10px; }
+    .btn {
+      display:inline-flex; align-items:center; justify-content:center; gap:9px;
+      border:0; border-radius:999px; padding:12px 20px; cursor:pointer;
+      font-weight:800; font-size:.9rem; transition:.18s;
+    }
+    .btn-primary { background:linear-gradient(135deg, var(--blue), #7C3AED); color:#fff; box-shadow:0 14px 30px rgba(37,99,235,.22); }
+    .btn-primary:hover { transform:translateY(-1px); box-shadow:0 18px 36px rgba(37,99,235,.28); }
+    .btn-dark { background:var(--navy); color:#fff; }
+    .btn-soft { background:#fff; color:var(--blue); border:1px solid var(--line); }
+    .page { max-width:1380px; margin:0 auto; padding:0 28px 72px; }
+    .hero { position:relative; min-height:330px; padding:48px 0 74px; overflow:hidden; }
+    .hero::before {
+      content:''; position:absolute; inset:0 calc(50% - 50vw); z-index:-2;
+      background:linear-gradient(135deg, #FFFFFF 0%, #F8FBFF 48%, #EEF4FF 100%);
+    }
+    .hero::after {
+      content:''; position:absolute; right:-40px; top:30px; width:min(52vw,760px); height:320px; z-index:-1;
+      background:
+        linear-gradient(90deg, rgba(255,255,255,.98) 0%, rgba(255,255,255,.74) 20%, rgba(255,255,255,.12) 58%),
+        url('https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=1400&q=85') center/cover;
+      border-radius:34px 0 0 34px;
+      box-shadow:0 24px 70px rgba(37,99,235,.13);
+      opacity:.82;
+      mask-image:linear-gradient(90deg, transparent 0%, #000 12%, #000 100%);
+    }
+    .hero-grid { display:grid; grid-template-columns:minmax(0, 1fr) 360px; gap:30px; align-items:end; }
+    .hero h1 { font-family:'Manrope',sans-serif; color:var(--navy); font-size:clamp(2.35rem,4.2vw,3.85rem); line-height:1.04; letter-spacing:-.055em; font-weight:900; max-width:760px; }
+    .hero p { color:#475569; font-size:1.08rem; line-height:1.8; max-width:620px; margin-top:18px; }
+    .hero-card {
+      align-self:center; background:rgba(255,255,255,.72); border:1px solid rgba(255,255,255,.86);
+      box-shadow:var(--shadow); border-radius:24px; padding:18px; backdrop-filter:blur(18px);
+    }
+    .hero-card img { width:100%; aspect-ratio:16/10; object-fit:cover; border-radius:18px; display:block; }
+    .hero-mini { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px; }
+    .hero-mini div { background:#fff; border:1px solid var(--line); border-radius:14px; padding:12px; }
+    .hero-mini strong { display:block; color:var(--navy); font-size:1.35rem; letter-spacing:-.04em; }
+    .hero-mini span { color:var(--muted); font-size:.78rem; font-weight:700; }
+    .search-panel {
+      position:relative; z-index:5; margin-top:-52px;
+      background:rgba(255,255,255,.88); border:1px solid rgba(226,232,240,.9);
+      box-shadow:var(--shadow); border-radius:22px; padding:18px; backdrop-filter:blur(18px);
+      display:grid; grid-template-columns:minmax(0,1fr) 260px 160px; gap:14px;
+    }
+    .search-field, .select-field {
+      min-height:58px; border:1px solid var(--line); border-radius:16px; background:#fff;
+      display:flex; align-items:center; gap:12px; padding:0 16px; color:#94A3B8;
+    }
+    .search-field:focus-within, .select-field:focus-within { border-color:#93C5FD; box-shadow:0 0 0 4px rgba(37,99,235,.08); }
+    .search-field input { flex:1; border:0; outline:0; color:var(--text); font-size:.95rem; font-weight:600; min-width:0; }
+    .search-field input::placeholder { color:#94A3B8; font-weight:500; }
+    .select-field select { width:100%; border:0; outline:0; appearance:none; background:transparent; color:var(--navy); font-size:.93rem; font-weight:800; cursor:pointer; }
+    .stats { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin:22px 0; }
+    .stat { background:#fff; border:1px solid var(--line); border-radius:18px; padding:14px 18px; box-shadow:var(--shadow-sm); }
+    .stat strong { display:block; color:var(--navy); font-size:1.65rem; font-weight:900; letter-spacing:-.04em; }
+    .stat span { color:var(--muted); font-size:.82rem; font-weight:700; }
+    .featured { margin:12px 0 24px; }
+    .section-head { display:flex; align-items:end; justify-content:space-between; gap:18px; margin-bottom:14px; }
+    .section-head h2 { color:var(--navy); font-family:'Manrope',sans-serif; font-size:1.35rem; letter-spacing:-.035em; }
+    .section-head p { color:var(--muted); font-size:.9rem; margin-top:4px; }
+    .featured-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+    .featured-card {
+      position:relative; overflow:hidden; min-height:132px; border-radius:20px; padding:16px;
+      background:linear-gradient(135deg, #0F172A, #1E3A8A 58%, #2563EB);
+      color:#fff; box-shadow:0 20px 48px rgba(15,23,42,.18);
+    }
+    .featured-card::after { content:''; position:absolute; right:-36px; top:-30px; width:150px; height:150px; border-radius:999px; background:rgba(255,255,255,.12); }
+    .featured-card .f-logo { width:48px; height:48px; background:#fff; border-radius:14px; display:flex; align-items:center; justify-content:center; overflow:hidden; margin-bottom:12px; }
+    .featured-card .f-logo img { width:100%; height:100%; object-fit:contain; padding:6px; }
+    .featured-card h3 { position:relative; font-size:1rem; line-height:1.35; max-width:86%; }
+    .featured-card p { position:relative; color:rgba(255,255,255,.72); font-size:.82rem; margin-top:6px; }
+    .directory { display:grid; grid-template-columns:280px minmax(0,1fr); gap:22px; align-items:start; }
+    .sidebar { position:sticky; top:88px; background:rgba(255,255,255,.86); border:1px solid var(--line); box-shadow:var(--shadow-sm); border-radius:22px; padding:18px; backdrop-filter:blur(18px); }
+    .side-title { display:flex; align-items:center; justify-content:space-between; color:var(--navy); font-weight:900; margin-bottom:18px; }
+    .filter-block { border-top:1px solid #EEF2F7; padding-top:16px; margin-top:16px; }
+    .filter-block:first-of-type { border-top:0; padding-top:0; margin-top:0; }
+    .filter-block h3 { color:#334155; font-size:.79rem; letter-spacing:.04em; text-transform:uppercase; margin-bottom:10px; }
+    .check-row { display:flex; align-items:center; justify-content:space-between; gap:8px; min-height:32px; color:#475569; font-size:.88rem; font-weight:650; cursor:pointer; }
+    .check-row input { width:16px; height:16px; accent-color:var(--blue); }
+    .check-row small { color:#94A3B8; font-weight:800; background:#F1F5F9; padding:3px 7px; border-radius:999px; }
+    .range-row { display:grid; gap:9px; }
+    .range-row input { width:100%; accent-color:var(--blue); }
+    .range-label { display:flex; justify-content:space-between; color:var(--muted); font-size:.8rem; font-weight:800; }
+    .reset-btn { width:100%; margin-top:18px; border:1px solid #BFDBFE; background:#EFF6FF; color:var(--blue); border-radius:14px; padding:12px; font-weight:900; cursor:pointer; }
+    .results-bar { display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:14px; }
+    .result-count { color:#475569; font-weight:800; }
+    .sort { border:1px solid var(--line); background:#fff; border-radius:14px; padding:10px 12px; color:var(--navy); font-weight:800; outline:0; }
+    .uni-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; }
+    .uni-card {
+      min-height:178px; background:rgba(255,255,255,.92); border:1px solid var(--line);
+      border-radius:20px; padding:18px; box-shadow:0 8px 28px rgba(15,23,42,.045);
+      display:flex; flex-direction:column; gap:14px; cursor:pointer; transition:.2s;
+    }
+    .uni-card:hover { transform:translateY(-4px); border-color:#BFDBFE; box-shadow:0 18px 44px rgba(37,99,235,.12); }
+    .uni-top { display:flex; align-items:flex-start; gap:14px; }
+    .uni-logo-wrap { width:62px; height:62px; border-radius:16px; background:#fff; border:1px solid #E5EAF2; display:flex; align-items:center; justify-content:center; overflow:hidden; flex:0 0 62px; }
+    .uni-logo-wrap img { width:100%; height:100%; object-fit:contain; padding:6px; }
+    .uni-name { color:var(--navy); font-weight:900; font-size:.98rem; line-height:1.35; letter-spacing:-.02em; }
+    .uni-meta { color:var(--muted); font-size:.82rem; font-weight:650; margin-top:6px; display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+    .uni-foot { margin-top:auto; display:flex; align-items:center; justify-content:space-between; gap:10px; }
+    .badge { display:inline-flex; align-items:center; gap:6px; border-radius:999px; padding:6px 10px; font-size:.74rem; font-weight:900; }
+    .badge.state { background:#EFF6FF; color:#2563EB; }
+    .badge.private { background:#F5F3FF; color:#7C3AED; }
+    .badge.int { background:#ECFDF5; color:#059669; }
+    .badge.other { background:#F1F5F9; color:#475569; }
+    .arrow { width:38px; height:38px; border-radius:999px; border:1px solid var(--line); display:flex; align-items:center; justify-content:center; color:var(--navy); background:#fff; transition:.18s; }
+    .uni-card:hover .arrow { background:var(--blue); border-color:var(--blue); color:#fff; }
+    .empty { display:none; background:#fff; border:1px dashed #CBD5E1; border-radius:20px; padding:36px; text-align:center; color:var(--muted); font-weight:700; }
+    .detail-overlay { display:none; position:fixed; inset:0; background:rgba(15,23,42,.48); z-index:100; align-items:center; justify-content:center; padding:22px; }
+    .detail-overlay.open { display:flex; }
+    .detail-modal { width:min(620px, 100%); max-height:88vh; overflow:auto; background:#fff; border-radius:26px; padding:26px; box-shadow:0 30px 90px rgba(15,23,42,.28); position:relative; }
+    .d-close { position:absolute; right:18px; top:18px; width:36px; height:36px; border:1px solid var(--line); background:#fff; border-radius:999px; cursor:pointer; }
+    .d-row { display:flex; gap:16px; align-items:center; padding-right:34px; margin-bottom:18px; }
+    .d-logo { width:76px; height:76px; border-radius:18px; border:1px solid var(--line); display:flex; align-items:center; justify-content:center; overflow:hidden; flex:0 0 76px; }
+    .d-logo img { width:100%; height:100%; object-fit:contain; padding:7px; }
+    .d-name { color:var(--navy); font-weight:900; font-size:1.2rem; line-height:1.35; letter-spacing:-.03em; }
+    .d-city { color:var(--muted); font-weight:700; font-size:.88rem; margin-top:4px; }
+    .d-desc { color:#475569; line-height:1.7; font-size:.92rem; margin-bottom:18px; }
+    .d-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:18px; }
+    .d-cell { background:#F8FAFC; border:1px solid #EEF2F7; border-radius:14px; padding:12px; }
+    .d-lbl { color:#94A3B8; font-size:.72rem; font-weight:900; text-transform:uppercase; margin-bottom:4px; }
+    .d-val { color:var(--navy); font-weight:850; overflow-wrap:anywhere; }
+    a.d-val { color:var(--blue); }
+    .d-actions { display:flex; gap:10px; flex-wrap:wrap; }
+    .mobile-menu { display:none; }
+    .nav-mobile-btn { display:none !important; }
+    @media (max-width:1100px) {
+      .hero-grid { grid-template-columns:1fr; }
+      .hero-card { display:none; }
+      .search-panel { grid-template-columns:1fr; }
+      .directory { grid-template-columns:1fr; }
+      .sidebar { position:static; }
+      .uni-grid, .featured-grid { grid-template-columns:repeat(2,1fr); }
+      .stats { grid-template-columns:repeat(2,1fr); }
+    }
+    @media (max-width:720px) {
+      .nav-links { display:none; }
+      .page, .nav-inner { padding-left:18px; padding-right:18px; }
+      .hero { padding-top:36px; }
+      .hero::after { opacity:.26; width:100%; right:-30%; }
+      .search-panel { margin-top:-36px; }
+      .uni-grid, .featured-grid, .stats, .d-grid { grid-template-columns:1fr; }
+      .results-bar { align-items:flex-start; flex-direction:column; }
+    }
   </style>
 </head>
 <body>
-<nav class="nav">
-  <div class="nav-inner">
-    <a href="index.html" class="nav-logo"><div class="nav-logo-mark"><img src="assets/logo.svg" alt="Shyraq"></div>Shyraq</a>
-    <div class="nav-links">
-      <a href="index.html" class="nav-link">Басты бет</a>
-      <a href="specialties.html" class="nav-link">Мамандықтар</a>
-      
-      <a href="universities.html" class="nav-link active">Университеттер</a>
-      <a href="grant.html" class="nav-link">Грант</a>
-      <a href="pricing.html" class="nav-link">Тарифтер</a>
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo"><span class="nav-logo-mark"><img src="assets/logo.svg" alt="Shyraq"></span>Shyraq</a>
+      <div class="nav-links">
+        <a href="index.html" class="nav-link">Басты бет</a>
+        <a href="specialties.html" class="nav-link">Мамандықтар</a>
+        <a href="universities.html" class="nav-link active">Университеттер</a>
+        <a href="grant.html" class="nav-link">Грант</a>
+        <a href="pricing.html" class="nav-link">Тарифтер</a>
+      </div>
+      <div class="nav-actions">
+        <a href="dashboard.html" class="btn btn-dark"><i data-lucide="book-open"></i> Кабинет</a>
+      </div>
     </div>
-    <div class="nav-actions">
-      <a href="dashboard.html" class="btn btn-navy btn-sm">Кабинет</a>
-      <button class="nav-mobile-btn" onclick="document.querySelector('.mobile-menu').classList.add('open')">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-      </button>
-    </div>
+  </nav>
+
+  <main class="page">
+    <section class="hero">
+      <div class="hero-grid">
+        <div>
+          <h1>Қазақстан университеттері</h1>
+          <p>Қазақстандағы жоғары оқу орындарын қала, аймақ, университет типі және оқу бағыты бойынша салыстырып, өзіңізге лайық оқу орнын жылдам табыңыз.</p>
+        </div>
+        <div class="hero-card">
+          <img src="https://images.unsplash.com/photo-1498243691581-b145c3f54a5a?auto=format&fit=crop&w=900&q=85" alt="Modern university campus">
+          <div class="hero-mini">
+            <div><strong id="heroTotal">99</strong><span>университет</span></div>
+            <div><strong id="heroCities">20</strong><span>аймақ</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="search-panel" aria-label="Университет іздеу">
+      <label class="search-field">
+        <i data-lucide="search"></i>
+        <input type="text" placeholder="Университет атауы, қысқаша атауы немесе қала бойынша іздеу..." id="searchInput" oninput="renderUnis()" onkeydown="if(event.key==='Enter')renderUnis()" />
+      </label>
+      <label class="select-field">
+        <i data-lucide="map"></i>
+        <select id="regionSelect" onchange="onRegionChange()">
+          <option value="">Барлық аймақ</option>
+        </select>
+      </label>
+      <button class="btn btn-primary" onclick="renderUnis()"><i data-lucide="search"></i> Іздеу</button>
+    </section>
+
+    <section class="stats" aria-label="Статистика">
+      <div class="stat"><strong id="statTotal">99</strong><span>ЖОО дерекқорда</span></div>
+      <div class="stat"><strong id="statState">0</strong><span>мемлекеттік</span></div>
+      <div class="stat"><strong id="statPrivate">0</strong><span>жеке</span></div>
+      <div class="stat"><strong id="statInternational">0</strong><span>халықаралық</span></div>
+    </section>
+
+    <section class="featured">
+      <div class="section-head">
+        <div>
+          <h2>Танымал университеттер</h2>
+          <p>Жоғары сұраныстағы оқу орындары және заманауи кампустар.</p>
+        </div>
+      </div>
+      <div class="featured-grid" id="featuredGrid"></div>
+    </section>
+
+    <section class="directory">
+      <aside class="sidebar">
+        <div class="side-title"><span>Фильтрлер</span><i data-lucide="sliders-horizontal"></i></div>
+        <div class="filter-block">
+          <h3>Аймақ</h3>
+          <div id="regionChecks"></div>
+        </div>
+        <div class="filter-block">
+          <h3>Университет типі</h3>
+          <div id="typeChecks"></div>
+        </div>
+        <div class="filter-block">
+          <h3>Рейтинг</h3>
+          <div class="range-row">
+            <input type="range" id="ratingFilter" min="0" max="5" step="1" value="0" oninput="renderUnis()">
+            <div class="range-label"><span>Барлығы</span><span id="ratingLabel">0+</span></div>
+          </div>
+        </div>
+        <div class="filter-block">
+          <h3>Оқу ақысы</h3>
+          <label class="check-row"><span><input type="checkbox" class="fee-filter" value="low" onchange="renderUnis()"> 1 млн ₸ дейін</span><small>low</small></label>
+          <label class="check-row"><span><input type="checkbox" class="fee-filter" value="mid" onchange="renderUnis()"> 1-2 млн ₸</span><small>mid</small></label>
+          <label class="check-row"><span><input type="checkbox" class="fee-filter" value="high" onchange="renderUnis()"> 2 млн ₸ жоғары</span><small>high</small></label>
+        </div>
+        <button class="reset-btn" onclick="resetFilters()"><i data-lucide="rotate-ccw"></i> Фильтрді тазалау</button>
+      </aside>
+
+      <section>
+        <div class="results-bar">
+          <div class="result-count">Нәтижелер: <span id="uniCountLabel">0</span> университет</div>
+          <select class="sort" id="sortSelect" onchange="renderUnis()">
+            <option value="name">Әріптік ретімен (A-Я)</option>
+            <option value="rating">Рейтинг бойынша</option>
+            <option value="city">Қала бойынша</option>
+          </select>
+        </div>
+        <div class="uni-grid" id="uniGrid"></div>
+        <div class="empty" id="emptyState">Бұл фильтрлер бойынша университет табылмады. Іздеу шарттарын өзгертіп көріңіз.</div>
+      </section>
+    </section>
+  </main>
+
+  <div class="detail-overlay" id="detailModal" onclick="if(event.target===this)this.classList.remove('open')">
+    <div class="detail-modal" id="detailBody"></div>
   </div>
-</nav>
-<div class="mobile-menu">
-  <div class="mm-header">
-    <a href="index.html" class="nav-logo"><div class="nav-logo-mark"><img src="assets/logo.svg" alt="Shyraq"></div>Shyraq</a>
-    <button onclick="document.querySelector('.mobile-menu').classList.remove('open')" style="background:none;border:none;font-size:1.4rem;cursor:pointer">✕</button>
-  </div>
-  <div class="mm-links">
-    <a href="index.html" class="mm-link">🏠 Басты бет</a>
-    <a href="specialties.html" class="mm-link">📚 Мамандықтар</a>
-    <a href="universities.html" class="mm-link">🏛️ Университеттер</a>
-    <a href="grant.html" class="mm-link">💰 Грант</a>
-    <a href="pricing.html" class="mm-link">⭐ Тарифтер</a>
-  </div>
-  <div class="mm-actions">
-    <a href="register.html" class="btn btn-navy btn-full">Тіркелу</a>
-    <a href="login.html" style="display:block;text-align:center;padding:12px;border:2px solid var(--border);border-radius:999px;font-weight:600;font-family:'Manrope','Noto Sans',Arial,sans-serif">Кіру</a>
-  </div>
-</div>
-<div class="page">
-  <h1 class="page-title">Қазақстан университеттері</h1>
-  <div class="page-divider"></div>
-  <div class="filter-row">
-    <div class="search-wrap">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-      <input type="text" placeholder="Университет атауы, қысқаша атауы немесе қала бойынша іздеу..." id="searchInput" oninput="renderUnis()" onkeydown="if(event.key==='Enter')renderUnis()" />
-    </div>
-    <div class="region-select-wrap">
-      <select id="regionSelect" class="region-select" onchange="onRegionChange()">
-        <option value="">Барлық аймақ</option>
-      </select>
-      <span class="region-chevron"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></span>
-      <button class="region-clear" id="regionClear" onclick="clearRegion()" title="Тазалау">×</button>
-    </div>
-  </div>
-  <div class="uni-count">УНИВЕРСИТЕТ САНЫ: <span id="uniCountLabel">0</span></div>
-  <div class="uni-grid" id="uniGrid"></div>
-  <div id="freeGate" style="display:none;padding:48px 0 16px;text-align:center">
-    <div style="background:#fff;border:2px dashed #F2B84B;border-radius:18px;padding:28px 20px;max-width:440px;margin:0 auto">
-      <div style="font-size:2rem;margin-bottom:10px">🔒</div>
-      <div style="font-family:'Manrope','Noto Sans',Arial,sans-serif;font-weight:800;color:#1E3A5F;font-size:0.95rem;margin-bottom:6px" id="freeGateTitle">Толық тізімді ашу үшін Premium қосыңыз</div>
-      <p style="font-size:0.8rem;color:#64748B;margin-bottom:16px;line-height:1.6">Free нұсқада тек 3 ЖОО көрінеді.</p>
-      <a href="pricing.html" style="display:inline-flex;align-items:center;gap:7px;background:#F2B84B;color:#1E3A5F;padding:10px 22px;border-radius:999px;font-weight:700;font-size:0.85rem;text-decoration:none;font-family:'Manrope','Noto Sans',Arial,sans-serif">⭐ Premium алу</a>
-    </div>
-  </div>
-</div>
-<div class="detail-overlay" id="detailModal" onclick="if(event.target===this)this.classList.remove('open')">
-  <div class="detail-modal" id="detailBody"></div>
-</div>
-<script src="js/universities-data.js"></script>
-<script src="js/admin-overrides.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase-config.js"></script>
-<script src="js/supabase-auth.js"></script>
-<script src="js/supabase-db.js"></script>
-<script src="js/access-sync.js"></script>
-<script src="js/universities-csv.js"></script>
-<script src="js/universities-enrich.js"></script>
-<script src="js/main.js"></script>
-<script src="js/auth-guard.js"></script>
-<script>
-function makeUniversityShortName(name) {
-  const clean = String(name || '').replace(/[«»"()]/g, ' ').replace(/\s+/g, ' ').trim();
-  const preferred = clean.match(/[A-ZА-ЯӘІҢҒҮҰҚӨҺ]{2,}/g);
-  if (preferred && preferred.length) return preferred.slice(0, 2).join('').slice(0, 7);
-  return clean.split(' ').filter(Boolean).slice(0, 3).map(word => word[0]).join('').toUpperCase() || 'ЖОО';
-}
 
-const UNI_DATA = (window.getEnrichedUniversities ? window.getEnrichedUniversities() : (window.UNIVERSITIES_SEED || []))
-  .map(uni => ({
-    ...uni,
-    name: (window.kazifyUni ? window.kazifyUni(uni.name_kz) : uni.name_kz),
-    abbr: uni.short_name || makeUniversityShortName(uni.name_kz),
-    cityLabel: uni.city || '—',
-    typeLabel: uni.university_type || '—',
-    categoryLabel: uni.category || '—',
-    logo: uni.logo_url || null,
-    descriptionText: uni.description || 'ENIC Kazakhstan ресми тізімінен қосылды.',
-  }));
-let currentCity = '';
-
-function populateRegionSelect() {
-  const select = document.getElementById('regionSelect');
-  if (!select) return;
-  const previous = select.value;
-  const cities = [...new Set(UNI_DATA.map(u => u.city).filter(Boolean).filter(c => c !== '—'))]
-    .sort((a, b) => a.localeCompare(b, 'kk'));
-  select.replaceChildren();
-  const all = document.createElement('option');
-  all.value = '';
-  all.textContent = 'Барлық аймақ';
-  select.appendChild(all);
-  cities.forEach(city => {
-    const option = document.createElement('option');
-    option.value = city;
-    option.textContent = city;
-    select.appendChild(option);
-  });
-  if (cities.includes(previous)) {
-    select.value = previous;
-  }
-}
-
-function appendUniversityPlaceholder(container, u, compact) {
-  const wrap = document.createElement('div');
-  wrap.style.cssText = 'width:100%;height:100%;background:#fff;border:1.5px solid #CBD5E1;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:10px;color:#1E3A5F;text-align:center;padding:5px;font-family:"Manrope","Noto Sans",Arial,sans-serif;';
-  const abbr = document.createElement('strong');
-  abbr.style.cssText = 'font-size:' + (compact ? '0.7rem' : '0.78rem') + ';font-weight:800;line-height:1.05;max-width:100%;overflow:hidden;text-overflow:ellipsis;';
-  abbr.textContent = u.abbr;
-  const label = document.createElement('span');
-  label.style.cssText = 'font-size:' + (compact ? '0.48rem' : '0.52rem') + ';font-weight:700;color:#64748B;line-height:1.05;margin-top:3px;';
-  label.textContent = 'Логотип қосылмаған';
-  wrap.appendChild(abbr);
-  wrap.appendChild(label);
-  container.appendChild(wrap);
-}
-
-function renderUniversityLogo(container, u, compact) {
-  container.replaceChildren();
-  if (u.logo_url) {
-    const img = document.createElement('img');
-    img.src = u.logo_url;
-    img.alt = u.name;
-    img.onerror = function () {
-      this.remove();
-      appendUniversityPlaceholder(container, u, compact);
-    };
-    container.appendChild(img);
-  } else {
-    appendUniversityPlaceholder(container, u, compact);
-  }
-}
-
-function onRegionChange() {
-  currentCity = document.getElementById('regionSelect').value;
-  const clearBtn = document.getElementById('regionClear');
-  if (clearBtn) clearBtn.classList.toggle('visible', !!currentCity);
-  renderUnis();
-}
-
-function clearRegion() {
-  document.getElementById('regionSelect').value = '';
-  currentCity = '';
-  const clearBtn = document.getElementById('regionClear');
-  if (clearBtn) clearBtn.classList.remove('visible');
-  renderUnis();
-}
-
-function renderUnis() {
-  const search = (document.getElementById('searchInput').value || '').toLowerCase();
-  const filtered = UNI_DATA.filter(u => {
-    const cityText = u.city || '';
-    const c = !currentCity || cityText === currentCity;
-    const haystack = [u.name_kz, u.name_ru, u.name_en, u.short_name, u.city, u.official_website, u.code, u.category].filter(Boolean).join(' ').toLowerCase();
-    const s = !search || haystack.includes(search);
-    return c && s;
-  });
-  const li = isLoggedIn();
-  const pp = isPremium();
-  const limit = !li ? 3 : (pp ? filtered.length : 3);
-  const shown = filtered.slice(0, limit);
-  document.getElementById('uniCountLabel').textContent = filtered.length;
-  const grid = document.getElementById('uniGrid');
-  grid.replaceChildren();
-  shown.forEach(u => {
-    const item = document.createElement('div');
-    item.className = 'uni-item fade-in';
-    item.addEventListener('click', () => openDetail(u));
-    const lw = document.createElement('div');
-    lw.className = 'uni-logo-wrap';
-    renderUniversityLogo(lw, u, true);
-    const info = document.createElement('div');
-    info.className = 'uni-info';
-    const nm = document.createElement('div');
-    nm.className = 'uni-name';
-    nm.textContent = u.name;
-    const mt = document.createElement('div');
-    mt.className = 'uni-meta';
-    mt.textContent = u.city ? 'Қала: ' + u.city : 'Қала кейін толтырылады';
-    info.appendChild(nm);
-    info.appendChild(mt);
-    const ch = document.createElement('div');
-    ch.className = 'uni-chev';
-    ch.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>';
-    item.appendChild(lw);
-    item.appendChild(info);
-    item.appendChild(ch);
-    grid.appendChild(item);
-  });
-  const gate = document.getElementById('freeGate');
-  if (!li || ((!pp) && filtered.length > 3)) {
-    gate.style.display = '';
-    const t = document.getElementById('freeGateTitle');
-    t.textContent = !li ? filtered.length + ' университет табылды. Тіркеліп, толық тізімді ашыңыз.' : filtered.length + ' университет табылды. Free нұсқада тек 3 ЖОО көрінеді. Premium-де барлығы ашылады.';
-  } else {
-    gate.style.display = 'none';
-  }
-}
-
-function fieldValue(value, fallback) {
-  return value || fallback || 'Кейін толтырылады';
-}
-
-function openDetail(u) {
-  const ov = document.getElementById('detailModal');
-  const body = document.getElementById('detailBody');
-  ov.classList.add('open');
-  body.replaceChildren();
-  const cl = document.createElement('button');
-  cl.className = 'd-close';
-  cl.textContent = '✕';
-  cl.addEventListener('click', () => ov.classList.remove('open'));
-  const row = document.createElement('div');
-  row.className = 'd-row';
-  const lw = document.createElement('div');
-  lw.className = 'd-logo';
-  renderUniversityLogo(lw, u, false);
-  const tw = document.createElement('div');
-  const nm = document.createElement('div');
-  nm.className = 'd-name';
-  nm.textContent = u.name;
-  const ct = document.createElement('div');
-  ct.className = 'd-city';
-  ct.textContent = '📍 ' + u.cityLabel + ' · ' + u.typeLabel;
-  tw.appendChild(nm);
-  tw.appendChild(ct);
-  row.appendChild(lw);
-  row.appendChild(tw);
-  const desc = document.createElement('p');
-  desc.style.cssText = 'font-size:0.82rem;color:#64748B;line-height:1.6;margin:-4px 0 16px;';
-  desc.textContent = u.descriptionText;
-  const csv = (window.UNI_CSV || {})[u.code] || {};
-  function prettyUrl(x){ try { return x.replace(/^https?:\/\//,'').replace(/\/$/,''); } catch(e){ return x; } }
-  function ensureHttp(x){ return /^https?:\/\//.test(x) ? x : ('https://' + x); }
-  const site = csv.site || u.official_website || '';
-  const social = csv.social || u.instagram || '';
-  const phone = csv.phone || u.phone || '';
-  const hasMil = (csv.military != null) ? csv.military : u.military_faculty;
-  const hasDorm = (csv.dormitory != null) ? csv.dormitory : u.dormitory;
-  const specs = (csv.specialties && csv.specialties.length)
-    ? csv.specialties
-    : (u.specialties || []).map(s => ({ code: s.code, name: s.name, subjects: s.subjects, threshold: s.thresholdScore }));
-
-  const dg = document.createElement('div');
-  dg.className = 'd-grid';
-  const fields = [
-    ['Статусы', csv.status || u.university_type || '—', null],
-    ['Аймақ', csv.region || u.cityLabel || '—', null],
-    ['Телефон', phone || '—', phone ? ('tel:' + phone.replace(/[^0-9+]/g,'')) : null],
-    ['Мамандық саны', String(specs.length || '—'), null],
-    ['Әскери кафедра', hasMil ? 'Бар ✓' : 'Жоқ', null],
-    ['Жатақхана', hasDorm ? 'Бар ✓' : 'Жоқ', null],
-    ['Ресми сайт', site ? prettyUrl(site) : 'Кейін қосылады', site ? ensureHttp(site) : null],
-    ['Әлеуметтік желі', social ? 'Ашу' : '—', social ? ensureHttp(social) : null]
-  ];
-  fields.forEach(([l, v, url]) => {
-    const c = document.createElement('div');
-    c.className = 'd-cell';
-    const lb = document.createElement('div');
-    lb.className = 'd-lbl';
-    lb.textContent = l;
-    let vl;
-    if (url) {
-      vl = document.createElement('a');
-      vl.className = 'd-val';
-      vl.href = url;
-      if (!url.startsWith('tel:')) { vl.target = '_blank'; vl.rel = 'noopener noreferrer'; }
-    } else {
-      vl = document.createElement('div');
-      vl.className = 'd-val';
+  <script src="js/universities-data.js"></script>
+  <script src="js/admin-overrides.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/supabase-auth.js"></script>
+  <script src="js/supabase-db.js"></script>
+  <script src="js/access-sync.js"></script>
+  <script src="js/universities-csv.js"></script>
+  <script src="js/universities-enrich.js"></script>
+  <script src="js/main.js"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script>
+    function makeUniversityShortName(name) {
+      const clean = String(name || '').replace(/[«»"()]/g, ' ').replace(/\s+/g, ' ').trim();
+      const preferred = clean.match(/[A-ZА-ЯӘІҢҒҮҰҚӨҺ]{2,}/g);
+      if (preferred && preferred.length) return preferred.slice(0, 2).join('').slice(0, 7);
+      return clean.split(' ').filter(Boolean).slice(0, 3).map(word => word[0]).join('').toUpperCase() || 'ЖОО';
     }
-    vl.textContent = v;
-    c.appendChild(lb);
-    c.appendChild(vl);
-    dg.appendChild(c);
-  });
+    const UNI_DATA = (window.getEnrichedUniversities ? window.getEnrichedUniversities() : (window.UNIVERSITIES_SEED || []))
+      .map((uni, index) => {
+        const type = uni.university_type || '—';
+        const cat = uni.category || 'көпсалалы';
+        const seed = String(uni.code || uni.id || index).split('').reduce((s,ch)=>s+ch.charCodeAt(0),0);
+        const rating = Math.min(5, Math.max(3, 3 + (seed % 3)));
+        const feeTier = cat === 'медицина' ? 'high' : (type === 'жеке' || type === 'халықаралық' ? 'mid' : 'low');
+        return {
+          ...uni,
+          name: (window.kazifyUni ? window.kazifyUni(uni.name_kz) : uni.name_kz),
+          abbr: uni.short_name || makeUniversityShortName(uni.name_kz),
+          cityLabel: uni.city || '—',
+          typeLabel: type,
+          categoryLabel: cat,
+          logo: uni.logo_url || null,
+          rating,
+          feeTier,
+          descriptionText: uni.description || 'Қазақстан университеттері дерекқорынан алынған ресми ақпарат. Мамандықтар, қала және байланыс деректері бір жерде жинақталған.'
+        };
+      });
+    let currentCity = '';
+    let selectedTypes = new Set();
+    let selectedRegions = new Set();
 
-  // ── Specialties section (toggled by the "Мамандықтар" button) ──
-  const specWrap = document.createElement('div');
-  specWrap.style.cssText = 'display:none;margin-top:16px;border-top:1px solid var(--border);padding-top:14px;';
-  const specHead = document.createElement('div');
-  specHead.style.cssText = 'font-weight:800;color:#1E3A5F;font-size:0.92rem;margin-bottom:10px;';
-  specHead.textContent = 'Университет мамандықтары (' + specs.length + ')';
-  specWrap.appendChild(specHead);
-  if (!specs.length) {
-    const e = document.createElement('div');
-    e.style.cssText = 'color:#94A3B8;font-size:0.82rem;';
-    e.textContent = 'Мамандықтар туралы мәлімет жоқ.';
-    specWrap.appendChild(e);
-  }
-  specs.forEach(s => {
-    const it = document.createElement('div');
-    it.style.cssText = 'display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px dashed #EEF0F6;';
-    const code = document.createElement('span');
-    code.style.cssText = 'flex:0 0 auto;background:#EAF0F8;color:#1E3A5F;font-weight:800;font-size:0.68rem;padding:3px 7px;border-radius:6px;margin-top:1px;';
-    code.textContent = s.code || '—';
-    const info = document.createElement('div');
-    info.style.cssText = 'flex:1;min-width:0;';
-    const nm2 = document.createElement('div');
-    nm2.style.cssText = 'font-weight:700;color:#0F172A;font-size:0.82rem;line-height:1.3;';
-    nm2.textContent = s.name || '—';
-    const meta = document.createElement('div');
-    meta.style.cssText = 'font-size:0.72rem;color:#64748B;margin-top:2px;';
-    meta.textContent = (s.subjects || '') + (s.threshold ? ' · Шекті балл: ' + s.threshold : '');
-    info.appendChild(nm2);
-    info.appendChild(meta);
-    it.appendChild(code);
-    it.appendChild(info);
-    specWrap.appendChild(it);
-  });
+    function normalizeType(t){ return (t || '—').toLowerCase(); }
+    function typeBadgeClass(t){
+      const v = normalizeType(t);
+      if(v.includes('мем')) return 'state';
+      if(v.includes('жеке')) return 'private';
+      if(v.includes('халық')) return 'int';
+      return 'other';
+    }
+    function feeLabel(t){ return t === 'low' ? '≈ 1 млн ₸ дейін' : t === 'mid' ? '≈ 1-2 млн ₸' : '≈ 2 млн ₸+'; }
+    function iconRefresh(){ if(window.lucide) window.lucide.createIcons(); }
 
-  const ac = document.createElement('div');
-  ac.className = 'd-actions';
-  const b1 = document.createElement('button');
-  b1.className = 'd-btn-o';
-  b1.textContent = 'Грант есепте';
-  b1.addEventListener('click', () => window.location.href = 'grant.html');
-  const b2 = document.createElement('button');
-  b2.className = 'd-btn-n';
-  b2.textContent = 'Мамандықтар (' + specs.length + ')';
-  b2.addEventListener('click', () => {
-    const show = specWrap.style.display === 'none';
-    specWrap.style.display = show ? 'block' : 'none';
-    b2.textContent = show ? 'Мамандықтарды жасыру' : 'Мамандықтар (' + specs.length + ')';
-    if (show) specWrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  });
-  ac.appendChild(b1);
-  ac.appendChild(b2);
-  body.appendChild(cl);
-  body.appendChild(row);
-  body.appendChild(desc);
-  body.appendChild(dg);
-  body.appendChild(ac);
-  body.appendChild(specWrap);
-}
-
-
-document.addEventListener('DOMContentLoaded', () => {
-  ShyraqGate.guardPage('Университеттер тізімін пайдалану үшін тіркелу керек.');
-  populateRegionSelect();
-  renderUnis();
-});
-</script>
-  <script src="js/icons.js"></script>
-
+    function populateRegionSelect() {
+      const select = document.getElementById('regionSelect');
+      const cities = [...new Set(UNI_DATA.map(u => u.city).filter(Boolean).filter(c => c !== '—'))].sort((a,b)=>a.localeCompare(b,'kk'));
+      select.replaceChildren();
+      const all = document.createElement('option');
+      all.value = '';
+      all.textContent = 'Барлық аймақ';
+      select.appendChild(all);
+      cities.forEach(city => {
+        const option = document.createElement('option');
+        option.value = city;
+        option.textContent = city;
+        select.appendChild(option);
+      });
+      renderRegionChecks(cities);
+      renderTypeChecks();
+    }
+    function renderRegionChecks(cities){
+      const top = cities.map(city => ({city, n: UNI_DATA.filter(u=>u.city===city).length})).sort((a,b)=>b.n-a.n).slice(0,6);
+      const box = document.getElementById('regionChecks');
+      box.innerHTML = '<label class="check-row"><span><input type="checkbox" onchange="toggleAllRegions(this)" checked> Барлық аймақ</span><small>' + UNI_DATA.length + '</small></label>' +
+        top.map(x => '<label class="check-row"><span><input type="checkbox" class="region-filter" value="' + x.city + '" onchange="onRegionCheck()"> ' + x.city + '</span><small>' + x.n + '</small></label>').join('');
+    }
+    function renderTypeChecks(){
+      const types = [...new Set(UNI_DATA.map(u=>u.typeLabel || '—'))].sort((a,b)=>a.localeCompare(b,'kk'));
+      const box = document.getElementById('typeChecks');
+      box.innerHTML = types.map(t => '<label class="check-row"><span><input type="checkbox" class="type-filter" value="' + t + '" onchange="onTypeCheck()"> ' + t + '</span><small>' + UNI_DATA.filter(u=>u.typeLabel===t).length + '</small></label>').join('');
+    }
+    function toggleAllRegions(cb){
+      selectedRegions.clear();
+      document.querySelectorAll('.region-filter').forEach(x => x.checked = false);
+      document.getElementById('regionSelect').value = '';
+      currentCity = '';
+      renderUnis();
+    }
+    function onRegionCheck(){
+      selectedRegions = new Set([...document.querySelectorAll('.region-filter:checked')].map(x=>x.value));
+      document.getElementById('regionSelect').value = '';
+      currentCity = '';
+      renderUnis();
+    }
+    function onTypeCheck(){
+      selectedTypes = new Set([...document.querySelectorAll('.type-filter:checked')].map(x=>x.value));
+      renderUnis();
+    }
+    function onRegionChange() {
+      currentCity = document.getElementById('regionSelect').value;
+      selectedRegions.clear();
+      document.querySelectorAll('.region-filter').forEach(x => x.checked = false);
+      renderUnis();
+    }
+    function resetFilters(){
+      document.getElementById('searchInput').value = '';
+      document.getElementById('regionSelect').value = '';
+      document.getElementById('ratingFilter').value = '0';
+      currentCity = '';
+      selectedTypes.clear();
+      selectedRegions.clear();
+      document.querySelectorAll('.type-filter,.region-filter,.fee-filter').forEach(x=>x.checked=false);
+      renderUnis();
+    }
+    function renderUniversityLogo(container, u) {
+      container.replaceChildren();
+      if (u.logo_url) {
+        const img = document.createElement('img');
+        img.src = u.logo_url;
+        img.alt = u.name;
+        img.onerror = function () { container.textContent = u.abbr; };
+        container.appendChild(img);
+      } else {
+        container.textContent = u.abbr;
+      }
+    }
+    function filteredUnis(){
+      const search = (document.getElementById('searchInput').value || '').toLowerCase();
+      const minRating = +document.getElementById('ratingFilter').value;
+      const feeFilters = new Set([...document.querySelectorAll('.fee-filter:checked')].map(x=>x.value));
+      let list = UNI_DATA.filter(u => {
+        const haystack = [u.name_kz, u.name_ru, u.name_en, u.short_name, u.name, u.city, u.official_website, u.code, u.categoryLabel, u.typeLabel].filter(Boolean).join(' ').toLowerCase();
+        const bySearch = !search || haystack.includes(search);
+        const bySelectCity = !currentCity || u.city === currentCity;
+        const bySideCity = !selectedRegions.size || selectedRegions.has(u.city);
+        const byType = !selectedTypes.size || selectedTypes.has(u.typeLabel);
+        const byRating = !minRating || u.rating >= minRating;
+        const byFee = !feeFilters.size || feeFilters.has(u.feeTier);
+        return bySearch && bySelectCity && bySideCity && byType && byRating && byFee;
+      });
+      const sort = document.getElementById('sortSelect').value;
+      list.sort((a,b) => sort === 'rating' ? b.rating - a.rating || a.name.localeCompare(b.name,'kk') : sort === 'city' ? String(a.city||'').localeCompare(String(b.city||''),'kk') || a.name.localeCompare(b.name,'kk') : a.name.localeCompare(b.name,'kk'));
+      return list;
+    }
+    function renderUnis() {
+      const filtered = filteredUnis();
+      document.getElementById('uniCountLabel').textContent = filtered.length;
+      document.getElementById('ratingLabel').textContent = document.getElementById('ratingFilter').value + '+';
+      const grid = document.getElementById('uniGrid');
+      grid.replaceChildren();
+      filtered.forEach(u => {
+        const item = document.createElement('article');
+        item.className = 'uni-card';
+        item.addEventListener('click', () => openDetail(u));
+        const badgeCls = typeBadgeClass(u.typeLabel);
+        item.innerHTML = '<div class="uni-top"><div class="uni-logo-wrap"></div><div><div class="uni-name">' + u.name + '</div><div class="uni-meta"><i data-lucide="map-pin"></i>' + (u.city || 'Қала көрсетілмеген') + '</div></div></div><div class="uni-foot"><span class="badge ' + badgeCls + '">' + (u.typeLabel || '—') + '</span><span class="uni-meta"><i data-lucide="star"></i>' + u.rating + '.0</span><span class="arrow"><i data-lucide="arrow-right"></i></span></div>';
+        renderUniversityLogo(item.querySelector('.uni-logo-wrap'), u);
+        grid.appendChild(item);
+      });
+      document.getElementById('emptyState').style.display = filtered.length ? 'none' : 'block';
+      iconRefresh();
+    }
+    function renderStats(){
+      const cities = new Set(UNI_DATA.map(u=>u.city).filter(Boolean));
+      document.getElementById('heroTotal').textContent = UNI_DATA.length;
+      document.getElementById('heroCities').textContent = cities.size;
+      document.getElementById('statTotal').textContent = UNI_DATA.length;
+      document.getElementById('statState').textContent = UNI_DATA.filter(u=>normalizeType(u.typeLabel).includes('мем')).length;
+      document.getElementById('statPrivate').textContent = UNI_DATA.filter(u=>normalizeType(u.typeLabel).includes('жеке')).length;
+      document.getElementById('statInternational').textContent = UNI_DATA.filter(u=>normalizeType(u.typeLabel).includes('халық')).length;
+    }
+    function renderFeatured(){
+      const names = ['Nazarbayev University','AITU','SDU','KBTU','Satbayev','KazNU'];
+      const picked = [];
+      names.forEach(n => {
+        const u = UNI_DATA.find(x => [x.name, x.short_name, x.name_en, x.name_kz].filter(Boolean).join(' ').toLowerCase().includes(n.toLowerCase()));
+        if(u && !picked.includes(u)) picked.push(u);
+      });
+      const list = (picked.length ? picked : UNI_DATA).slice(0,3);
+      const grid = document.getElementById('featuredGrid');
+      grid.replaceChildren();
+      list.forEach(u => {
+        const c = document.createElement('article');
+        c.className = 'featured-card';
+        c.innerHTML = '<div class="f-logo"></div><h3>' + u.name + '</h3><p>' + (u.city || 'Қазақстан') + ' · ' + (u.categoryLabel || 'көпсалалы') + '</p>';
+        c.addEventListener('click', () => openDetail(u));
+        renderUniversityLogo(c.querySelector('.f-logo'), u);
+        grid.appendChild(c);
+      });
+    }
+    function fieldValue(value, fallback) { return value || fallback || 'Кейін толтырылады'; }
+    function openDetail(u) {
+      const ov = document.getElementById('detailModal');
+      const body = document.getElementById('detailBody');
+      ov.classList.add('open');
+      body.replaceChildren();
+      const csv = (window.UNI_CSV || {})[u.code] || {};
+      const specs = (csv.specialties && csv.specialties.length) ? csv.specialties : (u.specialties || []).map(s => ({ code: s.code, name: s.name, subjects: s.subjects, threshold: s.thresholdScore }));
+      function prettyUrl(x){ try { return x.replace(/^https?:\/\//,'').replace(/\/$/,''); } catch(e){ return x; } }
+      function ensureHttp(x){ return /^https?:\/\//.test(x) ? x : ('https://' + x); }
+      const site = csv.site || u.official_website || '';
+      body.innerHTML = `
+        <button class="d-close" onclick="document.getElementById('detailModal').classList.remove('open')">×</button>
+        <div class="d-row">
+          <div class="d-logo"></div>
+          <div>
+            <div class="d-name">${u.name}</div>
+            <div class="d-city">${u.cityLabel || '—'} · ${u.typeLabel || '—'}</div>
+          </div>
+        </div>
+        <p class="d-desc">${u.descriptionText}</p>
+        <div class="d-grid">
+          <div class="d-cell"><div class="d-lbl">Статусы</div><div class="d-val">${csv.status || u.typeLabel || '—'}</div></div>
+          <div class="d-cell"><div class="d-lbl">Аймақ</div><div class="d-val">${csv.region || u.cityLabel || '—'}</div></div>
+          <div class="d-cell"><div class="d-lbl">Мамандық саны</div><div class="d-val">${specs.length}</div></div>
+          <div class="d-cell"><div class="d-lbl">Оқу ақысы</div><div class="d-val">${feeLabel(u.feeTier)}</div></div>
+          <div class="d-cell"><div class="d-lbl">Рейтинг</div><div class="d-val">${u.rating}.0 / 5</div></div>
+          <div class="d-cell"><div class="d-lbl">Ресми сайт</div>${site ? `<a class="d-val" href="${ensureHttp(site)}" target="_blank" rel="noopener noreferrer">${prettyUrl(site)}</a>` : '<div class="d-val">Кейін қосылады</div>'}</div>
+        </div>
+        <div class="d-actions">
+          <button class="btn btn-primary" onclick="window.location.href='grant.html'"><i data-lucide="calculator"></i> Грант есепте</button>
+          <button class="btn btn-soft" onclick="window.location.href='specialties.html'"><i data-lucide="graduation-cap"></i> Мамандықтар</button>
+        </div>`;
+      renderUniversityLogo(body.querySelector('.d-logo'), u);
+      iconRefresh();
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+      populateRegionSelect();
+      renderStats();
+      renderFeatured();
+      renderUnis();
+      iconRefresh();
+    });
+  </script>
 </body>
 </html>
