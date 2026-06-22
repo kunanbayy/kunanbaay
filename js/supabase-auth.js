@@ -26,7 +26,7 @@
     const all = accounts();
     const key = (p.email || '').toLowerCase();
     if (!key) return;
-    all[key] = { name, email: p.email, password: p.password, classYear: p.classYear || '', city: p.city || '', plan: 'free' };
+    all[key] = { name, email: p.email, password: p.password, classYear: p.classYear || '', city: p.city || '', plan: 'free', blocked: false, createdAt: new Date().toISOString() };
     saveAccounts(all);
   }
 
@@ -88,7 +88,8 @@
     // fallback: локальды аккаунт
     const u = accounts()[(email || '').toLowerCase()];
     if (!u || u.password !== password) throw new Error('Email немесе пароль қате');
-    const user = { name: u.name, email: u.email, classYear: u.classYear, city: u.city, plan: u.plan || 'free' };
+    if (u.blocked) throw new Error('Аккаунт бұғатталған. Әкімшіге хабарласыңыз.');
+    const user = { name: u.name, email: u.email, classYear: u.classYear, city: u.city, plan: u.plan || 'free', blocked: false };
     setSession(user);
     return user;
   }
