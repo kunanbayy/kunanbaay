@@ -226,13 +226,15 @@
       .ai-card { grid-template-columns: 1fr; }
       .prow { grid-template-columns: 1fr auto; }
     }
+    .nav-logo-mark { background: #fff !important; padding: 3px; overflow: hidden; }
+    .nav-logo-mark img { width: 100%; height: 100%; object-fit: contain; display: block; }
   </style>
 </head>
 <body>
 
 <nav class="nav">
   <div class="nav-inner">
-    <a href="index.html" class="nav-logo"><div class="nav-logo-mark">🔆</div>Shyraq</a>
+    <a href="index.html" class="nav-logo"><div class="nav-logo-mark"><img src="assets/logo.svg" alt="Shyraq"></div>Shyraq</a>
     <div class="nav-links">
       <a href="index.html" class="nav-link">Басты бет</a>
       <a href="specialties.html" class="nav-link">Мамандықтар</a>
@@ -251,7 +253,7 @@
 
 <div class="mobile-menu">
   <div class="mm-header">
-    <a href="index.html" class="nav-logo"><div class="nav-logo-mark">🔆</div>Shyraq</a>
+    <a href="index.html" class="nav-logo"><div class="nav-logo-mark"><img src="assets/logo.svg" alt="Shyraq"></div>Shyraq</a>
     <button class="modal-close" onclick="document.querySelector('.mobile-menu').classList.remove('open')">×</button>
   </div>
   <div class="mm-links">
@@ -395,8 +397,8 @@
           <span class="lk-feat"><i class="fas fa-check"></i>Әр ЖОО өту шегі мен ықтималдығы</span>
           <span class="lk-feat"><i class="fas fa-check"></i>AI кеңесшісі</span>
         </div>
-        <div class="pw-price">⚡ 1 Career Energy <small>· Standard 2 990 ₸</small></div>
-        <a href="payment.html?plan=standard&next=grant" class="btn btn-primary btn-lg" style="background:var(--gp);border-color:var(--gp)"><i class="fas fa-lock-open" style="margin-right:8px"></i> Энергия алу</a>
+        <div class="pw-price">499 ₸ <small>/ бір реттік есеп</small></div>
+        <a href="payment.html?plan=once&next=grant" class="btn btn-primary btn-lg" style="background:var(--gp);border-color:var(--gp)"><i class="fas fa-lock-open" style="margin-right:8px"></i> Төлеп ашу</a>
         <div class="pw-demo">Тек көру үшін: <a id="demoUnlock">демо режимде ашу</a></div>
       </div>
     </div>
@@ -424,8 +426,8 @@
           <span class="lk-feat"><i class="fas fa-check"></i>Қай университетті қай орынға қою керек</span>
           <span class="lk-feat"><i class="fas fa-check"></i>AI приоритет стратегиясы</span>
         </div>
-        <div class="pw-price" style="margin-top:4px">⚡ 1 Career Energy <small>· Standard 2 990 ₸</small></div>
-        <a href="payment.html?plan=standard&next=grant" class="btn btn-primary btn-lg" style="background:var(--gp);border-color:var(--gp)"><i class="fas fa-lock-open" style="margin-right:8px"></i> Энергия алу</a>
+        <div class="pw-price" style="margin-top:4px">499 ₸ <small>/ бір реттік есеп</small></div>
+        <a href="payment.html?plan=once&next=grant" class="btn btn-primary btn-lg" style="background:var(--gp);border-color:var(--gp)"><i class="fas fa-lock-open" style="margin-right:8px"></i> Төлеп ашу</a>
         <div class="pw-demo">Тек көру үшін: <a id="demoUnlock2">демо режимде ашу</a></div>
       </div>
     </div>
