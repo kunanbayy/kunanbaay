@@ -327,13 +327,21 @@
 <script>
 (function () {
   /* ── Тарифтер кестесі ── */
+  var PRICING = {}; try { PRICING = JSON.parse(localStorage.getItem('shyraq_pricing') || '{}'); } catch (e) {}
+  function pp(k, d) { return (PRICING[k] != null && PRICING[k] !== '') ? +PRICING[k] : d; }
   const PLANS = {
-    free:     { name: 'Free',        desc: 'Free — тегін',                  amount: 0 },
-    premium:  { name: 'Premium',     desc: 'Premium — 1 ай',                amount: 990 },
-    premium_y:{ name: 'Premium',     desc: 'Premium — 12 ай (жылдық)',       amount: 9504 },
-    ai:       { name: 'AI Premium',  desc: 'AI Premium — 1 ай',             amount: 1990 },
-    ai_y:     { name: 'AI Premium',  desc: 'AI Premium — 12 ай (жылдық)',   amount: 19104 },
-    career:   { name: 'Мансап есебі','desc': 'Мансап есебі — 1 рет',        amount: 1490 },
+    free:     { name: 'Free',            desc: 'Free — тегін',                  amount: 0 },
+    premium:  { name: 'Premium',         desc: 'Premium — 1 ай',                amount: pp('premium', 990) },
+    premium_y:{ name: 'Premium',         desc: 'Premium — 12 ай (жылдық)',      amount: Math.round(pp('premium', 990) * 12 * 0.8) },
+    ai:       { name: 'AI Premium',      desc: 'AI Premium — 1 ай',             amount: pp('ai', 1990) },
+    ai_y:     { name: 'AI Premium',      desc: 'AI Premium — 12 ай (жылдық)',   amount: Math.round(pp('ai', 1990) * 12 * 0.8) },
+    report:   { name: 'Бір реттік есеп', desc: 'Бір реттік есеп — 1 рет',       amount: pp('report', 499) },
+    career:   { name: 'Бір реттік есеп', desc: 'Бір реттік есеп — 1 рет',       amount: pp('report', 499) },
+    once:     { name: 'Бір реттік есеп', desc: 'Бір реттік есеп — 1 рет',       amount: pp('report', 499) },
+    test:     { name: 'Толық есеп',      desc: 'Толық есеп — 1 рет',            amount: pp('report', 499) },
+    test990:  { name: 'Premium',         desc: 'Premium — 1 ай',                amount: pp('premium', 990) },
+    test1990: { name: 'AI Premium',      desc: 'AI Premium — 1 ай',             amount: pp('ai', 1990) },
+    test2990: { name: 'AI Premium+',     desc: 'AI Premium+ — 1 ай',            amount: 2990 },
   };
 
   /* ── URL-параметрлер ── */
@@ -507,9 +515,8 @@
     // Чекті Supabase Storage-қа жүктеп + жергілікті admin тізіміне жазу.
     // Premium ҚОСЫЛМАЙДЫ — админ растағанша «pending».
     var u = JSON.parse(localStorage.getItem('shyraq_user') || 'null') || {};
-    var planName = (params.get('plan') === 'report') ? 'Бір реттік есеп'
-                 : (params.get('plan') === 'ai') ? 'AI Premium' : 'Premium';
-    var amt = (params.get('plan') === 'report') ? 1490 : (params.get('plan') === 'ai') ? 1990 : 990;
+    var planName = plan.name;
+    var amt = plan.amount;
     var receiptUrl = '';
     try {
       if (window.ShyraqDB && window.ShyraqDB.ready()) {
