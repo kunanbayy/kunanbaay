@@ -340,7 +340,7 @@ p { color: var(--text-muted); }
 .nav-link:hover { color: var(--navy); background: var(--navy-pale); }
 .nav-link.active { color: var(--navy); font-weight: 600; background: var(--navy-pale); }
 .nav-actions { display: flex; align-items: center; gap: 10px; }
-.nav-mobile-btn { display: none; background: none; border: none; padding: 8px; color: var(--navy); }
+.nav-mobile-btn { display: none !important; background: none; border: none; padding: 8px; color: var(--navy); }
 
 /* ===== HERO ===== */
 .hero {
@@ -919,8 +919,9 @@ p { color: var(--text-muted); }
   .auth-page { min-height: 100vh; }
 }
 @media (max-width: 768px) {
-  .nav-links, .nav-actions { display: none; }
-  .nav-mobile-btn { display: flex; align-items: center; }
+  .nav-links { display: none; }
+  .nav-actions { display: flex; margin-left: auto; }
+  .nav-mobile-btn { display: none !important; }
   .hero-stats { flex-direction: column; gap: 16px; }
   .hero-actions { flex-direction: column; width: 100%; }
   .hero-actions .btn { width: 100%; justify-content: center; }
