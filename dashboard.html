@@ -183,6 +183,26 @@
       .dashboard-greeting{ font-size:1.55rem; }
       .dash-stat-value{ font-size:1.5rem; }
     }
+
+    /* UBT subjects modal */
+    .subj-ov{position:fixed;inset:0;background:rgba(15,27,45,.55);backdrop-filter:blur(3px);display:none;align-items:center;justify-content:center;z-index:200;padding:20px}
+    .subj-ov.open{display:flex;animation:dashRise .3s ease}
+    .subj-modal{background:#fff;border-radius:22px;padding:24px;width:100%;max-width:460px;max-height:88vh;overflow-y:auto;box-shadow:0 30px 70px rgba(0,0,0,.3)}
+    .subj-head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px}
+    .subj-head h3{font-family:var(--font-display,'Unbounded');font-size:1.2rem;font-weight:800;color:var(--navy)}
+    .subj-head p{font-size:.84rem;color:var(--text-muted);margin-top:3px}
+    .subj-x{width:34px;height:34px;border:1px solid var(--border);background:#fff;border-radius:10px;cursor:pointer;font-size:1rem;color:var(--text-muted)}
+    .subj-x:hover{background:#F1F5F9}
+    .subj-mand{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:12px;background:#F8FAFC;border-radius:13px;margin-bottom:16px}
+    .subj-mand-note{font-size:.76rem;color:var(--text-light)}
+    .subj-label{font-size:.84rem;font-weight:700;color:var(--navy);margin-bottom:10px}
+    .subj-list{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+    .subj-opt{display:flex;align-items:center;gap:11px;padding:13px 14px;border:1.5px solid var(--border);border-radius:13px;cursor:pointer;transition:.15s;font-size:.9rem;font-weight:600;color:var(--text)}
+    .subj-opt:hover{border-color:#CADBF0;background:#F8FBFF}
+    .subj-opt.sel{border-color:var(--navy);background:#EDF3FB}
+    .subj-opt .rad{width:18px;height:18px;border-radius:50%;border:2px solid #CBD5E1;flex-shrink:0;display:grid;place-items:center}
+    .subj-opt.sel .rad{border-color:var(--navy)}
+    .subj-opt.sel .rad::after{content:'';width:9px;height:9px;border-radius:50%;background:var(--navy)}
   </style>
 </head>
 <body>
@@ -222,13 +242,13 @@
     </a>
 
     <div class="sidebar-section-title">Менің</div>
-    <a href="#" class="sidebar-link">
+    <a href="dashboard.html#plan" class="sidebar-link">
       <span class="icon"><span class="ui-icon"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="3"/><path d="M8 3v4"/><path d="M16 3v4"/><path d="M4 10h16"/><path d="M8 14h4"/></svg></span></span><span class="nav-label">Менің жоспарым</span><span class="nav-tip">Менің жоспарым</span>
     </a>
-    <a href="#" class="sidebar-link">
+    <a href="favorites.html" class="sidebar-link">
       <span class="icon"><span class="ui-icon"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-8.5-9A4.7 4.7 0 0 1 12 6a4.7 4.7 0 0 1 8.5 5c-1.5 4.6-8.5 9-8.5 9z"/></svg></span></span><span class="nav-label">Таңдаулылар</span><span class="nav-tip">Таңдаулылар</span>
     </a>
-    <a href="#" class="sidebar-link ai-link" style="color:var(--gold)">
+    <a href="ai.html" class="sidebar-link ai-link" style="color:var(--gold)">
       <span class="icon"><span class="ui-icon"><svg viewBox="0 0 24 24"><rect x="5" y="8" width="14" height="10" rx="3"/><path d="M12 8V5"/><path d="M9 13h.01"/><path d="M15 13h.01"/><path d="M9 18v2"/><path d="M15 18v2"/><path d="M3 12h2"/><path d="M19 12h2"/></svg></span></span><span class="nav-label">AI кеңесші</span>
       <span class="badge badge-gold" style="margin-left:auto;font-size:0.7rem">Premium</span><span class="nav-tip">AI кеңесші</span>
     </a>
@@ -351,7 +371,7 @@
         </div>
 
         <!-- Today's plan -->
-        <div class="plan-card">
+        <div class="plan-card" id="plan">
           <div class="plan-card-header">
             <span class="dash-section-title" style="margin-bottom:0">Бүгінгі жоспар</span>
             <span class="badge badge-gold">Streak: 3 күн</span>
@@ -378,12 +398,8 @@
         <!-- UBT subjects -->
         <div class="card">
           <div class="dash-section-title">Таңдаған пәндерім</div>
-          <div id="subjectsList" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px">
-            <span class="badge badge-gold">Қазақстан тарихы</span>
-            <span class="badge badge-navy">Оқу сауаттылығы</span>
-            <span class="badge badge-navy">Матем. сауаттылық</span>
-          </div>
-          <a href="specialties.html#catalogFilters" class="btn btn-outline btn-sm" style="margin-top:14px;width:100%;justify-content:center">Пән таңдау →</a>
+          <div id="subjectsList" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px"></div>
+          <button class="btn btn-outline btn-sm" style="margin-top:14px;width:100%;justify-content:center" onclick="openSubjects()">ҰБТ пәндерін таңдау →</button>
         </div>
 
         <!-- Recent activity -->
@@ -428,6 +444,29 @@
   </main>
 </div>
 
+<!-- UBT SUBJECTS MODAL -->
+<div class="subj-ov" id="subjOv">
+  <div class="subj-modal">
+    <div class="subj-head">
+      <div>
+        <h3>ҰБТ пәндерін таңдау</h3>
+        <p>3 міндетті пән + 1 бейіндік жұп</p>
+      </div>
+      <button class="subj-x" onclick="closeSubjects()">✕</button>
+    </div>
+    <div class="subj-mand">
+      <span class="badge badge-gold">Қазақстан тарихы</span>
+      <span class="badge badge-navy">Оқу сауаттылығы</span>
+      <span class="badge badge-navy">Матем. сауаттылық</span>
+      <span class="subj-mand-note">— міндетті</span>
+    </div>
+    <div class="subj-label">Бейіндік жұпты таңда:</div>
+    <div class="subj-list" id="subjList"></div>
+    <button class="btn btn-primary btn-full" style="justify-content:center;margin-top:6px" onclick="saveSubjects()">Сақтау</button>
+  </div>
+</div>
+
+<script src="js/favorites.js"></script>
 <script src="js/universities-data.js"></script>
 <script src="js/main.js"></script>
 <script src="js/auth-guard.js"></script>
@@ -472,10 +511,9 @@
     document.querySelectorAll('#navAvatar, #mobileAvatar').forEach(el => el.textContent = initials);
 
     const results = JSON.parse(localStorage.getItem('shyraq_results'));
-    const subjects = JSON.parse(localStorage.getItem('shyraq_subjects')) || [];
     const favs = JSON.parse(localStorage.getItem('shyraq_favorites')) || [];
 
-    document.getElementById('statSubjects').textContent = subjects.length || 3;
+    renderSubjects();
     document.getElementById('statFav').textContent = favs.length;
 
     if (results) {
@@ -494,6 +532,58 @@
       if (ctaEl) ctaEl.style.display = '';
     }
   });
+
+  // ── ҰБТ пәндерін таңдау ──
+  var UBT_MANDATORY = ['Қазақстан тарихы','Оқу сауаттылығы','Матем. сауаттылық'];
+  var UBT_PAIRS = [
+    ['Математика','Физика'], ['Математика','Информатика'], ['Математика','География'],
+    ['Химия','Биология'], ['Биология','География'], ['География','Дүниежүзі тарихы'],
+    ['Дүниежүзі тарихы','Құқық негіздері'], ['Қазақ тілі','Қазақ әдебиеті'],
+    ['Орыс тілі','Орыс әдебиеті'], ['Шетел тілі','Дүниежүзі тарихы']
+  ];
+  var _pairIdx = -1;
+
+  function getSubjects(){ try { return JSON.parse(localStorage.getItem('shyraq_subjects')) || []; } catch(e){ return []; } }
+
+  function renderSubjects(){
+    var subs = getSubjects();
+    var list = document.getElementById('subjectsList');
+    var show = subs.length ? subs : UBT_MANDATORY;
+    list.innerHTML = show.map(function(s,i){
+      var cls = (i < (subs.length ? UBT_MANDATORY.length : show.length)) ? 'badge-gold' : 'badge-navy';
+      return '<span class="badge '+cls+'">'+s+'</span>';
+    }).join('');
+    if(!subs.length){ list.insertAdjacentHTML('beforeend','<span class="badge" style="background:#F1F5F9;color:#94A3B8">+ бейіндік таңда</span>'); }
+    var st = document.getElementById('statSubjects'); if(st) st.textContent = subs.length || UBT_MANDATORY.length;
+  }
+
+  function openSubjects(){
+    var subs = getSubjects();
+    // егер сақталған бейіндік жұп болса — соны белгілеп қою
+    _pairIdx = -1;
+    if(subs.length > UBT_MANDATORY.length){
+      var chosen = subs.slice(UBT_MANDATORY.length).join('+');
+      UBT_PAIRS.forEach(function(p,i){ if(p.join('+')===chosen) _pairIdx=i; });
+    }
+    document.getElementById('subjList').innerHTML = UBT_PAIRS.map(function(p,i){
+      return '<div class="subj-opt'+(i===_pairIdx?' sel':'')+'" onclick="pickPair('+i+')"><span class="rad"></span>'+p[0]+' – '+p[1]+'</div>';
+    }).join('');
+    document.getElementById('subjOv').classList.add('open');
+  }
+  function closeSubjects(){ document.getElementById('subjOv').classList.remove('open'); }
+  function pickPair(i){
+    _pairIdx = i;
+    document.querySelectorAll('#subjList .subj-opt').forEach(function(el,idx){ el.classList.toggle('sel', idx===i); });
+  }
+  function saveSubjects(){
+    if(_pairIdx < 0){ if(typeof showToast==='function') showToast('Бейіндік жұпты таңда','error'); return; }
+    var subs = UBT_MANDATORY.concat(UBT_PAIRS[_pairIdx]);
+    localStorage.setItem('shyraq_subjects', JSON.stringify(subs));
+    closeSubjects(); renderSubjects();
+    if(typeof showToast==='function') showToast('Пәндер сақталды ✓','success');
+  }
+  // backdrop жабу
+  document.getElementById('subjOv').addEventListener('click', function(e){ if(e.target===this) closeSubjects(); });
 </script>
   <script src="js/icons.js"></script>
 

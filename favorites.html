@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Таңдаулылар — Shyraq Education</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Unbounded:wght@700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root{ --navy:#1E3A5F; --navy2:#2D5491; --gold:#F2B84B; --rose:#F43F5E;
+      --bg:#F5F8FC; --card:#fff; --border:#E8EEF6; --text:#1E293B; --muted:#7A8AA0; }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+    a{text-decoration:none;color:inherit}
+    .top{background:#fff;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10}
+    .top-in{max-width:1100px;margin:0 auto;padding:16px 24px;display:flex;align-items:center;justify-content:space-between}
+    .brand{display:flex;align-items:center;gap:10px;font-family:'Unbounded';font-weight:800;color:var(--navy);font-size:1.1rem}
+    .brand .mk{width:34px;height:34px;border-radius:11px;background:linear-gradient(145deg,var(--navy),var(--navy2));display:grid;place-items:center;font-size:.95rem}
+    .back{display:inline-flex;align-items:center;gap:7px;padding:9px 15px;border-radius:11px;border:1px solid var(--border);background:#fff;color:var(--navy);font-weight:600;font-size:.88rem;transition:.15s}
+    .back:hover{background:#F1F5F9}
+    .wrap{max-width:1100px;margin:0 auto;padding:30px 24px 60px}
+    .head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+    .head h1{font-family:'Unbounded';font-size:1.7rem;font-weight:800;color:var(--navy)}
+    .head .cnt{background:#FFF1F2;color:var(--rose);font-weight:800;font-size:.8rem;padding:4px 12px;border-radius:999px}
+    .sub{color:var(--muted);margin-bottom:26px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+    .fc{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:18px;position:relative;transition:.2s;box-shadow:0 6px 18px rgba(30,58,95,.05)}
+    .fc:hover{transform:translateY(-3px);box-shadow:0 16px 34px rgba(30,58,95,.12)}
+    .fc-code{font-size:.74rem;font-weight:700;color:var(--gold);letter-spacing:.04em}
+    .fc-name{font-weight:700;color:var(--navy);font-size:1.02rem;margin:6px 0 16px;line-height:1.35;padding-right:34px}
+    .fc-actions{display:flex;gap:8px}
+    .fc-btn{flex:1;text-align:center;padding:10px;border-radius:11px;font-weight:600;font-size:.85rem;border:1px solid var(--border);background:#fff;color:var(--navy);cursor:pointer;transition:.15s}
+    .fc-btn.primary{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;border:none}
+    .fc-btn:hover{filter:brightness(1.05)}
+    .fc-heart{position:absolute;top:14px;right:14px;width:34px;height:34px;border-radius:11px;border:1px solid #FECDD3;background:#FFF1F2;color:var(--rose);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s}
+    .fc-heart svg{width:18px;height:18px;fill:var(--rose);stroke:var(--rose);stroke-width:2}
+    .fc-heart:hover{transform:scale(1.1)}
+    @keyframes heartPop{0%{transform:scale(1)}35%{transform:scale(1.35)}60%{transform:scale(.85)}100%{transform:scale(1)}}
+    .fc-heart.pop svg{animation:heartPop .42s ease}
+    .empty{text-align:center;padding:70px 20px;color:var(--muted)}
+    .empty .ico{font-size:3.4rem;margin-bottom:14px}
+    .empty h3{font-family:'Unbounded';color:var(--navy);font-size:1.3rem;margin-bottom:8px}
+    .empty a{display:inline-block;margin-top:18px;padding:13px 24px;border-radius:13px;background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;font-weight:700}
+    .toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(20px);background:#0F1B2D;color:#fff;padding:12px 20px;border-radius:12px;font-weight:600;font-size:.88rem;opacity:0;pointer-events:none;transition:.3s;z-index:50}
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  </style>
+</head>
+<body>
+  <div class="top"><div class="top-in">
+    <a href="dashboard.html" class="brand"><span class="mk">🔆</span> Shyraq</a>
+    <a href="dashboard.html" class="back">← Кабинет</a>
+  </div></div>
+
+  <div class="wrap">
+    <div class="head"><h1>Таңдаулылар</h1><span class="cnt" id="favCnt">0</span></div>
+    <p class="sub">Сақтаған мамандықтарың осында. Жүректі қайта бассаң — тізімнен аласың.</p>
+    <div class="grid" id="favGrid"></div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="js/favorites.js"></script>
+  <script>
+    function toast(m){const t=document.getElementById('toast');t.textContent=m;t.className='toast show';clearTimeout(window.__t);window.__t=setTimeout(()=>t.className='toast',2200);}
+    function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+    function render(){
+      const items=window.ShyraqFav.list();
+      document.getElementById('favCnt').textContent=items.length;
+      const grid=document.getElementById('favGrid');
+      if(!items.length){
+        grid.innerHTML='<div class="empty" style="grid-column:1/-1"><div class="ico">💛</div><h3>Әзірге таңдаулы жоқ</h3><p>Мамандықтар бетінен ұнағанын жүрекпен белгіле.</p><a href="specialties.html">Мамандықтарды ашу →</a></div>';
+        return;
+      }
+      grid.innerHTML=items.map(it=>`<div class="fc">
+        <button class="fc-heart" title="Алып тастау" onclick="rm('${esc(it.code)}',this)"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-8.5-9A4.7 4.7 0 0 1 12 6a4.7 4.7 0 0 1 8.5 5c-1.5 4.6-8.5 9-8.5 9z"/></svg></button>
+        <div class="fc-code">${esc(it.code)}</div>
+        <div class="fc-name">${esc(it.name)}</div>
+        <div class="fc-actions">
+          <a class="fc-btn primary" href="specialties.html">Толығырақ</a>
+          <a class="fc-btn" href="grant.html">Грант есеп</a>
+        </div>
+      </div>`).join('');
+    }
+    function rm(code,btn){
+      btn.classList.add('pop');
+      setTimeout(()=>{ window.ShyraqFav.remove(code); render(); toast('Тізімнен алынды'); }, 240);
+    }
+    render();
+  </script>
+</body>
+</html>
