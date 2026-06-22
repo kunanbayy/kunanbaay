@@ -137,6 +137,9 @@
     .more-head h3 { color: var(--ink); font-size: 1.2rem; }
     .more-head p { color: var(--text-muted); font-size: .9rem; margin-top: 4px; max-width: 720px; line-height: 1.5; }
     .more-count { background: var(--gp-soft); color: var(--gp); border-radius: 999px; padding: 7px 13px; font-size: .78rem; font-weight: 800; white-space: nowrap; }
+    .more-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .more-toggle { border: 1.5px solid var(--gp); color: var(--gp); background: #fff; border-radius: 999px; padding: 8px 14px; font-family: var(--font-body); font-size: .8rem; font-weight: 900; cursor: pointer; transition: .18s; }
+    .more-toggle:hover { background: var(--gp-soft); }
     .opp-list { display: grid; grid-template-columns: 1fr; gap: 14px; }
     .opp-card { background: #fff; border: 1px solid var(--g-line); border-radius: 18px; padding: 18px; box-shadow: 0 8px 24px rgba(20,20,50,.035); }
     .opp-top { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
@@ -420,7 +423,10 @@
               <h3>Басқа сәйкес мүмкіндіктер</h3>
               <p>ҰБТ балыңыз бен таңдау пәндеріңізге сәйкес келетін басқа университеттер мен мамандықтар.</p>
             </div>
-            <span class="more-count" id="moreCount">0 мүмкіндік</span>
+            <div class="more-actions">
+              <span class="more-count" id="moreCount">0 мүмкіндік</span>
+              <button class="more-toggle" id="moreToggle" type="button">Барлығын көру</button>
+            </div>
           </div>
           <div class="opp-list" id="moreList"></div>
         </div>
@@ -758,18 +764,31 @@
         return chanceFromDiff(b.items[0].diff).pct - chanceFromDiff(a.items[0].diff).pct;
       });
   }
+
+  let MORE_EXPANDED = false;
+  let MORE_LAST_ALL = [];
+  let MORE_LAST_PICKS = [];
+
   function renderMoreOptions(all, picks){
     const list = document.getElementById('moreList');
     const count = document.getElementById('moreCount');
-    if (!list || !count) return;
+    const toggle = document.getElementById('moreToggle');
+    if (!list || !count || !toggle) return;
+    MORE_LAST_ALL = all;
+    MORE_LAST_PICKS = picks;
     const groups = buildMoreGroups(all, picks);
     const total = groups.reduce((s,g) => s + g.items.length, 0);
-    count.textContent = total + ' мүмкіндік';
+    const compactGroups = groups.slice(0, 5).map(g => ({ uni: g.uni, items: g.items.slice(0, 3) }));
+    const visibleGroups = MORE_EXPANDED ? groups : compactGroups;
+    const visibleTotal = visibleGroups.reduce((s,g) => s + g.items.length, 0);
+    count.textContent = MORE_EXPANDED ? total + ' мүмкіндік' : visibleTotal + ' / ' + total + ' көрсетілді';
+    toggle.hidden = total <= visibleTotal;
+    toggle.textContent = MORE_EXPANDED ? 'Жинақы көрсету' : 'Барлығын көру';
     if (!groups.length) {
       list.innerHTML = '<div class="opp-empty">Бұл пәндер мен балл бойынша 4 таңдаудан бөлек қосымша мүмкіндік табылмады. Қаланы немесе университет фильтрін кеңейтіп көріңіз.</div>';
       return;
     }
-    list.innerHTML = groups.map(g => {
+    list.innerHTML = visibleGroups.map(g => {
       const nm = uniName(g.uni);
       const logo = g.uni.logo_url
         ? `<img src="${g.uni.logo_url}" alt="${nm}" onerror="this.style.display='none';this.parentNode.innerHTML='<i class=\\'fas fa-university\\' style=\\'color:var(--gp)\\'></i>'">`
@@ -797,6 +816,12 @@
       </div>`;
     }).join('');
   }
+
+  document.getElementById('moreToggle')?.addEventListener('click', () => {
+    MORE_EXPANDED = !MORE_EXPANDED;
+    renderMoreOptions(MORE_LAST_ALL, MORE_LAST_PICKS);
+    document.getElementById('moreOps')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
 
   /* ---------- form readers ---------- */
   function readForm(){
@@ -832,6 +857,7 @@
     renderCutoffBox(f.score, gc);
 
     const picks=pick4(all);
+    MORE_EXPANDED = false;
     renderMoreOptions(all, picks);
 
     // priority cascade — grant is secured at the first (highest-priority) choice the score clears
