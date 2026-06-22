@@ -49,8 +49,10 @@ create table if not exists public.access (
   premium       boolean default false,
   premium_until timestamptz,
   blocked       boolean default false,
+  energy        integer default 0,         -- админ растаған төлемдер бойынша берілген ЖИЫНТЫҚ Career Energy
   updated_at    timestamptz default now()
 );
+alter table public.access add column if not exists energy integer default 0;
 alter table public.access enable row level security;
 drop policy if exists "access_select_any" on public.access;
 create policy "access_select_any" on public.access for select using (true);
@@ -58,6 +60,11 @@ drop policy if exists "access_insert_any" on public.access;
 create policy "access_insert_any" on public.access for insert with check (true);
 drop policy if exists "access_update_any" on public.access;
 create policy "access_update_any" on public.access for update using (true);
+
+-- ── ПРОФИЛЬДЕР: admin панелі барлық тіркелген қолданушыны көру үшін ──
+-- (демо деңгей: profiles тек аты/email/қала сақтайды, құпиясөз жоқ)
+drop policy if exists "profiles_select_any" on public.profiles;
+create policy "profiles_select_any" on public.profiles for select using (true);
 
 -- ── ЧЕКТЕР (Storage bucket: public оқу) ──
 insert into storage.buckets (id, name, public)

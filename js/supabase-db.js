@@ -84,6 +84,11 @@
     try { const { data, error } = await c.from('access').select('*'); if (error) return null; return data || []; }
     catch (e) { return null; }
   }
+  async function listProfiles() {
+    const c = sb(); if (!c) return null;
+    try { const { data, error } = await c.from('profiles').select('*').limit(1000); if (error) return null; return data || []; }
+    catch (e) { return null; }
+  }
 
   async function deletePayment(id) {
     const c = sb(); if (!c) return false;
@@ -91,5 +96,5 @@
     catch (e) { return false; }
   }
 
-  window.ShyraqDB = { getSettings, saveSettings, uploadReceipt, createPayment, listPayments, updatePayment, deletePayment, getAccess, setAccess, listAccess, ready: () => !!sb() };
+  window.ShyraqDB = { getSettings, saveSettings, uploadReceipt, createPayment, listPayments, updatePayment, deletePayment, getAccess, setAccess, listAccess, listProfiles, ready: () => !!sb() };
 })();

@@ -467,6 +467,7 @@
     <div class="ud-row"><span class="k">Жоспар</span><span class="v" id="udPlan">free</span></div>
     <div class="ud-row"><span class="k">Статус</span><span class="v" id="udStatus">Белсенді</span></div>
     <div class="ud-row"><span class="k">Premium мерзімі</span><span class="v" id="udUntil">—</span></div>
+    <div class="ud-row"><span class="k">⚡ Career Energy</span><span class="v" id="udEnergy">0</span></div>
     <div class="ud-row"><span class="k">Қала</span><span class="v" id="udCity">—</span></div>
 
     <div class="ud-sec-t">Қолжетімділікті басқару</div>
@@ -787,6 +788,7 @@ function openUserDetail(src, ref){
   $('udPlan').innerHTML='<span class="pill '+_pl+'">'+_pl+'</span>';
   $('udStatus').innerHTML=u.blocked?'<span class="pill pending">🔒 Бұғатталған</span>':'<span class="pill paid">✅ Белсенді</span>';
   $('udUntil').textContent=isActivePremium(u)?fmtDate(u.premiumUntil):'—';
+  $('udEnergy').textContent='⚡ '+(u.energy||0);
   $('udCity').textContent=u.city||'—';
   $('udBlockBtn').innerHTML=u.blocked?'🔓 Босату':'🔒 Бұғаттау';
   var pays=userPays(u);
@@ -825,6 +827,44 @@ async function loadPayments(){
   _pays = sbp.concat(demo);
   renderPayments(); renderOverview();
 }
+
+/* Дерекқордан тіркелген қолданушыларды + доступ күйін жүктеп,
+   жергілікті аккаунттарға біріктіреміз (сонда тізімде барлығы көрінеді). */
+async function loadUsers(){
+  try {
+    if (!(window.ShyraqDB && window.ShyraqDB.ready())) { renderUsers(); return; }
+    var profiles = await window.ShyraqDB.listProfiles() || [];
+    var access   = await window.ShyraqDB.listAccess()   || [];
+    var accMap = {}; access.forEach(a=>{ accMap[(a.email||'').toLowerCase()] = a; });
+    var local = getAcc();
+    function merge(email, base){
+      var k=(email||'').toLowerCase(); if(!k) return;
+      var a=accMap[k]||{}; var cur=local[k]||{};
+      local[k] = Object.assign({}, cur, base, {
+        email: base.email || cur.email || k,
+        plan: a.premium ? 'premium' : (cur.plan||'free'),
+        premiumUntil: a.premium_until || cur.premiumUntil || null,
+        blocked: a.blocked!=null ? !!a.blocked : !!cur.blocked,
+        energy: a.energy!=null ? a.energy : (cur.energy||0)
+      });
+    }
+    profiles.forEach(pr=> merge(pr.email, {
+      name: pr.name || (pr.email||'').split('@')[0], email: pr.email,
+      city: pr.city || '—', classYear: pr.class_year || '', createdAt: pr.created_at || ''
+    }));
+    (_pays||[]).forEach(p=>{ if(p.email && !local[(p.email||'').toLowerCase()]) merge(p.email, { name:p.name||p.email, email:p.email, city:'—' }); });
+    access.forEach(a=>{ if(a.email && !local[(a.email||'').toLowerCase()]) merge(a.email, { name:a.email, email:a.email, city:'—' }); });
+    setAcc(local);
+  } catch(e){ console.error('loadUsers', e); }
+  renderUsers(); renderOverview();
+}
+
+/* Тариф бойынша берілетін Career Energy саны */
+function planEnergy(p){
+  var s = ((p && p.plan) || '').toLowerCase();
+  if (s.indexOf('career report') > -1 || s.indexOf('report') > -1 || (+(p && p.amount) >= 4990)) return 3;
+  return 1;
+}
 function renderPayments(){
   const pays=_pays.length?_pays:getPays();
   const total=pays.filter(p=>p.status==='paid').reduce((s,p)=>s+(p.amount||0),0);
@@ -845,18 +885,25 @@ function renderPayments(){
 }
 async function approvePay(i){
   var p=_pays[i]; if(!p) return;
+  var wasPaid = p.status==='paid';
   if(p.src==='sb'){ await window.ShyraqDB.updatePayment(p.id,{status:'paid'}); p.status='paid'; }
   else { const d=getPays(); if(d[p.idx]){ d[p.idx].status='paid'; setPays(d); } }
-  // Растағанда — сол қолданушыға Premium доступ беру (30 күн)
+  // Растағанда — сол қолданушыға Premium доступ + Career Energy беру
   if(p.email && window.ShyraqDB && window.ShyraqDB.ready()){
     var until = new Date(Date.now()+30*86400000).toISOString();
-    await window.ShyraqDB.setAccess(p.email, { premium:true, premium_until:until, blocked:false });
+    var patch = { premium:true, premium_until:until, blocked:false };
+    if(!wasPaid){
+      var addE = planEnergy(p);
+      var existing = await window.ShyraqDB.getAccess(p.email);
+      patch.energy = ((existing && existing.energy)||0) + addE;
+    }
+    await window.ShyraqDB.setAccess(p.email, patch);
     // егер жергілікті аккаунт болса — оны да жаңарту
     var acc=getAcc(), k=(p.email||'').toLowerCase();
-    if(acc[k]){ acc[k].plan='premium'; acc[k].premiumUntil=until; acc[k].blocked=false; setAcc(acc); }
+    if(acc[k]){ acc[k].plan='premium'; acc[k].premiumUntil=until; acc[k].blocked=false; if(patch.energy!=null) acc[k].energy=patch.energy; setAcc(acc); }
   }
-  await loadPayments(); renderUsers();
-  toast('Төлем расталды ✓ Premium доступ берілді');
+  await loadPayments(); await loadUsers();
+  toast(wasPaid ? 'Төлем расталды ✓' : 'Төлем расталды ✓ Premium + ⚡ энергия берілді');
 }
 async function delPay(i){
   var p=_pays[i]; if(!p) return;
@@ -1080,7 +1127,8 @@ $('globalSearch').addEventListener('input', ()=>{
 document.querySelectorAll('.ov').forEach(o=>o.addEventListener('click',e=>{ if(e.target===o) o.classList.remove('open'); }));
 
 /* ════ INIT ════ */
-renderOverview(); renderUsers(); renderReviews(); loadPayments();
+renderOverview(); renderUsers(); renderReviews();
+loadPayments().then(loadUsers);
 </script>
 </body>
 </html>
