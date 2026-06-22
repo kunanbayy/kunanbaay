@@ -111,6 +111,7 @@
     .pill{display:inline-flex;align-items:center;gap:6px;padding:4px 11px;border-radius:999px;font-size:.76rem;font-weight:700}
     .pill.free{background:#EEF2F7;color:#64748B}
     .pill.premium{background:#FEF6E2;color:var(--gold-deep)}
+    .pill.standard{background:#EAF0F8;color:var(--navy)}
     .pill.admin{background:#EAF0F8;color:var(--navy)}
     .pill.paid{background:#E7F8F1;color:var(--green)}
     .pill.pending{background:#FFF4E5;color:#C2410C}
@@ -715,7 +716,14 @@ function recentActivity(users,pays){
 }
 function fmtDate(iso){ if(!iso) return '—'; try{ var d=new Date(iso); return String(d.getDate()).padStart(2,'0')+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+d.getFullYear(); }catch(e){ return '—'; } }
 function isActivePremium(u){ return u && u.premiumUntil && new Date(u.premiumUntil) > new Date(); }
-function planLabel(u){ if(isActivePremium(u)) return u.plan==='report'?'report':'premium'; return (u.plan==='premium'||u.plan==='report') && !u.premiumUntil ? u.plan : 'free'; }
+function planLabel(u){ if(isActivePremium(u)) return u.plan==='report'?'report':'premium'; return ['premium','report','standard'].includes(u.plan) && !u.premiumUntil ? u.plan : 'free'; }
+function paymentPlan(p){
+  var s=String((p&&p.plan)||'').toLowerCase();
+  if(s.indexOf('standard')>-1) return 'standard';
+  if(s.indexOf('report')>-1) return 'report';
+  if(s.indexOf('premium')>-1 || (p&&p.status)==='paid') return 'premium';
+  return 'free';
+}
 var ROW='display:flex;align-items:center;gap:13px;border:1px solid #E8EEF6;border-radius:12px;padding:10px 14px;margin-bottom:8px;background:#fff;cursor:pointer';
 var AV='width:38px;height:38px;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;flex-shrink:0';
 var IB='width:32px;height:32px;border:1px solid #E8EEF6;background:#fff;border-radius:9px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;color:#7A8AA0;flex-shrink:0';
@@ -852,7 +860,7 @@ async function loadUsers(){
       var a=accMap[k]||{}; var cur=local[k]||{};
       local[k] = Object.assign({}, cur, base, {
         email: base.email || cur.email || k,
-        plan: a.premium ? 'premium' : (cur.plan||'free'),
+        plan: a.premium ? (base.plan || 'premium') : (base.plan || cur.plan || 'free'),
         premiumUntil: a.premium_until || cur.premiumUntil || null,
         blocked: a.blocked!=null ? !!a.blocked : !!cur.blocked,
         energy: a.energy!=null ? a.energy : (cur.energy||0)
@@ -867,7 +875,7 @@ async function loadUsers(){
       city: r.city || '—', classYear: r.classYear || r.class_year || '',
       createdAt: r.createdAt || r.created_at || '', lastLoginAt: r.lastLoginAt || ''
     }));
-    (_pays||[]).forEach(p=>{ if(p.email && !local[(p.email||'').toLowerCase()]) merge(p.email, { name:p.name||p.email, email:p.email, city:'—' }); });
+    (_pays||[]).forEach(p=>{ if(p.email) merge(p.email, { name:p.name||p.email, email:p.email, city:'—', plan: paymentPlan(p), createdAt:p.date||'' }); });
     access.forEach(a=>{ if(a.email && !local[(a.email||'').toLowerCase()]) merge(a.email, { name:a.email, email:a.email, city:'—' }); });
     setAcc(local);
   } catch(e){ console.error('loadUsers', e); }
