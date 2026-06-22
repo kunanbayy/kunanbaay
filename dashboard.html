@@ -81,6 +81,108 @@
       .dash-stats { grid-template-columns: 1fr 1fr; }
       .dash-grid { grid-template-columns: 1fr; }
     }
+
+    /* ============ UI/UX REFRESH ============ */
+    .dashboard-main { background: radial-gradient(120% 80% at 100% 0, #EEF4FC 0%, #F6F9FD 38%, #FBFDFF 100%); }
+
+    /* Header */
+    .dashboard-header {
+      padding: 32px 34px; border-radius: 26px; align-items: center;
+      background:
+        radial-gradient(140% 120% at 85% -20%, rgba(242,184,75,.28), transparent 55%),
+        linear-gradient(135deg, #14233B 0%, #1E3A5F 55%, #2D5491 100%);
+      box-shadow: 0 24px 54px -20px rgba(11,30,51,.55);
+    }
+    .dashboard-header::after { width:300px; height:300px; right:-90px; top:-110px; opacity:.9; }
+    .dashboard-header::before {
+      content:''; position:absolute; left:-40px; bottom:-90px; width:220px; height:220px; border-radius:50%;
+      background: radial-gradient(circle, rgba(96,165,250,.28), transparent 70%); pointer-events:none;
+    }
+    .dash-eyebrow {
+      display:inline-flex; align-items:center; gap:8px; font-size:.78rem; font-weight:600;
+      color: rgba(255,255,255,.72); letter-spacing:.02em; margin-bottom:10px;
+      background: rgba(255,255,255,.10); padding:6px 13px; border-radius:999px;
+      border:1px solid rgba(255,255,255,.14); backdrop-filter: blur(6px);
+    }
+    .dashboard-greeting { font-size: 2rem; line-height:1.1; }
+    .dashboard-subtext { font-size: .98rem; margin-top: 8px; max-width: 46ch; }
+    .dash-header-actions { display:flex; align-items:center; gap:14px; margin-top:20px; flex-wrap:wrap; }
+    .dash-header-link { color:#fff; font-weight:600; font-size:.9rem; text-decoration:none; opacity:.9;
+      display:inline-flex; align-items:center; gap:6px; transition:.18s; }
+    .dash-header-link:hover { opacity:1; gap:9px; }
+    .dash-header-right { display:flex; align-items:center; gap:12px; }
+
+    /* Section titles with accent */
+    .dash-section-title {
+      display:flex; align-items:center; gap:9px; font-weight:800; color:var(--navy);
+      font-size:1.02rem; margin-bottom:14px;
+    }
+    .dash-section-title::before {
+      content:''; width:4px; height:17px; border-radius:3px;
+      background: linear-gradient(180deg, var(--gold), var(--gold-deep, #D99A2B));
+    }
+
+    /* Stats — accent + cleaner */
+    .dash-stats { gap: 18px; }
+    .dash-stat {
+      position:relative; padding: 22px; border-radius: 22px; gap: 6px; overflow:hidden;
+      border:1px solid #E8EEF6; box-shadow: 0 8px 24px rgba(30,58,95,.06);
+    }
+    .dash-stat::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; opacity:.9; }
+    .dash-stat:nth-child(1)::before { background: var(--navy); }
+    .dash-stat:nth-child(2)::before { background: #D99A2B; }
+    .dash-stat:nth-child(3)::before { background: #059669; }
+    .dash-stat:nth-child(4)::before { background: #DC2626; }
+    .dash-stat-icon { width: 48px; height: 48px; border-radius: 15px; margin-bottom: 4px; }
+    .dash-stat-value { font-size: 1.85rem; line-height:1; }
+    .dash-stat-label { font-weight:500; }
+
+    /* Cards */
+    .card { padding: 22px; border:1px solid #E8EEF6; }
+    .card:hover, .plan-card:hover { box-shadow: 0 14px 32px rgba(30,58,95,.09); }
+    .plan-card { transition: var(--transition); }
+
+    /* Quick actions */
+    .quick-action { padding: 17px; border:1px solid #E8EEF6; align-items:center; }
+    .quick-action::after {
+      content:'→'; margin-left:auto; color:var(--text-light); font-weight:700;
+      transition:.18s; opacity:0; transform: translateX(-4px);
+    }
+    .quick-action:hover::after { opacity:1; transform: translateX(0); color:var(--navy); }
+    .qa-icon { width: 46px; height: 46px; border-radius: 15px; }
+
+    /* Today's plan */
+    .plan-item { padding: 4px 0; }
+    .plan-item.done::before, .plan-item.pending::before {
+      width:20px; height:20px; border-radius:50%; display:inline-flex; align-items:center;
+      justify-content:center; font-size:.72rem; flex-shrink:0;
+    }
+    .plan-item.done::before { content:'✓'; background:var(--emerald-light,#D1FAE5); color:#047857; }
+    .plan-item.pending::before { content:''; border:2px solid #E2E8F0; background:#fff; }
+    .progress-wrap { height: 9px; border-radius: 6px; background:#EDF2F8; overflow:hidden; }
+    .progress-bar { background: linear-gradient(90deg, var(--navy), #2D5491); border-radius:6px; }
+
+    /* Premium card */
+    .dash-premium {
+      background: linear-gradient(140deg, #FFFDF6 0%, #FEF3D6 100%);
+      border:1px solid rgba(217,154,43,.35); border-radius: 22px; padding: 22px;
+      box-shadow: 0 10px 28px rgba(217,154,43,.12); position:relative; overflow:hidden;
+    }
+    .dash-premium::after { content:''; position:absolute; right:-30px; top:-30px; width:120px; height:120px;
+      border-radius:50%; background: radial-gradient(circle, rgba(242,184,75,.35), transparent 70%); }
+
+    /* load reveal */
+    @keyframes dashRise { from { opacity:0; transform: translateY(16px); } to { opacity:1; transform:none; } }
+    .reveal { opacity:0; animation: dashRise .55s cubic-bezier(.22,.61,.36,1) forwards; }
+    .reveal-1{animation-delay:.05s}.reveal-2{animation-delay:.12s}.reveal-3{animation-delay:.19s}
+    .reveal-4{animation-delay:.26s}.reveal-5{animation-delay:.33s}.reveal-6{animation-delay:.40s}
+    @media (prefers-reduced-motion: reduce){ .reveal{animation:none;opacity:1} }
+
+    @media (max-width: 768px){
+      .dashboard-header{ padding:24px 22px; }
+      .dashboard-greeting{ font-size:1.55rem; }
+      .dash-stat-value{ font-size:1.5rem; }
+    }
   </style>
 </head>
 <body>
@@ -158,14 +260,19 @@
 
   <!-- MAIN CONTENT -->
   <main class="dashboard-main">
-    <div class="dashboard-header">
+    <div class="dashboard-header reveal reveal-1">
       <div>
-        <div class="dashboard-greeting">Сәлем, <span id="userName">Ержан</span>!</div>
-        <p class="dashboard-subtext">Бүгін мамандық жолыңда жаңа қадам жасайық.</p>
+        <div class="dash-eyebrow"><span id="todayStr">—</span> · <span id="greetWord">Қайырлы күн</span></div>
+        <div class="dashboard-greeting">Сәлем, <span id="userName">Ержан</span>! 👋</div>
+        <p class="dashboard-subtext">Бүгін мамандық жолыңда жаңа қадам жасайық. Тестіңді жалғастыр немесе грант мүмкіндігіңді тексер.</p>
+        <div class="dash-header-actions">
+          <a href="test.html" class="btn btn-gold btn-sm">Тестті бастау →</a>
+          <a href="grant.html" class="dash-header-link">Грант есептеу →</a>
+        </div>
       </div>
-      <div style="display:flex;align-items:center;gap:10px">
+      <div class="dash-header-right">
         <div class="badge badge-gray">Free жоспар</div>
-        <a href="profile.html" style="width:42px;height:42px;background:var(--navy);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:1rem;text-decoration:none" id="navAvatar">Е</a>
+        <a href="profile.html" style="width:44px;height:44px;background:var(--navy);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:1rem;text-decoration:none" id="navAvatar">Е</a>
       </div>
     </div>
 
@@ -177,7 +284,7 @@
     </div>
 
     <!-- STATS -->
-    <div class="dash-stats">
+    <div class="dash-stats reveal reveal-2">
       <div class="dash-stat">
         <div class="dash-stat-icon"><span class="ui-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><path d="M12 12l7-7"/><path d="M16 5h3v3"/></svg></span></div>
         <div class="dash-stat-value" id="statTest">—</div>
@@ -200,7 +307,7 @@
       </div>
     </div>
 
-    <div class="dash-grid">
+    <div class="dash-grid reveal reveal-3">
       <!-- LEFT COLUMN -->
       <div>
         <!-- Test result preview -->
@@ -308,13 +415,13 @@
         </div>
 
         <!-- Premium upsell -->
-        <div style="background:linear-gradient(135deg, #FFFBEB, var(--gold-light));border:2px solid var(--gold);border-radius:var(--radius-lg);padding:20px">
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
-            <span class="ui-icon" style="color:var(--gold)"><svg viewBox="0 0 24 24"><path d="M12 3l2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 17.2 6.4 20.2 7.5 14 3 9.6l6.2-.9L12 3z"/></svg></span>
-            <span style="font-weight:700;color:var(--navy);font-size:0.95rem">Premium алу</span>
+        <div class="dash-premium">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;position:relative">
+            <span class="ui-icon" style="color:var(--gold-deep,#D99A2B)"><svg viewBox="0 0 24 24"><path d="M12 3l2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 17.2 6.4 20.2 7.5 14 3 9.6l6.2-.9L12 3z"/></svg></span>
+            <span style="font-weight:800;color:var(--navy);font-size:1rem">Premium алу</span>
           </div>
-          <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:14px">Толық анализ, AI кеңесші және PDF Career Report — бәрі 990 ₸/ай.</p>
-          <a href="pricing.html" class="btn btn-gold btn-sm btn-full" style="justify-content:center">Premium қосу</a>
+          <p style="font-size:0.84rem;color:var(--text-muted);margin-bottom:14px;position:relative">Толық анализ, AI кеңесші және PDF Career Report — бәрі 990 ₸/ай.</p>
+          <a href="pricing.html" class="btn btn-gold btn-sm btn-full" style="justify-content:center;position:relative">Premium қосу</a>
         </div>
       </div>
     </div>
@@ -341,6 +448,18 @@
   document.addEventListener('DOMContentLoaded', () => {
     const user = JSON.parse(localStorage.getItem('shyraq_user'));
     if (!user) { window.location.href = 'login.html'; return; }
+
+    // Уақытқа қарай сәлемдесу + бүгінгі күн
+    (function(){
+      const h = new Date().getHours();
+      const word = h < 6 ? 'Қайырлы түн' : h < 12 ? 'Қайырлы таң' : h < 18 ? 'Қайырлы күн' : 'Қайырлы кеш';
+      const gw = document.getElementById('greetWord'); if (gw) gw.textContent = word;
+      const months = ['қаңтар','ақпан','наурыз','сәуір','мамыр','маусым','шілде','тамыз','қыркүйек','қазан','қараша','желтоқсан'];
+      const days = ['Жексенбі','Дүйсенбі','Сейсенбі','Сәрсенбі','Бейсенбі','Жұма','Сенбі'];
+      const d = new Date();
+      const ds = document.getElementById('todayStr');
+      if (ds) ds.textContent = d.getDate() + ' ' + months[d.getMonth()] + ', ' + days[d.getDay()];
+    })();
 
     // Админ «Оқушы кабинеті» арқылы қараса — нақты оқушы аты жоқ, демо көрсетеміз
     const isAdminPreview = localStorage.getItem('shyraq_admin') === '1' && location.search.includes('as=student');
