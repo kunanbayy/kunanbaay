@@ -203,6 +203,20 @@
     .subj-opt .rad{width:18px;height:18px;border-radius:50%;border:2px solid #CBD5E1;flex-shrink:0;display:grid;place-items:center}
     .subj-opt.sel .rad{border-color:var(--navy)}
     .subj-opt.sel .rad::after{content:'';width:9px;height:9px;border-radius:50%;background:var(--navy)}
+
+    /* ҰБТ нәтижелер */
+    .unt-best{font-size:.78rem;font-weight:800;color:#047857;background:var(--emerald-light,#D1FAE5);padding:3px 11px;border-radius:999px}
+    .unt-row{padding:11px 0;border-bottom:1px solid var(--border)}
+    .unt-row:last-child{border-bottom:none}
+    .unt-row-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px}
+    .unt-row-label{font-size:.88rem;font-weight:600;color:var(--text)}
+    .unt-row-score{display:flex;align-items:center;gap:8px}
+    .unt-row-score b{font-size:1.02rem;color:var(--navy)}
+    .unt-del{border:none;background:none;cursor:pointer;color:var(--text-light);font-size:.95rem;padding:2px 4px;line-height:1}
+    .unt-del:hover{color:#DC2626}
+    .unt-track{height:8px;border-radius:5px;background:#EDF2F8;overflow:hidden}
+    .unt-fill{height:100%;border-radius:5px;background:linear-gradient(90deg,#10B981,#34D399);transition:width .5s ease}
+    .unt-empty{font-size:.85rem;color:var(--text-muted);padding:10px 0 4px;line-height:1.6}
   </style>
 </head>
 <body>
@@ -395,6 +409,16 @@
 
       <!-- RIGHT COLUMN -->
       <div style="display:flex;flex-direction:column;gap:16px">
+        <!-- ҰБТ нәтижелерім -->
+        <div class="card">
+          <div class="dash-section-title" style="justify-content:space-between">
+            <span style="display:flex;align-items:center;gap:9px">ҰБТ нәтижелерім</span>
+            <span class="unt-best" id="untBest"></span>
+          </div>
+          <div id="untList" style="margin-top:6px"></div>
+          <button class="btn btn-outline btn-sm" style="margin-top:14px;width:100%;justify-content:center" onclick="openUnt()">+ Нәтиже қосу</button>
+        </div>
+
         <!-- UBT subjects -->
         <div class="card">
           <div class="dash-section-title">Таңдаған пәндерім</div>
@@ -442,6 +466,25 @@
       </div>
     </div>
   </main>
+</div>
+
+<!-- ҰБТ SCORE MODAL -->
+<div class="subj-ov" id="untOv">
+  <div class="subj-modal" style="max-width:400px">
+    <div class="subj-head">
+      <div><h3>ҰБТ нәтижесін қосу</h3><p>Нақты немесе сынақ ҰБТ балыңды жаз</p></div>
+      <button class="subj-x" onclick="closeUnt()">✕</button>
+    </div>
+    <div class="field" style="margin-bottom:14px">
+      <label style="display:block;font-size:.82rem;font-weight:600;color:var(--text-muted);margin-bottom:7px">Атауы</label>
+      <input id="untLabel" type="text" placeholder="Нағыз ҰБТ 1" style="width:100%;padding:12px 14px;border:1px solid var(--border);border-radius:12px;font-family:inherit;font-size:.95rem;outline:none" />
+    </div>
+    <div class="field" style="margin-bottom:18px">
+      <label style="display:block;font-size:.82rem;font-weight:600;color:var(--text-muted);margin-bottom:7px">Балл (макс 140)</label>
+      <input id="untScore" type="number" min="0" max="140" placeholder="96" style="width:100%;padding:12px 14px;border:1px solid var(--border);border-radius:12px;font-family:inherit;font-size:.95rem;outline:none" />
+    </div>
+    <button class="btn btn-primary btn-full" style="justify-content:center" onclick="saveUnt()">Сақтау</button>
+  </div>
 </div>
 
 <!-- UBT SUBJECTS MODAL -->
@@ -514,6 +557,7 @@
     const favs = JSON.parse(localStorage.getItem('shyraq_favorites')) || [];
 
     renderSubjects();
+    renderUnt();
     document.getElementById('statFav').textContent = favs.length;
 
     if (results) {
@@ -584,6 +628,47 @@
   }
   // backdrop жабу
   document.getElementById('subjOv').addEventListener('click', function(e){ if(e.target===this) closeSubjects(); });
+
+  // ── ҰБТ нәтижелері ──
+  function getUnt(){ try { return JSON.parse(localStorage.getItem('shyraq_unt')) || []; } catch(e){ return []; } }
+  function setUnt(a){ localStorage.setItem('shyraq_unt', JSON.stringify(a)); }
+  function renderUnt(){
+    var arr = getUnt();
+    var list = document.getElementById('untList');
+    var best = document.getElementById('untBest');
+    if(!arr.length){
+      list.innerHTML = '<div class="unt-empty">Әзірге нәтиже жоқ. Нақты немесе сынақ ҰБТ балыңды қосып, прогресіңді қадағала.</div>';
+      best.textContent = '';
+      return;
+    }
+    var max = Math.max.apply(null, arr.map(function(x){ return x.score; }));
+    best.textContent = 'Үздік: ' + max;
+    list.innerHTML = arr.map(function(x,i){
+      var pct = Math.min(100, Math.round(x.score/140*100));
+      return '<div class="unt-row"><div class="unt-row-top"><span class="unt-row-label">'+x.label+'</span>'
+        +'<span class="unt-row-score"><b>'+x.score+'</b><span style="font-size:.76rem;color:var(--text-light)">/140</span>'
+        +'<button class="unt-del" onclick="delUnt('+i+')" title="Жою">✕</button></span></div>'
+        +'<div class="unt-track"><div class="unt-fill" style="width:'+pct+'%"></div></div></div>';
+    }).join('');
+  }
+  function openUnt(){
+    var n = getUnt().length + 1;
+    document.getElementById('untLabel').value = 'Нағыз ҰБТ ' + n;
+    document.getElementById('untScore').value = '';
+    document.getElementById('untOv').classList.add('open');
+    setTimeout(function(){ document.getElementById('untScore').focus(); }, 50);
+  }
+  function closeUnt(){ document.getElementById('untOv').classList.remove('open'); }
+  function saveUnt(){
+    var label = document.getElementById('untLabel').value.trim() || ('ҰБТ ' + (getUnt().length+1));
+    var score = parseInt(document.getElementById('untScore').value, 10);
+    if(isNaN(score) || score < 0 || score > 140){ if(typeof showToast==='function') showToast('Балл 0–140 аралығында болсын','error'); return; }
+    var arr = getUnt(); arr.push({ label: label, score: score }); setUnt(arr);
+    closeUnt(); renderUnt();
+    if(typeof showToast==='function') showToast('Нәтиже сақталды ✓','success');
+  }
+  function delUnt(i){ var arr = getUnt(); arr.splice(i,1); setUnt(arr); renderUnt(); }
+  document.getElementById('untOv').addEventListener('click', function(e){ if(e.target===this) closeUnt(); });
 </script>
   <script src="js/icons.js"></script>
 
