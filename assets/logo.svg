@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none">
+  <!-- rays -->
+  <g stroke="#F2B84B" stroke-width="2.4" stroke-linecap="round">
+    <line x1="60" y1="6" x2="60" y2="20"/>
+    <line x1="42" y1="10" x2="46" y2="23"/>
+    <line x1="78" y1="10" x2="74" y2="23"/>
+    <line x1="27" y1="20" x2="35" y2="31"/>
+    <line x1="93" y1="20" x2="85" y2="31"/>
+    <line x1="17" y1="35" x2="28" y2="42"/>
+    <line x1="103" y1="35" x2="92" y2="42"/>
+  </g>
+  <!-- sparkles -->
+  <path d="M22 60 l1.6 4 4 1.6 -4 1.6 -1.6 4 -1.6 -4 -4 -1.6 4 -1.6z" fill="#F2B84B"/>
+  <path d="M98 60 l1.6 4 4 1.6 -4 1.6 -1.6 4 -1.6 -4 -4 -1.6 4 -1.6z" fill="#F2B84B"/>
+  <!-- flame -->
+  <path d="M60 22 c10 9 14 17 14 25 a14 14 0 0 1 -28 0 c0 -6 3 -12 9 -16 c-1 5 1 8 4 9 c-3 -7 -2 -13 1 -18z" fill="#F2B84B"/>
+  <path d="M60 34 c5 5 7 10 7 14 a7 7 0 0 1 -14 0 c0 -4 3 -8 7 -14z" fill="#FFC94D"/>
+  <!-- open book -->
+  <path d="M60 70 C50 62 38 62 30 64 l0 13 c8 -2 20 -2 30 6 C70 75 82 75 90 77 l0 -13 C82 62 70 62 60 70z" fill="#1B2A52"/>
+  <!-- torch handle -->
+  <rect x="48" y="72" width="24" height="9" rx="4.5" fill="#1B2A52"/>
+  <path d="M53 81 h14 l-3 22 -4 6 -4 -6z" fill="#1B2A52"/>
+</svg>
