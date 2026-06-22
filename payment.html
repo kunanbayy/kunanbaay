@@ -504,26 +504,41 @@
       return;
     }
 
-    // Чекті Supabase Storage-қа жүктеп, төлемді payments кестесіне жазу
-    // (Supabase бапталмаса/кесте жоқ болса — қауіпсіз өтіп кетеді)
+    // Чекті Supabase Storage-қа жүктеп + жергілікті admin тізіміне жазу.
+    // Premium ҚОСЫЛМАЙДЫ — админ растағанша «pending».
+    var u = JSON.parse(localStorage.getItem('shyraq_user') || 'null') || {};
+    var planName = (params.get('plan') === 'report') ? 'Бір реттік есеп'
+                 : (params.get('plan') === 'ai') ? 'AI Premium' : 'Premium';
+    var amt = (params.get('plan') === 'report') ? 1490 : (params.get('plan') === 'ai') ? 1990 : 990;
+    var receiptUrl = '';
     try {
       if (window.ShyraqDB && window.ShyraqDB.ready()) {
-        var u = JSON.parse(localStorage.getItem('shyraq_user') || 'null') || {};
-        var planName = (params.get('plan') === 'report') ? 'Бір реттік есеп'
-                     : (params.get('plan') === 'ai') ? 'AI Premium' : 'Premium';
-        var amt = (params.get('plan') === 'report') ? 1490 : (params.get('plan') === 'ai') ? 1990 : 990;
-        var url = await window.ShyraqDB.uploadReceipt(file);
+        receiptUrl = await window.ShyraqDB.uploadReceipt(file);
         await window.ShyraqDB.createPayment({
           user_id: (u && /^[0-9a-f-]{36}$/i.test(u.id || '')) ? u.id : null,
           name: u.name || 'Қолданушы', email: u.email || null,
-          plan: planName, amount: amt, status: 'pending', receipt_url: url || null
+          plan: planName, amount: amt, status: 'pending', receipt_url: receiptUrl || null
         });
       }
-    } catch (e) { /* демо режим — елемейміз */ }
+    } catch (e) { /* елемейміз */ }
+    // Жергілікті admin тізіміне де (Supabase болмаса да админ көреді — сол браузерде)
+    try {
+      if (!receiptUrl && file.size < 1500000) { receiptUrl = await fileToDataURL(file); }
+      var lp = JSON.parse(localStorage.getItem('shyraq_admin_payments') || '[]');
+      lp.unshift({ name: u.name || 'Қолданушы', email: u.email || '', plan: planName, amount: amt,
+        status: 'pending', date: new Date().toISOString().slice(0, 10), receipt: receiptUrl || '' });
+      localStorage.setItem('shyraq_admin_payments', JSON.stringify(lp));
+    } catch (e) { /* елемейміз */ }
 
-    // Manual review — Premium АВТОМАТТЫ ҚОСЫЛМАЙДЫ. Админ чекті тексеріп растайды.
     setTimeout(payPending, 900);
   });
+
+  function fileToDataURL(f) {
+    return new Promise(function (res) {
+      try { var r = new FileReader(); r.onload = function () { res(r.result); }; r.onerror = function () { res(''); }; r.readAsDataURL(f); }
+      catch (e) { res(''); }
+    });
+  }
 
   // ─── Kaspi QR — automatic payment (uses kaspi-pos-automation gateway) ───
   var qrBtn = document.getElementById('qrPayBtn');

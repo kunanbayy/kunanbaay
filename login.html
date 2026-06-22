@@ -252,6 +252,8 @@
     function demoLogin(){
       localStorage.removeItem('shyraq_admin');
       localStorage.removeItem('shyraq_demo_premium');
+      localStorage.removeItem('shyraq_premium');
+      localStorage.removeItem('shyraq_premium_until');
       const user = { name: 'Демо оқушы', email: 'demo@shyraq.edu.kz', classYear: '11', city: 'Алматы', plan: 'free' };
       localStorage.setItem('shyraq_user', JSON.stringify(user));
       window.location.href = 'dashboard.html';

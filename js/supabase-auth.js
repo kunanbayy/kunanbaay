@@ -20,7 +20,14 @@
   const accounts = () => { try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) { return {}; } };
   const saveAccounts = a => localStorage.setItem(KEY, JSON.stringify(a));
 
-  function setSession(user) { localStorage.setItem('shyraq_user', JSON.stringify(user)); }
+  function setSession(user) {
+    localStorage.setItem('shyraq_user', JSON.stringify(user));
+    // Жаңа сессия — премиумды тазалаймыз. Премиум тек DB access арқылы беріледі
+    // (access-sync admin доступ берген кезде қояды).
+    localStorage.removeItem('shyraq_premium');
+    localStorage.removeItem('shyraq_premium_until');
+    try { sessionStorage.removeItem('shyraq_access_synced'); } catch (e) {}
+  }
 
   function saveLocalAccount(p, name) {
     const all = accounts();
