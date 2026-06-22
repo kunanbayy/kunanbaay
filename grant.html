@@ -193,18 +193,26 @@
     .prow .thr { color: var(--text-muted); }
     .prow .pp { font-weight: 800; }
 
-    /* Pricing */
-    .price-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; max-width: 820px; }
-    .price-card { background: #fff; border: 1px solid var(--g-line); border-radius: 22px; padding: 30px; display: flex; flex-direction: column; gap: 14px; position: relative; transition: .2s; }
+    /* Pricing — Career Energy */
+    .price-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; max-width: 1040px; align-items: stretch; }
+    .price-card { background: #fff; border: 1.5px solid var(--g-line); border-radius: 22px; padding: 28px 26px; display: flex; flex-direction: column; gap: 12px; position: relative; transition: .2s; }
+    .price-card:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(109,93,252,.12); }
     .price-card.featured { border-color: var(--gp); box-shadow: 0 18px 44px rgba(109,93,252,.18); }
     .price-badge { position: absolute; top: -13px; left: 50%; transform: translateX(-50%); background: var(--gp); color: #fff; font-size: .75rem; font-weight: 800; padding: 6px 16px; border-radius: 999px; white-space: nowrap; }
-    .price-name { font-weight: 700; color: var(--text-muted); font-size: .98rem; }
-    .price-amt { font-family: var(--font-display); font-weight: 800; font-size: 2.2rem; color: var(--ink); }
+    .price-tag { display: inline-block; align-self: flex-start; padding: 5px 13px; border-radius: 8px; font-size: .78rem; font-weight: 800; }
+    .tag-free { background: #F1F2F7; color: var(--text-muted); }
+    .tag-std  { background: var(--ink); color: var(--g-gold); }
+    .tag-rep  { background: var(--gp-soft); color: var(--gp); }
+    .price-amt { font-family: var(--font-display); font-weight: 800; font-size: 2.3rem; color: var(--ink); line-height: 1; }
     .price-amt small { font-size: .9rem; color: var(--text-light); font-weight: 600; }
-    .price-feats { display: flex; flex-direction: column; gap: 11px; margin: 6px 0 8px; }
-    .price-feats li { list-style: none; display: flex; align-items: center; gap: 10px; font-size: .92rem; color: var(--text); }
-    .price-feats i { color: var(--g-green); }
-    .price-btn { margin-top: auto; min-height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-weight: 800; border: 1.5px solid var(--gp); color: var(--gp); background: #fff; transition: .18s; }
+    .price-sub { font-size: .82rem; color: var(--text-muted); margin-top: -4px; }
+    .price-energy { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: .92rem; padding: 9px 13px; border-radius: 12px; background: var(--gp-softer); color: var(--gp); }
+    .price-energy.gold { background: var(--g-gold-bg); color: #B7791F; }
+    .price-energy.zero { background: #F1F2F7; color: var(--text-light); }
+    .price-feats { display: flex; flex-direction: column; gap: 10px; margin: 4px 0 8px; }
+    .price-feats li { list-style: none; display: flex; align-items: flex-start; gap: 10px; font-size: .9rem; color: var(--text); line-height: 1.4; }
+    .price-feats i { color: var(--g-green); margin-top: 3px; }
+    .price-btn { margin-top: auto; min-height: 50px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-weight: 800; border: 1.5px solid var(--gp); color: var(--gp); background: #fff; transition: .18s; cursor: pointer; font-family: var(--font-body); font-size: .96rem; }
     .price-btn:hover { background: var(--gp-soft); }
     .price-btn.solid { background: var(--gp); color: #fff; border-color: var(--gp); }
     .price-btn.solid:hover { background: var(--gp-dark); }
@@ -218,7 +226,8 @@
     @media (max-width: 920px) {
       .results { grid-template-columns: 1fr; }
       .uni-grid { grid-template-columns: repeat(2, 1fr); }
-      .price-grid, .lk-grid, .mode-toggle { grid-template-columns: 1fr; }
+      .price-grid { grid-template-columns: 1fr; max-width: 480px; }
+      .lk-grid, .mode-toggle { grid-template-columns: 1fr; }
     }
     @media (max-width: 560px) {
       .form-grid, .tips-grid, .uni-grid, .prog-grid { grid-template-columns: 1fr; }
@@ -397,8 +406,8 @@
           <span class="lk-feat"><i class="fas fa-check"></i>Әр ЖОО өту шегі мен ықтималдығы</span>
           <span class="lk-feat"><i class="fas fa-check"></i>AI кеңесшісі</span>
         </div>
-        <div class="pw-price">499 ₸ <small>/ бір реттік есеп</small></div>
-        <a href="payment.html?plan=once&next=grant" class="btn btn-primary btn-lg" style="background:var(--gp);border-color:var(--gp)"><i class="fas fa-lock-open" style="margin-right:8px"></i> Төлеп ашу</a>
+        <div class="pw-price">⚡ 1 Career Energy <small>· Standard 2 990 ₸</small></div>
+        <a href="payment.html?plan=standard&next=grant" class="btn btn-primary btn-lg" style="background:var(--gp);border-color:var(--gp)"><i class="fas fa-bolt" style="margin-right:8px"></i> Энергия алу</a>
         <div class="pw-demo">Тек көру үшін: <a id="demoUnlock">демо режимде ашу</a></div>
       </div>
     </div>
@@ -426,8 +435,8 @@
           <span class="lk-feat"><i class="fas fa-check"></i>Қай университетті қай орынға қою керек</span>
           <span class="lk-feat"><i class="fas fa-check"></i>AI приоритет стратегиясы</span>
         </div>
-        <div class="pw-price" style="margin-top:4px">499 ₸ <small>/ бір реттік есеп</small></div>
-        <a href="payment.html?plan=once&next=grant" class="btn btn-primary btn-lg" style="background:var(--gp);border-color:var(--gp)"><i class="fas fa-lock-open" style="margin-right:8px"></i> Төлеп ашу</a>
+        <div class="pw-price" style="margin-top:4px">⚡ 1 Career Energy <small>· Standard 2 990 ₸</small></div>
+        <a href="payment.html?plan=standard&next=grant" class="btn btn-primary btn-lg" style="background:var(--gp);border-color:var(--gp)"><i class="fas fa-bolt" style="margin-right:8px"></i> Энергия алу</a>
         <div class="pw-demo">Тек көру үшін: <a id="demoUnlock2">демо режимде ашу</a></div>
       </div>
     </div>
@@ -441,34 +450,58 @@
     </div>
   </div>
 
-  <!-- PRICING (shared) -->
-  <div class="sec-title"><h2>Тарифтер</h2></div>
+  <!-- PRICING (Career Energy) -->
+  <div class="sec-title"><h2>⚡ Career Energy жүйесі</h2></div>
+  <p class="sec-sub">Тегін көр, керек болса энергия сатып ал. Әр энергиямен бір толық грант талдауын ашасың.</p>
   <div class="price-grid">
+
+    <!-- FREE -->
     <div class="price-card">
-      <div class="price-name">Бір реттік есеп</div>
-      <div class="price-amt">499 ₸</div>
+      <span class="price-tag tag-free">🆓 Free</span>
+      <div class="price-amt">0 ₸</div>
+      <div class="price-sub">Сайтпен танысу үшін</div>
+      <div class="price-energy zero">⚡ 0 Career Energy</div>
       <ul class="price-feats">
-        <li><i class="fas fa-check"></i> Толық нәтиже</li>
-        <li><i class="fas fa-check"></i> Барлық университеттер</li>
-        <li><i class="fas fa-check"></i> Барлық мамандықтар</li>
-        <li><i class="fas fa-check"></i> PDF есеп</li>
+        <li><i class="fas fa-check"></i> Барлық мамандықтарды көру</li>
+        <li><i class="fas fa-check"></i> Барлық университеттерді көру</li>
+        <li><i class="fas fa-check"></i> Гранттар туралы ақпарат</li>
+        <li><i class="fas fa-check"></i> Демо нәтиже</li>
       </ul>
-      <a href="payment.html?plan=report&next=grant" class="price-btn">Сатып алу</a>
+      <a href="register.html" class="price-btn">Тегін бастау</a>
     </div>
+
+    <!-- STANDARD -->
+    <div class="price-card">
+      <span class="price-tag tag-std">⭐ Standard</span>
+      <div class="price-amt">2 990 ₸</div>
+      <div class="price-sub">Бір реттік төлем</div>
+      <div class="price-energy gold">⚡ 1 Career Energy</div>
+      <ul class="price-feats">
+        <li><i class="fas fa-check"></i> 1 толық мамандық анализі</li>
+        <li><i class="fas fa-check"></i> ТОП мамандық ұсыныстары</li>
+        <li><i class="fas fa-check"></i> Сәйкес университеттер</li>
+        <li><i class="fas fa-check"></i> Грант ықтималдығы</li>
+        <li><i class="fas fa-check"></i> Дайындық бойынша ұсыныстар</li>
+      </ul>
+      <a href="payment.html?plan=standard&next=grant" class="price-btn solid">Сатып алу</a>
+    </div>
+
+    <!-- CAREER REPORT (featured) -->
     <div class="price-card featured">
       <div class="price-badge">⭐ Ең танымал</div>
-      <div class="price-name">Premium</div>
-      <div class="price-amt">1 990 ₸ <small>/ ай</small></div>
+      <span class="price-tag tag-rep">🚀 Career Report</span>
+      <div class="price-amt">4 990 ₸</div>
+      <div class="price-sub">Бір реттік төлем</div>
+      <div class="price-energy">⚡ 3 Career Energy</div>
       <ul class="price-feats">
-        <li><i class="fas fa-check"></i> Шексіз есептеу</li>
-        <li><i class="fas fa-check"></i> Барлық мамандықтар мен университеттер</li>
-        <li><i class="fas fa-check"></i> AI Кеңесші</li>
-        <li><i class="fas fa-check"></i> Грант жаңартулары</li>
-        <li><i class="fas fa-check"></i> Приоритетті ұсыныстар</li>
+        <li><i class="fas fa-check"></i> Standard-тың бәрі</li>
+        <li><i class="fas fa-check"></i> 3 толық мамандық анализі</li>
+        <li><i class="fas fa-check"></i> Толық PDF Career Report</li>
+        <li><i class="fas fa-check"></i> Жеке даму жоспары</li>
+        <li><i class="fas fa-check"></i> Басым (priority) ұсыныстар</li>
         <li><i class="fas fa-check"></i> Толық аналитика</li>
-        <li><i class="fas fa-check"></i> Болашақ мамандықтар тренді</li>
       </ul>
-      <a href="payment.html?plan=premium&next=grant" class="price-btn solid">Premium алу</a>
+      <a href="payment.html?plan=career&next=grant" class="price-btn solid">Сатып алу</a>
     </div>
   </div>
 

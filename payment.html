@@ -339,12 +339,13 @@
     test990:  { name: 'Standard',        desc: 'Standard — 1 Career Energy',         amount: pp('standard', 2990),   energy: 1 },
     test1990: { name: 'Career Report',   desc: 'Career Report — 3 Career Energy',    amount: pp('career', 4990),     energy: 3 },
     test2990: { name: 'Career Report',   desc: 'Career Report — 3 Career Energy',    amount: pp('career', 4990),     energy: 3 },
+    premium:  { name: 'Career Report',   desc: 'Career Report — 3 Career Energy',    amount: pp('career', 4990),     energy: 3 },
   };
 
   /* ── URL-параметрлер ── */
   const params  = new URLSearchParams(window.location.search);
-  const planKey = params.get('plan') || 'premium';
-  const plan    = PLANS[planKey] || PLANS.premium;
+  const planKey = params.get('plan') || 'standard';
+  const plan    = PLANS[planKey] || PLANS.standard;
 
   /* Пайдаланушы email (localStorage немесе URL) */
   const userEmail = params.get('email') || localStorage.getItem('shyraq_email') || 'user@email.com';

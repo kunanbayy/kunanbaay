@@ -71,14 +71,21 @@
     .save-pill { background: var(--emerald-light); color: #047857; font-weight: 700; font-size: 0.74rem; padding: 3px 9px; border-radius: 999px; }
 
     /* PRICING CARDS */
-    .price-grid { max-width: 1180px; margin: 0 auto; padding: 0 24px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; align-items: stretch; }
+    .price-grid { max-width: 1020px; margin: 0 auto; padding: 0 24px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; align-items: stretch; }
     .price-card {
-      position: relative; border: 1.5px solid var(--border); border-radius: 20px; padding: 26px 24px;
-      background: rgba(255,255,255,0.82); backdrop-filter: blur(8px); display: flex; flex-direction: column;
+      position: relative; border: 1.5px solid var(--border); border-radius: 22px; padding: 30px 28px;
+      background: rgba(255,255,255,0.86); backdrop-filter: blur(8px); display: flex; flex-direction: column;
       transition: var(--transition);
     }
-    .price-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+    .price-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-md); }
     .price-card.featured { border-color: var(--gold); box-shadow: 0 18px 44px -14px rgba(224,153,46,0.45); }
+
+    /* energy highlight pill */
+    .energy-pill { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 0.96rem; padding: 11px 15px; border-radius: 13px; margin-bottom: 18px; }
+    .energy-pill .ep-bolt { font-size: 1.1rem; }
+    .energy-pill.zero { background: var(--cream-dark); color: var(--text-light); }
+    .energy-pill.std  { background: var(--gold-pale); color: #B7791F; }
+    .energy-pill.rep  { background: var(--navy-pale); color: var(--navy); }
     .ribbon { position: absolute; top: -11px; left: 24px; background: linear-gradient(170deg, #F7C766, var(--gold)); color: var(--ink); font-size: 0.7rem; font-weight: 800; padding: 4px 12px; border-radius: 999px; box-shadow: var(--shadow-sm); }
     .pbadge { display: inline-block; padding: 4px 12px; border-radius: 7px; font-size: 0.78rem; font-weight: 800; margin-bottom: 16px; }
     .b-free { background: var(--cream-dark); color: var(--text-muted); }
@@ -259,26 +266,24 @@
   <div class="price-card">
     <span class="pbadge b-free">🆓 Free</span>
     <div class="pamt">0 ₸</div>
-    <div class="pstrike">&nbsp;</div>
     <div class="psub">Сайтпен танысу үшін</div>
+    <div class="energy-pill zero"><span class="ep-bolt">⚡</span> 0 Career Energy</div>
     <a href="register.html" class="pcta pcta-outline">Тегін бастау</a>
     <p class="pinc">Кіретіндер:</p>
     <div class="pfeat"><span class="pf-ic">✓</span> Барлық мамандықтарды көру</div>
     <div class="pfeat"><span class="pf-ic">✓</span> Барлық университеттерді көру</div>
     <div class="pfeat"><span class="pf-ic">✓</span> Гранттар туралы ақпарат</div>
     <div class="pfeat"><span class="pf-ic">✓</span> Демо нәтиже</div>
-    <div class="pfeat" style="font-weight:800;color:var(--text-light)"><span class="pf-ic">⚡</span> 0 Career Energy</div>
   </div>
 
   <!-- STANDARD -->
   <div class="price-card">
     <span class="pbadge b-prem">⭐ Standard</span>
     <div class="pamt" data-plan="standard">2 990 ₸</div>
-    <div class="pstrike">&nbsp;</div>
     <div class="psub">Бір реттік төлем</div>
+    <div class="energy-pill std"><span class="ep-bolt">⚡</span> 1 Career Energy</div>
     <button class="pcta pcta-gold" onclick="handlePremium('standard')">Сатып алу</button>
     <p class="pinc">Не кіреді:</p>
-    <div class="pfeat" style="font-weight:800;color:#B7791F"><span class="pf-ic">⚡</span> 1 Career Energy</div>
     <div class="pfeat"><span class="pf-ic">✓</span> 1 толық мамандық анализі</div>
     <div class="pfeat"><span class="pf-ic">✓</span> ТОП мамандық ұсыныстары</div>
     <div class="pfeat"><span class="pf-ic">✓</span> Сәйкес университеттер</div>
@@ -291,11 +296,10 @@
     <span class="ribbon">⭐ Ең танымал</span>
     <span class="pbadge b-report">🚀 Career Report</span>
     <div class="pamt" data-plan="career">4 990 ₸</div>
-    <div class="pstrike">&nbsp;</div>
     <div class="psub">Бір реттік төлем</div>
+    <div class="energy-pill rep"><span class="ep-bolt">⚡</span> 3 Career Energy</div>
     <button class="pcta pcta-dark" onclick="handlePremium('career')">Сатып алу</button>
     <p class="pinc">Standard-тың бәрі, әрі:</p>
-    <div class="pfeat" style="font-weight:800;color:#6D5DFC"><span class="pf-ic">⚡</span> 3 Career Energy</div>
     <div class="pfeat"><span class="pf-ic">✓</span> 3 толық мамандық анализі</div>
     <div class="pfeat"><span class="pf-ic">✓</span> Толық PDF Career Report</div>
     <div class="pfeat"><span class="pf-ic">✓</span> Жеке даму жоспары</div>
@@ -337,8 +341,8 @@
         <tr>
           <th style="text-align:left;padding:15px 18px;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);border-bottom:1px solid var(--border)">Мүмкіндік</th>
           <th style="padding:15px 18px;font-size:0.8rem;text-transform:uppercase;color:var(--text-muted);border-bottom:1px solid var(--border)">Free</th>
-          <th style="padding:15px 18px;font-size:0.8rem;text-transform:uppercase;color:var(--ink);background:var(--gold-pale);border-bottom:1px solid var(--border)">Premium</th>
-          <th style="padding:15px 18px;font-size:0.8rem;text-transform:uppercase;color:var(--text-muted);border-bottom:1px solid var(--border)">AI Premium</th>
+          <th style="padding:15px 18px;font-size:0.8rem;text-transform:uppercase;color:var(--ink);background:var(--gold-pale);border-bottom:1px solid var(--border)">Standard</th>
+          <th style="padding:15px 18px;font-size:0.8rem;text-transform:uppercase;color:var(--text-muted);border-bottom:1px solid var(--border)">Career Report</th>
         </tr>
       </thead>
       <tbody id="cmpBody"></tbody>
@@ -444,16 +448,17 @@ function toggleBilling() {
 
 /* ── COMPARISON TABLE ── */
 const CMP = [
-  ['Мамандық тесті', '1 рет', 'Шексіз', 'Шексіз'],
-  ['Мамандық ұсынысы', '3', '120+', '120+'],
-  ['Грант есептеу', '1 рет', 'Шексіз', 'Шексіз'],
-  ['Университеттер', '3 ЖОО', '104', '104'],
-  ['Жеке дайындық жоспары', false, true, true],
-  ['Таңдаулыларға сақтау', false, true, true],
-  ['AI кеңесші', false, false, true],
-  ['PDF Career Report', false, false, true],
-  ['Ата-анаға есеп', false, false, true],
-  ['Баға', '0 ₸', '990 ₸/ай', '1 990 ₸/ай'],
+  ['Career Energy', '0 ⚡', '1 ⚡', '3 ⚡'],
+  ['Толық мамандық анализі', false, '1', '3'],
+  ['Мамандықтарды көру', 'Барлығы', 'Барлығы', 'Барлығы'],
+  ['Университеттер базасы', '104', '104', '104'],
+  ['Грант ықтималдығы', 'Демо', true, true],
+  ['Сәйкес университеттер', false, true, true],
+  ['Дайындық бойынша ұсыныстар', false, true, true],
+  ['Жеке даму жоспары', false, false, true],
+  ['Толық PDF Career Report', false, false, true],
+  ['Басым (priority) ұсыныстар', false, false, true],
+  ['Баға', '0 ₸', '2 990 ₸', '4 990 ₸'],
 ];
 (function () {
   const body = document.getElementById('cmpBody');
@@ -480,10 +485,11 @@ const CMP = [
 
 /* ── FAQ ── */
 const FAQS = [
-  { q: 'Premium-ді тоқтатуға болады ма?', a: 'Иә, кез келген уақытта тоқтатуға болады. Ешқандай айыппұл жоқ. Тоқтатқаннан кейін ай соңына дейін пайдалана беруге болады.' },
-  { q: 'PDF Career Report дегеніміз не?', a: 'PDF Career Report — сенің тест нәтижелеріңе, ҰБТ пәндеріңе және мамандықтарыңа негізделген 10–15 беттік кәсіби анализ. ТОП-10 мамандық, университеттер, дайындық жоспары кіреді.' },
-  { q: 'AI кеңесші қалай жұмыс істейді?', a: 'AI кеңесші кез келген сұрағыңа жауап береді: мамандық ұсыну, пән таңдауға көмектесу, университеттерді салыстыру, грант мүмкіндігін түсіндіру, дайындық жоспарын жасау.' },
-  { q: 'Free жоспар жеткілікті ме?', a: 'Free жоспармен мамандық тестін тапсырып, негізгі нәтижені аласың. Толық анализ, барлық мамандықтар мен университеттер үшін Premium қажет.' },
+  { q: 'Career Energy дегеніміз не?', a: 'Career Energy — бұл толық грант/мамандық талдауын ашатын «энергия». Әр энергиямен бір толық анализ ашасың: ТОП мамандықтар, сәйкес университеттер, грант ықтималдығы және дайындық ұсыныстары. Standard — 1 энергия, Career Report — 3 энергия.' },
+  { q: 'Бұл айлық жазылым ба?', a: 'Жоқ. Standard пен Career Report — бір реттік төлем. Сатып алған энергияң жанбайды, өзіңе ыңғайлы кезде жұмсайсың. Ешқандай автоматты ай сайынғы төлем жоқ.' },
+  { q: 'PDF Career Report дегеніміз не?', a: 'PDF Career Report — сенің тест нәтижелеріңе, ҰБТ пәндеріңе және мамандықтарыңа негізделген кәсіби анализ. ТОП мамандықтар, университеттер, жеке даму жоспары кіреді. Career Report тарифінде қолжетімді.' },
+  { q: 'Энергияны қалай жұмсаймын?', a: 'Грант калькуляторында немесе мамандық анализінде «толық нәтижені ашу» батырмасын басқанда 1 энергия жұмсалады да, толық талдау ашылады.' },
+  { q: 'Free тарифпен не істей аламын?', a: 'Free тарифпен барлық мамандықтар мен 104 университетті көресің, гранттар туралы ақпарат пен демо нәтиже аласың. Толық жеке анализ үшін энергия қажет.' },
   { q: 'Төлем қауіпсіз бе?', a: 'Иә, барлық төлемдер SSL шифрлауымен қорғалған. Kaspi Bank, VISA, MasterCard арқылы төлеуге болады.' },
 ];
 (function () {
