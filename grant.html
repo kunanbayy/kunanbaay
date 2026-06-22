@@ -132,6 +132,28 @@
     .chance.low  { background: var(--g-red-bg);   color: var(--g-red); }
     .card-note { font-size: .76rem; color: var(--text-muted); line-height: 1.4; }
 
+    .more-ops { margin-top: 28px; }
+    .more-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 14px; flex-wrap: wrap; }
+    .more-head h3 { color: var(--ink); font-size: 1.2rem; }
+    .more-head p { color: var(--text-muted); font-size: .9rem; margin-top: 4px; max-width: 720px; line-height: 1.5; }
+    .more-count { background: var(--gp-soft); color: var(--gp); border-radius: 999px; padding: 7px 13px; font-size: .78rem; font-weight: 800; white-space: nowrap; }
+    .opp-list { display: grid; grid-template-columns: 1fr; gap: 14px; }
+    .opp-card { background: #fff; border: 1px solid var(--g-line); border-radius: 18px; padding: 18px; box-shadow: 0 8px 24px rgba(20,20,50,.035); }
+    .opp-top { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+    .opp-logo { width: 44px; height: 44px; border-radius: 12px; background: #F8FAFC; border: 1px solid #EEF0F6; display: flex; align-items: center; justify-content: center; overflow: hidden; flex: 0 0 44px; }
+    .opp-logo img { width: 100%; height: 100%; object-fit: contain; padding: 5px; }
+    .opp-uni { font-weight: 900; color: var(--ink); }
+    .opp-city { color: var(--text-muted); font-size: .82rem; margin-top: 2px; }
+    .opp-programs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+    .opp-row { border: 1px solid #EEF0F6; border-radius: 13px; padding: 11px 12px; display: grid; gap: 7px; }
+    .opp-name { font-weight: 800; color: var(--ink); font-size: .9rem; line-height: 1.35; }
+    .opp-meta { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+    .opp-pill { display: inline-flex; align-items: center; gap: 5px; padding: 4px 8px; border-radius: 999px; background: #F8FAFC; color: var(--text-muted); font-size: .72rem; font-weight: 800; }
+    .opp-pill.ok { background: var(--g-green-bg); color: var(--g-green); }
+    .opp-pill.risk { background: var(--g-orange-bg); color: var(--g-orange); }
+    .opp-pill.low { background: var(--g-red-bg); color: var(--g-red); }
+    .opp-empty { padding: 22px; border: 1px dashed var(--g-line); border-radius: 16px; color: var(--text-muted); text-align: center; }
+
     .ai-card { margin-top: 24px; display: grid; grid-template-columns: 64px 1fr; gap: 18px; align-items: start; background: linear-gradient(135deg, #F6F4FF, #FFFFFF); border: 1px solid var(--gp-soft); border-radius: 22px; padding: 26px; }
     .ai-ic { width: 64px; height: 64px; border-radius: 18px; background: var(--gp); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 1.7rem; box-shadow: 0 12px 26px rgba(109,93,252,.32); }
     .ai-card h3 { font-size: 1.1rem; color: var(--ink); margin-bottom: 8px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
@@ -226,6 +248,7 @@
     @media (max-width: 920px) {
       .results { grid-template-columns: 1fr; }
       .uni-grid { grid-template-columns: repeat(2, 1fr); }
+      .opp-programs { grid-template-columns: 1fr; }
       .price-grid { grid-template-columns: 1fr; max-width: 480px; }
       .lk-grid, .mode-toggle { grid-template-columns: 1fr; }
     }
@@ -391,6 +414,16 @@
           <div><div class="pb-t" id="prioT">—</div><div class="pb-d" id="prioD">—</div></div>
         </div>
         <div class="uni-grid" id="uniGrid"></div>
+        <div class="more-ops" id="moreOps">
+          <div class="more-head">
+            <div>
+              <h3>Басқа сәйкес мүмкіндіктер</h3>
+              <p>ҰБТ балыңыз бен таңдау пәндеріңізге сәйкес келетін басқа университеттер мен мамандықтар.</p>
+            </div>
+            <span class="more-count" id="moreCount">0 мүмкіндік</span>
+          </div>
+          <div class="opp-list" id="moreList"></div>
+        </div>
         <div class="ai-card" style="margin-top:18px">
           <div class="ai-ic"><i class="fas fa-robot"></i></div>
           <div><h3>Shyraq AI кеңесшісі</h3><p id="aiText">—</p></div>
@@ -403,7 +436,8 @@
         <div class="lk-feats">
           <span class="lk-feat"><i class="fas fa-check"></i>4 таңдау стратегиясы</span>
           <span class="lk-feat"><i class="fas fa-check"></i>Қай приоритетте ілінесіз</span>
-          <span class="lk-feat"><i class="fas fa-check"></i>Әр ЖОО өту шегі мен ықтималдығы</span>
+          <span class="lk-feat"><i class="fas fa-check"></i>Басқа сәйкес университеттер</span>
+          <span class="lk-feat"><i class="fas fa-check"></i>Әр ЖОО-дағы барлық сәйкес мамандықтар</span>
           <span class="lk-feat"><i class="fas fa-check"></i>AI кеңесшісі</span>
         </div>
         <div class="pw-price">⚡ 1 Career Energy <small>· Standard 2 990 ₸</small></div>
@@ -694,6 +728,76 @@
     return L;
   }
 
+  function programKey(x){
+    return String(x.uni.id) + ':' + String(x.sp.code || x.sp.name || '');
+  }
+  function byOpportunityRank(a,b){
+    const ap = chanceFromDiff(a.diff).pct;
+    const bp = chanceFromDiff(b.diff).pct;
+    if ((b.diff >= 0) !== (a.diff >= 0)) return (b.diff >= 0) - (a.diff >= 0);
+    if (bp !== ap) return bp - ap;
+    return a.sp.thresholdScore - b.sp.thresholdScore;
+  }
+  function buildMoreGroups(all, picks){
+    const chosen = new Set((picks || []).map(p => programKey(p[2])));
+    const grouped = new Map();
+    all
+      .filter(x => !chosen.has(programKey(x)))
+      .sort(byOpportunityRank)
+      .forEach(x => {
+        const id = String(x.uni.id);
+        if (!grouped.has(id)) grouped.set(id, { uni: x.uni, items: [] });
+        grouped.get(id).items.push(x);
+      });
+    return Array.from(grouped.values())
+      .map(g => ({ uni: g.uni, items: g.items.sort(byOpportunityRank) }))
+      .sort((a,b) => {
+        const aReach = a.items.some(x => x.diff >= 0);
+        const bReach = b.items.some(x => x.diff >= 0);
+        if (aReach !== bReach) return bReach - aReach;
+        return chanceFromDiff(b.items[0].diff).pct - chanceFromDiff(a.items[0].diff).pct;
+      });
+  }
+  function renderMoreOptions(all, picks){
+    const list = document.getElementById('moreList');
+    const count = document.getElementById('moreCount');
+    if (!list || !count) return;
+    const groups = buildMoreGroups(all, picks);
+    const total = groups.reduce((s,g) => s + g.items.length, 0);
+    count.textContent = total + ' мүмкіндік';
+    if (!groups.length) {
+      list.innerHTML = '<div class="opp-empty">Бұл пәндер мен балл бойынша 4 таңдаудан бөлек қосымша мүмкіндік табылмады. Қаланы немесе университет фильтрін кеңейтіп көріңіз.</div>';
+      return;
+    }
+    list.innerHTML = groups.map(g => {
+      const nm = uniName(g.uni);
+      const logo = g.uni.logo_url
+        ? `<img src="${g.uni.logo_url}" alt="${nm}" onerror="this.style.display='none';this.parentNode.innerHTML='<i class=\\'fas fa-university\\' style=\\'color:var(--gp)\\'></i>'">`
+        : `<i class="fas fa-university" style="color:var(--gp)"></i>`;
+      const rows = g.items.map(x => {
+        const c = chanceFromDiff(x.diff);
+        const pillCls = c.cls === 'high' || c.cls === 'med' ? 'ok' : (c.cls === 'risk' ? 'risk' : 'low');
+        const reach = x.diff >= 0 ? 'Балл жетеді' : 'Балл жетпейді';
+        return `<div class="opp-row">
+          <div class="opp-name">${specKK(x.sp)}</div>
+          <div class="opp-meta">
+            <span class="opp-pill">Өткен жыл: ${x.sp.thresholdScore} балл</span>
+            <span class="opp-pill ${pillCls}">Сәйкестік: ${c.pct}%</span>
+            <span class="opp-pill ${pillCls}">${c.emoji} ${c.label}</span>
+            <span class="opp-pill">${reach}</span>
+          </div>
+        </div>`;
+      }).join('');
+      return `<div class="opp-card">
+        <div class="opp-top">
+          <div class="opp-logo">${logo}</div>
+          <div><div class="opp-uni">${nm}</div><div class="opp-city">${g.uni.city || '—'} · ${g.items.length} сәйкес мамандық</div></div>
+        </div>
+        <div class="opp-programs">${rows}</div>
+      </div>`;
+    }).join('');
+  }
+
   /* ---------- form readers ---------- */
   function readForm(){
     const score=+document.getElementById('scoreSlider').value;
@@ -728,6 +832,7 @@
     renderCutoffBox(f.score, gc);
 
     const picks=pick4(all);
+    renderMoreOptions(all, picks);
 
     // priority cascade — grant is secured at the first (highest-priority) choice the score clears
     let firstClear=-1;
@@ -780,7 +885,7 @@
     }
 
     const remaining=Math.max(0, all.length - picks.length);
-    document.getElementById('m1LockSub').textContent=`Тағы ${remaining} сәйкес нұсқа, грант приоритет стратегиясы және AI кеңесі төлемнен кейін ашылады.`;
+    document.getElementById('m1LockSub').textContent=`Тағы ${remaining} сәйкес мүмкіндік, басқа университеттер мен мамандықтар және AI кеңесі төлемнен кейін ашылады.`;
 
     const names=picks.slice(0,3).map(p=>uniName(p[2].uni));
     let ai='';
