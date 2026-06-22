@@ -166,6 +166,7 @@
     .bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;height:100%;justify-content:flex-end}
     .bar{width:100%;max-width:38px;border-radius:8px 8px 0 0;background:linear-gradient(180deg,var(--navy-2),var(--navy));animation:grow .6s ease both}
     @keyframes grow{from{height:0}}
+    .bar-n{font-size:.72rem;font-weight:800;color:var(--ink);min-height:16px}
     .bar-x{font-size:.74rem;color:var(--muted);font-weight:600}
 
     /* category chips */
@@ -584,20 +585,8 @@ function nf(n){ return n.toLocaleString('ru-RU'); }
 
 /* ════ SEED DATA (localStorage) ════ */
 function seed(k,v){ if(!localStorage.getItem(k)) localStorage.setItem(k, JSON.stringify(v)); }
-seed('shyraq_admin_users', [
-  {name:'Аяулым Бекова', email:'ayaulym@gmail.com', city:'Алматы', plan:'premium', date:'2026-06-18'},
-  {name:'Дәурен Сатыбалдин', email:'dauren@gmail.com', city:'Астана', plan:'free', date:'2026-06-17'},
-  {name:'Зарина Нұрланова', email:'zarina@mail.ru', city:'Шымкент', plan:'premium', date:'2026-06-15'},
-  {name:'Нұрислам Қайрат', email:'nurislam@gmail.com', city:'Қарағанды', plan:'free', date:'2026-06-14'},
-  {name:'Мадина Әбен', email:'madina@gmail.com', city:'Атырау', plan:'premium', date:'2026-06-12'},
-  {name:'Ерасыл Тұрсын', email:'erasyl@gmail.com', city:'Тараз', plan:'free', date:'2026-06-10'}
-]);
-seed('shyraq_admin_payments', [
-  {name:'Аяулым Бекова', email:'ayaulym@gmail.com', plan:'Premium', amount:990, status:'paid', date:'2026-06-18', receipt:'assets/receipt-sample.jpg'},
-  {name:'Зарина Нұрланова', email:'zarina@mail.ru', plan:'AI Premium', amount:1990, status:'paid', date:'2026-06-15', receipt:''},
-  {name:'Мадина Әбен', email:'madina@gmail.com', plan:'Premium', amount:990, status:'paid', date:'2026-06-12', receipt:''},
-  {name:'Бекжан О.', plan:'Premium', amount:990, status:'pending', date:'2026-06-20', receipt:'assets/receipt-sample.jpg'}
-]);
+seed('shyraq_admin_users', []);
+seed('shyraq_admin_payments', []);
 seed('shyraq_admin_reviews', [
   {name:'Аяулым · SDU University', text:'Маркетинг мамандығына грант алдым!', stars:5},
   {name:'Дәурен · AITU', text:'IT-ға бағыт алдым, қазір AITU-да оқимын.', stars:5},
@@ -610,6 +599,8 @@ const getPays = () => JSON.parse(localStorage.getItem('shyraq_admin_payments')||
 const setPays = a => localStorage.setItem('shyraq_admin_payments', JSON.stringify(a));
 const getReviews = () => JSON.parse(localStorage.getItem('shyraq_admin_reviews')||'[]');
 const setReviews = a => localStorage.setItem('shyraq_admin_reviews', JSON.stringify(a));
+const SEED_USER_EMAILS = new Set(['ayaulym@gmail.com','dauren@gmail.com','zarina@mail.ru','nurislam@gmail.com','madina@gmail.com','erasyl@gmail.com']);
+const SEED_PAY_NAMES = new Set(['аяулым бекова','зарина нұрланова','мадина әбен','бекжан о.']);
 
 const UNIS = window.UNIVERSITIES_SEED || [];
 
@@ -669,10 +660,10 @@ function renderOverview(){
   $('navPays').textContent = pays.length;
   $('navUniLbl').textContent = UNIS.length + ' ЖОО базасы';
 
-  // bars (mock growth)
-  const data=[{x:'Қаң',v:42},{x:'Ақп',v:58},{x:'Нау',v:71},{x:'Сәу',v:64},{x:'Мам',v:88},{x:'Мау',v:96},{x:'Шіл',v:74}];
-  const max=Math.max(...data.map(d=>d.v));
-  $('bars').innerHTML = data.map(d=>`<div class="bar-col"><div class="bar" style="height:${d.v/max*100}%"></div><div class="bar-x">${d.x}</div></div>`).join('');
+  // bars: соңғы 7 айдағы нақты тіркелулер
+  const data=registrationSeries(users);
+  const max=Math.max(1,...data.map(d=>d.v));
+  $('bars').innerHTML = data.map(d=>`<div class="bar-col" title="${d.full}: ${d.v} тіркелу"><div class="bar-n">${d.v}</div><div class="bar" style="height:${Math.max(8,d.v/max*100)}%"></div><div class="bar-x">${d.x}</div></div>`).join('');
 
   // categories
   const cats={};
@@ -685,12 +676,7 @@ function renderOverview(){
   $('recentUsers').innerHTML = users.slice(0,5).map(u=>`<tr><td><div class="u-cell"><span class="u-av" style="background:${avColor(u.name)}">${initial(u.name)}</span><div><div class="u-name">${u.name}</div><div class="u-mail">${u.email}</div></div></div></td><td><span class="pill ${u.plan}">${u.plan}</span></td></tr>`).join('');
 
   // activity
-  const acts=[
-    ['#10B981','Жаңа Premium төлем','Аяулым Бекова · 990 ₸ · бүгін'],
-    ['#3B82F6','Жаңа тіркелу','Ерасыл Тұрсын · Тараз · бүгін'],
-    ['#F2B84B','Грант есептелді','Нұрислам · 112 балл · кеше'],
-    ['#7C3AED','Тест тапсырылды','Мадина Әбен · Медицина · кеше']
-  ];
+  const acts=recentActivity(users,pays);
   $('activity').innerHTML = acts.map(a=>`<div class="act"><span class="dot" style="background:${a[0]}"></span><div><div class="t">${a[1]}</div><div class="m">${a[2]}</div></div></div>`).join('');
 }
 
@@ -700,11 +686,32 @@ const getAcc = () => { try { return JSON.parse(localStorage.getItem('shyraq_acco
 const setAcc = o => localStorage.setItem('shyraq_accounts', JSON.stringify(o));
 function allUsers(){
   // demo (массив) + real (объект) — біріктіреміз
-  const demo = getUsers().map((u,i)=>({ ...u, src:'demo', idx:i, blocked:!!u.blocked }));
   const acc = getAcc();
   const real = Object.keys(acc).map(k=>({ name:acc[k].name, email:acc[k].email||k, city:acc[k].city||'—',
-    plan:acc[k].plan||'free', blocked:!!acc[k].blocked, date:(acc[k].createdAt||'').slice(0,10)||'—', src:'real', key:k }));
+    plan:acc[k].plan||'free', blocked:!!acc[k].blocked, date:(acc[k].createdAt||'').slice(0,10)||'—', createdAt:acc[k].createdAt||'', lastLoginAt:acc[k].lastLoginAt||'', src:'real', key:k }));
+  const hasReal = real.some(u=>u.email && !SEED_USER_EMAILS.has(String(u.email).toLowerCase()));
+  const demo = getUsers()
+    .filter(u=> !hasReal || !SEED_USER_EMAILS.has(String(u.email||'').toLowerCase()))
+    .map((u,i)=>({ ...u, src:'demo', idx:i, blocked:!!u.blocked, createdAt:u.createdAt||u.date||'' }));
   return real.concat(demo);
+}
+function monthKey(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'); }
+function parseUserDate(u){ const raw=u.createdAt||u.date||u.lastLoginAt||''; const d=new Date(raw); return isNaN(d) ? null : d; }
+function registrationSeries(users){
+  const mon=['Қаң','Ақп','Нау','Сәу','Мам','Мау','Шіл','Там','Қыр','Қаз','Қар','Жел'];
+  const now=new Date(), series=[];
+  for(let i=6;i>=0;i--){
+    const d=new Date(now.getFullYear(), now.getMonth()-i, 1);
+    series.push({key:monthKey(d), x:mon[d.getMonth()], full:mon[d.getMonth()]+' '+d.getFullYear(), v:0});
+  }
+  users.forEach(u=>{ const d=parseUserDate(u); if(!d) return; const row=series.find(x=>x.key===monthKey(d)); if(row) row.v++; });
+  return series;
+}
+function recentActivity(users,pays){
+  const out=[];
+  pays.slice(0,3).forEach(p=>out.push(['#10B981', p.status==='paid'?'Төлем расталды':'Төлем күтуде', `${p.name||'Қолданушы'} · ${nf(p.amount||0)} ₸ · ${p.date||'—'}`]));
+  users.slice(0,3).forEach(u=>out.push(['#3B82F6','Жаңа тіркелу', `${u.name||'Қолданушы'} · ${u.city||'—'} · ${u.date||'—'}`]));
+  return out.slice(0,4);
 }
 function fmtDate(iso){ if(!iso) return '—'; try{ var d=new Date(iso); return String(d.getDate()).padStart(2,'0')+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+d.getFullYear(); }catch(e){ return '—'; } }
 function isActivePremium(u){ return u && u.premiumUntil && new Date(u.premiumUntil) > new Date(); }
@@ -818,13 +825,15 @@ function udToggleBlock(){ if(!_ud)return; _mutate(_ud.src,_ud.ref,u=>{u.blocked=
 /* ════ PAYMENTS (Supabase + демо біріктірілген) ════ */
 var _pays = [];
 async function loadPayments(){
-  var demo = getPays().map((p,idx)=>({ name:p.name, email:p.email, plan:p.plan, amount:p.amount, status:p.status, receipt:p.receipt, date:p.date, src:'demo', idx:idx }));
+  var demo = getPays()
+    .filter(p=>!SEED_PAY_NAMES.has(String(p.name||'').toLowerCase()))
+    .map((p,idx)=>({ name:p.name, email:p.email, plan:p.plan, amount:p.amount, status:p.status, receipt:p.receipt, date:p.date, src:'demo', idx:idx }));
   var sbp = [];
   if (window.ShyraqDB && window.ShyraqDB.ready()){
     var rows = await window.ShyraqDB.listPayments();
     if (rows) sbp = rows.map(r=>({ id:r.id, name:r.name, email:r.email, plan:r.plan, amount:r.amount, status:r.status, receipt:r.receipt_url, date:(r.created_at||'').slice(0,10), src:'sb' }));
   }
-  _pays = sbp.concat(demo);
+  _pays = sbp.length ? sbp : demo;
   renderPayments(); renderOverview();
 }
 
@@ -834,6 +843,7 @@ async function loadUsers(){
   try {
     if (!(window.ShyraqDB && window.ShyraqDB.ready())) { renderUsers(); return; }
     var profiles = await window.ShyraqDB.listProfiles() || [];
+    var regs = await window.ShyraqDB.getSettings('registrations') || [];
     var access   = await window.ShyraqDB.listAccess()   || [];
     var accMap = {}; access.forEach(a=>{ accMap[(a.email||'').toLowerCase()] = a; });
     var local = getAcc();
@@ -851,6 +861,11 @@ async function loadUsers(){
     profiles.forEach(pr=> merge(pr.email, {
       name: pr.name || (pr.email||'').split('@')[0], email: pr.email,
       city: pr.city || '—', classYear: pr.class_year || '', createdAt: pr.created_at || ''
+    }));
+    if(Array.isArray(regs)) regs.forEach(r=> merge(r.email, {
+      name: r.name || (r.email||'').split('@')[0], email: r.email,
+      city: r.city || '—', classYear: r.classYear || r.class_year || '',
+      createdAt: r.createdAt || r.created_at || '', lastLoginAt: r.lastLoginAt || ''
     }));
     (_pays||[]).forEach(p=>{ if(p.email && !local[(p.email||'').toLowerCase()]) merge(p.email, { name:p.name||p.email, email:p.email, city:'—' }); });
     access.forEach(a=>{ if(a.email && !local[(a.email||'').toLowerCase()]) merge(a.email, { name:a.email, email:a.email, city:'—' }); });
