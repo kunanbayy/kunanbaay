@@ -117,6 +117,26 @@
     .u-cell{display:flex;align-items:center;gap:11px}
     .u-av{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:.82rem;color:#fff;flex-shrink:0}
     .u-logo{width:36px;height:36px;border-radius:9px;object-fit:cover;background:#EEF2F7;flex-shrink:0;border:1px solid var(--border)}
+
+    /* card grids (users / unis) */
+    .u-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px}
+    .u-card{border:1px solid var(--border);border-radius:16px;padding:16px;background:#fff;transition:.18s;cursor:pointer;position:relative}
+    .u-card:hover{box-shadow:0 12px 28px rgba(30,58,95,.10);transform:translateY(-2px);border-color:#DCE6F2}
+    .u-card-top{display:flex;align-items:center;gap:12px;margin-bottom:13px}
+    .u-card-pills{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+    .u-card-foot{display:flex;gap:7px;border-top:1px solid #F1F5F9;padding-top:12px}
+    .u-card-foot .ibtn{flex:1}
+    .u-meta{font-size:.78rem;color:var(--muted);display:flex;align-items:center;gap:5px}
+    /* detail modal */
+    .ud-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #F1F5F9;font-size:.9rem}
+    .ud-row:last-child{border-bottom:none}
+    .ud-row .k{color:var(--muted)}
+    .ud-row .v{font-weight:700;color:var(--ink)}
+    .ud-acts{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:16px 0}
+    .ud-acts .btn{justify-content:center;font-size:.84rem;padding:11px}
+    .ud-sec-t{font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--light);margin:18px 0 8px}
+    .ud-pay{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border:1px solid var(--border);border-radius:11px;margin-bottom:8px;font-size:.86rem}
+    .ud-pay .lk{color:#3B82F6;font-weight:700;cursor:pointer;text-decoration:none}
     .u-name{font-weight:700;color:var(--ink)}
     .u-mail{font-size:.78rem;color:var(--muted)}
     .row-act{display:flex;gap:6px}
@@ -348,10 +368,7 @@
           <h3>Қолданушылар тізімі</h3>
           <button class="btn btn-primary" onclick="openUserModal()"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg> Қосу</button>
         </div>
-        <table class="a-tbl">
-          <thead><tr><th>Қолданушы</th><th>Жоспар</th><th>Статус</th><th>Қала</th><th></th></tr></thead>
-          <tbody id="usersBody"></tbody>
-        </table>
+        <div class="u-grid" id="usersGrid"></div>
       </div>
     </section>
 
@@ -360,7 +377,7 @@
       <div class="a-card">
         <div class="a-card-hd"><h3>Төлемдер</h3><span class="pill paid" id="payTotal">0 ₸</span></div>
         <table class="a-tbl">
-          <thead><tr><th>Қолданушы</th><th>Жоспар</th><th>Сома</th><th>Статус</th><th>Күні</th><th></th></tr></thead>
+          <thead><tr><th>Қолданушы</th><th>Жоспар</th><th>Сома</th><th>Статус</th><th>Чек</th><th>Күні</th><th></th></tr></thead>
           <tbody id="paymentsBody"></tbody>
         </table>
       </div>
@@ -370,10 +387,7 @@
     <section class="section" id="sec-unis">
       <div class="a-card">
         <div class="a-card-hd"><h3>Университеттер базасы</h3><span class="pill admin" id="uniCount">0 ЖОО</span></div>
-        <table class="a-tbl">
-          <thead><tr><th>Университет</th><th>Қала</th><th>Категория</th><th>Мамандық</th><th>Статус</th><th></th></tr></thead>
-          <tbody id="unisBody"></tbody>
-        </table>
+        <div class="u-grid" id="unisGrid"></div>
         <div style="text-align:center;margin-top:16px"><button class="btn btn-ghost" id="uniMore">Тағы көрсету</button></div>
       </div>
     </section>
@@ -433,6 +447,35 @@
       </div>
     </section>
   </main>
+</div>
+
+<!-- USER DETAIL MODAL -->
+<div class="ov" id="userDetail">
+  <div class="modal" style="max-width:480px">
+    <div class="subj-head" style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px">
+      <div style="display:flex;align-items:center;gap:12px">
+        <span class="u-av" id="udAv" style="width:46px;height:46px;font-size:1rem"></span>
+        <div><h3 id="udName" style="margin:0">—</h3><div class="u-mail" id="udEmail"></div></div>
+      </div>
+      <button class="subj-x" onclick="closeModal('userDetail')">✕</button>
+    </div>
+    <div class="ud-row"><span class="k">Жоспар</span><span class="v" id="udPlan">free</span></div>
+    <div class="ud-row"><span class="k">Статус</span><span class="v" id="udStatus">Белсенді</span></div>
+    <div class="ud-row"><span class="k">Premium мерзімі</span><span class="v" id="udUntil">—</span></div>
+    <div class="ud-row"><span class="k">Қала</span><span class="v" id="udCity">—</span></div>
+
+    <div class="ud-sec-t">Қолжетімділікті басқару</div>
+    <div class="ud-acts">
+      <button class="btn btn-gold" onclick="udGrant(30)">⭐ Premium 30 күн</button>
+      <button class="btn btn-ghost" onclick="udExtend(30)">➕ Ұзарту +30 күн</button>
+      <button class="btn btn-ghost" onclick="udExtend(-30)">➖ Қысқарту −30 күн</button>
+      <button class="btn btn-ghost" onclick="udRevoke()" style="color:var(--red);border-color:#FECACA">🚫 Доступ алу</button>
+    </div>
+    <button class="btn btn-ghost btn-full" id="udBlockBtn" onclick="udToggleBlock()" style="justify-content:center;width:100%">🔒 Бұғаттау</button>
+
+    <div class="ud-sec-t">Төлемдер тарихы</div>
+    <div id="udPays"></div>
+  </div>
 </div>
 
 <!-- USER MODAL -->
@@ -524,7 +567,8 @@ if (localStorage.getItem('shyraq_admin') !== '1') {
 const $ = id => document.getElementById(id);
 function toast(m){ const t=$('toast'); t.textContent=m; t.className='toast show'; clearTimeout(window.__t); window.__t=setTimeout(()=>t.className='toast',2400); }
 function avColor(s){ const c=['#1E3A5F','#0E7490','#065F46','#7C3AED','#DC2626','#D97706','#2D5491','#9333EA']; let h=0; for(const ch of (s||'A')) h=(h*31+ch.charCodeAt(0))%c.length; return c[h]; }
-function initial(s){ return (s||'?').trim()[0].toUpperCase(); }
+function initial(s){ return ((s||'?').trim()[0]||'?').toUpperCase(); }
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 const uniName = u => (window.kazifyUni ? window.kazifyUni(u.name_kz || u.name_ru || u.short_name || '') : (u.name_kz||u.short_name||'')) ;
 function nf(n){ return n.toLocaleString('ru-RU'); }
 
@@ -539,10 +583,10 @@ seed('shyraq_admin_users', [
   {name:'Ерасыл Тұрсын', email:'erasyl@gmail.com', city:'Тараз', plan:'free', date:'2026-06-10'}
 ]);
 seed('shyraq_admin_payments', [
-  {name:'Аяулым Бекова', plan:'Premium', amount:990, status:'paid', date:'2026-06-18'},
-  {name:'Зарина Нұрланова', plan:'AI Premium', amount:1990, status:'paid', date:'2026-06-15'},
-  {name:'Мадина Әбен', plan:'Premium', amount:990, status:'paid', date:'2026-06-12'},
-  {name:'Бекжан О.', plan:'Premium', amount:990, status:'pending', date:'2026-06-20'}
+  {name:'Аяулым Бекова', email:'ayaulym@gmail.com', plan:'Premium', amount:990, status:'paid', date:'2026-06-18', receipt:'https://kunanbayy.github.io/kunanbaay/assets/receipt-sample.jpg'},
+  {name:'Зарина Нұрланова', email:'zarina@mail.ru', plan:'AI Premium', amount:1990, status:'paid', date:'2026-06-15', receipt:''},
+  {name:'Мадина Әбен', email:'madina@gmail.com', plan:'Premium', amount:990, status:'paid', date:'2026-06-12', receipt:''},
+  {name:'Бекжан О.', plan:'Premium', amount:990, status:'pending', date:'2026-06-20', receipt:'https://kunanbayy.github.io/kunanbaay/assets/receipt-sample.jpg'}
 ]);
 seed('shyraq_admin_reviews', [
   {name:'Аяулым · SDU University', text:'Маркетинг мамандығына грант алдым!', stars:5},
@@ -651,22 +695,39 @@ function allUsers(){
     plan:acc[k].plan||'free', blocked:!!acc[k].blocked, date:(acc[k].createdAt||'').slice(0,10)||'—', src:'real', key:k }));
   return real.concat(demo);
 }
+function fmtDate(iso){ if(!iso) return '—'; try{ var d=new Date(iso); return String(d.getDate()).padStart(2,'0')+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+d.getFullYear(); }catch(e){ return '—'; } }
+function isActivePremium(u){ return u && u.premiumUntil && new Date(u.premiumUntil) > new Date(); }
+function planLabel(u){ if(isActivePremium(u)) return u.plan==='report'?'report':'premium'; return (u.plan==='premium'||u.plan==='report') && !u.premiumUntil ? u.plan : 'free'; }
 function renderUsers(){
-  const users=allUsers();
-  $('navUsers').textContent=users.length;
-  $('usersBody').innerHTML = users.map((u,i)=>{
-    const ref = u.src==='real' ? `'real','${u.key}'` : `'demo',${u.idx}`;
-    return `<tr style="${u.blocked?'opacity:.55':''}">
-    <td><div class="u-cell"><span class="u-av" style="background:${avColor(u.name)}">${initial(u.name)}</span><div><div class="u-name">${u.name||'—'} ${u.src==='real'?'<span class="pill admin" style="font-size:.6rem">тіркелген</span>':''}</div><div class="u-mail">${u.email}</div></div></div></td>
-    <td><span class="pill ${u.plan}">${u.plan}</span></td>
-    <td><span class="pill ${u.blocked?'pending':'paid'}">${u.blocked?'Бұғатталған':'Белсенді'}</span></td>
-    <td>${u.city||'—'}</td>
-    <td><div class="row-act">
-      <button class="ibtn ok" onclick="togglePlan(${ref})" title="${u.plan==='free'?'Premium беру':'Free жасау'}"><svg viewBox="0 0 24 24"><path d="M12 3l2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 17.2 6.4 20.2 7.5 14 3 9.6l6.2-.9z"/></svg></button>
-      <button class="ibtn" onclick="toggleBlock(${ref})" title="${u.blocked?'Босату':'Бұғаттау'}"><svg viewBox="0 0 24 24">${u.blocked?'<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0"/>':'<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>'}</svg></button>
-      <button class="ibtn" onclick="delUser(${ref})" title="Жою"><svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></button>
-    </div></td>
-  </tr>`;}).join('') || '<tr><td colspan="5" class="empty">Қолданушылар жоқ</td></tr>';
+  try {
+    const users=allUsers();
+    $('navUsers').textContent=users.length;
+    $('usersGrid').innerHTML = users.map((u)=>{
+      const ref = u.src==='real' ? `'real','${(u.key||'').replace(/'/g,"")}'` : `'demo',${u.idx}`;
+      const pl = planLabel(u);
+      return `<div class="u-card" style="${u.blocked?'opacity:.6':''}" onclick="openUserDetail(${ref})">
+        <div class="u-card-top">
+          <span class="u-av" style="background:${avColor(u.name)}">${initial(u.name)}</span>
+          <div style="min-width:0"><div class="u-name">${esc(u.name||'—')}</div><div class="u-mail">${esc(u.email||'')}</div></div>
+        </div>
+        <div class="u-card-pills">
+          <span class="pill ${pl}">${pl}</span>
+          <span class="pill ${u.blocked?'pending':'paid'}">${u.blocked?'Бұғатталған':'Белсенді'}</span>
+          ${u.src==='real'?'<span class="pill admin">тіркелген</span>':''}
+        </div>
+        <div class="u-meta">📍 ${esc(u.city||'—')}</div>
+        <div class="u-card-foot" onclick="event.stopPropagation()">
+          <button class="ibtn ok" onclick="openUserDetail(${ref})" title="Толығырақ / доступ"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+          <button class="ibtn" onclick="toggleBlock(${ref})" title="${u.blocked?'Босату':'Бұғаттау'}"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0${u.blocked?'':'v4'}"/></svg></button>
+          <button class="ibtn" onclick="delUser(${ref})" title="Жою"><svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></button>
+        </div>
+      </div>`;
+    }).join('') || '<div class="empty">Қолданушылар жоқ</div>';
+  } catch(e){ console.error(e); $('usersGrid').innerHTML='<div class="empty">Қате: '+e.message+'</div>'; }
+}
+function findUser(src, ref){
+  if(src==='real'){ return getAcc()[ref]||null; }
+  return getUsers()[ref]||null;
 }
 function _mutate(src, ref, fn){
   if(src==='real'){ const a=getAcc(); if(a[ref]){ fn(a[ref]); setAcc(a); } }
@@ -685,33 +746,71 @@ function addUser(){
   closeModal('userModal'); renderUsers(); renderOverview(); toast('Қолданушы қосылды ✓');
 }
 function delUser(src, ref){
+  if(!confirm('Қолданушыны жою керек пе?')) return;
   if(src==='real'){ const a=getAcc(); delete a[ref]; setAcc(a); }
   else { const u=getUsers(); u.splice(ref,1); setUsers(u); }
   renderUsers(); renderOverview(); toast('Жойылды');
 }
-function togglePlan(src, ref){
-  _mutate(src, ref, u=>{ u.plan = (u.plan==='free'||!u.plan) ? 'premium' : 'free'; });
-  toast('Жоспар жаңартылды ✓');
+function togglePlan(src, ref){ if(isActivePremium(findUser(src,ref))) udRevokeRef(src,ref); else udGrantRef(src,ref,30); }
+function toggleBlock(src, ref){ _mutate(src, ref, u=>{ u.blocked = !u.blocked; }); refreshDetail(); toast('Қолжетімділік жаңартылды ✓'); }
+
+/* ── User detail + access management ── */
+var _ud = null;
+function userPays(u){
+  const nm=(u.name||'').toLowerCase(), em=(u.email||'').toLowerCase();
+  return getPays().filter(p=>{ const pn=(p.name||'').toLowerCase(); return pn && (pn===nm || (em && p.email && p.email.toLowerCase()===em) || nm.indexOf(pn)>-1 || pn.indexOf(nm.split(' ')[0])>-1); });
 }
-function toggleBlock(src, ref){
-  _mutate(src, ref, u=>{ u.blocked = !u.blocked; });
-  toast('Қолжетімділік жаңартылды ✓');
+function openUserDetail(src, ref){
+  const u=findUser(src,ref); if(!u){ toast('Табылмады'); return; }
+  _ud={src,ref};
+  $('udAv').textContent=initial(u.name); $('udAv').style.background=avColor(u.name);
+  $('udName').textContent=u.name||'—'; $('udEmail').textContent=u.email||'';
+  $('udPlan').textContent=planLabel(u);
+  $('udStatus').textContent=u.blocked?'🔒 Бұғатталған':'✅ Белсенді';
+  $('udUntil').textContent=isActivePremium(u)?fmtDate(u.premiumUntil):'—';
+  $('udCity').textContent=u.city||'—';
+  $('udBlockBtn').innerHTML=u.blocked?'🔓 Босату':'🔒 Бұғаттау';
+  var pays=userPays(u);
+  $('udPays').innerHTML = pays.length ? pays.map(p=>`<div class="ud-pay">
+    <span>${p.plan||'—'} · <b>${nf(p.amount||0)} ₸</b> · <span class="pill ${p.status}">${p.status==='paid'?'Төленді':'Күтілуде'}</span></span>
+    <span>${p.receipt?'<a class="lk" href="'+esc(p.receipt)+'" target="_blank">Чекті көру</a>':'<span style="color:var(--light);font-size:.8rem">чек жоқ</span>'}</span>
+  </div>`).join('') : '<div style="color:var(--muted);font-size:.86rem">Төлем тарихы жоқ.</div>';
+  $('userDetail').classList.add('open');
 }
+function refreshDetail(){ if(_ud) openUserDetail(_ud.src, _ud.ref); }
+function udGrantRef(src,ref,days){ _mutate(src,ref,u=>{ u.plan='premium'; u.premiumUntil=new Date(Date.now()+days*86400000).toISOString(); u.blocked=false; }); }
+function udRevokeRef(src,ref){ _mutate(src,ref,u=>{ u.plan='free'; u.premiumUntil=null; }); }
+function udGrant(days){ if(!_ud)return; udGrantRef(_ud.src,_ud.ref,days); refreshDetail(); toast('Premium '+days+' күн берілді ✓'); }
+function udExtend(days){
+  if(!_ud)return;
+  _mutate(_ud.src,_ud.ref,u=>{
+    var base = isActivePremium(u) ? new Date(u.premiumUntil).getTime() : Date.now();
+    var nv = base + days*86400000;
+    if(nv<=Date.now()){ u.plan='free'; u.premiumUntil=null; }
+    else { u.plan='premium'; u.premiumUntil=new Date(nv).toISOString(); }
+  });
+  refreshDetail(); toast(days>0?('Ұзартылды +'+days+' күн ✓'):('Қысқартылды '+days+' күн'));
+}
+function udRevoke(){ if(!_ud)return; udRevokeRef(_ud.src,_ud.ref); refreshDetail(); toast('Доступ алынды (free)'); }
+function udToggleBlock(){ if(!_ud)return; _mutate(_ud.src,_ud.ref,u=>{u.blocked=!u.blocked;}); refreshDetail(); toast('Қолжетімділік жаңартылды ✓'); }
 
 /* ════ PAYMENTS ════ */
 function renderPayments(){
   const pays=getPays();
   const total=pays.filter(p=>p.status==='paid').reduce((s,p)=>s+p.amount,0);
   $('payTotal').textContent=nf(total)+' ₸';
-  $('paymentsBody').innerHTML = pays.map((p,i)=>`<tr>
-    <td><div class="u-cell"><span class="u-av" style="background:${avColor(p.name)}">${initial(p.name)}</span><div class="u-name">${p.name}</div></div></td>
-    <td>${p.plan}</td><td><b>${nf(p.amount)} ₸</b></td>
+  const q=($('globalSearch').value||'').toLowerCase();
+  var list = q ? pays.filter(p=>((p.name||'')+' '+(p.plan||'')).toLowerCase().includes(q)) : pays;
+  $('paymentsBody').innerHTML = list.map((p,i)=>`<tr>
+    <td><div class="u-cell"><span class="u-av" style="background:${avColor(p.name)}">${initial(p.name)}</span><div class="u-name">${esc(p.name||'—')}</div></div></td>
+    <td>${esc(p.plan||'—')}</td><td><b>${nf(p.amount||0)} ₸</b></td>
     <td><span class="pill ${p.status}">${p.status==='paid'?'Төленді':'Күтілуде'}</span></td>
-    <td>${p.date}</td>
+    <td>${p.receipt?'<a class="lk" href="'+esc(p.receipt)+'" target="_blank" style="color:#3B82F6;font-weight:700">Чекті көру</a>':'<span style="color:var(--light);font-size:.8rem">чек жоқ</span>'}</td>
+    <td>${esc(p.date||'')}</td>
     <td><div class="row-act">
       ${p.status==='pending'?`<button class="ibtn ok" onclick="approvePay(${i})" title="Растау"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></button>`:''}
       <button class="ibtn" onclick="delPay(${i})" title="Жою"><svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></button>
-    </div></td></tr>`).join('') || '<tr><td colspan="6" class="empty">Төлемдер жоқ</td></tr>';
+    </div></td></tr>`).join('') || '<tr><td colspan="7" class="empty">Төлемдер жоқ</td></tr>';
 }
 function approvePay(i){ const p=getPays(); p[i].status='paid'; setPays(p); renderPayments(); renderOverview(); toast('Төлем расталды ✓'); }
 function delPay(i){ const p=getPays(); p.splice(i,1); setPays(p); renderPayments(); renderOverview(); toast('Жойылды'); }
@@ -731,27 +830,32 @@ function uDisp(u){ const o=getUniOv()[u.id]||{}; return {
 }; }
 function uniLogo(u,d){
   const abbr=(u.short_name||d.name||'?').slice(0,3).toUpperCase();
-  if(u.logo_url) return `<img src="${u.logo_url}" class="u-logo" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><span class="u-av" style="display:none;background:${avColor(d.name)};font-size:.68rem">${abbr}</span>`;
-  return `<span class="u-av" style="background:${avColor(d.name)};font-size:.68rem">${abbr}</span>`;
+  if(u.logo_url) return `<img src="${esc(u.logo_url)}" class="u-logo" width="40" height="40" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><span class="u-av" style="display:none;background:${avColor(d.name)};font-size:.66rem;width:40px;height:40px">${esc(abbr)}</span>`;
+  return `<span class="u-av" style="background:${avColor(d.name)};font-size:.66rem;width:40px;height:40px">${esc(abbr)}</span>`;
 }
-let uniShown=12;
+let uniShown=18;
 function renderUnis(reset){
-  if(reset) uniShown=12;
-  const q=($('globalSearch').value||'').toLowerCase();
-  let list=UNIS;
-  if(q) list=UNIS.filter(u=>{const d=uDisp(u);return (d.name+' '+d.city+' '+d.category).toLowerCase().includes(q);});
-  $('uniCount').textContent=list.length+' ЖОО';
-  $('unisBody').innerHTML = list.slice(0,uniShown).map(u=>{const d=uDisp(u);return `<tr style="cursor:pointer;${d.hidden?'opacity:.5':''}" onclick="editUni(${u.id})">
-    <td><div class="u-cell">${uniLogo(u,d)}<div><div class="u-name">${d.name}</div><div class="u-mail">${u.short_name||''} ${d.hidden?'· 🚫 жасырылған':''}</div></div></div></td>
-    <td>${d.city}</td><td style="text-transform:capitalize">${d.category}</td>
-    <td>${(u.specialties||[]).length}</td>
-    <td><span class="pill ${d.status==='active'?'paid':'pending'}">${d.status==='active'?'Белсенді':d.status}</span></td>
-    <td onclick="event.stopPropagation()"><div class="row-act">
-      <button class="ibtn ok" onclick="editUni(${u.id})" title="Өңдеу"><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button>
-      <button class="ibtn" onclick="hideUni(${u.id})" title="${d.hidden?'Қайтару':'Сайттан жасыру'}"><svg viewBox="0 0 24 24">${d.hidden?'<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>':'<path d="M3 3l18 18"/><path d="M10.6 5.1A10.9 10.9 0 0 1 12 5c6.5 0 10 7 10 7a18 18 0 0 1-3.2 4M6.2 6.2A18 18 0 0 0 2 12s3.5 7 10 7a10.9 10.9 0 0 0 4-.8"/>'}</svg></button>
-    </div></td>
-  </tr>`;}).join('') || '<tr><td colspan="6" class="empty">Табылмады</td></tr>';
-  $('uniMore').style.display = uniShown>=list.length ? 'none':'inline-flex';
+  try {
+    if(reset) uniShown=18;
+    const q=($('globalSearch').value||'').toLowerCase();
+    let list=UNIS;
+    if(q) list=UNIS.filter(u=>{const d=uDisp(u);return (d.name+' '+d.city+' '+d.category).toLowerCase().includes(q);});
+    $('uniCount').textContent=list.length+' ЖОО';
+    $('unisGrid').innerHTML = list.slice(0,uniShown).map(u=>{const d=uDisp(u);return `<div class="u-card" style="${d.hidden?'opacity:.55':''}" onclick="editUni(${u.id})">
+      <div class="u-card-top">${uniLogo(u,d)}<div style="min-width:0"><div class="u-name">${esc(d.name)}</div><div class="u-mail">${esc(u.short_name||'')}${d.hidden?' · 🚫 жасырылған':''}</div></div></div>
+      <div class="u-card-pills">
+        <span class="pill ${d.status==='active'?'paid':'pending'}">${d.status==='active'?'Белсенді':esc(d.status)}</span>
+        <span class="pill admin" style="text-transform:capitalize">${esc(d.category)}</span>
+        <span class="pill free">${(u.specialties||[]).length} мамандық</span>
+      </div>
+      <div class="u-meta">📍 ${esc(d.city)}</div>
+      <div class="u-card-foot" onclick="event.stopPropagation()">
+        <button class="ibtn ok" onclick="editUni(${u.id})" title="Өңдеу"><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button>
+        <button class="ibtn" onclick="hideUni(${u.id})" title="${d.hidden?'Қайтару':'Жасыру'}"><svg viewBox="0 0 24 24">${d.hidden?'<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>':'<path d="M3 3l18 18"/><path d="M10.6 5.1A10.9 10.9 0 0 1 12 5c6.5 0 10 7 10 7a18 18 0 0 1-3.2 4M6.2 6.2A18 18 0 0 0 2 12s3.5 7 10 7a10.9 10.9 0 0 0 4-.8"/>'}</svg></button>
+      </div>
+    </div>`;}).join('') || '<div class="empty">Табылмады</div>';
+    $('uniMore').style.display = uniShown>=list.length ? 'none':'inline-flex';
+  } catch(e){ console.error(e); $('unisGrid').innerHTML='<div class="empty">Қате: '+e.message+'</div>'; }
 }
 function editUni(id){
   const u=UNIS.find(x=>x.id===id); if(!u) return;
@@ -911,6 +1015,7 @@ $('globalSearch').addEventListener('input', ()=>{
   const active=document.querySelector('.section.active').id.replace('sec-','');
   if(active==='unis') renderUnis(true);
   else if(active==='specs') renderSpecs();
+  else if(active==='payments') renderPayments();
 });
 
 /* close modal on backdrop */
