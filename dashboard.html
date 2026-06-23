@@ -179,9 +179,36 @@
     @media (prefers-reduced-motion: reduce){ .reveal{animation:none;opacity:1} }
 
     @media (max-width: 768px){
+      html, body { width:100%; max-width:100%; overflow-x:hidden; }
+      .dashboard-page { display:block; width:100%; overflow-x:hidden; }
+      .sidebar { display:none !important; }
+      .sidebar.open {
+        display:flex !important; position:fixed; inset:0 auto 0 0; width:min(82vw, 300px);
+        max-width:300px; transform:none; z-index:120; box-shadow:0 24px 70px rgba(15,23,42,.24);
+      }
+      .mobile-top-bar {
+        display:flex !important; height:60px; padding:0 14px; width:100%;
+        background:rgba(255,255,255,.92); backdrop-filter:blur(14px);
+      }
+      .mobile-top-bar .sidebar-logo { margin:0; padding:0; font-size:1rem; }
+      .mobile-top-bar .sidebar-logo-icon { width:32px; height:32px; border-radius:9px; flex:0 0 32px; }
+      .dashboard-main { margin-left:0 !important; width:100% !important; max-width:100%; padding:18px 14px 92px !important; }
       .dashboard-header{ padding:24px 22px; }
       .dashboard-greeting{ font-size:1.55rem; }
       .dash-stat-value{ font-size:1.5rem; }
+      .dash-stats { grid-template-columns:1fr !important; gap:12px; }
+      .dash-grid { grid-template-columns:1fr !important; gap:16px; }
+      .card, .plan-card, .dash-premium, .test-cta-card { max-width:100%; min-width:0; }
+      .dash-header-right { display:none; }
+      .quick-action { min-width:0; }
+      .test-cta-card { padding:28px 22px; }
+    }
+
+    @media (max-width: 480px){
+      .dashboard-header { border-radius:22px; }
+      .dashboard-subtext { font-size:.94rem; line-height:1.55; }
+      .dash-header-actions { flex-direction:column; align-items:stretch; }
+      .dash-header-actions .btn { width:100%; justify-content:center; }
     }
 
     /* UBT subjects modal */
@@ -287,7 +314,7 @@
 
   <!-- MOBILE TOP BAR -->
   <div class="mobile-top-bar">
-    <button class="sidebar-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')" style="background:none;border:none;font-size:1.3rem;cursor:pointer">☰</button>
+    <button class="sidebar-toggle" type="button" aria-label="Меню" style="background:none;border:none;font-size:1.3rem;cursor:pointer">☰</button>
     <a href="index.html" style="font-family:var(--font-display);font-weight:800;color:var(--navy);font-size:1.1rem;text-decoration:none">🔆 Shyraq</a>
     <a href="profile.html" style="width:36px;height:36px;background:var(--navy);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:0.9rem;text-decoration:none" id="mobileAvatar">Е</a>
   </div>
@@ -517,8 +544,17 @@
 <script src="js/supabase-db.js"></script>
 <script src="js/access-sync.js"></script>
 <script src="js/main.js"></script>
-<script src="js/auth-guard.js"></script>
-<script>
+  <script src="js/auth-guard.js"></script>
+  <script>
+  document.addEventListener('click', function(event) {
+    const btn = event.target.closest && event.target.closest('.sidebar-toggle');
+    if (!btn) return;
+    const sidebar = document.getElementById('sidebar');
+    if (!sidebar) return;
+    event.preventDefault();
+    sidebar.classList.toggle('open');
+  });
+
   // ── Collapsible sidebar (burger toggle, persisted) ──
   (function () {
     const page = document.querySelector('.dashboard-page');
