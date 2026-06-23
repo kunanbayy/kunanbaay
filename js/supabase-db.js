@@ -75,7 +75,13 @@
     const c = sb(); if (!c || !email) return false;
     try {
       const row = Object.assign({ email: email.toLowerCase(), updated_at: new Date().toISOString() }, patch);
-      const { error } = await c.from('access').upsert(row);
+      let { error } = await c.from('access').upsert(row);
+      // 'energy_total' бағаны әлі қосылмаған болса (миграция орындалмаған) —
+      // энергия жоғалмас үшін онсыз қайта жазамыз.
+      if (error && 'energy_total' in row) {
+        delete row.energy_total;
+        ({ error } = await c.from('access').upsert(row));
+      }
       return !error;
     } catch (e) { return false; }
   }

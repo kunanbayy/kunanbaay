@@ -15,6 +15,18 @@
   function used() { return Math.max(0, total() - bal()); }
   function unlimited() { return localStorage.getItem('shyraq_premium') === '1'; }
 
+  // Қалдықты дерекқорға (access.energy) жазу — admin панелі мен басқа құрылғылар
+  // бірдей мәнді көреді. Кірген қолданушы болса ғана; әйтпесе тек localStorage.
+  function persistRemaining() {
+    try {
+      if (localStorage.getItem('shyraq_admin') === '1') return;
+      var u = JSON.parse(localStorage.getItem('shyraq_user') || 'null');
+      if (!u || !u.email) return;
+      if (!(window.ShyraqDB && window.ShyraqDB.ready())) return;
+      window.ShyraqDB.setAccess(u.email, { energy: bal(), energy_total: total() });
+    } catch (e) { /* елемейміз — localStorage күйі сақталады, келесі грантта түзеледі */ }
+  }
+
   // Балансты тікелей азайту (бөлім кілтінсіз) — grant.html сессиялық тұтыну үшін.
   // Қайтарады: {ok, charged, left}
   function charge(n) {
@@ -23,6 +35,7 @@
     var b = bal();
     if (b < n) return { ok: false, charged: 0, left: b };
     setBal(b - n);
+    persistRemaining();
     return { ok: true, charged: n, left: b - n };
   }
 
@@ -43,6 +56,7 @@
     if (b <= 0) return { ok: false, charged: 0, left: 0 };
     setBal(b - 1);
     markUnlocked(key);
+    persistRemaining();
     return { ok: true, charged: 1, left: b - 1 };
   }
 
@@ -52,11 +66,12 @@
     setBal(bal() + n);
     var tot = parseInt(localStorage.getItem('shyraq_energy_total') || '0', 10) || 0;
     localStorage.setItem('shyraq_energy_total', String(tot + n));
+    persistRemaining();
   }
 
   window.ShyraqEnergy = {
     bal: bal, total: total, used: used, unlimited: unlimited,
     isUnlocked: isUnlocked, markUnlocked: markUnlocked,
-    charge: charge, spend: spend, grant: grant
+    charge: charge, spend: spend, grant: grant, persist: persistRemaining
   };
 })();

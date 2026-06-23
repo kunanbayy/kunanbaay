@@ -248,8 +248,8 @@
     <!-- жүйе статусы -->
     <div class="a-status" id="aStatus">
       <div class="a-status-hd"><span class="live"></span> Жүйе статусы</div>
-      <div class="a-status-main">Demo admin active</div>
-      <div class="a-status-sub">Local data · <span id="todayDate"></span></div>
+      <div class="a-status-main">Әкімші панелі белсенді</div>
+      <div class="a-status-sub">Supabase · <span id="todayDate"></span></div>
     </div>
 
     <div class="a-sec-lbl">Басқару</div>
@@ -297,7 +297,7 @@
     <div class="a-side-foot">
       <div class="a-rights" id="aRights">
         <div class="a-rights-t">🔒 Admin құқықтары</div>
-        <div class="a-rights-p">Бұл demo admin аккаунт. Production үшін backend authentication қосу керек.</div>
+        <div class="a-rights-p">Әкімші аккаунты. Production үшін backend authentication қосу ұсынылады.</div>
       </div>
       <div class="a-link" id="logoutBtn">
         <span class="ic"><svg viewBox="0 0 24 24"><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/><path d="M21 4v16h-7"/></svg></span>
@@ -469,8 +469,20 @@
     <div class="ud-row"><span class="k">Жоспар</span><span class="v" id="udPlan">free</span></div>
     <div class="ud-row"><span class="k">Статус</span><span class="v" id="udStatus">Белсенді</span></div>
     <div class="ud-row"><span class="k">Premium мерзімі</span><span class="v" id="udUntil">—</span></div>
-    <div class="ud-row"><span class="k">⚡ Career Energy</span><span class="v" id="udEnergy">0</span></div>
+    <div class="ud-row"><span class="k">⚡ Career Energy (қалдық)</span><span class="v" id="udEnergy">0</span></div>
     <div class="ud-row"><span class="k">Қала</span><span class="v" id="udCity">—</span></div>
+
+    <div class="ud-sec-t">⚡ Career Energy басқару</div>
+    <div class="ud-acts">
+      <button class="btn btn-ghost" onclick="udSetEnergy(1)">＋1 Energy</button>
+      <button class="btn btn-ghost" onclick="udSetEnergy(3)">＋3 Energy</button>
+      <button class="btn btn-ghost" onclick="udSetEnergy(-1)">−1 Energy</button>
+      <button class="btn btn-ghost" onclick="udSetEnergy(null,0)" style="color:var(--red);border-color:#FECACA">↺ Reset 0</button>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <input type="number" id="udEnergyInput" min="0" placeholder="Нақты сан" style="flex:1;border:1px solid #E8EEF6;border-radius:10px;padding:9px 12px;font-size:.9rem" />
+      <button class="btn btn-primary" onclick="udSaveEnergy()">Сақтау</button>
+    </div>
 
     <div class="ud-sec-t">Қолжетімділікті басқару</div>
     <div class="ud-acts">
@@ -803,7 +815,9 @@ function openUserDetail(src, ref){
   $('udPlan').innerHTML='<span class="pill '+_pl+'">'+_pl+'</span>';
   $('udStatus').innerHTML=u.blocked?'<span class="pill pending">🔒 Бұғатталған</span>':'<span class="pill paid">✅ Белсенді</span>';
   $('udUntil').textContent=isActivePremium(u)?fmtDate(u.premiumUntil):'—';
-  $('udEnergy').textContent='⚡ '+(u.energy||0);
+  var _eR=parseInt(u.energy||0,10)||0, _eT=parseInt(u.energyTotal||0,10)||_eR;
+  $('udEnergy').textContent='⚡ '+_eR+(_eT?(' / '+_eT):'');
+  var _ei=$('udEnergyInput'); if(_ei) _ei.value='';
   $('udCity').textContent=u.city||'—';
   $('udBlockBtn').innerHTML=u.blocked?'🔓 Босату':'🔒 Бұғаттау';
   var pays=userPays(u);
@@ -829,6 +843,34 @@ function udExtend(days){
 }
 function udRevoke(){ if(!_ud)return; udRevokeRef(_ud.src,_ud.ref); refreshDetail(); toast('Доступ алынды (free)'); }
 function udToggleBlock(){ if(!_ud)return; _mutate(_ud.src,_ud.ref,u=>{u.blocked=!u.blocked;}); refreshDetail(); toast('Қолжетімділік жаңартылды ✓'); }
+
+/* ── Career Energy қолмен басқару (план мен access-тен бөлек) ──
+   delta: +1/-1/+3; absolute: нақты мән (Reset 0 = absolute 0).
+   Жаңа қалдықты Supabase access.energy-ге жазады → grant.html да, осы панель де
+   бір мәнді көреді. energy_total: +grant ұлғайтады, азайту/reset өзгертпейді. */
+async function udSetEnergy(delta, absolute){
+  if(!_ud) return;
+  var u = findUser(_ud.src,_ud.ref); if(!u){ toast('Табылмады'); return; }
+  var cur = parseInt(u.energy||0,10)||0;
+  var curTot = parseInt(u.energyTotal||0,10)||cur;
+  var next = (absolute!=null) ? Math.max(0, parseInt(absolute,10)||0) : Math.max(0, cur + delta);
+  var nextTot = (absolute!=null) ? Math.max(curTot, next) : (delta>0 ? curTot + delta : curTot);
+  // 1) жергілікті айна
+  if(_ud.src==='real'){ var a=getAcc(); if(a[_ud.ref]){ a[_ud.ref].energy=next; a[_ud.ref].energyTotal=nextTot; setAcc(a); } }
+  else { var us=getUsers(); if(us[_ud.ref]){ us[_ud.ref].energy=next; us[_ud.ref].energyTotal=nextTot; setUsers(us); } }
+  // 2) Supabase (бірден-бір ақиқат көзі)
+  if(u.email && window.ShyraqDB && window.ShyraqDB.ready()){
+    try { await window.ShyraqDB.setAccess(u.email, { energy: next, energy_total: nextTot }); }
+    catch(e){ toast('Дерекқорға жазу қатесі'); }
+  }
+  renderUsers(); renderOverview(); refreshDetail();
+  toast('⚡ Career Energy: '+next);
+}
+function udSaveEnergy(){
+  var v = $('udEnergyInput').value;
+  if(v===''||isNaN(+v)){ toast('Нақты сан енгізіңіз'); return; }
+  udSetEnergy(null, +v);
+}
 
 /* ════ PAYMENTS (Supabase + демо біріктірілген) ════ */
 var _pays = [];
@@ -863,7 +905,8 @@ async function loadUsers(){
         plan: a.premium ? (base.plan || 'premium') : (base.plan || cur.plan || 'free'),
         premiumUntil: a.premium_until || cur.premiumUntil || null,
         blocked: a.blocked!=null ? !!a.blocked : !!cur.blocked,
-        energy: a.energy!=null ? a.energy : (cur.energy||0)
+        energy: a.energy!=null ? a.energy : (cur.energy||0),
+        energyTotal: a.energy_total!=null ? a.energy_total : (cur.energyTotal||a.energy||cur.energy||0)
       });
     }
     profiles.forEach(pr=> merge(pr.email, {
@@ -919,12 +962,15 @@ async function approvePay(i){
     if(!wasPaid){
       addE = planEnergy(p);
       var existing = await window.ShyraqDB.getAccess(p.email);
-      patch.energy = ((existing && existing.energy)||0) + addE;
+      var curR = (existing && existing.energy)||0;
+      var curT = (existing && existing.energy_total!=null) ? existing.energy_total : curR;
+      patch.energy = curR + addE;            // қалдыққа қосамыз
+      patch.energy_total = curT + addE;      // жиынтыққа да қосамыз
     }
     await window.ShyraqDB.setAccess(p.email, patch);
     // егер жергілікті аккаунт болса — оны да жаңарту
     var acc=getAcc(), k=(p.email||'').toLowerCase();
-    if(acc[k]){ acc[k].blocked=false; if(patch.energy!=null) acc[k].energy=patch.energy; setAcc(acc); }
+    if(acc[k]){ acc[k].blocked=false; if(patch.energy!=null){ acc[k].energy=patch.energy; acc[k].energyTotal=patch.energy_total; } setAcc(acc); }
   }
   await loadPayments(); await loadUsers();
   toast(wasPaid ? 'Төлем расталды ✓' : 'Төлем расталды ✓ ⚡ '+addE+' Career Energy берілді');

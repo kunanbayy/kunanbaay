@@ -38,22 +38,21 @@
     }
 
     // ── Career Energy ──
-    // acc.energy — админ растаған төлемдер бойынша берілген ЖИЫНТЫҚ энергия.
-    // Локальды 'credited' маркер арқылы тек жаңасын ғана қосамыз (бір реттен).
-    // Бұл құрылғыдан тәуелсіз жұмыс істейді әрі премиум бітсе де энергия қалады.
+    // acc.energy — НАҚТЫ ҚАЛДЫҚ (бірден-бір ақиқат көзі, дерекқорда).
+    // acc.energy_total — барлық берілген (виджеттегі «x / total» үшін).
+    // Дерекқорды localStorage-қа айна ретінде көшіреміз: admin қосса/алса не
+    // grant.html жұмсаса — қалдық осы арқылы барлық құрылғыда дұрыс көрінеді.
     if (acc) {
-      var granted  = parseInt(acc.energy || 0, 10) || 0;
-      var credited = parseInt(localStorage.getItem('shyraq_energy_credited') || '0', 10) || 0;
-      if (granted > credited) {
-        var add = granted - credited;
-        var cur = parseInt(localStorage.getItem('shyraq_energy') || '0', 10) || 0;
-        var tot = parseInt(localStorage.getItem('shyraq_energy_total') || '0', 10) || 0;
-        localStorage.setItem('shyraq_energy', String(cur + add));
-        localStorage.setItem('shyraq_energy_total', String(tot + add));
-        localStorage.setItem('shyraq_energy_credited', String(granted));
-        localStorage.removeItem('shyraq_pending_energy');
-        changed = true;
-      }
+      var remaining = parseInt(acc.energy || 0, 10) || 0;
+      var totalGranted = acc.energy_total != null
+        ? (parseInt(acc.energy_total, 10) || 0)
+        : Math.max(remaining, parseInt(localStorage.getItem('shyraq_energy_total') || '0', 10) || 0);
+      var prevRemaining = parseInt(localStorage.getItem('shyraq_energy') || '0', 10) || 0;
+      localStorage.setItem('shyraq_energy', String(remaining));
+      localStorage.setItem('shyraq_energy_total', String(totalGranted));
+      localStorage.removeItem('shyraq_energy_credited');   // ескі модельден тазарту
+      localStorage.removeItem('shyraq_pending_energy');
+      if (remaining !== prevRemaining) changed = true;
     }
 
     // Күй (премиум не энергия) өзгерсе — бетті бір рет қайта жүктеп, дұрыс көрсету

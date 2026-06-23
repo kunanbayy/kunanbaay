@@ -192,12 +192,6 @@
           <button type="submit" class="submit-btn">Кіру<span class="btn-glow"></span></button>
         </form>
 
-        <div class="divider">немесе</div>
-        <div class="socials">
-          <button type="button" onclick="demoLogin()">👤 Демо аккаунт</button>
-          <button type="button" onclick="demoLogin()"><b>G</b> Google</button>
-        </div>
-
         <p class="foot">Аккаунтыңыз жоқ па? <a href="register.html">Тіркелу</a></p>
       </section>
     </div>
@@ -234,29 +228,18 @@
         const admin = { name: 'Админ', email: contact, role: 'admin', plan: 'admin' };
         localStorage.setItem('shyraq_admin', '1');
         localStorage.setItem('shyraq_user', JSON.stringify(admin));
-        localStorage.setItem('shyraq_demo_premium', 'off');
         window.location.href = 'admin.html';
         return;
       }
 
       // ── Оқушы кіруі (Supabase немесе localStorage) ──
       localStorage.removeItem('shyraq_admin');
-      localStorage.removeItem('shyraq_demo_premium');
       try {
         await window.ShyraqAuth.login(contact, pw);
         window.location.href = 'dashboard.html';
       } catch (err) {
         toast(err.message || 'Кіру кезінде қате', 'error');
       }
-    }
-    function demoLogin(){
-      localStorage.removeItem('shyraq_admin');
-      localStorage.removeItem('shyraq_demo_premium');
-      localStorage.removeItem('shyraq_premium');
-      localStorage.removeItem('shyraq_premium_until');
-      const user = { name: 'Демо оқушы', email: 'demo@shyraq.edu.kz', classYear: '11', city: 'Алматы', plan: 'free' };
-      localStorage.setItem('shyraq_user', JSON.stringify(user));
-      window.location.href = 'dashboard.html';
     }
   </script>
 </body>

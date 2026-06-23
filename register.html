@@ -289,7 +289,6 @@
       const classYear = document.getElementById('classYear').value || '11';
       const city = document.getElementById('city').value || 'Алматы';
       localStorage.removeItem('shyraq_admin');
-      localStorage.removeItem('shyraq_demo_premium');
       try {
         await window.ShyraqAuth.register({ name: fullName, email, password, classYear, city });
         window.location.href = dest || 'test.html';
