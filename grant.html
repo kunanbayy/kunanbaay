@@ -198,8 +198,6 @@
     .pw-overlay.hidden { display: none; }
     .pw-price { font-family: var(--font-display); font-weight: 800; font-size: 1.6rem; color: var(--gp); }
     .pw-price small { font-size: .9rem; color: var(--text-muted); font-weight: 600; }
-    .pw-demo { font-size: .78rem; color: var(--text-light); }
-    .pw-demo a { color: var(--gp); font-weight: 700; text-decoration: underline; cursor: pointer; }
     .cascade-tag { font-size: .72rem; font-weight: 800; padding: 5px 9px; border-radius: 999px; margin-top: 2px; width: 100%; }
     .cascade-win { background: var(--g-green-bg); color: var(--g-green); }
     .cascade-before { background: var(--g-red-bg); color: var(--g-red); }
@@ -523,7 +521,7 @@
       <div class="ai-ic"><i class="fas fa-robot"></i></div>
       <div>
         <h3>Shyraq AI Кеңесі <span class="pill-premium">Premium</span></h3>
-        <p id="aiText2">Толық AI приоритет стратегиясы Premium пайдаланушыларға қолжетімді.</p>
+        <p id="aiText2">Толық AI приоритет стратегиясы 1 Career Energy жұмсағаннан кейін ашылады.</p>
       </div>
     </div>
   </div>
@@ -543,7 +541,7 @@
         <li><i class="fas fa-check"></i> Барлық мамандықтарды көру</li>
         <li><i class="fas fa-check"></i> Барлық университеттерді көру</li>
         <li><i class="fas fa-check"></i> Гранттар туралы ақпарат</li>
-        <li><i class="fas fa-check"></i> Демо нәтиже</li>
+        <li><i class="fas fa-check"></i> Алғашқы нәтиже</li>
       </ul>
       <a href="register.html" class="price-btn">Тегін бастау</a>
     </div>
@@ -608,12 +606,8 @@
 
   // ── Career Energy paywall (signature-bound session) ──
   // Толық нәтижені ашқанда 1 ⚡ жұмсалады; параметр/режим өзгерсе → қайта
-  // бұғатталады → келесі ашу тағы 1 ⚡. ?premium=1 — админ/dev override.
+  // бұғатталады → келесі ашу тағы 1 ⚡.
   let PREMIUM = false;
-  (function(){
-    const q = new URLSearchParams(location.search);
-    if(q.get('premium')==='1') localStorage.setItem('shyraq_premium','1');
-  })();
   function currentSig(){
     const f = readForm();
     const subj = document.getElementById('subjSel').value;
