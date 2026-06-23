@@ -136,7 +136,6 @@
           <span class="lk-feat"><i class="fas fa-check"></i>Карьералық жол картасы</span>
         </div>
         <a href="payment.html?plan=test&next=results" class="btn-p"><i class="fas fa-lock-open"></i> Толық есепті ашу</a>
-        <div class="pw-demo">Тек көру үшін: <a id="demoUnlock">демо режимде ашу</a></div>
       </div>
     </div>
   </div>
@@ -286,10 +285,6 @@
       cta.innerHTML = '<i class="fas fa-lock-open"></i> Толық есепті ашу';
     }
   }
-
-  document.getElementById('demoUnlock').addEventListener('click', function(e){
-    e.preventDefault(); if(window.ShyraqEnergy) ShyraqEnergy.markUnlocked('results'); PREMIUM=true; applyLock();
-  });
 
   if(results && results.type === 'aptitude') render();
 </script>
