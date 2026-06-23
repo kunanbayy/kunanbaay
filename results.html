@@ -259,6 +259,14 @@
   }
 
   if(results && results.type === 'aptitude') render();
+
+  // access-sync дерекқордан жаңартқанда (мыс. админ «Толық есепті ашу» басса) —
+  // бетті қайта жүктемей-ақ бұғатты қайта есептейміз.
+  window.addEventListener('shyraq:access-synced', function(){
+    RESULTS_UNLOCKED = localStorage.getItem('shyraq_premium')==='1'
+      || localStorage.getItem('shyraq_results_unlocked')==='1';
+    applyLock();
+  });
 </script>
 </body>
 </html>

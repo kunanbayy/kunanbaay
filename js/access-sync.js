@@ -64,7 +64,15 @@
       if (nowResults !== wasResults) changed = true;
     }
 
-    // Күй (премиум не энергия) өзгерсе — бетті бір рет қайта жүктеп, дұрыс көрсету
+    // Дерекқор localStorage-қа көшірілді — беттер тыңдап, қайта жүктеусіз жаңарсын.
+    // (results.html / grant.html осы оқиғаға бұғат күйін қайта есептейді.)
+    try {
+      window.dispatchEvent(new CustomEvent('shyraq:access-synced', {
+        detail: { changed: changed, premium: nowPremium }
+      }));
+    } catch (e) { /* ескі браузер — төмендегі reload жұмыс істейді */ }
+
+    // Күй өзгерсе — тыңдаушысы жоқ беттер үшін бір рет қайта жүктеу (резерв).
     if ((nowPremium !== wasPremium || changed) && !sessionStorage.getItem('shyraq_access_synced')) {
       sessionStorage.setItem('shyraq_access_synced', '1');
       window.location.reload();

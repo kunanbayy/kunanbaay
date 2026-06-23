@@ -1267,6 +1267,10 @@
   fillProgramSelects();
   if(window.GrantEnergy) GrantEnergy.mount();   // Career Energy widget + paywall modal
   runCurrent();
+
+  // access-sync дерекқордан энергия/премиум жаңартқанда — қайта жүктемей жаңарту
+  window.addEventListener('shyraq:access-synced', function(){ runCurrent(); });
+
   if(location.hash === '#results'){
     const r = document.getElementById('results');
     if(r) setTimeout(()=>r.scrollIntoView({behavior:'smooth', block:'start'}), 200);
