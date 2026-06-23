@@ -120,7 +120,17 @@ window.GrantEnergy = (function () {
       '.ce-btn-gold{background:var(--ce-p);color:#fff;box-shadow:0 12px 26px rgba(109,93,252,.28);} .ce-btn-gold:hover{background:var(--ce-pd);transform:translateY(-1px);}',
       '.ce-btn-out{background:#fff;color:#1e2030;border:1.5px solid var(--ce-line);} .ce-btn-out:hover{border-color:var(--ce-p);color:var(--ce-p);}',
       '.ce-modal-close{margin-top:14px;background:none;border:none;color:var(--ce-mut);font-size:.86rem;cursor:pointer;text-decoration:underline;}',
-      '@media(max-width:640px){.ce-widget{right:12px;left:12px;bottom:12px;width:auto;}}'
+      /* Мобильде ықшам — контентті жаппайтын кіші pill (оң төменгі бұрыш) */
+      '@media(max-width:640px){',
+      '.ce-widget{right:10px;left:auto;bottom:10px;width:auto;max-width:62vw;padding:10px 13px;border-radius:14px;}',
+      '.ce-widget .ce-w-bar,.ce-widget .ce-w-cap{display:none;}',
+      '.ce-w-top{margin-bottom:4px;gap:7px;}',
+      '.ce-w-bolt{width:26px;height:26px;flex:0 0 26px;font-size:.9rem;}',
+      '.ce-w-tier{font-size:.82rem;}',
+      '.ce-w-count{font-size:.92rem;}.ce-w-count small{font-size:.6rem;}',
+      '.ce-w-status{font-size:.7rem;}',
+      '.ce-widget.empty .ce-w-cta{margin-top:8px;padding:8px;font-size:.78rem;}',
+      '}'
     ].join('');
     document.head.appendChild(css);
   }

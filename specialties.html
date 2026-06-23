@@ -153,6 +153,20 @@
       box-shadow: 0 12px 24px rgba(109, 94, 246, .20);
     }
 
+    /* Бургер — тек мобильде көрінеді */
+    .maj-burger {
+      display: none;
+      width: 44px; height: 44px;
+      flex: 0 0 44px;
+      align-items: center; justify-content: center;
+      border: 1px solid rgba(226, 232, 240, .9);
+      border-radius: 13px;
+      background: #fff;
+      color: #111E42;
+      cursor: pointer;
+    }
+    .maj-burger:active { background: #F4F1FF; }
+
     .maj-cabinet {
       display: inline-flex;
       align-items: center;
@@ -879,13 +893,25 @@
         height: auto;
         position: static;
         flex-wrap: wrap;
-        align-items: stretch;
+        align-items: center;
       }
+      .maj-burger { display: inline-flex; order: 2; }
+      .maj-cabinet { order: 1; }
+      /* Мобильде мәзір бургермен ашылады */
       .maj-nav-links {
         order: 3;
         flex-basis: 100%;
-        justify-content: flex-start;
+        display: none;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+        overflow: visible;
+        margin-top: 4px;
+        padding-top: 12px;
+        border-top: 1px solid rgba(226, 232, 240, .8);
       }
+      .maj-topbar.nav-open .maj-nav-links { display: flex; }
+      .maj-nav-link { height: 46px; padding: 0 16px; width: 100%; }
       .maj-shell {
         height: auto;
         min-height: 0;
@@ -960,13 +986,16 @@
         <span class="maj-brand-mark"><img src="assets/logo.svg" alt="Shyraq" /></span>
         <span>Shyraq</span>
       </a>
-      <nav class="maj-nav-links" aria-label="Негізгі мәзір">
+      <nav class="maj-nav-links" id="majNav" aria-label="Негізгі мәзір">
         <a class="maj-nav-link" href="index.html">Басты бет</a>
         <a class="maj-nav-link active" href="specialties.html">Мамандықтар</a>
         <a class="maj-nav-link" href="universities.html">Университеттер</a>
         <a class="maj-nav-link" href="grant.html">Грант</a>
         <a class="maj-nav-link" href="pricing.html">Тарифтер</a>
       </nav>
+      <button class="maj-burger" id="majBurger" type="button" aria-label="Мәзір" aria-expanded="false">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
       <a class="maj-cabinet" href="dashboard.html">Кабинет</a>
     </header>
     <main class="maj-shell">
@@ -1447,6 +1476,22 @@
     }
 
     document.addEventListener('DOMContentLoaded', init);
+  </script>
+  <script>
+    // Мобиль бургер мәзірі
+    (function(){
+      var b = document.getElementById('majBurger');
+      var bar = document.querySelector('.maj-topbar');
+      if(!b || !bar) return;
+      b.addEventListener('click', function(){
+        var open = bar.classList.toggle('nav-open');
+        b.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+      // Сілтеме басылса — жабамыз
+      bar.querySelectorAll('.maj-nav-link').forEach(function(a){
+        a.addEventListener('click', function(){ bar.classList.remove('nav-open'); });
+      });
+    })();
   </script>
 </body>
 </html>

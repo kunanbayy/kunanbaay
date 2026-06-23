@@ -176,11 +176,19 @@
       .nav-inner { padding: 0 12px; gap: 8px; min-width: 0; }
       .nav-logo { min-width: 0; font-size: 1rem; gap: 8px; }
       .nav-logo-icon { width: 32px; height: 32px; flex: 0 0 32px; border-radius: 9px; }
-      .nav-links { display: none !important; }
+      .nav-inner { position: relative; }
+      .nav-links { display: none; }
+      .nav.nav-open .nav-links {
+        display: flex; flex-direction: column; gap: 6px;
+        position: absolute; top: 100%; left: 12px; right: 12px; margin-top: 8px;
+        background: #fff; border: 1px solid var(--border); border-radius: 16px;
+        padding: 10px; box-shadow: 0 18px 44px rgba(31,41,55,.16); z-index: 60;
+      }
+      .nav.nav-open .nav-link { width: 100%; padding: 13px 16px; }
       .nav-actions { margin-left: auto; gap: 6px; min-width: 0; }
       .nav-actions .btn-ghost { display: none !important; }
       .nav-actions .btn-primary { min-height: 38px; padding: 0 12px; font-size: .82rem; white-space: nowrap; }
-      .nav-mobile-btn { display: none !important; }
+      .nav-mobile-btn { display: inline-flex !important; align-items:center; justify-content:center; width:42px; height:42px; flex:0 0 42px; border:1px solid var(--border); border-radius:12px; background:#fff; color:var(--navy); cursor:pointer; }
       .fo-hero { padding: 34px 16px 24px; text-align: left; }
       .fo-hero h1 { font-size: clamp(2rem, 11vw, 2.8rem); line-height: 1.08; }
       .fo-hero p { margin-left: 0; max-width: 100%; font-size: .98rem; }
@@ -214,7 +222,7 @@
     <div class="nav-actions">
       <a href="register.html" class="btn btn-ghost btn-sm">Тіркелу</a>
       <a href="login.html" class="btn btn-primary btn-sm">Кіру</a>
-      <button class="nav-mobile-btn">
+      <button class="nav-mobile-btn" id="navBurger" type="button" aria-label="Мәзір" aria-expanded="false">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
       </button>
     </div>
@@ -538,6 +546,16 @@ function handlePremium(type) {
 }
 </script>
   <script src="js/icons.js"></script>
-
+  <script>
+    (function(){
+      var b=document.getElementById('navBurger'), nav=document.querySelector('.nav');
+      if(!b||!nav) return;
+      b.addEventListener('click', function(){
+        var open=nav.classList.toggle('nav-open');
+        b.setAttribute('aria-expanded', open?'true':'false');
+      });
+      nav.querySelectorAll('.nav-link').forEach(function(a){ a.addEventListener('click', function(){ nav.classList.remove('nav-open'); }); });
+    })();
+  </script>
 </body>
 </html>
