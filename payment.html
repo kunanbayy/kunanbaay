@@ -324,6 +324,7 @@
 <script src="js/supabase-config.js"></script>
 <script src="js/supabase-auth.js"></script>
 <script src="js/supabase-db.js"></script>
+<script src="js/energy.js"></script>
 <script>
 (function () {
   /* ── Тарифтер кестесі ── */
@@ -423,15 +424,16 @@
     submitBtn.classList.add('sent');
     submitBtn.textContent = '✓ Расталды';
     try {
-      localStorage.setItem('shyraq_premium', '1');
-      // Аккаунтты Premium қылу + бұғаттан босату (admin панель көреді)
-      var plan = (params.get('plan') === 'report') ? 'report' : 'premium';
+      // Тариф = Career Energy. Авто-расталғанда сатып алынған энергияны қосамыз
+      // (тұрақты premium берілмейді — энергия жұмсалатын валюта).
+      if (window.ShyraqEnergy) ShyraqEnergy.grant(plan.energy || 1);
+      var pkey = (params.get('plan') === 'report') ? 'report' : 'standard';
       var u = JSON.parse(localStorage.getItem('shyraq_user') || 'null');
-      if (u) { u.plan = plan; u.blocked = false; localStorage.setItem('shyraq_user', JSON.stringify(u)); }
+      if (u) { u.plan = pkey; u.blocked = false; localStorage.setItem('shyraq_user', JSON.stringify(u)); }
       if (u && u.email) {
         var acc = JSON.parse(localStorage.getItem('shyraq_accounts') || '{}');
         var k = u.email.toLowerCase();
-        if (acc[k]) { acc[k].plan = plan; acc[k].blocked = false; acc[k].paidAt = new Date().toISOString(); localStorage.setItem('shyraq_accounts', JSON.stringify(acc)); }
+        if (acc[k]) { acc[k].plan = pkey; acc[k].blocked = false; acc[k].paidAt = new Date().toISOString(); localStorage.setItem('shyraq_accounts', JSON.stringify(acc)); }
       }
     } catch (e) {}
     document.getElementById('successScreen').classList.add('visible');

@@ -911,22 +911,23 @@ async function approvePay(i){
   var wasPaid = p.status==='paid';
   if(p.src==='sb'){ await window.ShyraqDB.updatePayment(p.id,{status:'paid'}); p.status='paid'; }
   else { const d=getPays(); if(d[p.idx]){ d[p.idx].status='paid'; setPays(d); } }
-  // Растағанда — сол қолданушыға Premium доступ + Career Energy беру
+  // Растағанда — тек Career Energy беру (тариф = энергия; тұрақты premium емес).
+  // Energy ашылғанда қолданушыда доступ автоматты түрде қосылады (access-sync).
+  var addE = 0;
   if(p.email && window.ShyraqDB && window.ShyraqDB.ready()){
-    var until = new Date(Date.now()+30*86400000).toISOString();
-    var patch = { premium:true, premium_until:until, blocked:false };
+    var patch = { blocked:false };
     if(!wasPaid){
-      var addE = planEnergy(p);
+      addE = planEnergy(p);
       var existing = await window.ShyraqDB.getAccess(p.email);
       patch.energy = ((existing && existing.energy)||0) + addE;
     }
     await window.ShyraqDB.setAccess(p.email, patch);
     // егер жергілікті аккаунт болса — оны да жаңарту
     var acc=getAcc(), k=(p.email||'').toLowerCase();
-    if(acc[k]){ acc[k].plan='premium'; acc[k].premiumUntil=until; acc[k].blocked=false; if(patch.energy!=null) acc[k].energy=patch.energy; setAcc(acc); }
+    if(acc[k]){ acc[k].blocked=false; if(patch.energy!=null) acc[k].energy=patch.energy; setAcc(acc); }
   }
   await loadPayments(); await loadUsers();
-  toast(wasPaid ? 'Төлем расталды ✓' : 'Төлем расталды ✓ Premium + ⚡ энергия берілді');
+  toast(wasPaid ? 'Төлем расталды ✓' : 'Төлем расталды ✓ ⚡ '+addE+' Career Energy берілді');
 }
 async function delPay(i){
   var p=_pays[i]; if(!p) return;

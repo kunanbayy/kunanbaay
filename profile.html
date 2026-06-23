@@ -234,7 +234,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const classYear = user.classYear || '11';
   const city = user.city || 'Алматы';
   document.getElementById('profileMeta').replaceChildren();
-  const metaItems = [classYear + ' сынып', city, 'Free жоспар', '2026'];
+  const planLabel = (localStorage.getItem('shyraq_premium') === '1') ? 'Premium' : (eLeft > 0 ? eLeft + ' ⚡ Career Energy' : 'Free жоспар');
+  const metaItems = [classYear + ' сынып', city, planLabel, '2026'];
   metaItems.forEach(item => {
     const span = document.createElement('span');
     span.textContent = item;

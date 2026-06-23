@@ -470,7 +470,6 @@
         </div>
         <div class="pw-price">⚡ 1 Career Energy <small>· Standard 2 990 ₸</small></div>
         <a href="payment.html?plan=standard&next=grant" class="btn btn-primary btn-lg" style="background:var(--gp);border-color:var(--gp)"><i class="fas fa-bolt" style="margin-right:8px"></i> Энергия алу</a>
-        <div class="pw-demo">Тек көру үшін: <a id="demoUnlock">демо режимде ашу</a></div>
       </div>
     </div>
   </div>
@@ -499,7 +498,6 @@
         </div>
         <div class="pw-price" style="margin-top:4px">⚡ 1 Career Energy <small>· Standard 2 990 ₸</small></div>
         <a href="payment.html?plan=standard&next=grant" class="btn btn-primary btn-lg" style="background:var(--gp);border-color:var(--gp)"><i class="fas fa-bolt" style="margin-right:8px"></i> Энергия алу</a>
-        <div class="pw-demo">Тек көру үшін: <a id="demoUnlock2">демо режимде ашу</a></div>
       </div>
     </div>
 
@@ -584,17 +582,31 @@
 <script src="js/supabase-auth.js"></script>
 <script src="js/supabase-db.js"></script>
 <script src="js/access-sync.js"></script>
+<script src="js/energy.js"></script>
+<script src="js/grant-energy.js"></script>
 <script>
   const SEED = window.UNIVERSITIES_SEED || [];
   const MAIN_CITIES = ["Алматы","Астана","Шымкент"];
 
-  // premium / paywall state (unlocked after payment, demo, or ?premium=1 / ?paid=1)
+  // ── Career Energy paywall (signature-bound session) ──
+  // Толық нәтижені ашқанда 1 ⚡ жұмсалады. Ашылым ағымдағы input signature-ге
+  // байланады: параметр/режим өзгерсе → қайта бұғатталады → келесі ашу тағы 1 ⚡.
+  // ?premium=1 — админ/dev шексіз override. Логиканы GrantEnergy басқарады.
   let PREMIUM = false;
   (function(){
     const q = new URLSearchParams(location.search);
-    if(q.get('premium')==='1' || q.get('paid')==='1') localStorage.setItem('shyraq_premium','1');
-    PREMIUM = localStorage.getItem('shyraq_premium')==='1';
+    if(q.get('premium')==='1') localStorage.setItem('shyraq_premium','1');
   })();
+
+  // Ағымдағы талдаудың "қолтаңбасы" — input өзгерсе, ол да өзгереді.
+  function currentSig(){
+    const f = readForm();
+    const subj = document.getElementById('subjSel').value;
+    const progs = ['prog0','prog1','prog2','prog3'].map(id=>{ const el=document.getElementById(id); return el?el.value:''; });
+    return [MODE, f.score, subj, f.city, f.uniId, f.quota, progs.join('-')].join('|');
+  }
+  function isCurrentUnlocked(){ return window.GrantEnergy ? GrantEnergy.isUnlocked(currentSig()) : false; }
+
   function applyLockUI(){
     const locked = !PREMIUM;
     const m1c=document.getElementById('m1Content'), m1o=document.getElementById('m1Overlay');
@@ -603,6 +615,37 @@
     const pa=document.getElementById('progAnalysis'), m2o=document.getElementById('m2Overlay');
     if(pa) pa.classList.toggle('unlocked', !locked);
     if(m2o) m2o.classList.toggle('hidden', !locked);
+    if(locked) refreshEnergyCTA();
+    if(window.GrantEnergy) GrantEnergy.renderEnergyWidget();
+  }
+
+  // Бұғат overlay-індегі CTA-ны энергия күйіне қарай бейімдеу (екі flow бірдей).
+  function refreshEnergyCTA(){
+    if(!window.GrantEnergy || PREMIUM) return;
+    const can = GrantEnergy.canUnlockAnalysis();
+    const left = GrantEnergy.getRemainingEnergy();
+    document.querySelectorAll('#m1Overlay, #m2Overlay').forEach(function(ov){
+      const cta = ov.querySelector('a.btn-primary'); if(!cta) return;
+      const head = ov.querySelector('.pw-price');
+      if(can){
+        cta.innerHTML = '<i class="fas fa-lock-open" style="margin-right:8px"></i> Толық нәтижені ашу · 1 ⚡';
+        if(head) head.innerHTML = '⚡ 1 Career Energy жұмсалады <small>· қалды '+left+'</small>';
+      } else {
+        cta.innerHTML = '<i class="fas fa-bolt" style="margin-right:8px"></i> Тариф сатып алу';
+        if(head) head.innerHTML = '⚡ Career Energy аяқталды <small>· тариф қажет</small>';
+      }
+      cta.removeAttribute('href'); cta.style.cursor='pointer';
+      cta.onclick = unlockCurrent;
+    });
+  }
+
+  // Толық нәтижені ашу әрекеті — guarded (екі flow да осы арқылы).
+  function unlockCurrent(e){
+    if(e) e.preventDefault();
+    if(!window.GrantEnergy) return;
+    const r = GrantEnergy.openLockedAnalysis(currentSig(), 'grant-overlay');
+    if(r.ok){ PREMIUM=true; runCurrent(); applyLockUI(); window.scrollTo({top:0,behavior:'smooth'}); }
+    // r.ok=false болса — менеджер upgrade modal-ды өзі ашады.
   }
 
   const TOK = {"математика":"math","информатика":"info","физика":"phys","биология":"bio","география":"geo","химия":"chem","ин. язык":"foreign","вс. история":"hist","основы права":"law","рус. язык":"ruslang","рус. литература":"ruslit","каз. язык":"kazlang","каз. литература":"kazlit","творческий экзамен":"creative"};
@@ -1191,7 +1234,11 @@
     if(m==='manual') fillProgramSelects();
     runCurrent();
   }
-  function runCurrent(){ if(MODE==='ai') renderMode1(); else renderMode2(); }
+  function runCurrent(){
+    // Әр render алдында ағымдағы signature бойынша бұғат күйін қайта есептейміз.
+    PREMIUM = isCurrentUnlocked();
+    if(MODE==='ai') renderMode1(); else renderMode2();
+  }
 
   /* ---------- wiring ---------- */
   const slider=document.getElementById('scoreSlider');
@@ -1202,11 +1249,8 @@
   document.getElementById('modeManualBtn').addEventListener('click', ()=>setMode('manual'));
   document.getElementById('subjSel').addEventListener('change', ()=>{ if(MODE==='manual') fillProgramSelects(); runCurrent(); });
   ['citySel','uniSel','quotaSel'].forEach(id=>document.getElementById(id).addEventListener('change', runCurrent));
-  ['prog0','prog1','prog2','prog3'].forEach(id=>document.getElementById(id).addEventListener('change', renderMode2));
-
-  function doUnlock(e){ if(e) e.preventDefault(); localStorage.setItem('shyraq_premium','1'); PREMIUM=true; runCurrent(); window.scrollTo({top:0,behavior:'smooth'}); }
-  const d1=document.getElementById('demoUnlock'); if(d1) d1.addEventListener('click', doUnlock);
-  const d2=document.getElementById('demoUnlock2'); if(d2) d2.addEventListener('click', doUnlock);
+  // Бағдарлама таңдаулары да runCurrent арқылы өтеді — signature/бұғат қайта есептелсін.
+  ['prog0','prog1','prog2','prog3'].forEach(id=>document.getElementById(id).addEventListener('change', runCurrent));
 
   // prefill from URL (e.g. coming from the homepage widget: ?score=92&subj=1)
   (function(){
@@ -1219,8 +1263,8 @@
 
   syncSlider();
   fillProgramSelects();
-  renderMode1();
-  applyLockUI();
+  if(window.GrantEnergy) GrantEnergy.mount();   // Career Energy widget + paywall modal
+  runCurrent();                                  // PREMIUM-ды signature бойынша есептеп, рендерлейді
   if(location.hash === '#results'){
     const r = document.getElementById('results');
     if(r) setTimeout(()=>r.scrollIntoView({behavior:'smooth', block:'start'}), 200);
