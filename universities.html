@@ -191,13 +191,27 @@
       .stats { grid-template-columns:repeat(2,1fr); }
     }
     @media (max-width:720px) {
+      html, body { width:100%; max-width:100%; overflow-x:hidden; }
+      .nav { height:60px; }
+      .nav-inner { padding-left:14px !important; padding-right:14px !important; gap:8px; min-width:0; }
+      .nav-logo { font-size:1rem; gap:8px; min-width:0; }
+      .nav-logo-mark { width:32px; height:32px; flex:0 0 32px; border-radius:9px; }
       .nav-links { display:none; }
-      .page, .nav-inner { padding-left:18px; padding-right:18px; }
-      .hero { padding-top:36px; }
+      .nav-actions { margin-left:auto; min-width:0; }
+      .btn-dark { min-height:38px; padding:0 12px; font-size:.82rem; border-radius:999px; }
+      .btn-dark i { display:none; }
+      .page { padding-left:16px; padding-right:16px; overflow:hidden; }
+      .hero { padding-top:32px; min-height:auto; }
       .hero::after { opacity:.26; width:100%; right:-30%; }
-      .search-panel { margin-top:-36px; }
+      .hero h1 { font-size:clamp(2rem,10vw,2.7rem); letter-spacing:-.035em; }
+      .hero p { max-width:100%; font-size:.98rem; line-height:1.65; }
+      .search-panel { margin-top:-28px; padding:12px; border-radius:18px; }
+      .search-field, .select-field, .search-panel .btn { min-height:48px; }
       .uni-grid, .featured-grid, .stats, .d-grid { grid-template-columns:1fr; }
       .results-bar { align-items:flex-start; flex-direction:column; }
+      .sidebar { padding:14px; border-radius:18px; }
+      .filters { display:grid; grid-template-columns:1fr; gap:12px; }
+      .uni-card { min-width:0; }
     }
   </style>
 </head>
