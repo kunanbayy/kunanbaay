@@ -55,6 +55,15 @@
       if (remaining !== prevRemaining) changed = true;
     }
 
+    // ── Results Full Report (990₸) — Career Energy-ден БӨЛЕК entitlement ──
+    if (acc) {
+      var wasResults = localStorage.getItem('shyraq_results_unlocked') === '1';
+      var nowResults = !!acc.results_unlocked;
+      if (nowResults) localStorage.setItem('shyraq_results_unlocked', '1');
+      else localStorage.removeItem('shyraq_results_unlocked');
+      if (nowResults !== wasResults) changed = true;
+    }
+
     // Күй (премиум не энергия) өзгерсе — бетті бір рет қайта жүктеп, дұрыс көрсету
     if ((nowPremium !== wasPremium || changed) && !sessionStorage.getItem('shyraq_access_synced')) {
       sessionStorage.setItem('shyraq_access_synced', '1');

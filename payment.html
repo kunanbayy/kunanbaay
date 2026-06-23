@@ -330,17 +330,15 @@
   /* ── Тарифтер кестесі ── */
   var PRICING = {}; try { PRICING = JSON.parse(localStorage.getItem('shyraq_pricing') || '{}'); } catch (e) {}
   function pp(k, d) { return (PRICING[k] != null && PRICING[k] !== '') ? +PRICING[k] : d; }
+  // kind: 'energy' → grant.html Career Energy; 'results' → results.html толық есеп (БӨЛЕК).
   const PLANS = {
-    free:     { name: 'Free',            desc: 'Free — тегін',                       amount: 0,                      energy: 0 },
-    standard: { name: 'Standard',        desc: 'Standard — 1 Career Energy',         amount: pp('standard', 2990),   energy: 1 },
-    career:   { name: 'Career Report',   desc: 'Career Report — 3 Career Energy',    amount: pp('career', 4990),     energy: 3 },
-    once:     { name: 'Standard',        desc: 'Standard — 1 Career Energy',         amount: pp('standard', 2990),   energy: 1 },
-    report:   { name: 'Career Report',   desc: 'Career Report — 3 Career Energy',    amount: pp('career', 4990),     energy: 3 },
-    test:     { name: 'Standard',        desc: 'Standard — 1 Career Energy',         amount: pp('standard', 2990),   energy: 1 },
-    test990:  { name: 'Standard',        desc: 'Standard — 1 Career Energy',         amount: pp('standard', 2990),   energy: 1 },
-    test1990: { name: 'Career Report',   desc: 'Career Report — 3 Career Energy',    amount: pp('career', 4990),     energy: 3 },
-    test2990: { name: 'Career Report',   desc: 'Career Report — 3 Career Energy',    amount: pp('career', 4990),     energy: 3 },
-    premium:  { name: 'Career Report',   desc: 'Career Report — 3 Career Energy',    amount: pp('career', 4990),     energy: 3 },
+    free:      { name: 'Free',          desc: 'Free — тегін',                     amount: 0,                       energy: 0, kind: 'energy' },
+    standard:  { name: 'Standard',      desc: 'Standard — 1 Career Energy',       amount: pp('standard', 2990),    energy: 1, kind: 'energy' },
+    career:    { name: 'Career Report', desc: 'Career Report — 3 Career Energy',  amount: pp('career', 4990),      energy: 3, kind: 'energy' },
+    once:      { name: 'Standard',      desc: 'Standard — 1 Career Energy',       amount: pp('standard', 2990),    energy: 1, kind: 'energy' },
+    premium:   { name: 'Career Report', desc: 'Career Report — 3 Career Energy',  amount: pp('career', 4990),      energy: 3, kind: 'energy' },
+    // ── results.html: 990₸ Толық есеп (энергия ЕМЕС) ──
+    report990: { name: 'Толық есеп',    desc: 'Толық мамандықтар тізімі мен бағыттар', amount: pp('report990', 990), energy: 0, kind: 'results' },
   };
 
   /* ── URL-параметрлер ── */
@@ -424,16 +422,23 @@
     submitBtn.classList.add('sent');
     submitBtn.textContent = '✓ Расталды';
     try {
-      // Тариф = Career Energy. Авто-расталғанда сатып алынған энергияны қосамыз
-      // (тұрақты premium берілмейді — энергия жұмсалатын валюта).
-      if (window.ShyraqEnergy) ShyraqEnergy.grant(plan.energy || 1);
-      var pkey = (params.get('plan') === 'report') ? 'report' : 'standard';
       var u = JSON.parse(localStorage.getItem('shyraq_user') || 'null');
-      if (u) { u.plan = pkey; u.blocked = false; localStorage.setItem('shyraq_user', JSON.stringify(u)); }
-      if (u && u.email) {
-        var acc = JSON.parse(localStorage.getItem('shyraq_accounts') || '{}');
-        var k = u.email.toLowerCase();
-        if (acc[k]) { acc[k].plan = pkey; acc[k].blocked = false; acc[k].paidAt = new Date().toISOString(); localStorage.setItem('shyraq_accounts', JSON.stringify(acc)); }
+      if (plan.kind === 'results') {
+        // 990₸ Толық есеп — ТЕК results.html. Career Energy-ге қатысы жоқ.
+        localStorage.setItem('shyraq_results_unlocked', '1');
+        if (u && u.email && window.ShyraqDB && window.ShyraqDB.ready()) {
+          window.ShyraqDB.setAccess(u.email, { results_unlocked: true, results_unlocked_at: new Date().toISOString(), blocked: false });
+        }
+      } else {
+        // Career Energy жоспары — энергия қосамыз (grant.html үшін).
+        if (window.ShyraqEnergy) ShyraqEnergy.grant(plan.energy || 1);
+        var pkey = (params.get('plan') === 'career') ? 'report' : 'standard';
+        if (u) { u.plan = pkey; u.blocked = false; localStorage.setItem('shyraq_user', JSON.stringify(u)); }
+        if (u && u.email) {
+          var acc = JSON.parse(localStorage.getItem('shyraq_accounts') || '{}');
+          var k = u.email.toLowerCase();
+          if (acc[k]) { acc[k].plan = pkey; acc[k].blocked = false; acc[k].paidAt = new Date().toISOString(); localStorage.setItem('shyraq_accounts', JSON.stringify(acc)); }
+        }
       }
     } catch (e) {}
     document.getElementById('successScreen').classList.add('visible');

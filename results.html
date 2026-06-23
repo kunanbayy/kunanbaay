@@ -135,28 +135,17 @@
           <span class="lk-feat"><i class="fas fa-check"></i>Грантқа түсу мүмкіндігі</span>
           <span class="lk-feat"><i class="fas fa-check"></i>Карьералық жол картасы</span>
         </div>
-        <a href="payment.html?plan=test&next=results" class="btn-p"><i class="fas fa-lock-open"></i> Толық есепті ашу</a>
+        <a href="payment.html?plan=report990&next=results" class="btn-p"><i class="fas fa-lock-open"></i> Толық есепті ашу — 990 ₸</a>
       </div>
     </div>
   </div>
 
   <h2 class="sec-h">Толық есеп бағасы</h2>
-  <div class="price-grid">
-    <div class="price">
+  <div class="price-grid" id="priceGrid">
+    <div class="price feat" style="grid-column:1/-1;max-width:420px;margin:0 auto">
       <div class="amt">990 ₸</div>
       <div class="dsc">Толық мамандықтар тізімі мен бағыттар</div>
-      <a href="payment.html?plan=test990&next=results">Таңдау</a>
-    </div>
-    <div class="price feat">
-      <div class="badge">⭐ Танымал</div>
-      <div class="amt">1 990 ₸</div>
-      <div class="dsc">+ Университеттер, ҰБТ пәндері, грант мүмкіндігі</div>
-      <a href="payment.html?plan=test1990&next=results">Таңдау</a>
-    </div>
-    <div class="price">
-      <div class="amt">2 990 ₸</div>
-      <div class="dsc">+ Жалақы диапазоны және толық карьералық жол картасы</div>
-      <a href="payment.html?plan=test2990&next=results">Таңдау</a>
+      <a href="payment.html?plan=report990&next=results">Толық есепті ашу</a>
     </div>
   </div>
 
@@ -171,7 +160,6 @@
 <script src="js/supabase-auth.js"></script>
 <script src="js/supabase-db.js"></script>
 <script src="js/access-sync.js"></script>
-<script src="js/energy.js"></script>
 <script>
   const CL = {
     IT:  { label:'IT және бағдарламалау', ability:'Технологиялық қызығушылық', icon:'fa-laptop-code', desc:'Жаңа технологияларды тез меңгересіз және цифрлық ортада жұмыс істеуге бейімсіз.', subjects:'Математика + Информатика', salary:'350 000 – 1 500 000 ₸', specs:['Информатика','Ақпараттық жүйелер','Software Engineering','Ақпараттық қауіпсіздік','Деректер ғылымы (Data Science)','Жасанды интеллект','Компьютерлік инженерия','Веб-технологиялар'], unis:['Astana IT University','Satbayev University','ҚБТУ','ҚазҰУ','ЕҰУ'] },
@@ -187,11 +175,14 @@
   };
   const MEDALS = ['🥇','🥈','🥉','4️⃣','5️⃣'];
 
-  let PREMIUM = false;
+  // ── Results access (990₸ «Толық есеп») — Career Energy-ден БӨЛЕК ──
+  // resultsReportUnlocked = тек осы бет үшін. Энергия азаймайды, grant-қа құқық бермейді.
+  let RESULTS_UNLOCKED = false;
   (function(){
     const q = new URLSearchParams(location.search);
-    if(q.get('premium')==='1') localStorage.setItem('shyraq_premium','1');
-    PREMIUM = window.ShyraqEnergy ? ShyraqEnergy.isUnlocked('results') : (localStorage.getItem('shyraq_premium')==='1');
+    if(q.get('premium')==='1') localStorage.setItem('shyraq_premium','1');   // админ/dev override
+    RESULTS_UNLOCKED = localStorage.getItem('shyraq_premium')==='1'
+      || localStorage.getItem('shyraq_results_unlocked')==='1';
   })();
 
   const results = JSON.parse(localStorage.getItem('shyraq_results') || 'null');
@@ -261,29 +252,10 @@
   }
 
   function applyLock(){
-    document.getElementById('specLocked').classList.toggle('unlocked', PREMIUM);
-    document.getElementById('lkOv').classList.toggle('hidden', PREMIUM);
-    if(!PREMIUM) refreshEnergyCTA();
-  }
-
-  // Бұғат батырмасын энергия қалдығына қарай бейімдеу.
-  function refreshEnergyCTA(){
-    if(!window.ShyraqEnergy || PREMIUM) return;
-    const cta = document.querySelector('#lkOv a.btn-p'); if(!cta) return;
-    const bal = ShyraqEnergy.bal();
-    if(bal > 0){
-      cta.innerHTML = '<i class="fas fa-lock-open"></i> Энергиямен ашу · қалды '+bal+' ⚡';
-      cta.removeAttribute('href'); cta.style.cursor='pointer';
-      cta.onclick = function(e){
-        e.preventDefault();
-        const r = ShyraqEnergy.spend('results');
-        if(r.ok){ PREMIUM=true; applyLock(); window.scrollTo({top:0,behavior:'smooth'}); }
-        else { window.location.href='payment.html?plan=test&next=results'; }
-      };
-    } else {
-      cta.setAttribute('href','payment.html?plan=test&next=results'); cta.onclick=null;
-      cta.innerHTML = '<i class="fas fa-lock-open"></i> Толық есепті ашу';
-    }
+    document.getElementById('specLocked').classList.toggle('unlocked', RESULTS_UNLOCKED);
+    document.getElementById('lkOv').classList.toggle('hidden', RESULTS_UNLOCKED);
+    // Ашық болса — баға блогын да жасырамыз
+    const pg = document.getElementById('priceGrid'); if(pg) pg.style.display = RESULTS_UNLOCKED ? 'none' : '';
   }
 
   if(results && results.type === 'aptitude') render();

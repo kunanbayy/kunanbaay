@@ -470,6 +470,7 @@
     <div class="ud-row"><span class="k">Статус</span><span class="v" id="udStatus">Белсенді</span></div>
     <div class="ud-row"><span class="k">Premium мерзімі</span><span class="v" id="udUntil">—</span></div>
     <div class="ud-row"><span class="k">⚡ Career Energy (қалдық)</span><span class="v" id="udEnergy">0</span></div>
+    <div class="ud-row"><span class="k">📘 Results Full Report (990₸)</span><span class="v" id="udResults">—</span></div>
     <div class="ud-row"><span class="k">Қала</span><span class="v" id="udCity">—</span></div>
 
     <div class="ud-sec-t">⚡ Career Energy басқару</div>
@@ -483,6 +484,9 @@
       <input type="number" id="udEnergyInput" min="0" placeholder="Нақты сан" style="flex:1;border:1px solid #E8EEF6;border-radius:10px;padding:9px 12px;font-size:.9rem" />
       <button class="btn btn-primary" onclick="udSaveEnergy()">Сақтау</button>
     </div>
+
+    <div class="ud-sec-t">📘 Results Full Report (990₸ · бөлек)</div>
+    <button class="btn btn-ghost btn-full" id="udResultsBtn" onclick="udToggleResults()" style="justify-content:center;width:100%">📘 Толық есепті ашу</button>
 
     <div class="ud-sec-t">Қолжетімділікті басқару</div>
     <div class="ud-acts">
@@ -818,6 +822,9 @@ function openUserDetail(src, ref){
   var _eR=parseInt(u.energy||0,10)||0, _eT=parseInt(u.energyTotal||0,10)||_eR;
   $('udEnergy').textContent='⚡ '+_eR+(_eT?(' / '+_eT):'');
   var _ei=$('udEnergyInput'); if(_ei) _ei.value='';
+  var _ru=!!u.resultsUnlocked;
+  $('udResults').innerHTML = _ru ? '<span class="pill paid">✅ Ашық</span>' : '<span class="pill pending">🔒 Жабық</span>';
+  $('udResultsBtn').innerHTML = _ru ? '🔒 Толық есепті жабу' : '📘 Толық есепті ашу';
   $('udCity').textContent=u.city||'—';
   $('udBlockBtn').innerHTML=u.blocked?'🔓 Босату':'🔒 Бұғаттау';
   var pays=userPays(u);
@@ -872,6 +879,23 @@ function udSaveEnergy(){
   udSetEnergy(null, +v);
 }
 
+/* ── Results Full Report (990₸) — Career Energy-ден БӨЛЕК ── */
+async function udToggleResults(){
+  if(!_ud) return;
+  var u = findUser(_ud.src,_ud.ref); if(!u){ toast('Табылмады'); return; }
+  var next = !u.resultsUnlocked;
+  // жергілікті айна
+  if(_ud.src==='real'){ var a=getAcc(); if(a[_ud.ref]){ a[_ud.ref].resultsUnlocked=next; setAcc(a); } }
+  else { var us=getUsers(); if(us[_ud.ref]){ us[_ud.ref].resultsUnlocked=next; setUsers(us); } }
+  // Supabase (бірден-бір ақиқат көзі)
+  if(u.email && window.ShyraqDB && window.ShyraqDB.ready()){
+    try { await window.ShyraqDB.setAccess(u.email, { results_unlocked: next, results_unlocked_at: next?new Date().toISOString():null }); }
+    catch(e){ toast('Дерекқорға жазу қатесі'); }
+  }
+  renderUsers(); renderOverview(); refreshDetail();
+  toast(next ? '📘 Толық есеп ашылды ✓' : '📘 Толық есеп жабылды');
+}
+
 /* ════ PAYMENTS (Supabase + демо біріктірілген) ════ */
 var _pays = [];
 async function loadPayments(){
@@ -906,7 +930,8 @@ async function loadUsers(){
         premiumUntil: a.premium_until || cur.premiumUntil || null,
         blocked: a.blocked!=null ? !!a.blocked : !!cur.blocked,
         energy: a.energy!=null ? a.energy : (cur.energy||0),
-        energyTotal: a.energy_total!=null ? a.energy_total : (cur.energyTotal||a.energy||cur.energy||0)
+        energyTotal: a.energy_total!=null ? a.energy_total : (cur.energyTotal||a.energy||cur.energy||0),
+        resultsUnlocked: a.results_unlocked!=null ? !!a.results_unlocked : !!cur.resultsUnlocked
       });
     }
     profiles.forEach(pr=> merge(pr.email, {
@@ -925,7 +950,12 @@ async function loadUsers(){
   renderUsers(); renderOverview();
 }
 
-/* Тариф бойынша берілетін Career Energy саны */
+/* Төлем — results.html «Толық есеп» (990₸) па, әлде Career Energy ме? */
+function isResultsPay(p){
+  var s = ((p && p.plan) || '').toLowerCase();
+  return s.indexOf('толық есеп') > -1 || +(p && p.amount) === 990;
+}
+/* Career Energy жоспары бойынша берілетін энергия саны */
 function planEnergy(p){
   var s = ((p && p.plan) || '').toLowerCase();
   if (s.indexOf('career report') > -1 || s.indexOf('report') > -1 || (+(p && p.amount) >= 4990)) return 3;
@@ -954,26 +984,35 @@ async function approvePay(i){
   var wasPaid = p.status==='paid';
   if(p.src==='sb'){ await window.ShyraqDB.updatePayment(p.id,{status:'paid'}); p.status='paid'; }
   else { const d=getPays(); if(d[p.idx]){ d[p.idx].status='paid'; setPays(d); } }
-  // Растағанда — тек Career Energy беру (тариф = энергия; тұрақты premium емес).
-  // Energy ашылғанда қолданушыда доступ автоматты түрде қосылады (access-sync).
-  var addE = 0;
+  // Растағанда: results төлемі → results_unlocked (БӨЛЕК); әйтпесе → Career Energy.
+  var addE = 0, isResults = isResultsPay(p);
   if(p.email && window.ShyraqDB && window.ShyraqDB.ready()){
     var patch = { blocked:false };
     if(!wasPaid){
-      addE = planEnergy(p);
-      var existing = await window.ShyraqDB.getAccess(p.email);
-      var curR = (existing && existing.energy)||0;
-      var curT = (existing && existing.energy_total!=null) ? existing.energy_total : curR;
-      patch.energy = curR + addE;            // қалдыққа қосамыз
-      patch.energy_total = curT + addE;      // жиынтыққа да қосамыз
+      if(isResults){
+        patch.results_unlocked = true;
+        patch.results_unlocked_at = new Date().toISOString();
+      } else {
+        addE = planEnergy(p);
+        var existing = await window.ShyraqDB.getAccess(p.email);
+        var curR = (existing && existing.energy)||0;
+        var curT = (existing && existing.energy_total!=null) ? existing.energy_total : curR;
+        patch.energy = curR + addE;            // қалдыққа қосамыз
+        patch.energy_total = curT + addE;      // жиынтыққа да қосамыз
+      }
     }
     await window.ShyraqDB.setAccess(p.email, patch);
-    // егер жергілікті аккаунт болса — оны да жаңарту
+    // жергілікті айна
     var acc=getAcc(), k=(p.email||'').toLowerCase();
-    if(acc[k]){ acc[k].blocked=false; if(patch.energy!=null){ acc[k].energy=patch.energy; acc[k].energyTotal=patch.energy_total; } setAcc(acc); }
+    if(acc[k]){
+      acc[k].blocked=false;
+      if(patch.energy!=null){ acc[k].energy=patch.energy; acc[k].energyTotal=patch.energy_total; }
+      if(patch.results_unlocked!=null){ acc[k].resultsUnlocked=true; }
+      setAcc(acc);
+    }
   }
   await loadPayments(); await loadUsers();
-  toast(wasPaid ? 'Төлем расталды ✓' : 'Төлем расталды ✓ ⚡ '+addE+' Career Energy берілді');
+  toast(wasPaid ? 'Төлем расталды ✓' : (isResults ? 'Төлем расталды ✓ 📘 Толық есеп ашылды' : 'Төлем расталды ✓ ⚡ '+addE+' Career Energy берілді'));
 }
 async function delPay(i){
   var p=_pays[i]; if(!p) return;

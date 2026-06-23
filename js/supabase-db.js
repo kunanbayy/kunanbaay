@@ -76,10 +76,10 @@
     try {
       const row = Object.assign({ email: email.toLowerCase(), updated_at: new Date().toISOString() }, patch);
       let { error } = await c.from('access').upsert(row);
-      // 'energy_total' бағаны әлі қосылмаған болса (миграция орындалмаған) —
-      // энергия жоғалмас үшін онсыз қайта жазамыз.
-      if (error && 'energy_total' in row) {
-        delete row.energy_total;
+      // Қосымша бағандар әлі қосылмаған болса (миграция орындалмаған) — негізгі
+      // өрістер жоғалмас үшін соларды алып тастап қайта жазамыз.
+      if (error) {
+        ['energy_total', 'results_unlocked', 'results_unlocked_at'].forEach(function (col) { delete row[col]; });
         ({ error } = await c.from('access').upsert(row));
       }
       return !error;

@@ -49,12 +49,16 @@ create table if not exists public.access (
   premium       boolean default false,
   premium_until timestamptz,
   blocked       boolean default false,
-  energy        integer default 0,         -- careerEnergyRemaining: НАҚТЫ ҚАЛДЫҚ (бірден-бір ақиқат көзі)
-  energy_total  integer default 0,         -- careerEnergyTotal: барлық берілген (статистика/виджет үшін)
+  energy        integer default 0,         -- careerEnergyRemaining: grant.html үшін НАҚТЫ ҚАЛДЫҚ
+  energy_total  integer default 0,         -- careerEnergyTotal: барлық берілген (статистика/виджет)
+  results_unlocked boolean default false,  -- 990₸ «Толық есеп»: ТЕК results.html (энергия ЕМЕС)
+  results_unlocked_at timestamptz,         -- қашан ашылды
   updated_at    timestamptz default now()
 );
 alter table public.access add column if not exists energy integer default 0;
 alter table public.access add column if not exists energy_total integer default 0;
+alter table public.access add column if not exists results_unlocked boolean default false;
+alter table public.access add column if not exists results_unlocked_at timestamptz;
 alter table public.access enable row level security;
 drop policy if exists "access_select_any" on public.access;
 create policy "access_select_any" on public.access for select using (true);
