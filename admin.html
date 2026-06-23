@@ -446,10 +446,10 @@
       </div>
       <div class="a-card" style="max-width:560px">
         <div class="a-card-hd"><h3>Деректерді басқару</h3></div>
-        <p style="color:var(--muted);font-size:.85rem;margin-bottom:16px">Қолданушылар, төлемдер және пікірлер браузердің жадында (localStorage) сақталады.</p>
+        <p style="color:var(--muted);font-size:.85rem;margin-bottom:16px">Негізгі қолданушы және төлем деректері Supabase арқылы басқарылады.</p>
         <div style="display:flex;gap:10px;flex-wrap:wrap">
           <button class="btn btn-ghost" onclick="exportData()"><svg viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg> JSON жүктеу</button>
-          <button class="btn btn-ghost" onclick="resetData()" style="color:var(--red);border-color:#FECACA"><svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg> Демо деректерді қалпына келтіру</button>
+          <button class="btn btn-ghost" onclick="resetData()" style="color:var(--red);border-color:#FECACA"><svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg> Local уақытша деректерді тазалау</button>
         </div>
       </div>
     </section>
@@ -469,8 +469,7 @@
     <div class="ud-row"><span class="k">Жоспар</span><span class="v" id="udPlan">free</span></div>
     <div class="ud-row"><span class="k">Статус</span><span class="v" id="udStatus">Белсенді</span></div>
     <div class="ud-row"><span class="k">Premium мерзімі</span><span class="v" id="udUntil">—</span></div>
-    <div class="ud-row"><span class="k">⚡ Career Energy (қалдық)</span><span class="v" id="udEnergy">0</span></div>
-    <div class="ud-row"><span class="k">📘 Results Full Report (990₸)</span><span class="v" id="udResults">—</span></div>
+    <div class="ud-row"><span class="k">⚡ Career Energy</span><span class="v" id="udEnergy">0 / 0</span></div>
     <div class="ud-row"><span class="k">Қала</span><span class="v" id="udCity">—</span></div>
 
     <div class="ud-sec-t">⚡ Career Energy басқару</div>
@@ -484,9 +483,6 @@
       <input type="number" id="udEnergyInput" min="0" placeholder="Нақты сан" style="flex:1;border:1px solid #E8EEF6;border-radius:10px;padding:9px 12px;font-size:.9rem" />
       <button class="btn btn-primary" onclick="udSaveEnergy()">Сақтау</button>
     </div>
-
-    <div class="ud-sec-t">📘 Results Full Report (990₸ · бөлек)</div>
-    <button class="btn btn-ghost btn-full" id="udResultsBtn" onclick="udToggleResults()" style="justify-content:center;width:100%">📘 Толық есепті ашу</button>
 
     <div class="ud-sec-t">Қолжетімділікті басқару</div>
     <div class="ud-acts">
@@ -666,7 +662,7 @@ $('logoutBtn2').addEventListener('click', logout);
 
 /* ════ OVERVIEW ════ */
 function renderOverview(){
-  const users=allUsers(), pays=(_pays&&_pays.length)?_pays:getPays();
+  const users=allUsers(), pays=_pays||[];
   const premium = users.filter(u=>u.plan!=='free').length;
   const revenue = pays.filter(p=>p.status==='paid').reduce((s,p)=>s+p.amount,0);
   $('stUsers').textContent = nf(users.length);
@@ -698,19 +694,14 @@ function renderOverview(){
 }
 
 /* ════ USERS ════ */
-// Нақты тіркелген аккаунттар (login/register арқылы) + демо тізім
+// Нақты тіркелген аккаунттар (login/register/Supabase арқылы)
 const getAcc = () => { try { return JSON.parse(localStorage.getItem('shyraq_accounts')||'{}'); } catch(e){ return {}; } };
 const setAcc = o => localStorage.setItem('shyraq_accounts', JSON.stringify(o));
 function allUsers(){
-  // demo (массив) + real (объект) — біріктіреміз
   const acc = getAcc();
   const real = Object.keys(acc).map(k=>({ name:acc[k].name, email:acc[k].email||k, city:acc[k].city||'—',
     plan:acc[k].plan||'free', blocked:!!acc[k].blocked, date:(acc[k].createdAt||'').slice(0,10)||'—', createdAt:acc[k].createdAt||'', lastLoginAt:acc[k].lastLoginAt||'', src:'real', key:k }));
-  const hasReal = real.some(u=>u.email && !SEED_USER_EMAILS.has(String(u.email).toLowerCase()));
-  const demo = getUsers()
-    .filter(u=> !hasReal || !SEED_USER_EMAILS.has(String(u.email||'').toLowerCase()))
-    .map((u,i)=>({ ...u, src:'demo', idx:i, blocked:!!u.blocked, createdAt:u.createdAt||u.date||'' }));
-  return real.concat(demo);
+  return real.filter(u=>u.email && !SEED_USER_EMAILS.has(String(u.email).toLowerCase()));
 }
 function monthKey(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'); }
 function parseUserDate(u){ const raw=u.createdAt||u.date||u.lastLoginAt||''; const d=new Date(raw); return isNaN(d) ? null : d; }
@@ -733,6 +724,15 @@ function recentActivity(users,pays){
 function fmtDate(iso){ if(!iso) return '—'; try{ var d=new Date(iso); return String(d.getDate()).padStart(2,'0')+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+d.getFullYear(); }catch(e){ return '—'; } }
 function isActivePremium(u){ return u && u.premiumUntil && new Date(u.premiumUntil) > new Date(); }
 function planLabel(u){ if(isActivePremium(u)) return u.plan==='report'?'report':'premium'; return ['premium','report','standard'].includes(u.plan) && !u.premiumUntil ? u.plan : 'free'; }
+function energyRemaining(u){ return Math.max(0, parseInt((u && u.energy) || 0, 10) || 0); }
+function energyTotal(u){ return Math.max(energyRemaining(u), parseInt((u && (u.energyTotal != null ? u.energyTotal : u.energy_total)) || 0, 10) || 0); }
+function setUserEnergy(u, remaining, total){
+  var bal = Math.max(0, parseInt(remaining, 10) || 0);
+  var tot = Math.max(bal, parseInt(total, 10) || energyTotal(u) || bal);
+  u.energy = bal;
+  u.energyTotal = tot;
+  u.energy_total = tot;
+}
 function paymentPlan(p){
   var s=String((p&&p.plan)||'').toLowerCase();
   if(s.indexOf('standard')>-1) return 'standard';
@@ -748,7 +748,7 @@ function renderUsers(){
     const users=allUsers();
     $('navUsers').textContent=users.length;
     $('usersGrid').innerHTML = users.map((u)=>{
-      const ref = u.src==='real' ? `'real','${(u.key||'').replace(/'/g,"")}'` : `'demo',${u.idx}`;
+      const ref = `'real','${(u.key||'').replace(/'/g,"")}'`;
       const pl = planLabel(u);
       return `<div style="${ROW}${u.blocked?';opacity:.6':''}" onclick="openUserDetail(${ref})">
         <span style="${AV};background:${avColor(u.name)}">${initial(u.name)}</span>
@@ -766,14 +766,10 @@ function renderUsers(){
     }).join('') || '<div class="empty">Қолданушылар жоқ</div>';
   } catch(e){ console.error(e); $('usersGrid').innerHTML='<div class="empty">Қате: '+e.message+'</div>'; }
 }
-function findUser(src, ref){
-  if(src==='real'){ return getAcc()[ref]||null; }
-  return getUsers()[ref]||null;
-}
+function findUser(src, ref){ return getAcc()[ref]||null; }
 function _mutate(src, ref, fn){
   let updated=null;
-  if(src==='real'){ const a=getAcc(); if(a[ref]){ fn(a[ref]); setAcc(a); updated=a[ref]; } }
-  else { const u=getUsers(); if(u[ref]){ fn(u[ref]); setUsers(u); updated=u[ref]; } }
+  const a=getAcc(); if(a[ref]){ fn(a[ref]); setAcc(a); updated=a[ref]; }
   if(updated) syncAccess(updated);
   renderUsers(); renderOverview();
 }
@@ -782,23 +778,30 @@ function _mutate(src, ref, fn){
 function syncAccess(u){
   if(!u || !u.email || !(window.ShyraqDB && window.ShyraqDB.ready())) return;
   const prem = isActivePremium(u) || ((u.plan==='premium'||u.plan==='report') && !u.premiumUntil);
-  window.ShyraqDB.setAccess(u.email, { premium: !!prem, premium_until: u.premiumUntil||null, blocked: !!u.blocked });
+  window.ShyraqDB.setAccess(u.email, {
+    premium: !!prem,
+    premium_until: u.premiumUntil||null,
+    blocked: !!u.blocked,
+    energy: energyRemaining(u),
+    energy_total: energyTotal(u)
+  });
 }
 function openUserModal(){ $('userModal').classList.add('open'); }
 function closeModal(id){ $(id).classList.remove('open'); }
 function addUser(){
   const name=$('umName').value.trim(), email=$('umEmail').value.trim();
   if(!name||!email){ toast('Аты мен email керек'); return; }
-  const users=getUsers();
-  users.unshift({name,email,city:$('umCity').value.trim()||'—',plan:$('umPlan').value,blocked:false,date:new Date().toISOString().slice(0,10)});
-  setUsers(users);
+  const acc=getAcc();
+  const key=email.toLowerCase();
+  acc[key]={name,email:key,city:$('umCity').value.trim()||'—',plan:$('umPlan').value,blocked:false,createdAt:new Date().toISOString(),energy:0,energyTotal:0,energy_total:0};
+  setAcc(acc);
+  syncAccess(acc[key]);
   $('umName').value=$('umEmail').value=$('umCity').value='';
   closeModal('userModal'); renderUsers(); renderOverview(); toast('Қолданушы қосылды ✓');
 }
 function delUser(src, ref){
   if(!confirm('Қолданушыны жою керек пе?')) return;
-  if(src==='real'){ const a=getAcc(); delete a[ref]; setAcc(a); }
-  else { const u=getUsers(); u.splice(ref,1); setUsers(u); }
+  const a=getAcc(); delete a[ref]; setAcc(a);
   renderUsers(); renderOverview(); toast('Жойылды');
 }
 function togglePlan(src, ref){ if(isActivePremium(findUser(src,ref))) udRevokeRef(src,ref); else udGrantRef(src,ref,30); }
@@ -808,7 +811,7 @@ function toggleBlock(src, ref){ _mutate(src, ref, u=>{ u.blocked = !u.blocked; }
 var _ud = null;
 function userPays(u){
   const nm=(u.name||'').toLowerCase(), em=(u.email||'').toLowerCase();
-  return getPays().filter(p=>{ const pn=(p.name||'').toLowerCase(); return pn && (pn===nm || (em && p.email && p.email.toLowerCase()===em) || nm.indexOf(pn)>-1 || pn.indexOf(nm.split(' ')[0])>-1); });
+  return (_pays||[]).filter(p=>{ const pn=(p.name||'').toLowerCase(); return pn && (pn===nm || (em && p.email && p.email.toLowerCase()===em) || nm.indexOf(pn)>-1 || pn.indexOf(nm.split(' ')[0])>-1); });
 }
 function openUserDetail(src, ref){
   const u=findUser(src,ref); if(!u){ toast('Табылмады'); return; }
@@ -819,12 +822,8 @@ function openUserDetail(src, ref){
   $('udPlan').innerHTML='<span class="pill '+_pl+'">'+_pl+'</span>';
   $('udStatus').innerHTML=u.blocked?'<span class="pill pending">🔒 Бұғатталған</span>':'<span class="pill paid">✅ Белсенді</span>';
   $('udUntil').textContent=isActivePremium(u)?fmtDate(u.premiumUntil):'—';
-  var _eR=parseInt(u.energy||0,10)||0, _eT=parseInt(u.energyTotal||0,10)||_eR;
-  $('udEnergy').textContent='⚡ '+_eR+(_eT?(' / '+_eT):'');
-  var _ei=$('udEnergyInput'); if(_ei) _ei.value='';
-  var _ru=!!u.resultsUnlocked;
-  $('udResults').innerHTML = _ru ? '<span class="pill paid">✅ Ашық</span>' : '<span class="pill pending">🔒 Жабық</span>';
-  $('udResultsBtn').innerHTML = _ru ? '🔒 Толық есепті жабу' : '📘 Толық есепті ашу';
+  $('udEnergy').textContent='⚡ '+energyRemaining(u)+' / '+energyTotal(u);
+  var _ei=$('udEnergyInput'); if(_ei) _ei.value=energyRemaining(u);
   $('udCity').textContent=u.city||'—';
   $('udBlockBtn').innerHTML=u.blocked?'🔓 Босату':'🔒 Бұғаттау';
   var pays=userPays(u);
@@ -858,13 +857,12 @@ function udToggleBlock(){ if(!_ud)return; _mutate(_ud.src,_ud.ref,u=>{u.blocked=
 async function udSetEnergy(delta, absolute){
   if(!_ud) return;
   var u = findUser(_ud.src,_ud.ref); if(!u){ toast('Табылмады'); return; }
-  var cur = parseInt(u.energy||0,10)||0;
-  var curTot = parseInt(u.energyTotal||0,10)||cur;
+  var cur = energyRemaining(u);
+  var curTot = energyTotal(u);
   var next = (absolute!=null) ? Math.max(0, parseInt(absolute,10)||0) : Math.max(0, cur + delta);
   var nextTot = (absolute!=null) ? Math.max(curTot, next) : (delta>0 ? curTot + delta : curTot);
   // 1) жергілікті айна
-  if(_ud.src==='real'){ var a=getAcc(); if(a[_ud.ref]){ a[_ud.ref].energy=next; a[_ud.ref].energyTotal=nextTot; setAcc(a); } }
-  else { var us=getUsers(); if(us[_ud.ref]){ us[_ud.ref].energy=next; us[_ud.ref].energyTotal=nextTot; setUsers(us); } }
+  var a=getAcc(); if(a[_ud.ref]){ setUserEnergy(a[_ud.ref], next, nextTot); setAcc(a); }
   // 2) Supabase (бірден-бір ақиқат көзі)
   if(u.email && window.ShyraqDB && window.ShyraqDB.ready()){
     try { await window.ShyraqDB.setAccess(u.email, { energy: next, energy_total: nextTot }); }
@@ -879,35 +877,15 @@ function udSaveEnergy(){
   udSetEnergy(null, +v);
 }
 
-/* ── Results Full Report (990₸) — Career Energy-ден БӨЛЕК ── */
-async function udToggleResults(){
-  if(!_ud) return;
-  var u = findUser(_ud.src,_ud.ref); if(!u){ toast('Табылмады'); return; }
-  var next = !u.resultsUnlocked;
-  // жергілікті айна
-  if(_ud.src==='real'){ var a=getAcc(); if(a[_ud.ref]){ a[_ud.ref].resultsUnlocked=next; setAcc(a); } }
-  else { var us=getUsers(); if(us[_ud.ref]){ us[_ud.ref].resultsUnlocked=next; setUsers(us); } }
-  // Supabase (бірден-бір ақиқат көзі)
-  if(u.email && window.ShyraqDB && window.ShyraqDB.ready()){
-    try { await window.ShyraqDB.setAccess(u.email, { results_unlocked: next, results_unlocked_at: next?new Date().toISOString():null }); }
-    catch(e){ toast('Дерекқорға жазу қатесі'); }
-  }
-  renderUsers(); renderOverview(); refreshDetail();
-  toast(next ? '📘 Толық есеп ашылды ✓' : '📘 Толық есеп жабылды');
-}
-
-/* ════ PAYMENTS (Supabase + демо біріктірілген) ════ */
+/* ════ PAYMENTS (Supabase) ════ */
 var _pays = [];
 async function loadPayments(){
-  var demo = getPays()
-    .filter(p=>!SEED_PAY_NAMES.has(String(p.name||'').toLowerCase()))
-    .map((p,idx)=>({ name:p.name, email:p.email, plan:p.plan, amount:p.amount, status:p.status, receipt:p.receipt, date:p.date, src:'demo', idx:idx }));
   var sbp = [];
   if (window.ShyraqDB && window.ShyraqDB.ready()){
     var rows = await window.ShyraqDB.listPayments();
     if (rows) sbp = rows.map(r=>({ id:r.id, name:r.name, email:r.email, plan:r.plan, amount:r.amount, status:r.status, receipt:r.receipt_url, date:(r.created_at||'').slice(0,10), src:'sb' }));
   }
-  _pays = sbp.length ? sbp : demo;
+  _pays = sbp;
   renderPayments(); renderOverview();
 }
 
@@ -930,8 +908,7 @@ async function loadUsers(){
         premiumUntil: a.premium_until || cur.premiumUntil || null,
         blocked: a.blocked!=null ? !!a.blocked : !!cur.blocked,
         energy: a.energy!=null ? a.energy : (cur.energy||0),
-        energyTotal: a.energy_total!=null ? a.energy_total : (cur.energyTotal||a.energy||cur.energy||0),
-        resultsUnlocked: a.results_unlocked!=null ? !!a.results_unlocked : !!cur.resultsUnlocked
+        energyTotal: a.energy_total!=null ? a.energy_total : (cur.energyTotal||a.energy||cur.energy||0)
       });
     }
     profiles.forEach(pr=> merge(pr.email, {
@@ -950,19 +927,14 @@ async function loadUsers(){
   renderUsers(); renderOverview();
 }
 
-/* Төлем — results.html «Толық есеп» (990₸) па, әлде Career Energy ме? */
-function isResultsPay(p){
-  var s = ((p && p.plan) || '').toLowerCase();
-  return s.indexOf('толық есеп') > -1 || +(p && p.amount) === 990;
-}
-/* Career Energy жоспары бойынша берілетін энергия саны */
+/* Тариф бойынша берілетін Career Energy саны */
 function planEnergy(p){
   var s = ((p && p.plan) || '').toLowerCase();
   if (s.indexOf('career report') > -1 || s.indexOf('report') > -1 || (+(p && p.amount) >= 4990)) return 3;
   return 1;
 }
 function renderPayments(){
-  const pays=_pays.length?_pays:getPays();
+  const pays=_pays||[];
   const total=pays.filter(p=>p.status==='paid').reduce((s,p)=>s+(p.amount||0),0);
   $('payTotal').textContent=nf(total)+' ₸';
   $('navPays').textContent=pays.length;
@@ -984,35 +956,26 @@ async function approvePay(i){
   var wasPaid = p.status==='paid';
   if(p.src==='sb'){ await window.ShyraqDB.updatePayment(p.id,{status:'paid'}); p.status='paid'; }
   else { const d=getPays(); if(d[p.idx]){ d[p.idx].status='paid'; setPays(d); } }
-  // Растағанда: results төлемі → results_unlocked (БӨЛЕК); әйтпесе → Career Energy.
-  var addE = 0, isResults = isResultsPay(p);
+  // Растағанда — тек Career Energy беру (тариф = энергия; тұрақты premium емес).
+  // Energy ашылғанда қолданушыда доступ автоматты түрде қосылады (access-sync).
+  var addE = 0;
   if(p.email && window.ShyraqDB && window.ShyraqDB.ready()){
     var patch = { blocked:false };
     if(!wasPaid){
-      if(isResults){
-        patch.results_unlocked = true;
-        patch.results_unlocked_at = new Date().toISOString();
-      } else {
-        addE = planEnergy(p);
-        var existing = await window.ShyraqDB.getAccess(p.email);
-        var curR = (existing && existing.energy)||0;
-        var curT = (existing && existing.energy_total!=null) ? existing.energy_total : curR;
-        patch.energy = curR + addE;            // қалдыққа қосамыз
-        patch.energy_total = curT + addE;      // жиынтыққа да қосамыз
-      }
+      addE = planEnergy(p);
+      var existing = await window.ShyraqDB.getAccess(p.email);
+      var curR = (existing && existing.energy)||0;
+      var curT = (existing && existing.energy_total!=null) ? existing.energy_total : curR;
+      patch.energy = curR + addE;            // қалдыққа қосамыз
+      patch.energy_total = curT + addE;      // жиынтыққа да қосамыз
     }
     await window.ShyraqDB.setAccess(p.email, patch);
-    // жергілікті айна
+    // егер жергілікті аккаунт болса — оны да жаңарту
     var acc=getAcc(), k=(p.email||'').toLowerCase();
-    if(acc[k]){
-      acc[k].blocked=false;
-      if(patch.energy!=null){ acc[k].energy=patch.energy; acc[k].energyTotal=patch.energy_total; }
-      if(patch.results_unlocked!=null){ acc[k].resultsUnlocked=true; }
-      setAcc(acc);
-    }
+    if(acc[k]){ acc[k].blocked=false; if(patch.energy!=null){ acc[k].energy=patch.energy; acc[k].energyTotal=patch.energy_total; } setAcc(acc); }
   }
   await loadPayments(); await loadUsers();
-  toast(wasPaid ? 'Төлем расталды ✓' : (isResults ? 'Төлем расталды ✓ 📘 Толық есеп ашылды' : 'Төлем расталды ✓ ⚡ '+addE+' Career Energy берілді'));
+  toast(wasPaid ? 'Төлем расталды ✓' : 'Төлем расталды ✓ ⚡ '+addE+' Career Energy берілді');
 }
 async function delPay(i){
   var p=_pays[i]; if(!p) return;
@@ -1219,7 +1182,7 @@ function exportData(){
   toast('Деректер жүктелді ✓');
 }
 function resetData(){
-  if(!confirm('Демо деректерді қалпына келтіру керек пе? Барлық өзгерістер жойылады.')) return;
+  if(!confirm('Local уақытша деректерді тазалау керек пе?')) return;
   ['shyraq_admin_users','shyraq_admin_payments','shyraq_admin_reviews'].forEach(k=>localStorage.removeItem(k));
   location.reload();
 }
