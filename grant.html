@@ -132,6 +132,51 @@
     .chance.low  { background: var(--g-red-bg);   color: var(--g-red); }
     .card-note { font-size: .76rem; color: var(--text-muted); line-height: 1.4; }
 
+    .more-ops { margin-top: 28px; }
+    .more-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 14px; flex-wrap: wrap; }
+    .more-head h3 { color: var(--ink); font-size: 1.2rem; }
+    .more-head p { color: var(--text-muted); font-size: .9rem; margin-top: 4px; max-width: 720px; line-height: 1.5; }
+    .more-count { background: var(--gp-soft); color: var(--gp); border-radius: 999px; padding: 7px 13px; font-size: .78rem; font-weight: 800; white-space: nowrap; }
+    .more-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .more-toggle { border: 1.5px solid var(--gp); color: var(--gp); background: #fff; border-radius: 999px; padding: 8px 14px; font-family: var(--font-body); font-size: .8rem; font-weight: 900; cursor: pointer; transition: .18s; }
+    .more-toggle:hover { background: var(--gp-soft); }
+    .opp-list { display: grid; grid-template-columns: 1fr; gap: 14px; }
+    .opp-card { background: #fff; border: 1px solid var(--g-line); border-radius: 18px; padding: 18px; box-shadow: 0 8px 24px rgba(20,20,50,.035); }
+    .opp-top { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+    .opp-logo { width: 44px; height: 44px; border-radius: 12px; background: #F8FAFC; border: 1px solid #EEF0F6; display: flex; align-items: center; justify-content: center; overflow: hidden; flex: 0 0 44px; }
+    .opp-logo img { width: 100%; height: 100%; object-fit: contain; padding: 5px; }
+    .opp-uni { font-weight: 900; color: var(--ink); }
+    .opp-city { color: var(--text-muted); font-size: .82rem; margin-top: 2px; }
+    .opp-programs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+    .opp-row { border: 1px solid #EEF0F6; border-radius: 13px; padding: 11px 12px; display: grid; gap: 7px; }
+    .opp-name { font-weight: 800; color: var(--ink); font-size: .9rem; line-height: 1.35; }
+    .opp-meta { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+    .opp-pill { display: inline-flex; align-items: center; gap: 5px; padding: 4px 8px; border-radius: 999px; background: #F8FAFC; color: var(--text-muted); font-size: .72rem; font-weight: 800; }
+    .opp-pill.ok { background: var(--g-green-bg); color: var(--g-green); }
+    .opp-pill.risk { background: var(--g-orange-bg); color: var(--g-orange); }
+    .opp-pill.low { background: var(--g-red-bg); color: var(--g-red); }
+    .opp-empty { padding: 22px; border: 1px dashed var(--g-line); border-radius: 16px; color: var(--text-muted); text-align: center; }
+    .major-cats { display: grid; gap: 16px; }
+    .major-cat h4 { color: var(--ink); font-size: .95rem; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+    .major-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .major-card { width: 100%; text-align: left; background: #fff; border: 1px solid var(--g-line); border-radius: 16px; padding: 15px; cursor: pointer; font-family: var(--font-body); transition: .18s; }
+    .major-card:hover { border-color: var(--gp-soft); box-shadow: 0 10px 24px rgba(20,20,50,.06); transform: translateY(-1px); }
+    .major-card.active { border-color: var(--gp); background: var(--gp-softer); }
+    .major-name { color: var(--ink); font-weight: 900; font-size: .96rem; line-height: 1.35; margin-bottom: 10px; }
+    .major-meta { display: flex; flex-wrap: wrap; gap: 6px; }
+    .major-detail { grid-column: 1 / -1; background: #fff; border: 1px solid var(--gp-soft); border-radius: 18px; padding: 18px; box-shadow: 0 12px 28px rgba(109,93,252,.07); }
+    .major-detail h5 { color: var(--ink); font-size: 1rem; margin-bottom: 8px; }
+    .major-info { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 12px 0 16px; }
+    .major-info div { background: #F8FAFC; border: 1px solid #EEF0F6; border-radius: 12px; padding: 10px; }
+    .major-info span { display: block; color: var(--text-light); font-size: .7rem; font-weight: 800; text-transform: uppercase; margin-bottom: 4px; }
+    .major-info strong { color: var(--ink); font-size: .86rem; }
+    .uni-detail-list { display: grid; gap: 8px; }
+    .uni-detail-row { border: 1px solid #EEF0F6; border-radius: 13px; padding: 11px 12px; display: grid; grid-template-columns: 1.15fr .75fr repeat(5, auto); gap: 9px; align-items: center; font-size: .78rem; }
+    .uni-detail-row .ud-name { font-weight: 900; color: var(--ink); font-size: .86rem; }
+    .uni-detail-row .ud-muted { color: var(--text-muted); }
+    .uni-detail-row .ud-good { color: var(--g-green); font-weight: 900; }
+    .uni-detail-row .ud-bad { color: var(--g-red); font-weight: 900; }
+
     .ai-card { margin-top: 24px; display: grid; grid-template-columns: 64px 1fr; gap: 18px; align-items: start; background: linear-gradient(135deg, #F6F4FF, #FFFFFF); border: 1px solid var(--gp-soft); border-radius: 22px; padding: 26px; }
     .ai-ic { width: 64px; height: 64px; border-radius: 18px; background: var(--gp); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 1.7rem; box-shadow: 0 12px 26px rgba(109,93,252,.32); }
     .ai-card h3 { font-size: 1.1rem; color: var(--ink); margin-bottom: 8px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
@@ -226,14 +271,35 @@
     @media (max-width: 920px) {
       .results { grid-template-columns: 1fr; }
       .uni-grid { grid-template-columns: repeat(2, 1fr); }
+      .opp-programs { grid-template-columns: 1fr; }
+      .major-grid, .major-info { grid-template-columns: 1fr; }
+      .uni-detail-row { grid-template-columns: 1fr 1fr; }
       .price-grid { grid-template-columns: 1fr; max-width: 480px; }
       .lk-grid, .mode-toggle { grid-template-columns: 1fr; }
     }
     @media (max-width: 560px) {
+      html, body { width: 100%; max-width: 100%; overflow-x: hidden; }
+      .nav { height: 60px; }
+      .nav-inner { padding: 0 12px; gap: 8px; min-width: 0; }
+      .nav-logo { min-width: 0; font-size: 1rem; gap: 8px; }
+      .nav-logo-mark { width: 32px; height: 32px; flex: 0 0 32px; border-radius: 9px; }
+      .nav-links { display: none !important; }
+      .nav-actions { margin-left: auto; gap: 6px; min-width: 0; }
+      .nav-actions .btn { min-height: 38px; padding: 0 12px; font-size: .82rem; white-space: nowrap; }
+      .nav-actions .btn i { display: none; }
+      .nav-mobile-btn { display: none !important; }
+      .grant-wrap { width: 100%; padding: 22px 16px 56px; overflow: hidden; }
+      .gp-title { font-size: clamp(1.85rem, 9vw, 2.45rem); line-height: 1.14; letter-spacing: -0.04em; }
+      .gp-sub { font-size: .98rem; line-height: 1.65; }
+      .mode-grid, .results, .prog-grid, .uni-grid, .tips-grid, .price-grid,
+      .major-grid, .major-info, .opp-programs { grid-template-columns: 1fr !important; max-width: none; }
       .form-grid, .tips-grid, .uni-grid, .prog-grid { grid-template-columns: 1fr; }
       .prob-pct { font-size: 2.6rem; }
       .ai-card { grid-template-columns: 1fr; }
       .prow { grid-template-columns: 1fr auto; }
+      .uni-detail-row { grid-template-columns: 1fr !important; }
+      .price-card, .mode-card, .card, .major-card, .uni-card { max-width: 100%; min-width: 0; }
+      .prio-banner { grid-template-columns: 1fr; }
     }
     .nav-logo-mark { width: 34px; height: 34px; flex: 0 0 34px; background: #fff !important; padding: 3px; overflow: hidden; border-radius: 8px; }
     .nav-logo-mark img { width: 100%; height: 100%; object-fit: contain; display: block; }
@@ -391,6 +457,19 @@
           <div><div class="pb-t" id="prioT">—</div><div class="pb-d" id="prioD">—</div></div>
         </div>
         <div class="uni-grid" id="uniGrid"></div>
+        <div class="more-ops" id="moreOps">
+          <div class="more-head">
+            <div>
+              <h3>🎓 Сізге сәйкес <span id="majorCount">0</span> мамандық табылды</h3>
+              <p>Сіздің ҰБТ балыңыз бен таңдау пәндеріңіз негізінде ең қолайлы бағыттар.</p>
+            </div>
+            <div class="more-actions">
+              <span class="more-count" id="moreCount">Санаттар</span>
+              <button class="more-toggle" id="moreToggle" type="button">Барлық мамандықтарды көру</button>
+            </div>
+          </div>
+          <div class="opp-list" id="moreList"></div>
+        </div>
         <div class="ai-card" style="margin-top:18px">
           <div class="ai-ic"><i class="fas fa-robot"></i></div>
           <div><h3>Shyraq AI кеңесшісі</h3><p id="aiText">—</p></div>
@@ -403,7 +482,8 @@
         <div class="lk-feats">
           <span class="lk-feat"><i class="fas fa-check"></i>4 таңдау стратегиясы</span>
           <span class="lk-feat"><i class="fas fa-check"></i>Қай приоритетте ілінесіз</span>
-          <span class="lk-feat"><i class="fas fa-check"></i>Әр ЖОО өту шегі мен ықтималдығы</span>
+          <span class="lk-feat"><i class="fas fa-check"></i>Басқа сәйкес университеттер</span>
+          <span class="lk-feat"><i class="fas fa-check"></i>Әр ЖОО-дағы барлық сәйкес мамандықтар</span>
           <span class="lk-feat"><i class="fas fa-check"></i>AI кеңесшісі</span>
         </div>
         <div class="pw-price">⚡ 1 Career Energy <small>· Standard 2 990 ₸</small></div>
@@ -640,7 +720,7 @@
       if(ratio >= 0.6){ label='🟢 Жоғары мүмкіндік'; color='var(--g-green)'; bg='var(--g-green-bg)'; bar='var(--g-green)'; }
       else if(ratio >= 0.3){ label='🟡 Орташа мүмкіндік'; color='var(--g-gold)'; bg='var(--g-gold-bg)'; bar='var(--g-gold)'; }
       else { label='🟠 Тәуекелді мүмкіндік'; color='var(--g-orange)'; bg='var(--g-orange-bg)'; bar='var(--g-orange)'; }
-      desc = 'Өткен жылғы соңғы грант балы бойынша ' + total + ' бағдарламаның ' + qual + '-іне балыңыз жетеді.' +
+      desc = 'Өткен жылғы соңғы грант балдары бойынша балыңызға сай келетін бағыттар бар.' +
         (ratio < 0.6 ? ' Мүмкіндікті арттыру үшін бәсекелестігі төмен ЖОО-ларды да қарастырыңыз.' : ' Бірнеше университетке құжат тапсыру ұсынылады.');
     }
     return { pct, label, color, bg, bar, desc, min:minC, med:medC, max:maxC, qual, total };
@@ -694,6 +774,214 @@
     return L;
   }
 
+  function programKey(x){
+    return String(x.uni.id) + ':' + String(x.sp.code || x.sp.name || '');
+  }
+  function byOpportunityRank(a,b){
+    const ap = chanceFromDiff(a.diff).pct;
+    const bp = chanceFromDiff(b.diff).pct;
+    if ((b.diff >= 0) !== (a.diff >= 0)) return (b.diff >= 0) - (a.diff >= 0);
+    if (bp !== ap) return bp - ap;
+    return a.sp.thresholdScore - b.sp.thresholdScore;
+  }
+  function buildMoreGroups(all, picks){
+    const chosen = new Set((picks || []).map(p => programKey(p[2])));
+    const grouped = new Map();
+    all
+      .filter(x => !chosen.has(programKey(x)))
+      .sort(byOpportunityRank)
+      .forEach(x => {
+        const id = String(x.uni.id);
+        if (!grouped.has(id)) grouped.set(id, { uni: x.uni, items: [] });
+        grouped.get(id).items.push(x);
+      });
+    return Array.from(grouped.values())
+      .map(g => ({ uni: g.uni, items: g.items.sort(byOpportunityRank) }))
+      .sort((a,b) => {
+        const aReach = a.items.some(x => x.diff >= 0);
+        const bReach = b.items.some(x => x.diff >= 0);
+        if (aReach !== bReach) return bReach - aReach;
+        return chanceFromDiff(b.items[0].diff).pct - chanceFromDiff(a.items[0].diff).pct;
+      });
+  }
+
+  let MORE_EXPANDED = false;
+  let MORE_LAST_ALL = [];
+  let MORE_LAST_PICKS = [];
+  let OPEN_MAJOR = '';
+
+  const CATEGORY_META = [
+    {name:'IT және технологиялар', icon:'fa-laptop-code', codes:['B057','B058','B059','B158','В157']},
+    {name:'Бизнес және экономика', icon:'fa-chart-line', codes:['B044','B045','B046','B047','B048','B091','B092','B093','B140','B141','B142','B145']},
+    {name:'Инженерия', icon:'fa-gears', codes:['B060','B061','B062','B063','B064','B065','B066','B067','B068','B069','B070','B071','B073','B074','B075','B076','B126','B162','B165','B166','B167','B171','B173','B175','B176','B183','В271']},
+    {name:'Педагогика', icon:'fa-chalkboard-user', prefix:['B00','B01'], codes:['B020','B120']},
+    {name:'Медицина', icon:'fa-stethoscope', prefix:['ВМ0'], codes:['B084','B085','B089','B094','B072']},
+    {name:'Құқық', icon:'fa-scale-balanced', codes:['B049']},
+    {name:'Жаратылыстану ғылымдары', icon:'fa-flask', codes:['B050','B051','B052','B053','B054','B055','B056']},
+    {name:'Гуманитарлық және әлеуметтік бағыттар', icon:'fa-book-open', codes:['B032','B033','B034','B035','B036','B037','B038','B039','B040','B041','B042','B043','B090','B134','B135','B234']},
+    {name:'Агро және табиғи ресурстар', icon:'fa-seedling', codes:['B077','B078','B079','B080','B082','B083']},
+    {name:'Шығармашылық және спорт', icon:'fa-palette', codes:['B021','B027','B028','B029','B030','B031','B098','В023']}
+  ];
+  function categoryForCode(code){
+    for(const c of CATEGORY_META){
+      if((c.codes||[]).indexOf(code) >= 0) return c;
+      if((c.prefix||[]).some(p => code.indexOf(p) === 0)) return c;
+    }
+    return {name:'Басқа санаттар', icon:'fa-layer-group'};
+  }
+  function majorDescription(code, name){
+    const cat = categoryForCode(code).name;
+    if(cat === 'IT және технологиялар') return name + ' бағыты цифрлық өнім, дерек, бағдарламалау және қауіпсіздікпен жұмыс істеуге арналған.';
+    if(cat === 'Бизнес және экономика') return name + ' бағыты басқару, нарық, қаржы және ұйымдардың даму шешімдерін талдауға бағытталған.';
+    if(cat === 'Инженерия') return name + ' бағыты өндіріс, техника, инфрақұрылым және инженерлік жүйелерді жобалауға үйретеді.';
+    if(cat === 'Педагогика') return name + ' бағыты білім беру, оқыту әдістемесі және оқушы дамуын қолдауға арналған.';
+    if(cat === 'Медицина') return name + ' бағыты денсаулық сақтау саласында кәсіби көмек көрсетуге дайындайды.';
+    if(cat === 'Құқық') return name + ' бағыты заң, құқықтық талдау және азаматтық-қоғамдық қатынастармен жұмысқа бағытталған.';
+    if(cat === 'Жаратылыстану ғылымдары') return name + ' бағыты зерттеу, тәжірибе, табиғи процестерді талдау және ғылыми ойлауды дамытады.';
+    return name + ' бағыты таңдаған пәндеріңізге сәйкес келетін кәсіби білім траекториясын ұсынады.';
+  }
+  function majorDemand(code){
+    const cat = categoryForCode(code).name;
+    if(cat === 'IT және технологиялар') return 'Өте жоғары';
+    if(cat === 'Инженерия') return 'Жоғары';
+    if(cat === 'Медицина') return 'Тұрақты жоғары';
+    if(cat === 'Бизнес және экономика') return 'Жоғары';
+    if(cat === 'Педагогика') return 'Тұрақты';
+    return 'Орташа-жоғары';
+  }
+  function averageSalary(code){
+    const cat = categoryForCode(code).name;
+    if(cat === 'IT және технологиялар') return '450 000 - 900 000 ₸';
+    if(cat === 'Инженерия') return '350 000 - 750 000 ₸';
+    if(cat === 'Медицина') return '300 000 - 800 000 ₸';
+    if(cat === 'Бизнес және экономика') return '300 000 - 700 000 ₸';
+    if(cat === 'Құқық') return '280 000 - 650 000 ₸';
+    if(cat === 'Педагогика') return '220 000 - 450 000 ₸';
+    return '250 000 - 600 000 ₸';
+  }
+  function buildMajorGroups(all, picks){
+    const chosen = new Set((picks || []).map(p => programKey(p[2])));
+    const byCode = new Map();
+    all.filter(x => !chosen.has(programKey(x))).forEach(x => {
+      const code = baseCode(x.sp.code);
+      if(!code) return;
+      if(!byCode.has(code)){
+        byCode.set(code, { code, name: codeName(code, x.sp.name), items: [] });
+      }
+      byCode.get(code).items.push(x);
+    });
+    return Array.from(byCode.values()).map(m => {
+      const byUni = new Map();
+      m.items.forEach(x => {
+        const id = String(x.uni.id);
+        if(!byUni.has(id) || chanceFromDiff(x.diff).pct > chanceFromDiff(byUni.get(id).diff).pct) byUni.set(id, x);
+      });
+      const universities = Array.from(byUni.values()).sort(byOpportunityRank);
+      const best = universities[0];
+      const reachable = universities.filter(x => x.diff >= 0).length;
+      const avgPct = universities.length ? Math.round(universities.reduce((s,x)=>s+chanceFromDiff(x.diff).pct,0)/universities.length) : 0;
+      return {
+        code: m.code,
+        name: m.name,
+        category: categoryForCode(m.code),
+        universities,
+        bestPct: best ? chanceFromDiff(best.diff).pct : avgPct,
+        bestChance: best ? chanceFromDiff(best.diff) : {pct:avgPct, cls:'low', label:'Дерек жоқ', emoji:'⚪'},
+        reachable
+      };
+    }).sort((a,b) => {
+      if((b.reachable > 0) !== (a.reachable > 0)) return (b.reachable > 0) - (a.reachable > 0);
+      if(b.bestPct !== a.bestPct) return b.bestPct - a.bestPct;
+      return b.universities.length - a.universities.length;
+    });
+  }
+
+  function renderMoreOptions(all, picks){
+    const list = document.getElementById('moreList');
+    const count = document.getElementById('moreCount');
+    const majorCount = document.getElementById('majorCount');
+    const toggle = document.getElementById('moreToggle');
+    if (!list || !count || !majorCount || !toggle) return;
+    MORE_LAST_ALL = all;
+    MORE_LAST_PICKS = picks;
+    const majors = buildMajorGroups(all, picks);
+    const visibleMajors = MORE_EXPANDED ? majors : majors.slice(0, 8);
+    const catNames = new Set(majors.map(m => m.category.name));
+    majorCount.textContent = majors.length;
+    count.textContent = catNames.size + ' санат';
+    toggle.hidden = majors.length <= visibleMajors.length;
+    toggle.textContent = MORE_EXPANDED ? 'Жинақы көрсету' : 'Барлық мамандықтарды көру';
+    if (!majors.length) {
+      list.innerHTML = '<div class="opp-empty">Бұл пәндер мен балл бойынша қосымша мамандық табылмады. Қаланы немесе университет фильтрін кеңейтіп көріңіз.</div>';
+      return;
+    }
+    const byCat = new Map();
+    visibleMajors.forEach(m => {
+      if(!byCat.has(m.category.name)) byCat.set(m.category.name, {meta:m.category, majors:[]});
+      byCat.get(m.category.name).majors.push(m);
+    });
+    list.innerHTML = '<div class="major-cats">' + Array.from(byCat.values()).map(group => {
+      const cards = group.majors.map(m => {
+        const c = m.bestChance;
+        const pillCls = c.cls === 'high' || c.cls === 'med' ? 'ok' : (c.cls === 'risk' ? 'risk' : 'low');
+        const active = OPEN_MAJOR === m.code ? ' active' : '';
+        const detail = OPEN_MAJOR === m.code ? renderMajorDetail(m) : '';
+        return `<button class="major-card${active}" type="button" data-major="${m.code}">
+          <div class="major-name">${m.name}</div>
+          <div class="major-meta">
+            <span class="opp-pill ${pillCls}">Сәйкестік: ${m.bestPct}%</span>
+            <span class="opp-pill ${pillCls}">${c.emoji} ${c.label}</span>
+            <span class="opp-pill">Университеттер: ${m.universities.length}</span>
+          </div>
+        </button>${detail}`;
+      }).join('');
+      return `<section class="major-cat"><h4><i class="fas ${group.meta.icon}"></i>${group.meta.name}</h4><div class="major-grid">${cards}</div></section>`;
+    }).join('') + '</div>';
+  }
+
+  function renderMajorDetail(m){
+    const rows = m.universities.map(x => {
+      const c = chanceFromDiff(x.diff);
+      const diffText = x.diff >= 0 ? '+' + x.diff : String(x.diff);
+      const diffCls = x.diff >= 0 ? 'ud-good' : 'ud-bad';
+      const pillCls = c.cls === 'high' || c.cls === 'med' ? 'ok' : (c.cls === 'risk' ? 'risk' : 'low');
+      return `<div class="uni-detail-row">
+        <div class="ud-name">${uniName(x.uni)}</div>
+        <div class="ud-muted">${x.uni.city || '—'}</div>
+        <div>Өту: <strong>${x.sp.thresholdScore}</strong></div>
+        <div>Сіз: <strong>${document.getElementById('scoreSlider').value}</strong></div>
+        <div class="${diffCls}">${diffText} балл</div>
+        <div>≈ ${fmtTg(tuition(x.sp, x.uni))} ₸</div>
+        <div><span class="opp-pill ${pillCls}">${c.emoji} ${c.label}</span></div>
+      </div>`;
+    }).join('');
+    return `<div class="major-detail">
+      <h5>${m.name}</h5>
+      <p class="card-note">${majorDescription(m.code, m.name)}</p>
+      <div class="major-info">
+        <div><span>Болашақ сұранысы</span><strong>${majorDemand(m.code)}</strong></div>
+        <div><span>Орташа жалақы</span><strong>${averageSalary(m.code)}</strong></div>
+        <div><span>Грантқа қолайлы ЖОО</span><strong>${m.reachable} университет</strong></div>
+      </div>
+      <div class="uni-detail-list">${rows}</div>
+    </div>`;
+  }
+
+  document.getElementById('moreList')?.addEventListener('click', (e) => {
+    const card = e.target.closest('.major-card');
+    if(!card) return;
+    const code = card.getAttribute('data-major');
+    OPEN_MAJOR = OPEN_MAJOR === code ? '' : code;
+    renderMoreOptions(MORE_LAST_ALL, MORE_LAST_PICKS);
+  });
+
+  document.getElementById('moreToggle')?.addEventListener('click', () => {
+    MORE_EXPANDED = !MORE_EXPANDED;
+    OPEN_MAJOR = '';
+    renderMoreOptions(MORE_LAST_ALL, MORE_LAST_PICKS);
+    document.getElementById('moreOps')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+
   /* ---------- form readers ---------- */
   function readForm(){
     const score=+document.getElementById('scoreSlider').value;
@@ -728,6 +1016,9 @@
     renderCutoffBox(f.score, gc);
 
     const picks=pick4(all);
+    MORE_EXPANDED = false;
+    OPEN_MAJOR = '';
+    renderMoreOptions(all, picks);
 
     // priority cascade — grant is secured at the first (highest-priority) choice the score clears
     let firstClear=-1;
@@ -779,8 +1070,7 @@
       document.getElementById('prioD').textContent='Басқа пән тіркесімін таңдап көріңіз.';
     }
 
-    const remaining=Math.max(0, all.length - picks.length);
-    document.getElementById('m1LockSub').textContent=`Тағы ${remaining} сәйкес нұсқа, грант приоритет стратегиясы және AI кеңесі төлемнен кейін ашылады.`;
+    document.getElementById('m1LockSub').textContent='Қосымша сәйкес мамандықтар, оларды оқытатын университеттер және AI кеңесі төлемнен кейін ашылады.';
 
     const names=picks.slice(0,3).map(p=>uniName(p[2].uni));
     let ai='';

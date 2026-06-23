@@ -171,10 +171,27 @@
       .foot-grid { grid-template-columns: 1fr 1fr; }
     }
     @media (max-width: 600px) {
+      html, body { width: 100%; max-width: 100%; overflow-x: hidden; }
+      .nav { height: 60px; }
+      .nav-inner { padding: 0 12px; gap: 8px; min-width: 0; }
+      .nav-logo { min-width: 0; font-size: 1rem; gap: 8px; }
+      .nav-logo-icon { width: 32px; height: 32px; flex: 0 0 32px; border-radius: 9px; }
+      .nav-links { display: none !important; }
+      .nav-actions { margin-left: auto; gap: 6px; min-width: 0; }
+      .nav-actions .btn-ghost { display: none !important; }
+      .nav-actions .btn-primary { min-height: 38px; padding: 0 12px; font-size: .82rem; white-space: nowrap; }
+      .nav-mobile-btn { display: none !important; }
+      .fo-hero { padding: 34px 16px 24px; text-align: left; }
+      .fo-hero h1 { font-size: clamp(2rem, 11vw, 2.8rem); line-height: 1.08; }
+      .fo-hero p { margin-left: 0; max-width: 100%; font-size: .98rem; }
+      .free-banner-wrap, .price-grid, .uni-logos, .testi, .ent-wrap, .faq, .px { padding-left: 16px; padding-right: 16px; }
       .price-grid { grid-template-columns: 1fr; }
       .feat-grid { grid-template-columns: 1fr; }
       .ent-grid { grid-template-columns: 1fr; }
       .foot-grid { grid-template-columns: 1fr; }
+      .free-banner-features, .free-banner-cta, .price-card, .ent { padding: 22px; }
+      .price-card { min-width: 0; }
+      .foot-bottom { align-items: flex-start; }
     }
   </style>
 </head>
