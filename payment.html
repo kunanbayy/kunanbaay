@@ -6,154 +6,129 @@
   <title>Kaspi Төлем — Shyraq Education</title>
   <link rel="stylesheet" href="css/style.css"/>
   <style>
+    :root {
+      --pg-bg: #0E0F13; --pg-card: #16181E; --pg-card-2: #1B1E25;
+      --pg-border: #282B33; --pg-text: #F4F5F7; --pg-muted: #8B909B;
+      --pg-red: #FB5C4C; --pg-red-2: #E94A3C; --pg-green: #43D17F;
+    }
+    body { background: var(--pg-bg); }
     .pay-outer {
       min-height: calc(100vh - var(--nav-h));
       display: flex; align-items: flex-start; justify-content: center;
-      padding: 40px 20px 80px;
+      padding: 40px 20px 90px;
+      background:
+        radial-gradient(circle at 1px 1px, rgba(255,255,255,0.035) 1px, transparent 0) 0 0/22px 22px,
+        var(--pg-bg);
     }
-    .pay-card-wrap {
-      width: 100%; max-width: 480px;
-    }
+    .pay-card-wrap { width: 100%; max-width: 440px; }
 
     /* ── Back link ── */
     .pay-back {
       display: inline-flex; align-items: center; gap: 6px;
-      font-size: 0.82rem; font-weight: 600; color: var(--text-muted);
-      margin-bottom: 20px; transition: var(--transition);
+      font-size: 0.82rem; font-weight: 600; color: var(--pg-muted);
+      margin-bottom: 18px; transition: .2s;
     }
-    .pay-back:hover { color: var(--navy); }
+    .pay-back:hover { color: var(--pg-text); }
 
-    /* ── Header ── */
-    .pay-header { margin-bottom: 24px; }
-    .pay-badge {
-      display: inline-flex; align-items: center; gap: 6px;
-      background: var(--gold-pale); border: 1.5px solid var(--gold);
-      border-radius: var(--radius-full); padding: 5px 14px;
-      font-size: 0.78rem; font-weight: 700; color: var(--gold-deep);
-      margin-bottom: 12px;
+    /* ── Cards ── */
+    .pay-block {
+      background: var(--pg-card); border: 1px solid var(--pg-border);
+      border-radius: 26px; padding: 30px 26px; margin-bottom: 22px;
     }
-    .pay-title {
-      font-family: var(--font-display);
-      font-size: 1.65rem; font-weight: 700; line-height: 1.2;
-      letter-spacing: -0.03em; color: var(--ink); margin-bottom: 6px;
+    .pay-block.glow {
+      border-color: rgba(251,92,76,0.30);
+      box-shadow: 0 0 0 1px rgba(251,92,76,0.08), 0 0 46px rgba(251,92,76,0.12);
     }
-    .pay-sub { font-size: 0.88rem; color: var(--text-muted); line-height: 1.55; }
+    .pay-block-title { font-family: var(--font-display); font-weight: 800; font-size: 1.35rem; color: var(--pg-text); text-align: center; letter-spacing: -0.01em; }
+    .pay-block-sub { font-size: 0.9rem; color: var(--pg-muted); text-align: center; margin-top: 6px; }
 
-    /* ── Plan summary strip ── */
-    .plan-strip {
-      display: flex; align-items: center; justify-content: space-between;
-      background: var(--navy); color: #fff;
-      border-radius: var(--radius-lg); padding: 14px 20px;
-      margin-bottom: 20px;
+    /* ── Kaspi QR ── */
+    .kqr-frame {
+      position: relative; width: 232px; height: 232px; margin: 24px auto 0;
+      background: #fff; border-radius: 24px; padding: 15px;
+      display: flex; align-items: center; justify-content: center;
     }
-    .plan-strip-name { font-size: 0.88rem; font-weight: 600; opacity: .85; }
-    .plan-strip-amount { font-family: var(--font-display); font-size: 1.3rem; font-weight: 700; }
-
-    /* ── Kaspi QR payment ── */
-    .kaspi-qr-pay {
-      text-align: center; background: #fff;
-      border: 1.5px solid var(--border); border-radius: 18px;
-      padding: 24px 22px; margin-bottom: 16px;
-      box-shadow: 0 10px 34px rgba(11,30,51,0.08);
+    .kqr-frame #qrCanvas { display: flex; line-height: 0; }
+    .kqr-frame #qrCanvas img, .kqr-frame #qrCanvas canvas { display: block; width: 202px !important; height: 202px !important; }
+    .kqr-logo {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      width: 54px; height: 54px; border-radius: 15px; background: var(--pg-red);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.30);
     }
-    .kqr-title { font-family: var(--font-display); font-weight: 800; font-size: 1.1rem; color: var(--navy); margin-bottom: 4px; }
-    .kqr-sub { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 18px; line-height: 1.45; }
-    .kqr-canvas { display: flex; justify-content: center; }
-    .kqr-canvas img, .kqr-canvas canvas { border-radius: 10px; }
-    .kqr-amount { font-family: var(--font-display); font-size: 1.6rem; font-weight: 800; color: var(--navy); margin-top: 16px; }
+    .kqr-logo img { width: 34px; height: 34px; }
+    .kqr-amount { text-align: center; font-family: var(--font-display); font-size: 2.5rem; font-weight: 800; color: var(--pg-text); margin-top: 24px; letter-spacing: -0.02em; }
+    .kqr-amount .tg { font-size: 1.4rem; font-weight: 600; color: var(--pg-muted); margin-left: 4px; }
+    .kqr-cashback { text-align: center; color: var(--pg-green); font-size: 0.92rem; font-weight: 600; margin-top: 8px; }
     .kqr-open-btn {
       display: flex; align-items: center; justify-content: center; gap: 8px;
-      width: 100%; min-height: 52px; margin-top: 16px;
-      border-radius: 14px; background: #F2B84B; color: #0B1E33;
-      font-weight: 800; font-size: 0.98rem; text-decoration: none;
-      transition: var(--transition);
+      width: 100%; min-height: 60px; margin-top: 24px;
+      border-radius: 18px; background: var(--pg-red); color: #fff;
+      font-family: var(--font-display); font-weight: 800; font-size: 1.05rem;
+      text-decoration: none; border: none; cursor: pointer; transition: .2s;
     }
-    .kqr-open-btn:hover { background: var(--gold-deep); color: #fff; }
-    .pay-or-sep { text-align: center; color: var(--text-light); font-size: 0.8rem; margin: 14px 0 12px; }
-
-    /* ── Buttons row ── */
-    .pay-btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
-    .pay-btn-outline {
-      display: flex; align-items: center; justify-content: center; gap: 7px;
-      padding: 12px 16px; border-radius: var(--radius); font-size: 0.875rem; font-weight: 700;
-      background: #fff; color: var(--navy); border: 1.5px solid var(--border);
-      transition: var(--transition); cursor: pointer;
-    }
-    .pay-btn-outline:hover { border-color: var(--navy); background: var(--navy-pale); }
-    .pay-btn-outline.copied { border-color: var(--emerald); color: var(--emerald); }
-
-    /* ── Info grid ── */
-    .pay-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
-    .pay-info-box {
-      background: #fff; border: 1.5px solid var(--border); border-radius: var(--radius);
-      padding: 12px 14px;
-    }
-    .pay-info-box.gold-accent { border-color: var(--gold); border-left-width: 3px; grid-column: span 2; background: var(--gold-pale); }
-    .pay-info-label { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--text-muted); margin-bottom: 5px; }
-    .pay-info-value { font-size: 0.875rem; font-weight: 600; color: var(--ink); line-height: 1.4; word-break: break-all; }
-    .pay-comment-copy {
-      display: inline-flex; align-items: center; gap: 5px; margin-top: 8px;
-      font-size: 0.75rem; font-weight: 700; color: var(--gold-deep); cursor: pointer;
-      background: none; border: none; padding: 0; transition: var(--transition);
-    }
-    .pay-comment-copy:hover { color: var(--navy); }
+    .kqr-open-btn:hover { background: var(--pg-red-2); transform: translateY(-1px); }
+    .kqr-after { text-align: center; color: var(--pg-red); font-size: 0.9rem; font-weight: 700; margin-top: 18px; }
 
     /* ── Upload zone ── */
     .pay-upload {
-      border: 1.5px dashed var(--border); border-radius: var(--radius-lg);
-      padding: 28px 20px; text-align: center; cursor: pointer;
-      background: #fff; transition: var(--transition); position: relative;
-      margin-bottom: 16px;
+      border: 1.6px dashed #3A3E48; border-radius: 18px;
+      padding: 34px 20px; text-align: center; cursor: pointer;
+      background: var(--pg-card-2); transition: .2s; position: relative;
+      margin-top: 22px;
     }
-    .pay-upload:hover, .pay-upload.drag { border-color: var(--gold); background: var(--gold-pale); }
+    .pay-upload:hover, .pay-upload.drag { border-color: var(--pg-red); background: rgba(251,92,76,0.06); }
     .pay-upload input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
     .pay-upload-icon {
-      width: 44px; height: 44px; border-radius: 50%; background: var(--gold-pale);
-      display: flex; align-items: center; justify-content: center; margin: 0 auto 12px;
-      border: 1.5px solid var(--gold);
+      width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 14px; color: var(--pg-red);
     }
-    .pay-upload-title { font-weight: 700; color: var(--ink); margin-bottom: 4px; font-size: 0.9rem; }
-    .pay-upload-sub { font-size: 0.78rem; color: var(--text-muted); }
-    .pay-file-name { margin-top: 10px; font-size: 0.8rem; font-weight: 600; color: var(--navy); display: none; }
+    .pay-upload-title { font-weight: 700; color: var(--pg-text); font-size: 0.98rem; }
+    .pay-file-name { margin-top: 10px; font-size: 0.82rem; font-weight: 600; color: var(--pg-green); display: none; }
     .pay-file-name.visible { display: block; }
+
+    /* ── Comment ── */
+    .pay-comment { margin-top: 18px; padding: 12px 14px; border-radius: 14px; background: rgba(251,92,76,0.07); border: 1px solid rgba(251,92,76,0.22); }
+    .pay-comment-label { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--pg-red); margin-bottom: 4px; }
+    .pay-comment-value { font-size: 0.88rem; font-weight: 600; color: var(--pg-text); word-break: break-all; }
+    .pay-comment-copy { display: inline-flex; align-items: center; gap: 5px; margin-top: 8px; font-size: 0.76rem; font-weight: 700; color: var(--pg-red); cursor: pointer; background: none; border: none; padding: 0; }
 
     /* ── Submit button ── */
     .pay-submit {
-      width: 100%; padding: 15px; border-radius: var(--radius-lg);
-      font-family: var(--font-display); font-size: 1rem; font-weight: 700;
-      border: none; cursor: pointer; transition: var(--transition);
-      background: var(--gold); color: var(--ink);
-      box-shadow: var(--shadow-gold);
+      width: 100%; padding: 16px; border-radius: 16px; margin-top: 16px;
+      font-family: var(--font-display); font-size: 1rem; font-weight: 800;
+      border: none; cursor: pointer; transition: .2s;
+      background: var(--pg-red); color: #fff;
     }
-    .pay-submit:hover:not(:disabled) { background: var(--gold-deep); color: #fff; transform: translateY(-1px); }
-    .pay-submit:disabled { background: var(--border); color: var(--text-muted); cursor: not-allowed; box-shadow: none; }
-    .pay-submit.sent { background: var(--emerald); color: #fff; }
+    .pay-submit:hover:not(:disabled) { background: var(--pg-red-2); transform: translateY(-1px); }
+    .pay-submit:disabled { background: #2A2D35; color: var(--pg-muted); cursor: not-allowed; }
+    .pay-submit.sent { background: var(--pg-green); color: #06210F; }
+
+    /* ── Support button ── */
+    .pay-support {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      width: 100%; min-height: 56px; margin-top: 14px;
+      border-radius: 16px; background: var(--pg-card-2); color: var(--pg-text);
+      border: 1px solid var(--pg-border); font-weight: 700; font-size: 0.95rem;
+      text-decoration: none; transition: .2s;
+    }
+    .pay-support:hover { border-color: var(--pg-muted); }
 
     /* ── Success screen ── */
-    .pay-success { display: none; text-align: center; padding: 40px 20px; }
+    .pay-success { display: none; text-align: center; padding: 28px 8px 4px; }
     .pay-success.visible { display: block; }
     .pay-success-icon {
-      width: 72px; height: 72px; border-radius: 50%; background: var(--emerald-light);
-      display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;
-      font-size: 2rem; border: 2px solid var(--emerald);
+      width: 64px; height: 64px; border-radius: 50%; background: rgba(67,209,127,0.12);
+      display: flex; align-items: center; justify-content: center; margin: 0 auto 18px;
+      font-size: 1.8rem; color: var(--pg-green); border: 2px solid var(--pg-green);
     }
-    .pay-success h2 { font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; color: var(--ink); margin-bottom: 10px; }
-    .pay-success p { font-size: 0.88rem; color: var(--text-muted); line-height: 1.6; }
-
-    /* ── Footer note ── */
-    .pay-note {
-      text-align: center; margin-top: 20px; font-size: 0.78rem;
-      color: var(--text-light); line-height: 1.55;
-    }
-    .pay-note a { color: var(--gold-deep); font-weight: 600; }
-
-    /* ── Nav override (keep minimal) ── */
-    .nav-actions .btn-gold { background: var(--gold); color: var(--ink); border-color: var(--gold); }
+    .pay-success h2 { font-family: var(--font-display); font-size: 1.3rem; font-weight: 800; color: var(--pg-text); margin-bottom: 10px; }
+    .pay-success p { font-size: 0.88rem; color: var(--pg-muted); line-height: 1.6; }
 
     @media (max-width: 520px) {
-      .pay-btn-row { grid-template-columns: 1fr; }
-      .pay-info-grid { grid-template-columns: 1fr; }
-      .pay-info-box.gold-accent { grid-column: 1; }
+      .pay-block { padding: 26px 20px; border-radius: 22px; }
+      .kqr-frame { width: 212px; height: 212px; }
+      .kqr-frame #qrCanvas img, .kqr-frame #qrCanvas canvas { width: 182px !important; height: 182px !important; }
     }
   </style>
 </head>
@@ -176,81 +151,68 @@
     <!-- Back -->
     <a href="pricing.html" class="pay-back">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5m7-7-7 7 7 7"/></svg>
-      Тарифтерге оралу
+      Назад к тарифам
     </a>
 
-    <!-- Header -->
-    <div class="pay-header">
-      <div class="pay-badge">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="5" width="20" height="14" rx="3"/><path d="M2 10h20"/></svg>
-        Kaspi арқылы төлем
-      </div>
-      <div class="pay-title">Shyraq <span id="planName">Premium</span> қосу</div>
-      <div class="pay-sub">Kaspi QR-ды сканерлеп төлеңіз, сосын чекті жүктеңіз — админ растаған соң тариф іске қосылады.</div>
-    </div>
+    <!-- Card 1: Kaspi QR -->
+    <div class="pay-block">
+      <div class="pay-block-title">Оплата через Kaspi</div>
 
-    <!-- Plan strip -->
-    <div class="plan-strip">
-      <div>
-        <div class="plan-strip-name" id="planDesc">Premium — 1 ай</div>
-        <div style="font-size:.75rem;opacity:.6;margin-top:2px">Барлық мүмкіндіктер қосылады</div>
+      <div class="kqr-frame">
+        <div id="qrCanvas"></div>
+        <div class="kqr-logo"><img src="assets/logo.svg" alt="Shyraq"/></div>
       </div>
-      <div class="plan-strip-amount" id="planAmount">990 ₸</div>
-    </div>
 
-    <!-- Kaspi QR — негізгі төлем әдісі -->
-    <div class="kaspi-qr-pay">
-      <div class="kqr-title">Kaspi QR арқылы төлеңіз</div>
-      <div class="kqr-sub">Телефон камерасымен немесе Kaspi қолданбасымен QR-ды сканерлеңіз</div>
-      <div id="qrCanvas" class="kqr-canvas"></div>
-      <div class="kqr-amount" id="qrAmount">990 ₸</div>
+      <div class="kqr-amount"><span id="qrAmount">751</span><span class="tg">₸</span></div>
+      <div class="kqr-cashback">кэшбэк коинами после оплаты</div>
+
       <a id="kaspiPayLink" href="https://pay.kaspi.kz/pay/abp9nx0l" target="_blank" rel="noopener" class="kqr-open-btn">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-        Kaspi қолданбасында ашу
+        Открыть Kaspi и оплатить
       </a>
+
+      <div class="kqr-after">После оплаты — прикрепи чек ниже ↓</div>
     </div>
 
-    <!-- Комментарий (админ растауды жеңілдетеді) -->
-    <div class="pay-info-grid">
-      <div class="pay-info-box gold-accent">
-        <div class="pay-info-label">⚠️ Төлем кезінде/чекте көрсетіңіз</div>
-        <div class="pay-info-value" id="commentText">Жүктелуде...</div>
+    <!-- Card 2: attach receipt -->
+    <div class="pay-block glow">
+      <div class="pay-block-title">Прикрепить чек</div>
+      <div class="pay-block-sub">Загрузи PDF-чек из Kaspi</div>
+
+      <div class="pay-upload" id="uploadZone">
+        <input type="file" id="receiptInput" accept=".jpg,.jpeg,.png,.pdf"/>
+        <div class="pay-upload-icon">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25"/><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/></svg>
+        </div>
+        <div class="pay-upload-title">Нажми, чтобы загрузить файл</div>
+        <div class="pay-file-name" id="fileNameDisplay"></div>
+      </div>
+
+      <!-- Комментарий (помогает админу сопоставить оплату) -->
+      <div class="pay-comment">
+        <div class="pay-comment-label">⚠️ Укажи при оплате / в чеке</div>
+        <div class="pay-comment-value" id="commentText">—</div>
         <button class="pay-comment-copy" id="copyCommentBtn">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-          Көшіру
+          Скопировать
         </button>
       </div>
-    </div>
 
-    <div class="pay-or-sep">— төлеген соң чекті жүктеңіз 👇 —</div>
+      <!-- Submit (файл таңдалғанда көрінеді) -->
+      <button class="pay-submit" id="submitBtn" style="display:none" disabled>
+        Отправить чек
+      </button>
 
-    <!-- Upload zone -->
-    <div class="pay-upload" id="uploadZone">
-      <input type="file" id="receiptInput" accept=".jpg,.jpeg,.png,.pdf"/>
-      <div class="pay-upload-icon">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E0992E" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      <a class="pay-support" href="https://t.me/shyraq_support" target="_blank" rel="noopener">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        Написать в поддержку
+      </a>
+
+      <!-- Success (hidden by default) -->
+      <div class="pay-success" id="successScreen">
+        <div class="pay-success-icon">✓</div>
+        <h2>Чек отправлен!</h2>
+        <p>Чек отправлен на проверку.<br>Тариф активируется после подтверждения.<br>Обычно в течение 1–24 часов.</p>
       </div>
-      <div class="pay-upload-title">Kaspi чекін жүктеңіз</div>
-      <div class="pay-upload-sub">PDF, JPG немесе PNG — скриншот немесе ресми чек</div>
-      <div class="pay-file-name" id="fileNameDisplay"></div>
-    </div>
-
-    <!-- Submit -->
-    <button class="pay-submit" id="submitBtn" disabled>
-      Чекті жіберу
-    </button>
-
-    <!-- Success (hidden by default) -->
-    <div class="pay-success" id="successScreen">
-      <div class="pay-success-icon">✓</div>
-      <h2>Чек сәтті жіберілді!</h2>
-      <p>Сіздің чегіңіз тексеруге жіберілді.<br>Админ растаған соң тариф іске қосылады.<br>Күту уақыты: 1–24 сағат.</p>
-    </div>
-
-    <!-- Footer note -->
-    <div class="pay-note">
-      Сұрақ болса: <a href="https://t.me/shyraq_support" target="_blank">@shyraq_support</a> Telegram арнасы<br>
-      немесе <a href="mailto:itskunanbay@gmail.com">itskunanbay@gmail.com</a>
     </div>
 
   </div>
@@ -291,11 +253,9 @@
 
   /* ── DOM жаңарту ── */
   function fmt(n) { return n.toLocaleString('ru-RU') + ' ₸'; }
-  document.getElementById('planName').textContent   = plan.name;
-  document.getElementById('planDesc').textContent   = plan.desc;
-  document.getElementById('planAmount').textContent = fmt(plan.amount);
-  document.getElementById('qrAmount').textContent = fmt(plan.amount);
-  document.getElementById('commentText').textContent = commentText;
+  function setText(id, t) { var el = document.getElementById(id); if (el) el.textContent = t; }
+  setText('qrAmount', plan.amount.toLocaleString('ru-RU'));
+  setText('commentText', commentText);
 
   /* ── Kaspi QR (статикалық төлем сілтемесі) ── */
   var KASPI_PAY_URL = 'https://pay.kaspi.kz/pay/abp9nx0l';
@@ -307,9 +267,9 @@
       if (!holder) return;
       holder.innerHTML = '';
       if (window.QRCode) {
-        new window.QRCode(holder, { text: KASPI_PAY_URL, width: 210, height: 210, colorDark: '#0B1E33', colorLight: '#ffffff' });
+        new window.QRCode(holder, { text: KASPI_PAY_URL, width: 202, height: 202, colorDark: '#0B0C0F', colorLight: '#ffffff', correctLevel: window.QRCode.CorrectLevel ? window.QRCode.CorrectLevel.H : undefined });
       } else {
-        holder.innerHTML = '<a href="' + KASPI_PAY_URL + '" target="_blank" rel="noopener" style="color:var(--gold-deep);font-weight:700;">Kaspi-де ашу →</a>';
+        holder.innerHTML = '<a href="' + KASPI_PAY_URL + '" target="_blank" rel="noopener" style="color:#0B0C0F;font-weight:700;">Открыть в Kaspi →</a>';
       }
     }
     if (window.QRCode) return draw();
@@ -322,9 +282,9 @@
   /* ── Комментарийді көшіру ── */
   document.getElementById('copyCommentBtn').addEventListener('click', function () {
     navigator.clipboard.writeText(commentText).then(() => {
-      this.textContent = '✓ Көшірілді!';
+      this.textContent = '✓ Скопировано!';
       setTimeout(() => {
-        this.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Комментарийді көшіру';
+        this.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Скопировать';
       }, 2500);
     });
   });
@@ -339,9 +299,11 @@
     if (this.files.length > 0) {
       fileDisplay.textContent = '📎 ' + this.files[0].name;
       fileDisplay.classList.add('visible');
+      submitBtn.style.display = 'block';
       submitBtn.disabled = false;
     } else {
       fileDisplay.classList.remove('visible');
+      submitBtn.style.display = 'none';
       submitBtn.disabled = true;
     }
   });
@@ -365,7 +327,8 @@
   }
   function paySuccess() {
     submitBtn.classList.add('sent');
-    submitBtn.textContent = '✓ Расталды';
+    submitBtn.style.display = 'block';
+    submitBtn.textContent = '✓ Подтверждено';
     try {
       var u = JSON.parse(localStorage.getItem('shyraq_user') || 'null');
       if (plan.kind === 'results') {
@@ -407,18 +370,20 @@
   function payPending() {
     // Чек қабылданды, бірақ Premium әлі ҚОСЫЛМАЙДЫ (админ растағанша)
     submitBtn.classList.add('sent');
-    submitBtn.textContent = '✓ Жіберілді';
+    submitBtn.style.display = 'block';
+    submitBtn.textContent = '✓ Отправлено';
     submitBtn.disabled = true;
     var ss = document.getElementById('successScreen');
     ss.classList.add('visible');
-    var h = ss.querySelector('h2'); if (h) h.textContent = 'Чек тексеруге жіберілді!';
-    var p = ss.querySelector('p'); if (p) p.innerHTML = 'Чегіңіз админге жіберілді.<br><b>Premium админ растағаннан кейін қосылады.</b><br>Әдетте 1–24 сағат ішінде.';
+    var h = ss.querySelector('h2'); if (h) h.textContent = 'Чек отправлен на проверку!';
+    var p = ss.querySelector('p'); if (p) p.innerHTML = 'Чек отправлен админу.<br><b>Тариф активируется после подтверждения.</b><br>Обычно в течение 1–24 часов.';
     document.getElementById('uploadZone').style.display = 'none';
   }
   function payError(msg) {
     submitBtn.disabled = false;
     submitBtn.classList.remove('sent');
-    submitBtn.textContent = 'Чекті жіберу';
+    submitBtn.style.display = 'block';
+    submitBtn.textContent = 'Отправить чек';
     var box = document.getElementById('payError');
     if (!box) {
       box = document.createElement('div');
@@ -434,7 +399,7 @@
     if (!file) return;
     var pe = document.getElementById('payError'); if (pe) pe.remove();
     this.disabled = true;
-    this.textContent = API ? '⏳ Чек тексерілуде...' : '⏳ Жіберілуде...';
+    this.textContent = API ? '⏳ Проверка чека...' : '⏳ Отправка...';
 
     // Automated OCR verification when a backend (window.SHYRAQ_API) is configured
     if (API) {
