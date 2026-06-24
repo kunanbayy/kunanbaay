@@ -163,7 +163,7 @@
         <div class="kqr-logo"><img src="assets/logo.svg" alt="Shyraq"/></div>
       </div>
 
-      <div class="kqr-amount"><span id="qrAmount">751</span><span class="tg">₸</span></div>
+      <div class="kqr-amount"><span id="qrAmount">…</span> <span class="tg">₸</span></div>
       <div class="kqr-cashback">кэшбэк коинами после оплаты</div>
 
       <a id="kaspiPayLink" href="https://pay.kaspi.kz/pay/abp9nx0l" target="_blank" rel="noopener" class="kqr-open-btn">
@@ -257,8 +257,18 @@
   setText('qrAmount', plan.amount.toLocaleString('ru-RU'));
   setText('commentText', commentText);
 
-  /* ── Kaspi QR (статикалық төлем сілтемесі) ── */
-  var KASPI_PAY_URL = 'https://pay.kaspi.kz/pay/abp9nx0l';
+  /* ── Kaspi төлем сілтемелері (әр тарифке — өз сілтемесі) ──
+     Kaspi сілтемесінде сома ТҰРАҚТЫ болады. Әр баға үшін Kaspi қолданбасында
+     бөлек сілтеме жасап, төмендегі сәйкес жолға қойыңыз.
+     Әзірге барлық тариф бір сілтемеге бағытталған. */
+  var KASPI_LINKS = {
+    standard:  'https://pay.kaspi.kz/pay/abp9nx0l', // 2 990 ₸
+    once:      'https://pay.kaspi.kz/pay/abp9nx0l', // 2 990 ₸
+    career:    'https://pay.kaspi.kz/pay/abp9nx0l', // 4 990 ₸
+    premium:   'https://pay.kaspi.kz/pay/abp9nx0l', // 4 990 ₸
+    report990: 'https://pay.kaspi.kz/pay/abp9nx0l'  //   990 ₸
+  };
+  var KASPI_PAY_URL = KASPI_LINKS[planKey] || 'https://pay.kaspi.kz/pay/abp9nx0l';
   var payLinkEl = document.getElementById('kaspiPayLink');
   if (payLinkEl) payLinkEl.href = KASPI_PAY_URL;
   (function renderKaspiQr() {
