@@ -1,6 +1,6 @@
 // Shared TypeScript types for the Kaspi verification flow.
 
-export type PaymentStatus = 'pending' | 'paid' | 'failed' | 'expired';
+export type PaymentStatus = 'pending' | 'paid' | 'failed' | 'expired' | 'rejected';
 
 export interface PaymentOrder {
   id: string;
@@ -33,10 +33,10 @@ export interface Profile {
 export interface ExtractedReceipt {
   receiptNumber: string | null;
   amount: number | null;          // integer KZT
-  receiverName: string | null;
+  receiverName: string | null;    // merchant/recipient, expected to normalize to BAYGROUP
   payerName: string | null;       // sender / Жіберуші / Отправитель
   comment: string | null;         // purpose / Назначение / Комментарий
-  paymentDate: string | null;     // ISO 8601
+  paymentDate: string | null;     // Kaspi local time: DD.MM.YYYY HH:mm
   transferType: string | null;
   confidence: number;             // 0..1, model self-reported
   isReadable: boolean;            // false if blurry / cropped
@@ -54,6 +54,7 @@ export type VerifyFailReason =
   | 'duplicate_receipt'
   | 'amount_mismatch'
   | 'receiver_mismatch'
+  | 'receipt_outside_session'
   | 'not_your_receipt'
   | 'receipt_too_old'
   | 'ocr_error'

@@ -1,82 +1,152 @@
-import { config } from '../lib/config';
-import type { ExtractedReceipt, VerifyFailReason } from '../types';
+import { createHash } from 'crypto';
+import type { ExtractedReceipt, PaymentStatus, VerifyFailReason } from '../types';
 
 export interface ValidationOutcome {
   ok: boolean;
   reason?: VerifyFailReason;
   message: string;
+  receiptHash?: string;
+  paidAtIso?: string;
 }
 
 export interface ValidateOptions {
-  /** Тапсырыста бекітілген сома (тарифтің бағасы), ₸. */
   expectedAmount: number;
-  /** Тапсырыс жасалған сәт (ms) — 6-минут терезенің басы. */
   windowStartMs: number;
-  /** Терезе ұзақтығы (минут). */
   windowMinutes: number;
-  /** Қолданушының email-і — чек комментарийінде осы белгі бар-жоғын тексеру (бар болса). */
-  expectedEmail?: string;
+  orderStatus?: PaymentStatus;
 }
 
-const CLOCK_SKEW_MS = 2 * 60_000; // сағат айырмасына 2 минут жеңілдік
+const ALMATY_TIME_ZONE = 'Asia/Almaty';
+const CLOCK_SKEW_MS = 2 * 60_000;
+const MERCHANT_TRANSLATION: Record<string, string> = {
+  '0': 'O',
+  'А': 'A',
+  'В': 'B',
+  'Р': 'P',
+  'О': 'O',
+};
 
-/** Normalise a receiver name for tolerant comparison (case / spaces / punctuation). */
-function normName(s: string | null | undefined): string {
-  return (s || '')
-    .toLowerCase()
-    .replace(/\s+/g, ' ')
-    .replace(/[.,]/g, '')
-    .trim();
+function normalizeMerchant(value: unknown): string {
+  return String(value ?? '')
+    .toUpperCase()
+    .replace(/[^\p{L}\p{N}]/gu, '')
+    .replace(/[0АВРО]/g, (char) => MERCHANT_TRANSLATION[char] ?? char);
 }
 
-/**
- * Pure, side-effect-free validation of the OCR result against business rules.
- * Duplicate-receipt and order-status checks that need the DB are done in the route.
- */
+function parseAmount(value: unknown): { amount: number; cleanedAmount: string } {
+  const digits = String(value ?? '').replace(/[^\d]/g, '');
+  if (!digits) throw new Error('amount_parse_failed');
+  const amount = Number.parseInt(digits, 10);
+  if (!Number.isFinite(amount)) throw new Error('amount_parse_failed');
+  return { amount, cleanedAmount: String(amount) };
+}
+
+function almatyParts(date: Date): { year: number; month: number; day: number; hour: number; minute: number; second: number } {
+  const formatter = new Intl.DateTimeFormat('en-CA', {
+    timeZone: ALMATY_TIME_ZONE,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hourCycle: 'h23',
+  });
+  const parts = Object.fromEntries(formatter.formatToParts(date).map((part) => [part.type, part.value]));
+  return {
+    year: Number(parts.year),
+    month: Number(parts.month),
+    day: Number(parts.day),
+    hour: Number(parts.hour),
+    minute: Number(parts.minute),
+    second: Number(parts.second),
+  };
+}
+
+function almatyDateKey(date: Date): string {
+  const p = almatyParts(date);
+  return `${p.year}-${String(p.month).padStart(2, '0')}-${String(p.day).padStart(2, '0')}`;
+}
+
+function timeZoneOffsetMinutes(date: Date): number {
+  const p = almatyParts(date);
+  const asUtc = Date.UTC(p.year, p.month - 1, p.day, p.hour, p.minute, p.second);
+  return (asUtc - date.getTime()) / 60000;
+}
+
+function parseKaspiPaidAt(value: unknown): Date {
+  const raw = String(value ?? '').trim();
+  const match = /^(\d{2})\.(\d{2})\.(\d{4}) (\d{2}):(\d{2})$/.exec(raw);
+  if (!match) throw new Error('paid_at_parse_failed');
+
+  const [, dd, mm, yyyy, hh, min] = match;
+  const localAsUtc = Date.UTC(Number(yyyy), Number(mm) - 1, Number(dd), Number(hh), Number(min), 0);
+  const offset = timeZoneOffsetMinutes(new Date(localAsUtc));
+  return new Date(localAsUtc - offset * 60_000);
+}
+
+function hashTime(date: Date): string {
+  const p = almatyParts(date);
+  return [
+    p.year,
+    String(p.month).padStart(2, '0'),
+    String(p.day).padStart(2, '0'),
+    String(p.hour).padStart(2, '0'),
+    String(p.minute).padStart(2, '0'),
+  ].join('');
+}
+
 export function validateReceipt(r: ExtractedReceipt, opts: ValidateOptions): ValidationOutcome {
-  if (!r.isReadable) {
-    return { ok: false, reason: 'unreadable', message: 'Чек анық емес немесе Kaspi чегі емес. Сапалы скриншот/PDF жүктеңіз.' };
+  if (opts.orderStatus === 'expired') {
+    return { ok: false, reason: 'order_not_pending', message: 'Чек expired session-ге тиесілі болса' };
   }
-  if (r.looksEdited) {
-    return { ok: false, reason: 'looks_edited', message: 'Чекте өзгертілу белгілері байқалды. Түпнұсқа чекті жүктеңіз.' };
+
+  const normalizedMerchant = normalizeMerchant(r.receiverName);
+  if (!normalizedMerchant.includes('BAYGROUP')) {
+    return { ok: false, reason: 'receiver_mismatch', message: 'Сатушы сәйкес емес' };
   }
-  if (r.confidence < config.minOcrConfidence) {
-    return { ok: false, reason: 'low_confidence', message: 'Чекті нақты оқу мүмкін болмады. Анығырақ суретпен қайталаңыз.' };
+
+  let receiptAmount: number;
+  let cleanedAmount: string;
+  let expectedAmount: number;
+  try {
+    ({ amount: receiptAmount, cleanedAmount } = parseAmount(r.amount));
+    ({ amount: expectedAmount } = parseAmount(opts.expectedAmount));
+  } catch {
+    return { ok: false, reason: 'amount_mismatch', message: 'Сома сәйкес емес' };
   }
-  if (!r.receiptNumber) {
-    return { ok: false, reason: 'no_receipt_number', message: 'Чек нөмірі табылмады.' };
+  if (receiptAmount !== expectedAmount) {
+    return { ok: false, reason: 'amount_mismatch', message: 'Сома сәйкес емес' };
   }
-  // Сома — тапсырыста бекітілген тариф бағасына тең болуы керек
-  if (r.amount !== opts.expectedAmount) {
-    return { ok: false, reason: 'amount_mismatch', message: `Сома сәйкес емес. Қажет: ${opts.expectedAmount} ₸, чекте: ${r.amount ?? '—'} ₸.` };
+
+  let paidAt: Date;
+  try {
+    paidAt = parseKaspiPaidAt(r.paymentDate);
+  } catch {
+    return { ok: false, reason: 'receipt_outside_session', message: 'Төлем уақыты сәйкес емес' };
   }
-  // Алушы тексеруі — тек EXPECTED_RECEIVER орнатылған болса ғана
-  if (config.expectedReceiver && normName(r.receiverName) !== normName(config.expectedReceiver)) {
-    return { ok: false, reason: 'receiver_mismatch', message: `Алушы сәйкес емес. Аударым «${config.expectedReceiver}» атына жасалуы керек.` };
+
+  const startedAt = new Date(opts.windowStartMs);
+  if (almatyDateKey(paidAt) !== almatyDateKey(startedAt)) {
+    return { ok: false, reason: 'receipt_outside_session', message: 'Чек күні басқа күн болса' };
   }
-  // Чек осы қолданушыға тиесілі ме — комментарийде email белгісі болса тексереміз.
-  // (Комментарий болмаса — өткіземіз; негізгі қорғаныс: сома + уақыт терезесі + hash.)
-  if (opts.expectedEmail && r.comment && r.comment.trim()) {
-    const c = r.comment.toLowerCase();
-    const email = opts.expectedEmail.toLowerCase().trim();
-    const local = email.split('@')[0];
-    if (!c.includes(email) && !(local.length >= 3 && c.includes(local))) {
-      return { ok: false, reason: 'not_your_receipt', message: 'Чек осы тапсырысқа тиесілі емес. Төлем комментарийіне өз email-іңізді жазыңыз.' };
-    }
+
+  const validFrom = opts.windowStartMs - CLOCK_SKEW_MS;
+  const validUntil = opts.windowStartMs + opts.windowMinutes * 60_000 + CLOCK_SKEW_MS;
+  if (paidAt.getTime() < validFrom || paidAt.getTime() > validUntil) {
+    return { ok: false, reason: 'receipt_outside_session', message: 'Төлем уақыты сәйкес емес' };
   }
-  // Чектегі күн/уақыт — тапсырыстың 6-минут терезесінің ішінде болуы керек
-  const when = r.paymentDate ? Date.parse(r.paymentDate) : NaN;
-  if (Number.isNaN(when)) {
-    return { ok: false, reason: 'receipt_too_old', message: 'Чек күні/уақыты анықталмады.' };
+
+  const receiptNumber = String(r.receiptNumber ?? '').split(/\s+/).join('');
+  if (!receiptNumber) {
+    return { ok: false, reason: 'no_receipt_number', message: 'Чек нөмірі оқылмады' };
   }
-  const windowStart = opts.windowStartMs - CLOCK_SKEW_MS;
-  const windowEnd = opts.windowStartMs + opts.windowMinutes * 60_000 + CLOCK_SKEW_MS;
-  if (when < windowStart || when > windowEnd) {
-    return {
-      ok: false,
-      reason: 'receipt_too_old',
-      message: `Чектегі уақыт төлем терезесіне (${opts.windowMinutes} мин) сай емес. Тапсырыс жасалған соң ${opts.windowMinutes} минут ішінде төлеп, дәл сол чекті жүктеңіз.`,
-    };
-  }
-  return { ok: true, message: 'Чек расталды.' };
+
+  const hashPayload = receiptNumber + cleanedAmount + hashTime(paidAt) + normalizedMerchant;
+  return {
+    ok: true,
+    message: 'Төлем қабылданды',
+    receiptHash: createHash('sha256').update(hashPayload, 'utf8').digest('hex'),
+    paidAtIso: paidAt.toISOString(),
+  };
 }

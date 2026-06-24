@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createHash } from 'crypto';
 import { supabaseAdmin } from '../../../../lib/supabase';
 import { config, corsHeaders } from '../../../../lib/config';
 import { log, logVerification } from '../../../../lib/logger';
@@ -73,20 +72,9 @@ export async function POST(req: NextRequest) {
       return fail('order_not_pending', 'Бұл тапсырыс бойынша төлем бұрын расталған.');
     }
 
-    // 6-минут терезе бітсе — тапсырысты «expired» етеміз, чекті қабылдамаймыз
     const windowStartMs = Date.parse(order.created_at);
-    const windowMs = config.receiptMaxAgeMinutes * 60_000;
-    if (Date.now() > windowStartMs + windowMs) {
-      await supabaseAdmin.from('payment_orders')
-        .update({ status: 'expired', updated_at: new Date().toISOString() })
-        .eq('id', orderId);
-      await logVerification({ userId, orderId, success: false, reason: 'receipt_too_old' });
-      return fail('receipt_too_old', `Төлем терезесі (${config.receiptMaxAgeMinutes} мин) бітті. Тапсырыс отменен — қайта бастаңыз.`);
-    }
 
-    // 2) Чектің файл-хэші (anti-fraud) + жалпы өрістер
     const buffer = Buffer.from(await file.arrayBuffer());
-    const receiptHash = createHash('sha256').update(buffer).digest('hex');
     const nowIso = new Date().toISOString();
     const baseFields = {
       receipt_url: receiptUrl,
@@ -94,26 +82,12 @@ export async function POST(req: NextRequest) {
       payment_method: paymentMethod || undefined,
     };
 
-    // Anti-fraud: дәл сондай файл (хэш) бұрын қолданылған ба?
-    const { data: hashHit } = await supabaseAdmin
-      .from('payment_orders')
-      .select('id')
-      .eq('receipt_hash', receiptHash)
-      .neq('id', orderId)
-      .maybeSingle();
-    if (hashHit) {
-      await markRejected(orderId, 'Бұл чек бұрын қолданылған', baseFields); // хэшті қайта жазбаймыз (unique)
-      await logVerification({ userId, orderId, success: false, reason: 'duplicate_receipt', receiptHash });
-      return fail('duplicate_receipt', 'Бұл чек бұрын қолданылған.');
-    }
-
-    // 3) OCR
     let extracted;
     try {
       extracted = await extractReceipt(buffer, file.type);
     } catch (e) {
       log('error', 'ocr_failed', e);
-      await logVerification({ userId, orderId, success: false, reason: 'ocr_error', receiptHash });
+      await logVerification({ userId, orderId, success: false, reason: 'ocr_error' });
       return fail('ocr_error', 'Чекті оқу мүмкін болмады. Қайталап көріңіз.', 502); // pending қалады
     }
 
@@ -123,27 +97,35 @@ export async function POST(req: NextRequest) {
       payer_name: extracted.payerName,
       receipt_comment: extracted.comment,
       receipt_amount: extracted.amount,
-      receipt_paid_at: extracted.paymentDate,
     };
 
-    // Қолданушының email-і (чек комментарийін салыстыру үшін)
-    const { data: prof } = await supabaseAdmin
-      .from('profiles').select('email').eq('id', userId).maybeSingle();
-
-    // 4) business rules — сома тапсырыстан, уақыт тапсырыс терезесінен, тиесілілік
     const v = validateReceipt(extracted, {
       expectedAmount: order.amount,
       windowStartMs,
       windowMinutes: config.receiptMaxAgeMinutes,
-      expectedEmail: prof?.email || undefined,
+      orderStatus: order.status,
     });
     if (!v.ok) {
-      await logVerification({ userId, orderId, success: false, reason: v.reason, extracted, receiptHash });
+      await logVerification({ userId, orderId, success: false, reason: v.reason, extracted });
       if (v.reason && RETRYABLE.has(v.reason)) {
         return fail(v.reason, v.message); // сапа мәселесі — pending, қайта жүктеуге болады
       }
-      await markRejected(orderId, v.message, { ...baseFields, ...ocrFields, receipt_hash: receiptHash });
+      await markRejected(orderId, v.message, { ...baseFields, ...ocrFields });
       return fail(v.reason, v.message);
+    }
+
+    const receiptHash = v.receiptHash!;
+    const receiptPaidAt = v.paidAtIso!;
+    const { data: hashHit } = await supabaseAdmin
+      .from('payment_orders')
+      .select('id')
+      .eq('receipt_hash', receiptHash)
+      .neq('id', orderId)
+      .maybeSingle();
+    if (hashHit) {
+      await markRejected(orderId, 'Бұл чек бұрын қолданылған', { ...baseFields, ...ocrFields, receipt_paid_at: receiptPaidAt });
+      await logVerification({ userId, orderId, success: false, reason: 'duplicate_receipt', extracted, receiptHash });
+      return fail('duplicate_receipt', 'Бұл чек бұрын қолданылған');
     }
 
     // 5) record transaction (unique receipt_number = race-safe final guard)
@@ -153,7 +135,7 @@ export async function POST(req: NextRequest) {
       receipt_number: extracted.receiptNumber!,
       amount: extracted.amount!,
       receiver_name: extracted.receiverName,
-      paid_at: extracted.paymentDate!,
+      paid_at: receiptPaidAt,
     });
     if (txErr) {
       const dup = (txErr as { code?: string }).code === '23505';
@@ -170,6 +152,7 @@ export async function POST(req: NextRequest) {
         approved_at: nowIso,
         admin_review_status: 'auto_approved',
         receipt_hash: receiptHash,
+        receipt_paid_at: receiptPaidAt,
         ...baseFields,
         ...ocrFields,
         updated_at: nowIso,

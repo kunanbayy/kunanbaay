@@ -16,6 +16,8 @@ do $$ begin
   create type public.payment_status as enum ('pending','paid','failed','expired');
 exception when duplicate_object then null; end $$;
 
+alter type public.payment_status add value if not exists 'rejected';
+
 create table if not exists public.payment_orders (
   id          uuid primary key default gen_random_uuid(),
   user_id     uuid not null references auth.users(id) on delete cascade,
@@ -28,6 +30,24 @@ create table if not exists public.payment_orders (
   created_at  timestamptz not null default now(),
   updated_at  timestamptz not null default now()
 );
+
+alter table public.payment_orders add column if not exists expires_at timestamptz;
+alter table public.payment_orders add column if not exists receipt_url text;
+alter table public.payment_orders add column if not exists receipt_uploaded_at timestamptz;
+alter table public.payment_orders add column if not exists receipt_hash text;
+alter table public.payment_orders add column if not exists receipt_paid_at timestamptz;
+alter table public.payment_orders add column if not exists receipt_amount integer;
+alter table public.payment_orders add column if not exists payer_name text;
+alter table public.payment_orders add column if not exists receipt_comment text;
+alter table public.payment_orders add column if not exists receiver_name text;
+alter table public.payment_orders add column if not exists payment_method text;
+alter table public.payment_orders add column if not exists approved_at timestamptz;
+alter table public.payment_orders add column if not exists rejected_reason text;
+alter table public.payment_orders add column if not exists admin_review_status text default 'pending';
+alter table public.payment_orders add column if not exists tariff_id text;
+
+create unique index if not exists payment_orders_receipt_hash_unique
+  on public.payment_orders(receipt_hash) where receipt_hash is not null;
 
 -- Verified payments. receipt_number is UNIQUE → blocks reuse of the same receipt.
 create table if not exists public.payment_transactions (
