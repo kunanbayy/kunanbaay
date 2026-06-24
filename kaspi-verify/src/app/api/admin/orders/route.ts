@@ -26,7 +26,7 @@ export async function GET(req: NextRequest) {
   // Соңғы 200 тапсырыс + сәйкес транзакция (расталған чек) мәліметі
   const { data: orders, error } = await supabaseAdmin
     .from('payment_orders')
-    .select('id, user_id, plan, tariff_id, amount, status, payment_method, created_at, expires_at, updated_at, receipt_url, receipt_uploaded_at, receipt_paid_at, approved_at, rejected_reason, admin_review_status, payment_transactions(receipt_number, paid_at)')
+    .select('id, user_id, plan, tariff_id, amount, status, payment_method, created_at, expires_at, updated_at, receipt_url, receipt_uploaded_at, receipt_paid_at, receipt_amount, payer_name, receipt_comment, receiver_name, approved_at, rejected_reason, admin_review_status, payment_transactions(receipt_number, paid_at)')
     .order('created_at', { ascending: false })
     .limit(200);
 
@@ -75,6 +75,10 @@ export async function GET(req: NextRequest) {
       receiptUrl: o.receipt_url ?? null,
       receiptUploadedAt: o.receipt_uploaded_at ?? null,
       receiptPaidAt: o.receipt_paid_at ?? tx?.paid_at ?? null,
+      parsedAmount: o.receipt_amount ?? null,
+      payerName: o.payer_name ?? null,
+      receiverName: o.receiver_name ?? null,
+      comment: o.receipt_comment ?? null,
       approvedAt: o.approved_at ?? null,
       rejectedReason: o.rejected_reason ?? null,
       startedAt: o.created_at,

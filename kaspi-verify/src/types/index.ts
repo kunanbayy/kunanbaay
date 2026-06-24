@@ -34,6 +34,8 @@ export interface ExtractedReceipt {
   receiptNumber: string | null;
   amount: number | null;          // integer KZT
   receiverName: string | null;
+  payerName: string | null;       // sender / Жіберуші / Отправитель
+  comment: string | null;         // purpose / Назначение / Комментарий
   paymentDate: string | null;     // ISO 8601
   transferType: string | null;
   confidence: number;             // 0..1, model self-reported
@@ -52,6 +54,7 @@ export type VerifyFailReason =
   | 'duplicate_receipt'
   | 'amount_mismatch'
   | 'receiver_mismatch'
+  | 'not_your_receipt'
   | 'receipt_too_old'
   | 'ocr_error'
   | 'internal_error';

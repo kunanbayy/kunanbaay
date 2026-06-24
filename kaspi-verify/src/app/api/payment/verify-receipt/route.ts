@@ -117,18 +117,32 @@ export async function POST(req: NextRequest) {
       return fail('ocr_error', 'Чекті оқу мүмкін болмады. Қайталап көріңіз.', 502); // pending қалады
     }
 
-    // 4) business rules — сома тапсырыстан, уақыт тапсырыс терезесінен
+    // Чектен оқылған деректер (admin көрінісі + сақтау)
+    const ocrFields = {
+      receiver_name: extracted.receiverName,
+      payer_name: extracted.payerName,
+      receipt_comment: extracted.comment,
+      receipt_amount: extracted.amount,
+      receipt_paid_at: extracted.paymentDate,
+    };
+
+    // Қолданушының email-і (чек комментарийін салыстыру үшін)
+    const { data: prof } = await supabaseAdmin
+      .from('profiles').select('email').eq('id', userId).maybeSingle();
+
+    // 4) business rules — сома тапсырыстан, уақыт тапсырыс терезесінен, тиесілілік
     const v = validateReceipt(extracted, {
       expectedAmount: order.amount,
       windowStartMs,
       windowMinutes: config.receiptMaxAgeMinutes,
+      expectedEmail: prof?.email || undefined,
     });
     if (!v.ok) {
       await logVerification({ userId, orderId, success: false, reason: v.reason, extracted, receiptHash });
       if (v.reason && RETRYABLE.has(v.reason)) {
         return fail(v.reason, v.message); // сапа мәселесі — pending, қайта жүктеуге болады
       }
-      await markRejected(orderId, v.message, { ...baseFields, receipt_hash: receiptHash });
+      await markRejected(orderId, v.message, { ...baseFields, ...ocrFields, receipt_hash: receiptHash });
       return fail(v.reason, v.message);
     }
 
@@ -156,8 +170,8 @@ export async function POST(req: NextRequest) {
         approved_at: nowIso,
         admin_review_status: 'auto_approved',
         receipt_hash: receiptHash,
-        receipt_paid_at: extracted.paymentDate,
         ...baseFields,
+        ...ocrFields,
         updated_at: nowIso,
       })
       .eq('id', orderId);

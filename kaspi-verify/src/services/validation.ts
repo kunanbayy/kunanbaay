@@ -14,6 +14,8 @@ export interface ValidateOptions {
   windowStartMs: number;
   /** Терезе ұзақтығы (минут). */
   windowMinutes: number;
+  /** Қолданушының email-і — чек комментарийінде осы белгі бар-жоғын тексеру (бар болса). */
+  expectedEmail?: string;
 }
 
 const CLOCK_SKEW_MS = 2 * 60_000; // сағат айырмасына 2 минут жеңілдік
@@ -51,6 +53,16 @@ export function validateReceipt(r: ExtractedReceipt, opts: ValidateOptions): Val
   // Алушы тексеруі — тек EXPECTED_RECEIVER орнатылған болса ғана
   if (config.expectedReceiver && normName(r.receiverName) !== normName(config.expectedReceiver)) {
     return { ok: false, reason: 'receiver_mismatch', message: `Алушы сәйкес емес. Аударым «${config.expectedReceiver}» атына жасалуы керек.` };
+  }
+  // Чек осы қолданушыға тиесілі ме — комментарийде email белгісі болса тексереміз.
+  // (Комментарий болмаса — өткіземіз; негізгі қорғаныс: сома + уақыт терезесі + hash.)
+  if (opts.expectedEmail && r.comment && r.comment.trim()) {
+    const c = r.comment.toLowerCase();
+    const email = opts.expectedEmail.toLowerCase().trim();
+    const local = email.split('@')[0];
+    if (!c.includes(email) && !(local.length >= 3 && c.includes(local))) {
+      return { ok: false, reason: 'not_your_receipt', message: 'Чек осы тапсырысқа тиесілі емес. Төлем комментарийіне өз email-іңізді жазыңыз.' };
+    }
   }
   // Чектегі күн/уақыт — тапсырыстың 6-минут терезесінің ішінде болуы керек
   const when = r.paymentDate ? Date.parse(r.paymentDate) : NaN;

@@ -903,7 +903,8 @@ async function loadOcrOrders(){
         date:(o.startedAt||o.createdAt||'').slice(0,10), fails:o.failedAttempts||0, src:'ocr',
         method:o.paymentMethod||'qr', reason:o.rejectedReason||'', review:o.adminReviewStatus||'pending',
         uploadedAt:o.receiptUploadedAt||'', paidAt:o.receiptPaidAt||'',
-        startedAt:o.startedAt||'', expiresAt:o.expiresAt||''
+        startedAt:o.startedAt||'', expiresAt:o.expiresAt||'',
+        payer:o.payerName||'', comment:o.comment||'', parsedAmount:o.parsedAmount, receiver:o.receiverName||''
       };
     });
   }catch(e){ return []; }
@@ -979,8 +980,17 @@ function renderPayments(){
   var list = pays.map((p,i)=>({p,i})).filter(x=> !q || ((x.p.name||'')+' '+(x.p.plan||'')).toLowerCase().includes(q));
   $('paymentsBody').innerHTML = list.map(({p,i})=>{
     var meth = p.src==='ocr' ? (p.method==='kaspi_link'?'Kaspi сілтеме':'QR') : '';
+    var pinfo = [];
+    if(p.src==='ocr'){
+      if(p.parsedAmount!=null) pinfo.push('сома: '+nf(p.parsedAmount)+' ₸');
+      if(p.paidAt) pinfo.push('төленген: '+esc(String(p.paidAt).replace('T',' ').slice(0,16)));
+      if(p.payer) pinfo.push('төлеуші: '+esc(p.payer));
+    }
     var sub = p.src==='ocr'
-      ? '🤖 Kaspi OCR · '+meth+(p.fails?(' · '+p.fails+' сәтсіз'):'')+(p.reason?('<br><span style="color:#B91C1C">'+esc(p.reason)+'</span>'):'')
+      ? '🤖 Kaspi OCR · '+meth+(p.fails?(' · '+p.fails+' сәтсіз'):'')
+        + (pinfo.length?('<br><span style="color:var(--muted)">'+pinfo.join(' · ')+'</span>'):'')
+        + (p.comment?('<br><span style="color:var(--muted)">💬 '+esc(p.comment)+'</span>'):'')
+        + (p.reason?('<br><span style="color:#B91C1C">⚠ '+esc(p.reason)+'</span>'):'')
       : (p.src==='sb'?'☁️ дерекқор':'');
     var reviewBtns = (p.src==='ocr')
       ? `<button class="ibtn ok" onclick="reviewOcr('${p.id}','approve')" title="Растау"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></button>

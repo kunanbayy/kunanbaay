@@ -16,6 +16,8 @@ const PROMPT = `Extract these fields from the receipt image and return JSON with
   "receiptNumber": string|null,   // the long transaction/check number, digits only
   "amount": number|null,          // integer tenge, no spaces or symbols (e.g. 990)
   "receiverName": string|null,    // recipient as printed (e.g. "Мадина Е.")
+  "payerName": string|null,       // sender/payer name (Жіберуші / Отправитель / От кого), as printed
+  "comment": string|null,         // payment purpose / comment (Назначение / Комментарий / Ескертпе), full text
   "paymentDate": string|null,     // ISO 8601 with timezone if visible, else "YYYY-MM-DDTHH:mm:ss"
   "transferType": string|null,
   "confidence": number,           // 0..1 — how sure you are the fields are correct
@@ -75,6 +77,8 @@ export async function extractReceipt(buffer: Buffer, mime: string): Promise<Extr
     receiptNumber: digits(parsed.receiptNumber) || null,
     amount: num(parsed.amount),
     receiverName: (parsed.receiverName as string) ?? null,
+    payerName: (parsed.payerName as string) ?? null,
+    comment: (parsed.comment as string) ?? null,
     paymentDate: (parsed.paymentDate as string) ?? null,
     transferType: (parsed.transferType as string) ?? null,
     confidence: typeof parsed.confidence === 'number' ? parsed.confidence : 0,

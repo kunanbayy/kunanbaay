@@ -48,6 +48,13 @@ create unique index if not exists uq_orders_receipt_hash
 
 create index if not exists idx_orders_user_status on public.payment_orders(user_id, status);
 
--- 4) Чек аудиті (verification_logs кеңейтілді)
+-- 4) Чектен оқылған деректер (admin көрінісі үшін)
+alter table public.payment_orders
+  add column if not exists payer_name text,
+  add column if not exists receipt_comment text,
+  add column if not exists receiver_name text,
+  add column if not exists receipt_amount integer;
+
+-- 5) Чек аудиті (verification_logs кеңейтілді)
 alter table public.verification_logs
   add column if not exists receipt_hash text;
