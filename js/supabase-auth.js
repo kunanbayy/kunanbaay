@@ -74,6 +74,7 @@
     saveLocalAccount(p, name);
 
     // Supabase-қа тіркеу (бапталса)
+    let authId = null;
     if (sb) {
       try {
         const { data, error } = await sb.auth.signUp({
@@ -85,12 +86,13 @@
           console.warn('Supabase signUp:', error.message);
         }
         if (data && data.user) {
+          authId = data.user.id;   // Supabase auth uuid — төлем backend-іне қажет
           try { await sb.from('profiles').upsert({ id: data.user.id, name, email: p.email, class_year: p.classYear || '', city: p.city || '' }); } catch (e) {}
         }
       } catch (e) { console.warn('Supabase signUp failed, using local:', e); }
     }
 
-    const user = { name, email: p.email, classYear: p.classYear || '', city: p.city || '', plan: 'free' };
+    const user = { id: authId, name, email: p.email, classYear: p.classYear || '', city: p.city || '', plan: 'free' };
     setSession(user);
     await recordRegistration(user, 'register');
     return user;
@@ -110,7 +112,7 @@
             const { data: pr } = await sb.from('profiles').select('*').eq('id', data.user.id).maybeSingle();
             if (pr) { name = pr.name || name; classYear = pr.class_year || ''; city = pr.city || ''; }
           } catch (e) {}
-          const user = { name, email, classYear, city, plan: 'free' };
+          const user = { id: data.user.id, name, email, classYear, city, plan: 'free' };
           setSession(user);
           await recordRegistration(user, 'login');
           return user;

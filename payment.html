@@ -373,6 +373,24 @@
     try { var u = JSON.parse(localStorage.getItem('shyraq_user') || 'null'); if (u && u.id) return u.id; } catch (e) {}
     return window.SHYRAQ_USER_ID || '';
   }
+  // Ескі сессияларда shyraq_user.id болмауы мүмкін → Supabase auth-тан алып, backfill жасаймыз
+  async function resolveUserId() {
+    var direct = getUserId();
+    if (direct) return direct;
+    try {
+      if (window.SHYRAQ_SUPABASE && window.supabase) {
+        var c = window.supabase.createClient(window.SHYRAQ_SUPABASE.url, window.SHYRAQ_SUPABASE.anonKey);
+        var r = await c.auth.getUser();
+        var uid = r && r.data && r.data.user && r.data.user.id;
+        if (uid) {
+          window.SHYRAQ_USER_ID = uid;
+          try { var u = JSON.parse(localStorage.getItem('shyraq_user') || 'null'); if (u && !u.id) { u.id = uid; localStorage.setItem('shyraq_user', JSON.stringify(u)); } } catch (e) {}
+          return uid;
+        }
+      }
+    } catch (e) {}
+    return '';
+  }
   function paySuccess() {
     submitBtn.classList.add('sent');
     submitBtn.style.display = 'block';
@@ -468,7 +486,7 @@
     // Automated OCR verification when a backend (window.SHYRAQ_API) is configured
     if (API) {
       try {
-        const userId = getUserId();
+        const userId = await resolveUserId();
         if (!userId) { payError('Авто-растау үшін алдымен жүйеге кіріңіз (тіркелу қажет).'); return; }
         // Тапсырыс бет ашылғанда жасалады (currentOrderId). Болмаса — осында жасаймыз.
         var orderId = currentOrderId;
@@ -622,7 +640,7 @@
   // болмаса жаңа тапсырыс ашамыз. 6-мин терезе бэкендтен синхрондалады.
   (async function initSession() {
     if (!API || window.__payExpired) return;
-    var userId = getUserId();
+    var userId = await resolveUserId();
     if (!userId) return;                 // тіркелмеген болса — жіберу кезінде ескертіледі
     try {
       // 1) қайта кірсе — соңғы белсенді сессия
