@@ -1,6 +1,6 @@
 // Shared TypeScript types for the Kaspi verification flow.
 
-export type PaymentStatus = 'pending' | 'paid' | 'failed' | 'expired' | 'rejected';
+export type PaymentStatus = 'pending' | 'pending_review' | 'approved' | 'paid' | 'failed' | 'expired' | 'rejected';
 
 export interface PaymentOrder {
   id: string;

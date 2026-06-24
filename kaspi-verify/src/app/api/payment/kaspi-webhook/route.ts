@@ -3,7 +3,6 @@ import crypto from 'crypto';
 import { supabaseAdmin } from '../../../../lib/supabase';
 import { config } from '../../../../lib/config';
 import { log, logVerification } from '../../../../lib/logger';
-import { activatePremium } from '../../../../services/premium';
 
 export const runtime = 'nodejs';
 
@@ -30,7 +29,7 @@ export async function POST(req: NextRequest) {
   let p: any;
   try { p = JSON.parse(raw); } catch { return NextResponse.json({ ok: false }, { status: 400 }); }
 
-  // We only activate on success; other events are acknowledged & logged.
+  // We only record on success; admin approval is still required for unlocking.
   if (p.event !== 'payment.success') {
     log('info', 'webhook_event', { event: p.event, paymentId: p.paymentId });
     return NextResponse.json({ ok: true, ignored: p.event });
@@ -46,14 +45,14 @@ export async function POST(req: NextRequest) {
       .maybeSingle();
 
     if (!order) { log('warn', 'webhook_order_not_found', { paymentId }); return NextResponse.json({ ok: true }); }
-    if (order.status === 'paid') return NextResponse.json({ ok: true, already: true });
+    if (order.status === 'approved' || order.status === 'paid') return NextResponse.json({ ok: true, already: true });
 
     if (typeof p.amount === 'number' && p.amount !== order.amount) {
       await logVerification({ userId: order.user_id, orderId: order.id, success: false, reason: 'amount_mismatch' });
       return NextResponse.json({ ok: false, reason: 'amount_mismatch' }, { status: 422 });
     }
 
-    // record + activate (receipt_number = paymentId → unique, one activation per payment)
+    // record payment proof (receipt_number = paymentId → unique) but do not unlock here.
     const { error: txErr } = await supabaseAdmin.from('payment_transactions').insert({
       payment_order_id: order.id,
       user_id: order.user_id,
@@ -67,14 +66,18 @@ export async function POST(req: NextRequest) {
     }
     if (txErr) throw txErr;
 
-    const premiumUntil = await activatePremium(order.user_id);
     await supabaseAdmin.from('payment_orders')
-      .update({ status: 'paid', updated_at: new Date().toISOString() })
+      .update({
+        status: 'pending_review',
+        admin_review_status: 'pending_review',
+        receipt_paid_at: p.timestamp || new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      })
       .eq('id', order.id);
 
     await logVerification({ userId: order.user_id, orderId: order.id, success: true });
-    log('info', 'premium_activated_via_qr', { orderId: order.id, paymentId, premiumUntil });
-    return NextResponse.json({ ok: true, premiumUntil });
+    log('info', 'webhook_pending_review', { orderId: order.id, paymentId });
+    return NextResponse.json({ ok: true, status: 'pending_review' });
   } catch (e) {
     log('error', 'webhook_process_failed', e);
     return NextResponse.json({ ok: false }, { status: 500 });

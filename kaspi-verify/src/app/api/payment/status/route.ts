@@ -21,15 +21,16 @@ export async function GET(req: NextRequest) {
 
   if (!order) return NextResponse.json({ ok: false, message: 'not found' }, { status: 404, headers: corsHeaders });
 
+  const isApproved = order.status === 'approved' || order.status === 'paid';
   let premiumUntil: string | null = null;
-  if (order.status === 'paid') {
+  if (isApproved) {
     const { data: profile } = await supabaseAdmin
       .from('profiles').select('premium_until').eq('id', order.user_id).maybeSingle();
     premiumUntil = profile?.premium_until ?? null;
   }
   return NextResponse.json({
     ok: true,
-    status: order.status,
+    status: isApproved ? 'approved' : order.status,
     rejectedReason: order.rejected_reason ?? null,
     adminReviewStatus: order.admin_review_status ?? null,
     approvedAt: order.approved_at ?? null,

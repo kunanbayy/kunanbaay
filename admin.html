@@ -115,6 +115,7 @@
     .pill.admin{background:#EAF0F8;color:var(--navy)}
     .pill.paid,.pill.approved{background:#E7F8F1;color:var(--green)}
     .pill.pending{background:#FFF4E5;color:#C2410C}
+    .pill.pending_review{background:#EAF0F8;color:var(--navy)}
     .pill.expired{background:#F1F5F9;color:#64748B}
     .pill.rejected{background:#FEE2E2;color:#B91C1C}
     .u-cell{display:flex;align-items:center;gap:11px}
@@ -922,6 +923,7 @@ async function loadPayments(){
 /* Төлем статусының белгісі */
 function payStatusLabel(s){
   return s==='paid'||s==='approved' ? 'Расталды'
+       : s==='pending_review' ? 'Админ тексеруде'
        : s==='expired'  ? 'Мерзімі бітті'
        : s==='rejected' ? 'Қабылданбады'
        : 'Күтілуде';
@@ -993,8 +995,10 @@ function renderPayments(){
         + (p.reason?('<br><span style="color:#B91C1C">⚠ '+esc(p.reason)+'</span>'):'')
       : (p.src==='sb'?'☁️ дерекқор':'');
     var reviewBtns = (p.src==='ocr')
-      ? `<button class="ibtn ok" onclick="reviewOcr('${p.id}','approve')" title="Растау"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></button>
-         <button class="ibtn" onclick="reviewOcr('${p.id}','reject')" title="Қабылдамау"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>`
+      ? (p.status==='pending_review'
+        ? `<button class="ibtn ok" onclick="reviewOcr('${p.id}','approve')" title="Растау"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></button>
+           <button class="ibtn" onclick="reviewOcr('${p.id}','reject')" title="Қабылдамау"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>`
+        : `<span style="color:var(--light);font-size:.8rem">—</span>`)
       : `${p.status==='pending'?`<button class="ibtn ok" onclick="approvePay(${i})" title="Растау"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></button>`:''}
          <button class="ibtn" onclick="delPay(${i})" title="Жою"><svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></button>`;
     return `<tr>

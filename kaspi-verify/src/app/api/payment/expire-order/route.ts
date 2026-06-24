@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
 
     const { data: order } = await supabaseAdmin
       .from('payment_orders')
-      .select('id, user_id, status, created_at')
+      .select('id, user_id, status, created_at, expires_at')
       .eq('id', orderId)
       .maybeSingle();
 
@@ -37,7 +37,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: true, status: order.status }, { headers: corsHeaders });
     }
 
-    const expiredByTime = Date.now() > Date.parse(order.created_at) + config.receiptMaxAgeMinutes * 60_000;
+    const expiresMs = order.expires_at ? Date.parse(order.expires_at) : Date.parse(order.created_at) + config.receiptMaxAgeMinutes * 60_000;
+    const expiredByTime = Date.now() > expiresMs;
     if (!expiredByTime) {
       // Терезе әлі бітпеген — өзгертпейміз (клиент сағаты қате болуы мүмкін)
       return NextResponse.json({ ok: true, status: 'pending' }, { headers: corsHeaders });

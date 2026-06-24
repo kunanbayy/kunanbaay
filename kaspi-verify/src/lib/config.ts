@@ -49,6 +49,6 @@ export function amountForPlan(plan: string | null | undefined): number {
 
 export const corsHeaders = {
   'Access-Control-Allow-Origin': config.allowedOrigin,
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type, Authorization',
 };

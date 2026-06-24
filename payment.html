@@ -391,13 +391,16 @@
     } catch (e) {}
     return '';
   }
-  function paySuccess() {
+  function paySuccess(backendApproved) {
     submitBtn.classList.add('sent');
     submitBtn.style.display = 'block';
     submitBtn.textContent = '✓ Подтверждено';
     try {
       var u = JSON.parse(localStorage.getItem('shyraq_user') || 'null');
-      if (plan.kind === 'results') {
+      if (backendApproved) {
+        // Backend admin approve already granted access/energy in Supabase.
+        // Do not grant locally again, otherwise energy can be doubled.
+      } else if (plan.kind === 'results') {
         // 990₸ Толық есеп — ТЕК results.html. Career Energy-ге қатысы жоқ.
         localStorage.setItem('shyraq_results_unlocked', '1');
         if (u && u.email && window.ShyraqDB && window.ShyraqDB.ready()) {
@@ -470,7 +473,7 @@
     document.getElementById('payStatusTitle').textContent = title;
     document.getElementById('payStatusText').innerHTML = html;
   }
-  function showReview() { showStatus('review', 'Чек тексеруге жіберілді', 'Чек автоматты тексерілуде…', '<div class="pay-spinner"></div>'); }
+  function showReview() { showStatus('review', 'Чек жіберілді', 'Әкімші тексеріп жатыр. Расталғаннан кейін тариф белсенді болады.', '<div class="pay-spinner"></div>'); }
   function showRejected(reason) {
     showStatus('rejected', 'Чек қабылданбады', '<b>' + (reason || 'Тексеруден өтпеді') + '</b><br>Жабық бөлімдер ашылмады. Соманы, уақытты және түпнұсқа чекті тексеріңіз.', '✕');
   }
@@ -504,7 +507,7 @@
         var receiptUrl = '';
         try { if (window.ShyraqDB && window.ShyraqDB.ready()) receiptUrl = await window.ShyraqDB.uploadReceipt(file); } catch (e) {}
 
-        // UI: бірден «Чек отправлена на проверку» (backend автотексеруді осы кезде жүргізеді)
+        // UI: бірден review статусын көрсетеміз. Backend auto-approve жасамайды.
         showReview();
 
         const fd = new FormData();
@@ -515,8 +518,18 @@
         if (receiptUrl) fd.append('receiptUrl', receiptUrl);
         const vRes = await fetch(API + '/api/payment/verify-receipt', { method: 'POST', body: fd });
         const vJson = await vRes.json().catch(() => ({}));
-        if (vRes.ok && vJson.ok) paySuccess();              // → «Төлем қабылданды» + ашу
-        else showRejected(vJson.message);                   // → «Чек қабылданбады» + себеп
+        if (vRes.ok && vJson.ok) {
+          window.__payExpired = false;
+          clearInterval(timerInt);
+          timerEl.classList.remove('warn', 'expired');
+          clockEl.textContent = 'review';
+          fillEl.style.width = '100%';
+          noteEl.textContent = 'Чек жүктелді — әкімші тексеріп жатыр.';
+          showReview();
+          pollPaymentStatus(orderId);
+        } else {
+          showRejected(vJson.message);
+        }
       } catch (e) {
         showRejected('Желі қатесі. Кейінірек қайталаңыз.');
       }
@@ -566,6 +579,7 @@
   var PAY_WINDOW_MIN = 6;
   var currentOrderId = null;            // бэкенд тапсырысы (API болса)
   window.__payExpired = false;
+  var statusPollInt = null;
 
   var timerEl  = document.getElementById('payTimer');
   var clockEl  = document.getElementById('payTimerClock');
@@ -636,6 +650,35 @@
     tick();
   }
 
+  function pollPaymentStatus(orderId) {
+    if (!API || !orderId) return;
+    if (statusPollInt) clearInterval(statusPollInt);
+    async function check() {
+      try {
+        var r = await fetch(API + '/api/payment/status?orderId=' + encodeURIComponent(orderId));
+        var j = await r.json().catch(function () { return {}; });
+        if (!r.ok || !j.ok) return;
+        if (j.status === 'approved' || j.status === 'paid') {
+          clearInterval(statusPollInt);
+          statusPollInt = null;
+          paySuccess(true);
+        } else if (j.status === 'rejected') {
+          clearInterval(statusPollInt);
+          statusPollInt = null;
+          showRejected(j.rejectedReason || 'Админ қабылдамады');
+        } else if (j.status === 'expired') {
+          clearInterval(statusPollInt);
+          statusPollInt = null;
+          showRejected('Тапсырыс мерзімі бітті');
+        } else if (j.status === 'pending_review') {
+          showReview();
+        }
+      } catch (e) {}
+    }
+    check();
+    statusPollInt = setInterval(check, 8000);
+  }
+
   // Бэкенд бар болса: алдымен белсенді (expired емес) сессияны қалпына келтіреміз,
   // болмаса жаңа тапсырыс ашамыз. 6-мин терезе бэкендтен синхрондалады.
   (async function initSession() {
@@ -649,6 +692,16 @@
       if (aj && aj.ok && aj.session) {
         currentOrderId = aj.session.orderId;
         if (aj.session.expiresAt) syncTimer(aj.session.expiresAt);
+        if (aj.session.status === 'pending_review') {
+          window.__payExpired = false;
+          clearInterval(timerInt);
+          timerEl.classList.remove('warn', 'expired');
+          clockEl.textContent = 'review';
+          fillEl.style.width = '100%';
+          noteEl.textContent = 'Чек жүктелді — әкімші тексеріп жатыр.';
+          showReview();
+          pollPaymentStatus(currentOrderId);
+        }
         return;
       }
       // 2) жаңа сессия

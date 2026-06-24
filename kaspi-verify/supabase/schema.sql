@@ -17,6 +17,8 @@ do $$ begin
 exception when duplicate_object then null; end $$;
 
 alter type public.payment_status add value if not exists 'rejected';
+alter type public.payment_status add value if not exists 'pending_review';
+alter type public.payment_status add value if not exists 'approved';
 
 create table if not exists public.payment_orders (
   id          uuid primary key default gen_random_uuid(),
@@ -45,6 +47,23 @@ alter table public.payment_orders add column if not exists approved_at timestamp
 alter table public.payment_orders add column if not exists rejected_reason text;
 alter table public.payment_orders add column if not exists admin_review_status text default 'pending';
 alter table public.payment_orders add column if not exists tariff_id text;
+
+-- Frontend access/unlock source used by grant.html/access-sync.js.
+create table if not exists public.access (
+  email         text primary key,
+  premium       boolean default false,
+  premium_until timestamptz,
+  blocked       boolean default false,
+  energy        integer default 0,
+  energy_total  integer default 0,
+  results_unlocked boolean default false,
+  results_unlocked_at timestamptz,
+  updated_at    timestamptz default now()
+);
+alter table public.access add column if not exists energy integer default 0;
+alter table public.access add column if not exists energy_total integer default 0;
+alter table public.access add column if not exists results_unlocked boolean default false;
+alter table public.access add column if not exists results_unlocked_at timestamptz;
 
 create unique index if not exists payment_orders_receipt_hash_unique
   on public.payment_orders(receipt_hash) where receipt_hash is not null;

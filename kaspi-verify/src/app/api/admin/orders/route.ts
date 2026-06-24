@@ -16,7 +16,7 @@ export function OPTIONS() {
 /**
  * Admin: барлық төлем тапсырыстары мен олардың статусы.
  * x-admin-token арқылы қорғалған (ADMIN_TOKEN env). Service role RLS-ті айналып өтеді.
- * status: pending | approved (paid) | expired | rejected (терезе ішінде сәтсіз әрекет болды)
+ * status: pending | pending_review | approved | expired | rejected
  */
 export async function GET(req: NextRequest) {
   if (!config.adminToken || req.headers.get('x-admin-token') !== config.adminToken) {
@@ -55,8 +55,9 @@ export async function GET(req: NextRequest) {
     const tx = Array.isArray(o.payment_transactions) ? o.payment_transactions[0] : null;
     const f = failByOrder.get(o.id);
     // Көрсетілетін статус
-    let display: 'pending' | 'approved' | 'expired' | 'rejected' = 'pending';
-    if (o.status === 'paid') display = 'approved';
+    let display: 'pending' | 'pending_review' | 'approved' | 'expired' | 'rejected' = 'pending';
+    if (o.status === 'paid' || o.status === 'approved') display = 'approved';
+    else if (o.status === 'pending_review') display = 'pending_review';
     else if (o.status === 'expired') display = f && f.count > 0 ? 'rejected' : 'expired';
     else if (o.status === 'failed') display = 'rejected';
     else display = 'pending';

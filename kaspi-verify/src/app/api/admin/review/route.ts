@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { supabaseAdmin } from '../../../../lib/supabase';
 import { config, corsHeaders } from '../../../../lib/config';
-import { activatePremium } from '../../../../services/premium';
+import { activateTariff } from '../../../../services/premium';
 import { log } from '../../../../lib/logger';
 
 export const runtime = 'nodejs';
@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
 
     const { data: order } = await supabaseAdmin
       .from('payment_orders')
-      .select('id, user_id, status')
+      .select('id, user_id, status, plan, tariff_id, amount, receipt_url, receipt_uploaded_at')
       .eq('id', orderId)
       .maybeSingle();
     if (!order) {
@@ -41,13 +41,26 @@ export async function POST(req: NextRequest) {
     }
 
     if (action === 'approve') {
-      const premiumUntil = await activatePremium(order.user_id);
+      if (order.status === 'expired') {
+        return NextResponse.json({ ok: false, message: 'expired order approve болмайды' }, { status: 409, headers: adminHeaders });
+      }
+      if (order.status === 'approved' || order.status === 'paid') {
+        return NextResponse.json({ ok: true, status: 'approved', already: true }, { headers: adminHeaders });
+      }
+      if (order.status !== 'pending_review') {
+        return NextResponse.json({ ok: false, message: 'Чек әлі жүктелмеген немесе review статусында емес' }, { status: 409, headers: adminHeaders });
+      }
+      if (!order.receipt_url && !order.receipt_uploaded_at) {
+        return NextResponse.json({ ok: false, message: 'Чек файлы жоқ' }, { status: 409, headers: adminHeaders });
+      }
+
+      const activation = await activateTariff(order.user_id, order.tariff_id || order.plan, order.amount);
       await supabaseAdmin.from('payment_orders').update({
-        status: 'paid', approved_at: now, admin_review_status: 'reviewed_approved',
+        status: 'approved', approved_at: now, admin_review_status: 'reviewed_approved',
         rejected_reason: null, updated_at: now,
       }).eq('id', orderId);
-      log('info', 'admin_approved', { orderId });
-      return NextResponse.json({ ok: true, status: 'approved', premiumUntil }, { headers: adminHeaders });
+      log('info', 'admin_approved', { orderId, energyGranted: activation.energyGranted, resultsUnlocked: activation.resultsUnlocked });
+      return NextResponse.json({ ok: true, status: 'approved', ...activation }, { headers: adminHeaders });
     }
 
     await supabaseAdmin.from('payment_orders').update({

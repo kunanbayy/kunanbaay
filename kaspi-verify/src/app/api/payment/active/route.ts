@@ -9,7 +9,7 @@ export function OPTIONS() {
 }
 
 /**
- * Қолданушының соңғы белсенді (pending әрі мерзімі бітпеген) сессиясы.
+ * Қолданушының соңғы белсенді (pending/pending_review әрі мерзімі бітпеген) сессиясы.
  * User қайта кіргенде frontend осыны сұрап, сол сессияны жалғастырады.
  */
 export async function GET(req: NextRequest) {
@@ -23,7 +23,7 @@ export async function GET(req: NextRequest) {
     .from('payment_orders')
     .select('id, plan, amount, status, created_at, expires_at')
     .eq('user_id', userId)
-    .eq('status', 'pending')
+    .in('status', ['pending', 'pending_review'])
     .order('created_at', { ascending: false })
     .limit(1);
   if (plan) q = q.eq('plan', plan);
@@ -31,10 +31,11 @@ export async function GET(req: NextRequest) {
   const { data } = await q.maybeSingle();
   if (!data) return NextResponse.json({ ok: true, session: null }, { headers: corsHeaders });
 
-  // Мерзімі бітіп қалса — expired етіп, бос қайтарамыз
+  // Мерзімі бітіп қалса — тек чек жүктелмеген pending тапсырысты expired етеміз.
+  // pending_review admin шешімін күтеді, оны timer аяқталған соң өшірмейміз.
   const windowMs = config.receiptMaxAgeMinutes * 60_000;
   const expiresMs = data.expires_at ? Date.parse(data.expires_at) : Date.parse(data.created_at) + windowMs;
-  if (Date.now() > expiresMs) {
+  if (data.status === 'pending' && Date.now() > expiresMs) {
     await supabaseAdmin.from('payment_orders')
       .update({ status: 'expired', updated_at: new Date().toISOString() })
       .eq('id', data.id).eq('status', 'pending');
