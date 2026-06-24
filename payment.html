@@ -50,13 +50,6 @@
     }
     .kqr-frame #qrCanvas { display: flex; line-height: 0; }
     .kqr-frame #qrCanvas img, .kqr-frame #qrCanvas canvas { display: block; width: 202px !important; height: 202px !important; }
-    .kqr-logo {
-      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-      width: 54px; height: 54px; border-radius: 15px; background: var(--pg-red);
-      display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 3px 12px rgba(0,0,0,0.30);
-    }
-    .kqr-logo img { width: 34px; height: 34px; }
     .kqr-amount { text-align: center; font-family: var(--font-display); font-size: 2.5rem; font-weight: 800; color: var(--pg-text); margin-top: 24px; letter-spacing: -0.02em; }
     .kqr-amount .tg { font-size: 1.4rem; font-weight: 600; color: var(--pg-muted); margin-left: 4px; }
     .kqr-cashback { text-align: center; color: var(--pg-green); font-size: 0.92rem; font-weight: 600; margin-top: 8px; }
@@ -160,7 +153,6 @@
 
       <div class="kqr-frame">
         <div id="qrCanvas"></div>
-        <div class="kqr-logo"><img src="assets/logo.svg" alt="Shyraq"/></div>
       </div>
 
       <div class="kqr-amount"><span id="qrAmount">…</span> <span class="tg">₸</span></div>
@@ -277,7 +269,7 @@
       if (!holder) return;
       holder.innerHTML = '';
       if (window.QRCode) {
-        new window.QRCode(holder, { text: KASPI_PAY_URL, width: 202, height: 202, colorDark: '#0B0C0F', colorLight: '#ffffff', correctLevel: window.QRCode.CorrectLevel ? window.QRCode.CorrectLevel.H : undefined });
+        new window.QRCode(holder, { text: KASPI_PAY_URL, width: 202, height: 202, colorDark: '#0B0C0F', colorLight: '#ffffff', correctLevel: window.QRCode.CorrectLevel ? window.QRCode.CorrectLevel.M : undefined });
       } else {
         holder.innerHTML = '<a href="' + KASPI_PAY_URL + '" target="_blank" rel="noopener" style="color:#0B0C0F;font-weight:700;">Открыть в Kaspi →</a>';
       }
