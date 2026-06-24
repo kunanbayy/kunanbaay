@@ -113,8 +113,10 @@
     .pill.premium{background:#FEF6E2;color:var(--gold-deep)}
     .pill.standard{background:#EAF0F8;color:var(--navy)}
     .pill.admin{background:#EAF0F8;color:var(--navy)}
-    .pill.paid{background:#E7F8F1;color:var(--green)}
+    .pill.paid,.pill.approved{background:#E7F8F1;color:var(--green)}
     .pill.pending{background:#FFF4E5;color:#C2410C}
+    .pill.expired{background:#F1F5F9;color:#64748B}
+    .pill.rejected{background:#FEE2E2;color:#B91C1C}
     .u-cell{display:flex;align-items:center;gap:11px}
     .u-av{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:.82rem;color:#fff;flex-shrink:0}
     .u-logo{width:36px;height:36px;border-radius:9px;object-fit:cover;background:#EEF2F7;flex-shrink:0;border:1px solid var(--border)}
@@ -581,6 +583,7 @@
 <script src="js/supabase-config.js"></script>
 <script src="js/supabase-auth.js"></script>
 <script src="js/supabase-db.js"></script>
+<script src="js/shyraq-api.js"></script>
 <script>
 /* ════ AUTH GUARD ════ */
 if (localStorage.getItem('shyraq_admin') !== '1') {
@@ -877,16 +880,44 @@ function udSaveEnergy(){
   udSetEnergy(null, +v);
 }
 
-/* ════ PAYMENTS (Supabase) ════ */
+/* ════ PAYMENTS (Supabase + Kaspi OCR backend) ════ */
 var _pays = [];
+/* Kaspi OCR backend-тен барлық тапсырыстарды + статусын жүктеу */
+async function loadOcrOrders(){
+  var api = (window.SHYRAQ_API||'').replace(/\/$/,'');
+  var tok = window.SHYRAQ_ADMIN_TOKEN||'';
+  if(!api || !tok) return [];
+  try{
+    var r = await fetch(api+'/api/admin/orders', { headers:{ 'x-admin-token': tok } });
+    var j = await r.json().catch(()=>({}));
+    if(!r.ok || !j.ok) return [];
+    return (j.orders||[]).map(function(o){
+      // approved → 'paid' (бірдей жасыл pill/есеп), қалғаны сол күйінде
+      var st = o.status==='approved' ? 'paid' : o.status;
+      return {
+        id:o.id, name:(o.receiptNumber ? 'Чек №'+o.receiptNumber : 'User '+String(o.userId||'').slice(0,8)),
+        email:'', plan:o.plan, amount:o.amount, status:st, receipt:'',
+        date:(o.createdAt||'').slice(0,10), fails:o.failedAttempts||0, src:'ocr'
+      };
+    });
+  }catch(e){ return []; }
+}
 async function loadPayments(){
   var sbp = [];
   if (window.ShyraqDB && window.ShyraqDB.ready()){
     var rows = await window.ShyraqDB.listPayments();
     if (rows) sbp = rows.map(r=>({ id:r.id, name:r.name, email:r.email, plan:r.plan, amount:r.amount, status:r.status, receipt:r.receipt_url, date:(r.created_at||'').slice(0,10), src:'sb' }));
   }
-  _pays = sbp;
+  var ocr = await loadOcrOrders();
+  _pays = ocr.concat(sbp);
   renderPayments(); renderOverview();
+}
+/* Төлем статусының белгісі */
+function payStatusLabel(s){
+  return s==='paid'||s==='approved' ? 'Расталды'
+       : s==='expired'  ? 'Мерзімі бітті'
+       : s==='rejected' ? 'Қабылданбады'
+       : 'Күтілуде';
 }
 
 /* Дерекқордан тіркелген қолданушыларды + доступ күйін жүктеп,
@@ -941,14 +972,14 @@ function renderPayments(){
   const q=($('globalSearch').value||'').toLowerCase();
   var list = pays.map((p,i)=>({p,i})).filter(x=> !q || ((x.p.name||'')+' '+(x.p.plan||'')).toLowerCase().includes(q));
   $('paymentsBody').innerHTML = list.map(({p,i})=>`<tr>
-    <td><div class="u-cell"><span class="u-av" style="background:${avColor(p.name)}">${initial(p.name)}</span><div><div class="u-name">${esc(p.name||'—')}</div>${p.src==='sb'?'<div class="u-mail">☁️ дерекқор</div>':''}</div></div></td>
+    <td><div class="u-cell"><span class="u-av" style="background:${avColor(p.name)}">${initial(p.name)}</span><div><div class="u-name">${esc(p.name||'—')}</div>${p.src==='ocr'?'<div class="u-mail">🤖 Kaspi OCR'+(p.fails?(' · '+p.fails+' сәтсіз әрекет'):'')+'</div>':(p.src==='sb'?'<div class="u-mail">☁️ дерекқор</div>':'')}</div></div></td>
     <td>${esc(p.plan||'—')}</td><td><b>${nf(p.amount||0)} ₸</b></td>
-    <td><span class="pill ${p.status}">${p.status==='paid'?'Төленді':'Күтілуде'}</span></td>
-    <td>${p.receipt?'<a class="lk" href="'+esc(p.receipt)+'" target="_blank" style="color:#3B82F6;font-weight:700">Чекті көру</a>':'<span style="color:var(--light);font-size:.8rem">чек жоқ</span>'}</td>
+    <td><span class="pill ${p.status}">${payStatusLabel(p.status)}</span></td>
+    <td>${p.receipt?'<a class="lk" href="'+esc(p.receipt)+'" target="_blank" style="color:#3B82F6;font-weight:700">Чекті көру</a>':'<span style="color:var(--light);font-size:.8rem">'+(p.src==='ocr'?'OCR расталды':'чек жоқ')+'</span>'}</td>
     <td>${esc(p.date||'')}</td>
     <td><div class="row-act">
-      ${p.status==='pending'?`<button class="ibtn ok" onclick="approvePay(${i})" title="Растау"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></button>`:''}
-      <button class="ibtn" onclick="delPay(${i})" title="Жою"><svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></button>
+      ${(p.status==='pending'&&p.src!=='ocr')?`<button class="ibtn ok" onclick="approvePay(${i})" title="Растау"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></button>`:''}
+      ${p.src!=='ocr'?`<button class="ibtn" onclick="delPay(${i})" title="Жою"><svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></button>`:''}
     </div></td></tr>`).join('') || '<tr><td colspan="7" class="empty">Төлемдер жоқ</td></tr>';
 }
 async function approvePay(i){

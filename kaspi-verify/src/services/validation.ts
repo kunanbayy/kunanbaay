@@ -7,6 +7,17 @@ export interface ValidationOutcome {
   message: string;
 }
 
+export interface ValidateOptions {
+  /** Тапсырыста бекітілген сома (тарифтің бағасы), ₸. */
+  expectedAmount: number;
+  /** Тапсырыс жасалған сәт (ms) — 6-минут терезенің басы. */
+  windowStartMs: number;
+  /** Терезе ұзақтығы (минут). */
+  windowMinutes: number;
+}
+
+const CLOCK_SKEW_MS = 2 * 60_000; // сағат айырмасына 2 минут жеңілдік
+
 /** Normalise a receiver name for tolerant comparison (case / spaces / punctuation). */
 function normName(s: string | null | undefined): string {
   return (s || '')
@@ -20,7 +31,7 @@ function normName(s: string | null | undefined): string {
  * Pure, side-effect-free validation of the OCR result against business rules.
  * Duplicate-receipt and order-status checks that need the DB are done in the route.
  */
-export function validateReceipt(r: ExtractedReceipt): ValidationOutcome {
+export function validateReceipt(r: ExtractedReceipt, opts: ValidateOptions): ValidationOutcome {
   if (!r.isReadable) {
     return { ok: false, reason: 'unreadable', message: 'Чек анық емес немесе Kaspi чегі емес. Сапалы скриншот/PDF жүктеңіз.' };
   }
@@ -33,20 +44,26 @@ export function validateReceipt(r: ExtractedReceipt): ValidationOutcome {
   if (!r.receiptNumber) {
     return { ok: false, reason: 'no_receipt_number', message: 'Чек нөмірі табылмады.' };
   }
-  if (r.amount !== config.premiumAmount) {
-    return { ok: false, reason: 'amount_mismatch', message: `Сома сәйкес емес. Қажет: ${config.premiumAmount} ₸, чекте: ${r.amount ?? '—'} ₸.` };
+  // Сома — тапсырыста бекітілген тариф бағасына тең болуы керек
+  if (r.amount !== opts.expectedAmount) {
+    return { ok: false, reason: 'amount_mismatch', message: `Сома сәйкес емес. Қажет: ${opts.expectedAmount} ₸, чекте: ${r.amount ?? '—'} ₸.` };
   }
   if (normName(r.receiverName) !== normName(config.expectedReceiver)) {
     return { ok: false, reason: 'receiver_mismatch', message: `Алушы сәйкес емес. Аударым «${config.expectedReceiver}» атына жасалуы керек.` };
   }
-  // freshness
+  // Чектегі күн/уақыт — тапсырыстың 6-минут терезесінің ішінде болуы керек
   const when = r.paymentDate ? Date.parse(r.paymentDate) : NaN;
   if (Number.isNaN(when)) {
-    return { ok: false, reason: 'receipt_too_old', message: 'Чек күні анықталмады.' };
+    return { ok: false, reason: 'receipt_too_old', message: 'Чек күні/уақыты анықталмады.' };
   }
-  const ageMin = (Date.now() - when) / 60000;
-  if (ageMin > config.receiptMaxAgeMinutes || ageMin < -10 /* allow small clock skew */) {
-    return { ok: false, reason: 'receipt_too_old', message: `Чек ${config.receiptMaxAgeMinutes} минут ішінде жасалуы керек. Жаңа аударым жасаңыз.` };
+  const windowStart = opts.windowStartMs - CLOCK_SKEW_MS;
+  const windowEnd = opts.windowStartMs + opts.windowMinutes * 60_000 + CLOCK_SKEW_MS;
+  if (when < windowStart || when > windowEnd) {
+    return {
+      ok: false,
+      reason: 'receipt_too_old',
+      message: `Чектегі уақыт төлем терезесіне (${opts.windowMinutes} мин) сай емес. Тапсырыс жасалған соң ${opts.windowMinutes} минут ішінде төлеп, дәл сол чекті жүктеңіз.`,
+    };
   }
   return { ok: true, message: 'Чек расталды.' };
 }

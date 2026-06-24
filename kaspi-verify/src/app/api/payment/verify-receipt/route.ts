@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '../../../../lib/supabase';
-import { corsHeaders } from '../../../../lib/config';
+import { config, corsHeaders } from '../../../../lib/config';
 import { log, logVerification } from '../../../../lib/logger';
 import { extractReceipt } from '../../../../services/ocr';
 import { validateReceipt } from '../../../../services/validation';
@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
     // 1) order must exist, belong to the user, and be pending
     const { data: order } = await supabaseAdmin
       .from('payment_orders')
-      .select('id, user_id, amount, status')
+      .select('id, user_id, amount, status, created_at')
       .eq('id', orderId)
       .maybeSingle();
 
@@ -46,9 +46,23 @@ export async function POST(req: NextRequest) {
       await logVerification({ userId, orderId, success: false, reason: 'order_not_found' });
       return fail('order_not_found', 'Тапсырыс табылмады.', 404);
     }
+    if (order.status === 'expired') {
+      return fail('order_not_pending', 'Тапсырыс мерзімі бітті. Қайта бастаңыз.');
+    }
     if (order.status !== 'pending') {
       await logVerification({ userId, orderId, success: false, reason: 'order_not_pending' });
       return fail('order_not_pending', 'Бұл тапсырыс бойынша төлем бұрын расталған.');
+    }
+
+    // 6-минут терезе бітсе — тапсырысты «expired» етеміз, чекті қабылдамаймыз
+    const windowStartMs = Date.parse(order.created_at);
+    const windowMs = config.receiptMaxAgeMinutes * 60_000;
+    if (Date.now() > windowStartMs + windowMs) {
+      await supabaseAdmin.from('payment_orders')
+        .update({ status: 'expired', updated_at: new Date().toISOString() })
+        .eq('id', orderId);
+      await logVerification({ userId, orderId, success: false, reason: 'receipt_too_old' });
+      return fail('receipt_too_old', `Төлем терезесі (${config.receiptMaxAgeMinutes} мин) бітті. Тапсырыс отменен — қайта бастаңыз.`);
     }
 
     // 2) OCR
@@ -62,8 +76,12 @@ export async function POST(req: NextRequest) {
       return fail('ocr_error', 'Чекті оқу мүмкін болмады. Қайталап көріңіз.', 502);
     }
 
-    // 3) business rules (pure)
-    const v = validateReceipt(extracted);
+    // 3) business rules (pure) — сома тапсырыстан, уақыт тапсырыс терезесінен
+    const v = validateReceipt(extracted, {
+      expectedAmount: order.amount,
+      windowStartMs,
+      windowMinutes: config.receiptMaxAgeMinutes,
+    });
     if (!v.ok) {
       await logVerification({ userId, orderId, success: false, reason: v.reason, extracted });
       return fail(v.reason, v.message);

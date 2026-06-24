@@ -42,6 +42,20 @@
     .pay-block-title { font-family: var(--font-display); font-weight: 800; font-size: 1.35rem; color: var(--pg-text); text-align: center; letter-spacing: -0.01em; }
     .pay-block-sub { font-size: 0.9rem; color: var(--pg-muted); text-align: center; margin-top: 6px; }
 
+    /* ── 6-минут таймер ── */
+    .pay-timer { background: var(--pg-card); border: 1px solid var(--pg-border); border-radius: 16px; padding: 14px 18px; margin-bottom: 18px; }
+    .pay-timer.warn { border-color: rgba(251,92,76,0.4); }
+    .pay-timer.expired { border-color: var(--pg-red); background: rgba(251,92,76,0.08); }
+    .pay-timer-row { display: flex; align-items: center; justify-content: space-between; }
+    .pay-timer-label { font-size: 0.85rem; font-weight: 700; color: var(--pg-muted); }
+    .pay-timer-clock { font-family: var(--font-display); font-size: 1.5rem; font-weight: 800; color: var(--pg-text); font-variant-numeric: tabular-nums; }
+    .pay-timer.warn .pay-timer-clock, .pay-timer.expired .pay-timer-clock { color: var(--pg-red); }
+    .pay-timer-bar { height: 6px; border-radius: 4px; background: #2A2D35; margin-top: 10px; overflow: hidden; }
+    .pay-timer-fill { height: 100%; width: 100%; background: var(--pg-green); transition: width 1s linear; }
+    .pay-timer.warn .pay-timer-fill, .pay-timer.expired .pay-timer-fill { background: var(--pg-red); }
+    .pay-timer-note { font-size: 0.76rem; color: var(--pg-muted); margin-top: 8px; line-height: 1.4; }
+    .pay-blocked { pointer-events: none; opacity: 0.45; }
+
     /* ── Kaspi QR ── */
     .kqr-frame {
       position: relative; width: 232px; height: 232px; margin: 24px auto 0;
@@ -147,6 +161,16 @@
       Назад к тарифам
     </a>
 
+    <!-- 6-минут төлем терезесі -->
+    <div class="pay-timer" id="payTimer">
+      <div class="pay-timer-row">
+        <span class="pay-timer-label">⏳ Время на оплату</span>
+        <span class="pay-timer-clock" id="payTimerClock">06:00</span>
+      </div>
+      <div class="pay-timer-bar"><div class="pay-timer-fill" id="payTimerFill"></div></div>
+      <div class="pay-timer-note" id="payTimerNote">Оплатите по QR и прикрепите чек до конца таймера</div>
+    </div>
+
     <!-- Card 1: Kaspi QR -->
     <div class="pay-block">
       <div class="pay-block-title">Оплата через Kaspi</div>
@@ -216,6 +240,7 @@
 <script src="js/supabase-auth.js"></script>
 <script src="js/supabase-db.js"></script>
 <script src="js/energy.js"></script>
+<script src="js/shyraq-api.js"></script>
 <script>
 (function () {
   /* ── Тарифтер кестесі ── */
@@ -399,6 +424,7 @@
   submitBtn.addEventListener('click', async function () {
     const file = fileInput.files[0];
     if (!file) return;
+    if (window.__payExpired) { payError('Время вышло — заказ отменён. Нажмите «Начать заново».'); return; }
     var pe = document.getElementById('payError'); if (pe) pe.remove();
     this.disabled = true;
     this.textContent = API ? '⏳ Проверка чека...' : '⏳ Отправка...';
@@ -408,15 +434,20 @@
       try {
         const userId = getUserId();
         if (!userId) { payError('Авто-растау үшін алдымен жүйеге кіріңіз (тіркелу қажет).'); return; }
-        const oRes = await fetch(API + '/api/payment/create-order', {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ userId: userId, plan: params.get('plan') || 'premium_1m' })
-        });
-        const oJson = await oRes.json().catch(() => ({}));
-        if (!oRes.ok || !oJson.ok) { payError('Тапсырыс жасалмады. Қайталап көріңіз.'); return; }
+        // Тапсырыс бет ашылғанда жасалады (currentOrderId). Болмаса — осында жасаймыз.
+        var orderId = currentOrderId;
+        if (!orderId) {
+          const oRes = await fetch(API + '/api/payment/create-order', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userId: userId, plan: planKey })
+          });
+          const oJson = await oRes.json().catch(() => ({}));
+          if (!oRes.ok || !oJson.ok) { payError('Тапсырыс жасалмады. Қайталап көріңіз.'); return; }
+          orderId = oJson.orderId;
+        }
 
         const fd = new FormData();
-        fd.append('orderId', oJson.orderId);
+        fd.append('orderId', orderId);
         fd.append('userId', userId);
         fd.append('file', file);
         const vRes = await fetch(API + '/api/payment/verify-receipt', { method: 'POST', body: fd });
@@ -465,6 +496,88 @@
       catch (e) { res(''); }
     });
   }
+
+  /* ════════════════════════════════════════════════════════════
+     6-минут төлем терезесі + тапсырыс өмірлік циклі
+     ════════════════════════════════════════════════════════════ */
+  var PAY_WINDOW_MIN = 6;
+  var currentOrderId = null;            // бэкенд тапсырысы (API болса)
+  window.__payExpired = false;
+
+  var timerEl  = document.getElementById('payTimer');
+  var clockEl  = document.getElementById('payTimerClock');
+  var fillEl   = document.getElementById('payTimerFill');
+  var noteEl   = document.getElementById('payTimerNote');
+
+  // Терезе басы (сессияда сақталады — refresh ескі терезені жалғастырады)
+  var winKey = 'shyraq_pay_window_' + planKey;
+  var startedAt = parseInt(sessionStorage.getItem(winKey) || '0', 10);
+  if (!startedAt || Date.now() - startedAt > PAY_WINDOW_MIN * 60000 + 3600000) {
+    startedAt = Date.now();
+    sessionStorage.setItem(winKey, String(startedAt));
+  }
+  var endsAt = startedAt + PAY_WINDOW_MIN * 60000;
+
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  function fmtClock(ms) { var s = Math.max(0, Math.floor(ms / 1000)); return pad(Math.floor(s / 60)) + ':' + pad(s % 60); }
+
+  function blockPayment() {
+    var qrCard = document.querySelector('.pay-block');           // 1-ші карта (QR)
+    if (qrCard) qrCard.classList.add('pay-blocked');
+    if (uploadZone) uploadZone.classList.add('pay-blocked');
+    if (submitBtn) { submitBtn.disabled = true; }
+  }
+
+  function expireOrder() {
+    if (window.__payExpired) return;
+    window.__payExpired = true;
+    timerEl.classList.remove('warn');
+    timerEl.classList.add('expired');
+    clockEl.textContent = '00:00';
+    fillEl.style.width = '0%';
+    noteEl.innerHTML = '⛔ Заказ отменён — время вышло. <a href="#" id="payRestart" style="color:var(--pg-red);font-weight:800;text-decoration:underline;">Начать заново</a>';
+    blockPayment();
+    document.getElementById('payRestart').addEventListener('click', function (e) {
+      e.preventDefault();
+      sessionStorage.removeItem(winKey);
+      location.reload();
+    });
+    // Бэкендте тапсырысты «expired» етіп белгілейміз
+    if (API && currentOrderId) {
+      try {
+        fetch(API + '/api/payment/expire-order', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ orderId: currentOrderId, userId: getUserId() })
+        });
+      } catch (e) {}
+    }
+  }
+
+  function tick() {
+    var left = endsAt - Date.now();
+    clockEl.textContent = fmtClock(left);
+    var pct = Math.max(0, Math.min(100, (left / (PAY_WINDOW_MIN * 60000)) * 100));
+    fillEl.style.width = pct + '%';
+    if (left <= 60000 && left > 0) timerEl.classList.add('warn');
+    if (left <= 0) { expireOrder(); clearInterval(timerInt); }
+  }
+  var timerInt = setInterval(tick, 1000);
+  tick();
+
+  // Бэкенд бар болса — тапсырысты бет ашылғанда жасаймыз (6-мин терезе осыдан басталады)
+  (async function createOrderOnLoad() {
+    if (!API || window.__payExpired) return;
+    var userId = getUserId();
+    if (!userId) return;                 // тіркелмеген болса — жіберу кезінде ескертіледі
+    try {
+      var r = await fetch(API + '/api/payment/create-order', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: userId, plan: planKey })
+      });
+      var j = await r.json().catch(function () { return {}; });
+      if (r.ok && j.ok) currentOrderId = j.orderId;
+    } catch (e) {}
+  })();
 
 })();
 </script>

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { supabaseAdmin } from '../../../../lib/supabase';
-import { config, corsHeaders } from '../../../../lib/config';
+import { corsHeaders, amountForPlan } from '../../../../lib/config';
 import { log } from '../../../../lib/logger';
 
 export const runtime = 'nodejs';
@@ -19,11 +19,12 @@ export async function POST(req: NextRequest) {
   try {
     const json = await req.json();
     const { userId, plan } = Body.parse(json);
+    const amount = amountForPlan(plan);
 
     const { data, error } = await supabaseAdmin
       .from('payment_orders')
-      .insert({ user_id: userId, amount: config.premiumAmount, plan: plan || 'premium_1m', status: 'pending' })
-      .select('id, amount, status')
+      .insert({ user_id: userId, amount, plan: plan || 'premium_1m', status: 'pending' })
+      .select('id, amount, status, created_at')
       .single();
 
     if (error) throw error;

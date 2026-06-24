@@ -14,8 +14,17 @@ export const config = {
   openaiModel: process.env.OPENAI_VISION_MODEL || 'gpt-4o',
 
   premiumAmount: Number(process.env.PREMIUM_AMOUNT || 990),
+  // Әр тарифтің нақты сомасы (₸). Чектегі сома осы санға тең болуы керек.
+  planAmounts: {
+    standard:  Number(process.env.AMOUNT_STANDARD  || 2990),
+    once:      Number(process.env.AMOUNT_STANDARD  || 2990),
+    career:    Number(process.env.AMOUNT_CAREER    || 4990),
+    premium:   Number(process.env.AMOUNT_CAREER    || 4990),
+    report990: Number(process.env.AMOUNT_REPORT990 || 990),
+  } as Record<string, number>,
   expectedReceiver: process.env.EXPECTED_RECEIVER || 'Мадина Е.',
-  receiptMaxAgeMinutes: Number(process.env.RECEIPT_MAX_AGE_MINUTES || 30),
+  // Төлем терезесі: чек тапсырыс жасалған сәттен бастап осы минут ішінде болуы керек.
+  receiptMaxAgeMinutes: Number(process.env.RECEIPT_MAX_AGE_MINUTES || 6),
   minOcrConfidence: Number(process.env.MIN_OCR_CONFIDENCE || 0.75),
   premiumDays: Number(process.env.PREMIUM_DAYS || 30),
 
@@ -27,7 +36,16 @@ export const config = {
   kaspiWebhookSecret: process.env.KASPI_WEBHOOK_SECRET || '',
 
   allowedOrigin: process.env.ALLOWED_ORIGIN || '*',
+
+  // Admin panel-дің барлық тапсырыстарды оқуы үшін құпия токен (x-admin-token).
+  adminToken: process.env.ADMIN_TOKEN || '',
 } as const;
+
+/** Тарифке сай күтілетін сома (₸). Белгісіз тариф → premiumAmount. */
+export function amountForPlan(plan: string | null | undefined): number {
+  if (plan && config.planAmounts[plan] != null) return config.planAmounts[plan];
+  return config.premiumAmount;
+}
 
 export const corsHeaders = {
   'Access-Control-Allow-Origin': config.allowedOrigin,
