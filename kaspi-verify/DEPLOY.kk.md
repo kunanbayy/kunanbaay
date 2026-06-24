@@ -11,8 +11,9 @@
 
 ## 1. Supabase дайындау
 1. Supabase жобасында **SQL Editor** ашыңыз.
-2. `supabase/schema.sql` ішіндегі бүкіл SQL-ді іске қосыңыз
-   (profiles, payment_orders, payment_transactions, verification_logs + RLS + триггер).
+2. Алдымен `supabase/schema.sql`, **сосын** `supabase/schema-v2.sql` іске қосыңыз
+   (payment_session өрістері: payment_method, expires_at, receipt_url/hash/paid_at,
+   approved_at, rejected_reason, admin_review_status + `tariffs` кестесі + receipt_hash unique).
 3. Кілттерді алыңыз: **Project Settings → API**:
    - `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` (service role — құпия!), `anon` key.
 

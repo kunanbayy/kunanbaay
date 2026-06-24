@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
 
   const { data: order } = await supabaseAdmin
     .from('payment_orders')
-    .select('id, user_id, status')
+    .select('id, user_id, status, rejected_reason, admin_review_status, approved_at, expires_at')
     .eq('id', orderId)
     .maybeSingle();
 
@@ -27,5 +27,13 @@ export async function GET(req: NextRequest) {
       .from('profiles').select('premium_until').eq('id', order.user_id).maybeSingle();
     premiumUntil = profile?.premium_until ?? null;
   }
-  return NextResponse.json({ ok: true, status: order.status, premiumUntil }, { headers: corsHeaders });
+  return NextResponse.json({
+    ok: true,
+    status: order.status,
+    rejectedReason: order.rejected_reason ?? null,
+    adminReviewStatus: order.admin_review_status ?? null,
+    approvedAt: order.approved_at ?? null,
+    expiresAt: order.expires_at ?? null,
+    premiumUntil,
+  }, { headers: corsHeaders });
 }

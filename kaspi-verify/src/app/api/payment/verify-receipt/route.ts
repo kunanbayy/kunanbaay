@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { createHash } from 'crypto';
 import { supabaseAdmin } from '../../../../lib/supabase';
 import { config, corsHeaders } from '../../../../lib/config';
 import { log, logVerification } from '../../../../lib/logger';
@@ -21,6 +22,22 @@ function fail(reason: VerifyResult['reason'], message: string, status = 422): Ne
   return NextResponse.json({ ok: false, reason, message } satisfies VerifyResult, { status, headers: corsHeaders });
 }
 
+// Сапа мәселелері — қайта жүктеуге болады (order pending қалады), reject емес.
+const RETRYABLE = new Set(['unreadable', 'low_confidence', 'ocr_error']);
+
+async function markRejected(orderId: string, reason: string, extra: Record<string, unknown> = {}) {
+  await supabaseAdmin
+    .from('payment_orders')
+    .update({
+      status: 'rejected',
+      rejected_reason: reason,
+      admin_review_status: 'auto_rejected',
+      updated_at: new Date().toISOString(),
+      ...extra,
+    })
+    .eq('id', orderId);
+}
+
 export async function POST(req: NextRequest) {
   let userId: string | null = null;
   let orderId: string | null = null;
@@ -29,6 +46,8 @@ export async function POST(req: NextRequest) {
     orderId = String(form.get('orderId') || '');
     userId = String(form.get('userId') || '');
     const file = form.get('file');
+    const receiptUrl = String(form.get('receiptUrl') || '') || null;
+    const paymentMethod = String(form.get('paymentMethod') || '') || null;
 
     if (!orderId || !userId) return fail('order_not_found', 'orderId және userId міндетті.', 400);
     if (!(file instanceof File)) return fail('unreadable', 'Чек файлы жүктелмеді.', 400);
@@ -65,37 +84,52 @@ export async function POST(req: NextRequest) {
       return fail('receipt_too_old', `Төлем терезесі (${config.receiptMaxAgeMinutes} мин) бітті. Тапсырыс отменен — қайта бастаңыз.`);
     }
 
-    // 2) OCR
+    // 2) Чектің файл-хэші (anti-fraud) + жалпы өрістер
     const buffer = Buffer.from(await file.arrayBuffer());
+    const receiptHash = createHash('sha256').update(buffer).digest('hex');
+    const nowIso = new Date().toISOString();
+    const baseFields = {
+      receipt_url: receiptUrl,
+      receipt_uploaded_at: nowIso,
+      payment_method: paymentMethod || undefined,
+    };
+
+    // Anti-fraud: дәл сондай файл (хэш) бұрын қолданылған ба?
+    const { data: hashHit } = await supabaseAdmin
+      .from('payment_orders')
+      .select('id')
+      .eq('receipt_hash', receiptHash)
+      .neq('id', orderId)
+      .maybeSingle();
+    if (hashHit) {
+      await markRejected(orderId, 'Бұл чек бұрын қолданылған', baseFields); // хэшті қайта жазбаймыз (unique)
+      await logVerification({ userId, orderId, success: false, reason: 'duplicate_receipt', receiptHash });
+      return fail('duplicate_receipt', 'Бұл чек бұрын қолданылған.');
+    }
+
+    // 3) OCR
     let extracted;
     try {
       extracted = await extractReceipt(buffer, file.type);
     } catch (e) {
       log('error', 'ocr_failed', e);
-      await logVerification({ userId, orderId, success: false, reason: 'ocr_error' });
-      return fail('ocr_error', 'Чекті оқу мүмкін болмады. Қайталап көріңіз.', 502);
+      await logVerification({ userId, orderId, success: false, reason: 'ocr_error', receiptHash });
+      return fail('ocr_error', 'Чекті оқу мүмкін болмады. Қайталап көріңіз.', 502); // pending қалады
     }
 
-    // 3) business rules (pure) — сома тапсырыстан, уақыт тапсырыс терезесінен
+    // 4) business rules — сома тапсырыстан, уақыт тапсырыс терезесінен
     const v = validateReceipt(extracted, {
       expectedAmount: order.amount,
       windowStartMs,
       windowMinutes: config.receiptMaxAgeMinutes,
     });
     if (!v.ok) {
-      await logVerification({ userId, orderId, success: false, reason: v.reason, extracted });
+      await logVerification({ userId, orderId, success: false, reason: v.reason, extracted, receiptHash });
+      if (v.reason && RETRYABLE.has(v.reason)) {
+        return fail(v.reason, v.message); // сапа мәселесі — pending, қайта жүктеуге болады
+      }
+      await markRejected(orderId, v.message, { ...baseFields, receipt_hash: receiptHash });
       return fail(v.reason, v.message);
-    }
-
-    // 4) duplicate receipt guard (explicit check + DB unique constraint below)
-    const { data: existing } = await supabaseAdmin
-      .from('payment_transactions')
-      .select('id')
-      .eq('receipt_number', extracted.receiptNumber!)
-      .maybeSingle();
-    if (existing) {
-      await logVerification({ userId, orderId, success: false, reason: 'duplicate_receipt', extracted });
-      return fail('duplicate_receipt', 'Бұл чек бұрын қолданылған.');
     }
 
     // 5) record transaction (unique receipt_number = race-safe final guard)
@@ -108,19 +142,27 @@ export async function POST(req: NextRequest) {
       paid_at: extracted.paymentDate!,
     });
     if (txErr) {
-      // 23505 = unique_violation → someone used this receipt a moment ago
       const dup = (txErr as { code?: string }).code === '23505';
-      await logVerification({ userId, orderId, success: false, reason: dup ? 'duplicate_receipt' : 'internal_error', extracted });
+      await logVerification({ userId, orderId, success: false, reason: dup ? 'duplicate_receipt' : 'internal_error', extracted, receiptHash });
+      if (dup) await markRejected(orderId, 'Бұл чек бұрын қолданылған', baseFields);
       return fail(dup ? 'duplicate_receipt' : 'internal_error', dup ? 'Бұл чек бұрын қолданылған.' : 'Ішкі қате.', dup ? 422 : 500);
     }
 
-    // 6) activate premium + close order
+    // 6) approve: premium қосу + тапсырысты жабу (бар өрістерімен)
     const premiumUntil = await activatePremium(userId);
     await supabaseAdmin.from('payment_orders')
-      .update({ status: 'paid', updated_at: new Date().toISOString() })
+      .update({
+        status: 'paid',
+        approved_at: nowIso,
+        admin_review_status: 'auto_approved',
+        receipt_hash: receiptHash,
+        receipt_paid_at: extracted.paymentDate,
+        ...baseFields,
+        updated_at: nowIso,
+      })
       .eq('id', orderId);
 
-    await logVerification({ userId, orderId, success: true, extracted });
+    await logVerification({ userId, orderId, success: true, extracted, receiptHash });
     log('info', 'premium_activated', { userId, orderId, premiumUntil });
 
     return NextResponse.json(

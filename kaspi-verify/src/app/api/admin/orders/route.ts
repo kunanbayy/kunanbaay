@@ -26,7 +26,7 @@ export async function GET(req: NextRequest) {
   // Соңғы 200 тапсырыс + сәйкес транзакция (расталған чек) мәліметі
   const { data: orders, error } = await supabaseAdmin
     .from('payment_orders')
-    .select('id, user_id, plan, amount, status, created_at, updated_at, payment_transactions(receipt_number, paid_at)')
+    .select('id, user_id, plan, tariff_id, amount, status, payment_method, created_at, expires_at, updated_at, receipt_url, receipt_uploaded_at, receipt_paid_at, approved_at, rejected_reason, admin_review_status, payment_transactions(receipt_number, paid_at)')
     .order('created_at', { ascending: false })
     .limit(200);
 
@@ -65,11 +65,20 @@ export async function GET(req: NextRequest) {
       id: o.id,
       userId: o.user_id,
       plan: o.plan,
+      tariffId: o.tariff_id ?? o.plan,
       amount: o.amount,
+      paymentMethod: o.payment_method ?? 'qr',
       status: display,
       rawStatus: o.status,
+      adminReviewStatus: o.admin_review_status ?? 'pending',
       receiptNumber: tx?.receipt_number ?? null,
-      paidAt: tx?.paid_at ?? null,
+      receiptUrl: o.receipt_url ?? null,
+      receiptUploadedAt: o.receipt_uploaded_at ?? null,
+      receiptPaidAt: o.receipt_paid_at ?? tx?.paid_at ?? null,
+      approvedAt: o.approved_at ?? null,
+      rejectedReason: o.rejected_reason ?? null,
+      startedAt: o.created_at,
+      expiresAt: o.expires_at ?? null,
       failedAttempts: f?.count ?? 0,
       lastFailReason: f?.lastReason ?? null,
       createdAt: o.created_at,

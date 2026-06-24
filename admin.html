@@ -896,8 +896,11 @@ async function loadOcrOrders(){
       var st = o.status==='approved' ? 'paid' : o.status;
       return {
         id:o.id, name:(o.receiptNumber ? 'Чек №'+o.receiptNumber : 'User '+String(o.userId||'').slice(0,8)),
-        email:'', plan:o.plan, amount:o.amount, status:st, receipt:'',
-        date:(o.createdAt||'').slice(0,10), fails:o.failedAttempts||0, src:'ocr'
+        email:'', plan:o.tariffId||o.plan, amount:o.amount, status:st, receipt:o.receiptUrl||'',
+        date:(o.startedAt||o.createdAt||'').slice(0,10), fails:o.failedAttempts||0, src:'ocr',
+        method:o.paymentMethod||'qr', reason:o.rejectedReason||'', review:o.adminReviewStatus||'pending',
+        uploadedAt:o.receiptUploadedAt||'', paidAt:o.receiptPaidAt||'',
+        startedAt:o.startedAt||'', expiresAt:o.expiresAt||''
       };
     });
   }catch(e){ return []; }
@@ -971,16 +974,37 @@ function renderPayments(){
   $('navPays').textContent=pays.length;
   const q=($('globalSearch').value||'').toLowerCase();
   var list = pays.map((p,i)=>({p,i})).filter(x=> !q || ((x.p.name||'')+' '+(x.p.plan||'')).toLowerCase().includes(q));
-  $('paymentsBody').innerHTML = list.map(({p,i})=>`<tr>
-    <td><div class="u-cell"><span class="u-av" style="background:${avColor(p.name)}">${initial(p.name)}</span><div><div class="u-name">${esc(p.name||'—')}</div>${p.src==='ocr'?'<div class="u-mail">🤖 Kaspi OCR'+(p.fails?(' · '+p.fails+' сәтсіз әрекет'):'')+'</div>':(p.src==='sb'?'<div class="u-mail">☁️ дерекқор</div>':'')}</div></div></td>
+  $('paymentsBody').innerHTML = list.map(({p,i})=>{
+    var meth = p.src==='ocr' ? (p.method==='kaspi_link'?'Kaspi сілтеме':'QR') : '';
+    var sub = p.src==='ocr'
+      ? '🤖 Kaspi OCR · '+meth+(p.fails?(' · '+p.fails+' сәтсіз'):'')+(p.reason?('<br><span style="color:#B91C1C">'+esc(p.reason)+'</span>'):'')
+      : (p.src==='sb'?'☁️ дерекқор':'');
+    var reviewBtns = (p.src==='ocr')
+      ? `<button class="ibtn ok" onclick="reviewOcr('${p.id}','approve')" title="Растау"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></button>
+         <button class="ibtn" onclick="reviewOcr('${p.id}','reject')" title="Қабылдамау"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>`
+      : `${p.status==='pending'?`<button class="ibtn ok" onclick="approvePay(${i})" title="Растау"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></button>`:''}
+         <button class="ibtn" onclick="delPay(${i})" title="Жою"><svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></button>`;
+    return `<tr>
+    <td><div class="u-cell"><span class="u-av" style="background:${avColor(p.name)}">${initial(p.name)}</span><div><div class="u-name">${esc(p.name||'—')}</div>${sub?'<div class="u-mail">'+sub+'</div>':''}</div></div></td>
     <td>${esc(p.plan||'—')}</td><td><b>${nf(p.amount||0)} ₸</b></td>
     <td><span class="pill ${p.status}">${payStatusLabel(p.status)}</span></td>
-    <td>${p.receipt?'<a class="lk" href="'+esc(p.receipt)+'" target="_blank" style="color:#3B82F6;font-weight:700">Чекті көру</a>':'<span style="color:var(--light);font-size:.8rem">'+(p.src==='ocr'?'OCR расталды':'чек жоқ')+'</span>'}</td>
+    <td>${p.receipt?'<a class="lk" href="'+esc(p.receipt)+'" target="_blank" style="color:#3B82F6;font-weight:700">Чекті көру</a>':'<span style="color:var(--light);font-size:.8rem">'+(p.src==='ocr'?'—':'чек жоқ')+'</span>'}</td>
     <td>${esc(p.date||'')}</td>
-    <td><div class="row-act">
-      ${(p.status==='pending'&&p.src!=='ocr')?`<button class="ibtn ok" onclick="approvePay(${i})" title="Растау"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></button>`:''}
-      ${p.src!=='ocr'?`<button class="ibtn" onclick="delPay(${i})" title="Жою"><svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></button>`:''}
-    </div></td></tr>`).join('') || '<tr><td colspan="7" class="empty">Төлемдер жоқ</td></tr>';
+    <td><div class="row-act">${reviewBtns}</div></td></tr>`;
+  }).join('') || '<tr><td colspan="7" class="empty">Төлемдер жоқ</td></tr>';
+}
+/* OCR тапсырысын қолмен растау/қабылдамау (backend) */
+async function reviewOcr(orderId, action){
+  var api=(window.SHYRAQ_API||'').replace(/\/$/,''); var tok=window.SHYRAQ_ADMIN_TOKEN||'';
+  if(!api||!tok){ toast('SHYRAQ_API/токен бапталмаған'); return; }
+  var reason='';
+  if(action==='reject'){ reason = prompt('Қабылдамау себебі:','Чек сәйкес емес')||''; }
+  try{
+    var r=await fetch(api+'/api/admin/review',{ method:'POST', headers:{'Content-Type':'application/json','x-admin-token':tok}, body:JSON.stringify({orderId:orderId,action:action,reason:reason}) });
+    var j=await r.json().catch(()=>({}));
+    if(r.ok&&j.ok){ toast(action==='approve'?'✓ Расталды':'Қабылданбады'); loadPayments(); }
+    else toast('Қате: '+(j.message||r.status));
+  }catch(e){ toast('Желі қатесі'); }
 }
 async function approvePay(i){
   var p=_pays[i]; if(!p) return;

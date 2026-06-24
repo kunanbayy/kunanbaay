@@ -6,134 +6,140 @@
   <title>Kaspi Төлем — Shyraq Education</title>
   <link rel="stylesheet" href="css/style.css"/>
   <style>
-    :root {
-      --pg-bg: #0E0F13; --pg-card: #16181E; --pg-card-2: #1B1E25;
-      --pg-border: #282B33; --pg-text: #F4F5F7; --pg-muted: #8B909B;
-      --pg-red: #FB5C4C; --pg-red-2: #E94A3C; --pg-green: #43D17F;
-    }
-    body { background: var(--pg-bg); }
+    /* ═══ Shyraq стиліндегі төлем беті (ашық navy/gold тема) ═══ */
     .pay-outer {
       min-height: calc(100vh - var(--nav-h));
       display: flex; align-items: flex-start; justify-content: center;
       padding: 40px 20px 90px;
-      background:
-        radial-gradient(circle at 1px 1px, rgba(255,255,255,0.035) 1px, transparent 0) 0 0/22px 22px,
-        var(--pg-bg);
+      background: var(--bg-atmosphere), var(--cream);
     }
     .pay-card-wrap { width: 100%; max-width: 440px; }
 
     /* ── Back link ── */
     .pay-back {
       display: inline-flex; align-items: center; gap: 6px;
-      font-size: 0.82rem; font-weight: 600; color: var(--pg-muted);
-      margin-bottom: 18px; transition: .2s;
+      font-size: 0.82rem; font-weight: 600; color: var(--text-muted);
+      margin-bottom: 18px; transition: var(--transition);
     }
-    .pay-back:hover { color: var(--pg-text); }
+    .pay-back:hover { color: var(--navy); }
 
     /* ── Cards ── */
     .pay-block {
-      background: var(--pg-card); border: 1px solid var(--pg-border);
-      border-radius: 26px; padding: 30px 26px; margin-bottom: 22px;
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: var(--radius-xl); padding: 30px 26px; margin-bottom: 22px;
+      box-shadow: var(--shadow-md);
     }
-    .pay-block.glow {
-      border-color: rgba(251,92,76,0.30);
-      box-shadow: 0 0 0 1px rgba(251,92,76,0.08), 0 0 46px rgba(251,92,76,0.12);
-    }
-    .pay-block-title { font-family: var(--font-display); font-weight: 800; font-size: 1.35rem; color: var(--pg-text); text-align: center; letter-spacing: -0.01em; }
-    .pay-block-sub { font-size: 0.9rem; color: var(--pg-muted); text-align: center; margin-top: 6px; }
+    .pay-block.glow { border-color: var(--border-warm); box-shadow: var(--glow-gold); }
+    .pay-block-title { font-family: var(--font-display); font-weight: 800; font-size: 1.35rem; color: var(--ink); text-align: center; letter-spacing: -0.01em; }
+    .pay-block-sub { font-size: 0.9rem; color: var(--text-muted); text-align: center; margin-top: 6px; }
 
     /* ── 6-минут таймер ── */
-    .pay-timer { background: var(--pg-card); border: 1px solid var(--pg-border); border-radius: 16px; padding: 14px 18px; margin-bottom: 18px; }
-    .pay-timer.warn { border-color: rgba(251,92,76,0.4); }
-    .pay-timer.expired { border-color: var(--pg-red); background: rgba(251,92,76,0.08); }
+    .pay-timer { background: var(--navy); color: #fff; border-radius: var(--radius-lg); padding: 15px 18px; margin-bottom: 18px; box-shadow: var(--shadow-navy-lg); }
+    .pay-timer.warn { background: linear-gradient(135deg, #C2410C, #9A3412); }
+    .pay-timer.expired { background: linear-gradient(135deg, #DC2626, #991B1B); }
     .pay-timer-row { display: flex; align-items: center; justify-content: space-between; }
-    .pay-timer-label { font-size: 0.85rem; font-weight: 700; color: var(--pg-muted); }
-    .pay-timer-clock { font-family: var(--font-display); font-size: 1.5rem; font-weight: 800; color: var(--pg-text); font-variant-numeric: tabular-nums; }
-    .pay-timer.warn .pay-timer-clock, .pay-timer.expired .pay-timer-clock { color: var(--pg-red); }
-    .pay-timer-bar { height: 6px; border-radius: 4px; background: #2A2D35; margin-top: 10px; overflow: hidden; }
-    .pay-timer-fill { height: 100%; width: 100%; background: var(--pg-green); transition: width 1s linear; }
-    .pay-timer.warn .pay-timer-fill, .pay-timer.expired .pay-timer-fill { background: var(--pg-red); }
-    .pay-timer-note { font-size: 0.76rem; color: var(--pg-muted); margin-top: 8px; line-height: 1.4; }
-    .pay-blocked { pointer-events: none; opacity: 0.45; }
+    .pay-timer-label { font-size: 0.85rem; font-weight: 700; color: rgba(255,255,255,.8); }
+    .pay-timer-clock { font-family: var(--font-display); font-size: 1.6rem; font-weight: 800; color: #fff; font-variant-numeric: tabular-nums; }
+    .pay-timer-bar { height: 6px; border-radius: 4px; background: rgba(255,255,255,.18); margin-top: 10px; overflow: hidden; }
+    .pay-timer-fill { height: 100%; width: 100%; background: var(--gold); transition: width 1s linear; }
+    .pay-timer.warn .pay-timer-fill, .pay-timer.expired .pay-timer-fill { background: #fff; }
+    .pay-timer-note { font-size: 0.76rem; color: rgba(255,255,255,.7); margin-top: 8px; line-height: 1.4; }
+    .pay-timer-note a { color: #fff; font-weight: 800; text-decoration: underline; }
+    .pay-blocked { pointer-events: none; opacity: 0.5; }
 
     /* ── Kaspi QR ── */
     .kqr-frame {
       position: relative; width: 232px; height: 232px; margin: 24px auto 0;
-      background: #fff; border-radius: 24px; padding: 15px;
-      display: flex; align-items: center; justify-content: center;
+      background: #fff; border: 1px solid var(--border); border-radius: 24px; padding: 15px;
+      display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-sm);
     }
     .kqr-frame #qrCanvas { display: flex; line-height: 0; }
     .kqr-frame #qrCanvas img, .kqr-frame #qrCanvas canvas { display: block; width: 202px !important; height: 202px !important; }
-    .kqr-amount { text-align: center; font-family: var(--font-display); font-size: 2.5rem; font-weight: 800; color: var(--pg-text); margin-top: 24px; letter-spacing: -0.02em; }
-    .kqr-amount .tg { font-size: 1.4rem; font-weight: 600; color: var(--pg-muted); margin-left: 4px; }
-    .kqr-cashback { text-align: center; color: var(--pg-green); font-size: 0.92rem; font-weight: 600; margin-top: 8px; }
+    .kqr-amount { text-align: center; font-family: var(--font-display); font-size: 2.5rem; font-weight: 800; color: var(--ink); margin-top: 22px; letter-spacing: -0.02em; }
+    .kqr-amount .tg { font-size: 1.4rem; font-weight: 600; color: var(--text-light); margin-left: 4px; }
+    .kqr-cashback { text-align: center; color: var(--emerald); font-size: 0.92rem; font-weight: 600; margin-top: 8px; }
+    .kqr-or { text-align: center; font-size: 0.78rem; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: .08em; margin: 20px 0 4px; }
     .kqr-open-btn {
       display: flex; align-items: center; justify-content: center; gap: 8px;
-      width: 100%; min-height: 60px; margin-top: 24px;
-      border-radius: 18px; background: var(--pg-red); color: #fff;
-      font-family: var(--font-display); font-weight: 800; font-size: 1.05rem;
-      text-decoration: none; border: none; cursor: pointer; transition: .2s;
+      width: 100%; min-height: 56px; margin-top: 14px;
+      border-radius: var(--radius-lg); background: var(--gold); color: var(--ink);
+      font-family: var(--font-display); font-weight: 800; font-size: 1.02rem;
+      text-decoration: none; border: none; cursor: pointer; transition: var(--transition);
+      box-shadow: var(--shadow-gold);
     }
-    .kqr-open-btn:hover { background: var(--pg-red-2); transform: translateY(-1px); }
-    .kqr-after { text-align: center; color: var(--pg-red); font-size: 0.9rem; font-weight: 700; margin-top: 18px; }
+    .kqr-open-btn:hover { background: var(--gold-deep); color: #fff; transform: translateY(-1px); }
+    .kqr-after { text-align: center; color: var(--navy); font-size: 0.9rem; font-weight: 700; margin-top: 18px; }
 
     /* ── Upload zone ── */
     .pay-upload {
-      border: 1.6px dashed #3A3E48; border-radius: 18px;
+      border: 1.6px dashed var(--border); border-radius: var(--radius-lg);
       padding: 34px 20px; text-align: center; cursor: pointer;
-      background: var(--pg-card-2); transition: .2s; position: relative;
+      background: var(--cream-dark); transition: var(--transition); position: relative;
       margin-top: 22px;
     }
-    .pay-upload:hover, .pay-upload.drag { border-color: var(--pg-red); background: rgba(251,92,76,0.06); }
+    .pay-upload:hover, .pay-upload.drag { border-color: var(--gold); background: var(--gold-pale); }
     .pay-upload input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
     .pay-upload-icon {
-      width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;
-      margin: 0 auto 14px; color: var(--pg-red);
+      width: 48px; height: 48px; border-radius: 50%; background: var(--gold-light);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 14px; color: var(--gold-deep); border: 1.5px solid var(--gold);
     }
-    .pay-upload-title { font-weight: 700; color: var(--pg-text); font-size: 0.98rem; }
-    .pay-file-name { margin-top: 10px; font-size: 0.82rem; font-weight: 600; color: var(--pg-green); display: none; }
+    .pay-upload-title { font-weight: 700; color: var(--ink); font-size: 0.98rem; }
+    .pay-file-name { margin-top: 10px; font-size: 0.82rem; font-weight: 600; color: var(--emerald); display: none; }
     .pay-file-name.visible { display: block; }
 
     /* ── Comment ── */
-    .pay-comment { margin-top: 18px; padding: 12px 14px; border-radius: 14px; background: rgba(251,92,76,0.07); border: 1px solid rgba(251,92,76,0.22); }
-    .pay-comment-label { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--pg-red); margin-bottom: 4px; }
-    .pay-comment-value { font-size: 0.88rem; font-weight: 600; color: var(--pg-text); word-break: break-all; }
-    .pay-comment-copy { display: inline-flex; align-items: center; gap: 5px; margin-top: 8px; font-size: 0.76rem; font-weight: 700; color: var(--pg-red); cursor: pointer; background: none; border: none; padding: 0; }
+    .pay-comment { margin-top: 18px; padding: 12px 14px; border-radius: var(--radius); background: var(--gold-pale); border: 1px solid var(--border-warm); border-left: 3px solid var(--gold); }
+    .pay-comment-label { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--gold-deep); margin-bottom: 4px; }
+    .pay-comment-value { font-size: 0.88rem; font-weight: 600; color: var(--ink); word-break: break-all; }
+    .pay-comment-copy { display: inline-flex; align-items: center; gap: 5px; margin-top: 8px; font-size: 0.76rem; font-weight: 700; color: var(--gold-deep); cursor: pointer; background: none; border: none; padding: 0; }
 
     /* ── Submit button ── */
     .pay-submit {
-      width: 100%; padding: 16px; border-radius: 16px; margin-top: 16px;
+      width: 100%; padding: 16px; border-radius: var(--radius-lg); margin-top: 16px;
       font-family: var(--font-display); font-size: 1rem; font-weight: 800;
-      border: none; cursor: pointer; transition: .2s;
-      background: var(--pg-red); color: #fff;
+      border: none; cursor: pointer; transition: var(--transition);
+      background: var(--gold); color: var(--ink); box-shadow: var(--shadow-gold);
     }
-    .pay-submit:hover:not(:disabled) { background: var(--pg-red-2); transform: translateY(-1px); }
-    .pay-submit:disabled { background: #2A2D35; color: var(--pg-muted); cursor: not-allowed; }
-    .pay-submit.sent { background: var(--pg-green); color: #06210F; }
+    .pay-submit:hover:not(:disabled) { background: var(--gold-deep); color: #fff; transform: translateY(-1px); }
+    .pay-submit:disabled { background: var(--border); color: var(--text-muted); cursor: not-allowed; box-shadow: none; }
+    .pay-submit.sent { background: var(--emerald); color: #fff; }
 
     /* ── Support button ── */
     .pay-support {
       display: flex; align-items: center; justify-content: center; gap: 8px;
-      width: 100%; min-height: 56px; margin-top: 14px;
-      border-radius: 16px; background: var(--pg-card-2); color: var(--pg-text);
-      border: 1px solid var(--pg-border); font-weight: 700; font-size: 0.95rem;
-      text-decoration: none; transition: .2s;
+      width: 100%; min-height: 52px; margin-top: 14px;
+      border-radius: var(--radius-lg); background: var(--white); color: var(--navy);
+      border: 1.5px solid var(--border); font-weight: 700; font-size: 0.95rem;
+      text-decoration: none; transition: var(--transition);
     }
-    .pay-support:hover { border-color: var(--pg-muted); }
+    .pay-support:hover { border-color: var(--navy); background: var(--navy-pale); }
 
-    /* ── Success screen ── */
+    /* ── Review / status states ── */
+    .pay-status { display: none; text-align: center; padding: 26px 8px 4px; }
+    .pay-status.visible { display: block; }
+    .pay-status-icon { width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 1.7rem; }
+    .pay-status.review .pay-status-icon { background: var(--navy-pale); color: var(--navy); border: 2px solid var(--navy-light); }
+    .pay-status.approved .pay-status-icon { background: var(--emerald-light); color: var(--emerald); border: 2px solid var(--emerald); }
+    .pay-status.rejected .pay-status-icon { background: #FEF2F2; color: #DC2626; border: 2px solid #FCA5A5; }
+    .pay-status h2 { font-family: var(--font-display); font-size: 1.3rem; font-weight: 800; color: var(--ink); margin-bottom: 10px; }
+    .pay-status p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.6; }
+    .pay-spinner { width: 30px; height: 30px; border: 3px solid var(--navy-pale); border-top-color: var(--navy); border-radius: 50%; animation: payspin .8s linear infinite; margin: 0 auto; }
+    @keyframes payspin { to { transform: rotate(360deg); } }
+
+    /* ── Success screen (legacy) ── */
     .pay-success { display: none; text-align: center; padding: 28px 8px 4px; }
     .pay-success.visible { display: block; }
     .pay-success-icon {
-      width: 64px; height: 64px; border-radius: 50%; background: rgba(67,209,127,0.12);
+      width: 64px; height: 64px; border-radius: 50%; background: var(--emerald-light);
       display: flex; align-items: center; justify-content: center; margin: 0 auto 18px;
-      font-size: 1.8rem; color: var(--pg-green); border: 2px solid var(--pg-green);
+      font-size: 1.8rem; color: var(--emerald); border: 2px solid var(--emerald);
     }
-    .pay-success h2 { font-family: var(--font-display); font-size: 1.3rem; font-weight: 800; color: var(--pg-text); margin-bottom: 10px; }
-    .pay-success p { font-size: 0.88rem; color: var(--pg-muted); line-height: 1.6; }
+    .pay-success h2 { font-family: var(--font-display); font-size: 1.3rem; font-weight: 800; color: var(--ink); margin-bottom: 10px; }
+    .pay-success p { font-size: 0.88rem; color: var(--text-muted); line-height: 1.6; }
 
     @media (max-width: 520px) {
-      .pay-block { padding: 26px 20px; border-radius: 22px; }
+      .pay-block { padding: 26px 20px; border-radius: var(--radius-xl); }
       .kqr-frame { width: 212px; height: 212px; }
       .kqr-frame #qrCanvas img, .kqr-frame #qrCanvas canvas { width: 182px !important; height: 182px !important; }
     }
@@ -180,13 +186,16 @@
       </div>
 
       <div class="kqr-amount"><span id="qrAmount">…</span> <span class="tg">₸</span></div>
-      <div class="kqr-cashback">кэшбэк коинами после оплаты</div>
+      <div class="kqr-cashback">Способ 1 — отсканируйте QR в Kaspi</div>
+
+      <div class="kqr-or">или</div>
 
       <a id="kaspiPayLink" href="https://pay.kaspi.kz/pay/abp9nx0l" target="_blank" rel="noopener" class="kqr-open-btn">
-        Открыть Kaspi и оплатить
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        Способ 2 — открыть Kaspi
       </a>
 
-      <div class="kqr-after">После оплаты — прикрепи чек ниже ↓</div>
+      <div class="kqr-after">После оплаты — прикрепите чек ниже ↓</div>
     </div>
 
     <!-- Card 2: attach receipt -->
@@ -223,7 +232,14 @@
         Написать в поддержку
       </a>
 
-      <!-- Success (hidden by default) -->
+      <!-- Авто-тексеру күйі (backend бар болғанда) -->
+      <div class="pay-status" id="payStatus">
+        <div class="pay-status-icon" id="payStatusIcon"><div class="pay-spinner"></div></div>
+        <h2 id="payStatusTitle">Чек отправлена на проверку</h2>
+        <p id="payStatusText">Идёт автоматическая проверка чека…</p>
+      </div>
+
+      <!-- Success (hidden by default) — қолмен растау режимі -->
       <div class="pay-success" id="successScreen">
         <div class="pay-success-icon">✓</div>
         <h2>Чек отправлен!</h2>
@@ -287,7 +303,12 @@
   };
   var KASPI_PAY_URL = KASPI_LINKS[planKey] || 'https://pay.kaspi.kz/pay/abp9nx0l';
   var payLinkEl = document.getElementById('kaspiPayLink');
-  if (payLinkEl) payLinkEl.href = KASPI_PAY_URL;
+  // Төлем әдісі: QR сканерлеу (қалыпты) немесе Kaspi сілтемесін ашу
+  var payMethod = 'qr';
+  if (payLinkEl) {
+    payLinkEl.href = KASPI_PAY_URL;
+    payLinkEl.addEventListener('click', function () { payMethod = 'kaspi_link'; });
+  }
   (function renderKaspiQr() {
     function draw() {
       var holder = document.getElementById('qrCanvas');
@@ -376,22 +397,20 @@
         }
       }
     } catch (e) {}
-    document.getElementById('successScreen').classList.add('visible');
-    document.getElementById('uploadZone').style.display = 'none';
+    // «Төлем қабылданды» — тариф белсенді, locked бөлімдер ашылды
+    showStatus('approved', 'Төлем қабылданды!', 'Тариф белсендірілді — жабық бөлімдер ашылды.', '✓');
     var next = params.get('next');
     var dest = (next === 'results') ? { href: 'results.html?paid=1', label: '← Толық тест нәтижесін ашу' }
              : (next === 'grant')  ? { href: 'grant.html?paid=1',  label: '← Грант талдауын ашу' }
-             : null;
-    if (dest) {
-      var back = document.getElementById('successScreen');
-      if (back) {
-        var a = document.createElement('a');
-        a.href = dest.href;
-        a.className = 'pay-submit';
-        a.style.cssText = 'display:flex;align-items:center;justify-content:center;text-decoration:none;margin-top:14px;';
-        a.textContent = dest.label;
-        back.appendChild(a);
-      }
+             : { href: 'grant.html', label: '← Кабинетке өту' };
+    var box = document.getElementById('payStatus');
+    if (dest && box) {
+      var a = document.createElement('a');
+      a.href = dest.href;
+      a.className = 'pay-submit';
+      a.style.cssText = 'display:flex;align-items:center;justify-content:center;text-decoration:none;margin-top:18px;';
+      a.textContent = dest.label;
+      box.appendChild(a);
     }
   }
   function payPending() {
@@ -421,6 +440,23 @@
     box.textContent = '⚠️ ' + msg;
   }
 
+  /* ── Авто-тексеру күй экраны (backend) ── */
+  function showStatus(kind, title, html, icon) {
+    var box = document.getElementById('payStatus');
+    document.getElementById('uploadZone').style.display = 'none';
+    document.getElementById('successScreen').classList.remove('visible');
+    submitBtn.style.display = 'none';
+    var cm = document.querySelector('.pay-comment'); if (cm) cm.style.display = 'none';
+    box.className = 'pay-status visible ' + kind;
+    document.getElementById('payStatusIcon').innerHTML = icon;
+    document.getElementById('payStatusTitle').textContent = title;
+    document.getElementById('payStatusText').innerHTML = html;
+  }
+  function showReview() { showStatus('review', 'Чек отправлена на проверку', 'Идёт автоматическая проверка чека…', '<div class="pay-spinner"></div>'); }
+  function showRejected(reason) {
+    showStatus('rejected', 'Чек не принят', '<b>' + (reason || 'Проверка не пройдена') + '</b><br>Закрытые разделы не открыты. Проверьте сумму, время и оригинал чека.', '✕');
+  }
+
   submitBtn.addEventListener('click', async function () {
     const file = fileInput.files[0];
     if (!file) return;
@@ -446,16 +482,25 @@
           orderId = oJson.orderId;
         }
 
+        // Чекті алдымен Supabase Storage-қа жүктейміз (admin panel-де көрінуі үшін)
+        var receiptUrl = '';
+        try { if (window.ShyraqDB && window.ShyraqDB.ready()) receiptUrl = await window.ShyraqDB.uploadReceipt(file); } catch (e) {}
+
+        // UI: бірден «Чек отправлена на проверку» (backend автотексеруді осы кезде жүргізеді)
+        showReview();
+
         const fd = new FormData();
         fd.append('orderId', orderId);
         fd.append('userId', userId);
         fd.append('file', file);
+        fd.append('paymentMethod', payMethod);
+        if (receiptUrl) fd.append('receiptUrl', receiptUrl);
         const vRes = await fetch(API + '/api/payment/verify-receipt', { method: 'POST', body: fd });
         const vJson = await vRes.json().catch(() => ({}));
-        if (vRes.ok && vJson.ok) paySuccess();
-        else payError(vJson.message || 'Чек расталмады. Дұрыс Kaspi чегін жүктеңіз.');
+        if (vRes.ok && vJson.ok) paySuccess();              // → «Төлем қабылданды» + ашу
+        else showRejected(vJson.message);                   // → «Чек не принят» + себеп
       } catch (e) {
-        payError('Желі қатесі. Кейінірек қайталаңыз.');
+        showRejected('Желі қатесі. Кейінірек қайталаңыз.');
       }
       return;
     }
@@ -535,7 +580,7 @@
     timerEl.classList.add('expired');
     clockEl.textContent = '00:00';
     fillEl.style.width = '0%';
-    noteEl.innerHTML = '⛔ Заказ отменён — время вышло. <a href="#" id="payRestart" style="color:var(--pg-red);font-weight:800;text-decoration:underline;">Начать заново</a>';
+    noteEl.innerHTML = '⛔ Заказ отменён — время вышло. <a href="#" id="payRestart">Начать заново</a>';
     blockPayment();
     document.getElementById('payRestart').addEventListener('click', function (e) {
       e.preventDefault();
@@ -564,18 +609,40 @@
   var timerInt = setInterval(tick, 1000);
   tick();
 
-  // Бэкенд бар болса — тапсырысты бет ашылғанда жасаймыз (6-мин терезе осыдан басталады)
-  (async function createOrderOnLoad() {
+  // Таймерді бэкенд сессиясының expires_at-імен синхрондау
+  function syncTimer(expiresIso) {
+    var ms = Date.parse(expiresIso);
+    if (!ms || isNaN(ms)) return;
+    endsAt = ms;
+    sessionStorage.setItem(winKey, String(ms - PAY_WINDOW_MIN * 60000));
+    tick();
+  }
+
+  // Бэкенд бар болса: алдымен белсенді (expired емес) сессияны қалпына келтіреміз,
+  // болмаса жаңа тапсырыс ашамыз. 6-мин терезе бэкендтен синхрондалады.
+  (async function initSession() {
     if (!API || window.__payExpired) return;
     var userId = getUserId();
     if (!userId) return;                 // тіркелмеген болса — жіберу кезінде ескертіледі
     try {
+      // 1) қайта кірсе — соңғы белсенді сессия
+      var ar = await fetch(API + '/api/payment/active?userId=' + encodeURIComponent(userId) + '&plan=' + encodeURIComponent(planKey));
+      var aj = await ar.json().catch(function () { return {}; });
+      if (aj && aj.ok && aj.session) {
+        currentOrderId = aj.session.orderId;
+        if (aj.session.expiresAt) syncTimer(aj.session.expiresAt);
+        return;
+      }
+      // 2) жаңа сессия
       var r = await fetch(API + '/api/payment/create-order', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId: userId, plan: planKey })
+        body: JSON.stringify({ userId: userId, plan: planKey, paymentMethod: payMethod })
       });
       var j = await r.json().catch(function () { return {}; });
-      if (r.ok && j.ok) currentOrderId = j.orderId;
+      if (r.ok && j.ok) {
+        currentOrderId = j.orderId;
+        if (j.expiresAt) syncTimer(j.expiresAt);
+      }
     } catch (e) {}
   })();
 

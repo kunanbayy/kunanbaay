@@ -16,6 +16,7 @@ export async function logVerification(input: {
   success: boolean;
   reason?: VerifyFailReason | null;
   extracted?: ExtractedReceipt | null;
+  receiptHash?: string | null;
 }) {
   try {
     await supabaseAdmin.from('verification_logs').insert({
@@ -25,6 +26,7 @@ export async function logVerification(input: {
       reason: input.reason ?? null,
       ocr_confidence: input.extracted?.confidence ?? null,
       raw_ocr: input.extracted ?? null,
+      receipt_hash: input.receiptHash ?? null,
     });
   } catch (e) {
     log('error', 'failed to write verification_log', e);
