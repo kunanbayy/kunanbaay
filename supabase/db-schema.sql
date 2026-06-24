@@ -26,6 +26,8 @@ drop policy if exists "payments_select_any" on public.payments;
 create policy "payments_select_any" on public.payments for select using (true);
 drop policy if exists "payments_update_any" on public.payments;
 create policy "payments_update_any" on public.payments for update using (true);
+drop policy if exists "payments_delete_any" on public.payments;
+create policy "payments_delete_any" on public.payments for delete using (true);
 
 -- ── ПАРАМЕТРЛЕР (тарифтер т.б. — бір кілт = бір жазба) ──
 create table if not exists public.settings (

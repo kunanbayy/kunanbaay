@@ -1037,24 +1037,29 @@ async function approvePay(i){
 }
 async function delPay(i){
   var p=_pays[i]; if(!p) return;
-  if(!confirm('Төлемді жою керек пе?')) return;
-  if(p.src==='sb'){ await window.ShyraqDB.deletePayment(p.id); }
-  else { const d=getPays(); d.splice(p.idx,1); setPays(d); }
-  await loadPayments(); toast('Жойылды');
+  if(!confirm('Бұл төлемді жою керек пе?')) return;
+  var ok=false;
+  if(p.src==='ocr'){ toast('OCR тапсырысын «Қабылдамау» арқылы басқарыңыз'); return; }
+  if(p.src==='sb'){ ok = await window.ShyraqDB.deletePayment(p.id); }   // DB деңгейінде өшіру
+  else { const d=getPays(); if(p.idx!=null){ d.splice(p.idx,1); setPays(d); } ok=true; }
+  if(ok){ await loadPayments(); toast('Жойылды ✓'); }     // тізім + жалпы түсім қайта есептеледі
+  else { toast('⚠️ DB-де өшпеді — Supabase-та payments delete саясатын қосыңыз (db-schema.sql)'); }
 }
 /* Барлық төлемдерді тазалау (Supabase payments + жергілікті тізім).
    OCR тапсырыстары (payment_orders) бөлек — олар backend-те қалады. */
 async function clearAllPayments(){
   if(!confirm('Барлық төлемдер мен жалпы түсім тазаланады. Жалғастырасыз ба?')) return;
+  var total=0, failed=0;
   try {
     if (window.ShyraqDB && window.ShyraqDB.ready()){
       var rows = await window.ShyraqDB.listPayments() || [];
-      for (var i=0;i<rows.length;i++){ try{ await window.ShyraqDB.deletePayment(rows[i].id); }catch(e){} }
+      total = rows.length;
+      for (var i=0;i<rows.length;i++){ var ok=false; try{ ok = await window.ShyraqDB.deletePayment(rows[i].id); }catch(e){} if(!ok) failed++; }
     }
   } catch(e){}
   try { localStorage.setItem('shyraq_admin_payments','[]'); } catch(e){}
-  await loadPayments();
-  toast('✓ Төлемдер тазаланды');
+  await loadPayments();   // _pays қайта жүктеледі → жалпы түсім нөлге түседі
+  toast(failed ? ('⚠️ '+failed+'/'+total+' өшпеді — RLS delete саясатын қосыңыз') : '✓ Барлық төлем тазаланды');
 }
 
 /* ════ UNIVERSITIES ════ */
