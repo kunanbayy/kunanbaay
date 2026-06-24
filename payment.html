@@ -49,50 +49,27 @@
     .plan-strip-name { font-size: 0.88rem; font-weight: 600; opacity: .85; }
     .plan-strip-amount { font-family: var(--font-display); font-size: 1.3rem; font-weight: 700; }
 
-    /* ── Kaspi Gold Card ── */
-    .kaspi-card {
-      border-radius: 18px;
-      overflow: hidden;
-      position: relative;
-      min-height: 210px;
-      box-shadow: 0 18px 50px rgba(11,30,51,0.22);
-      margin-bottom: 16px;
-      display: flex; flex-direction: column; justify-content: space-between;
+    /* ── Kaspi QR payment ── */
+    .kaspi-qr-pay {
+      text-align: center; background: #fff;
+      border: 1.5px solid var(--border); border-radius: 18px;
+      padding: 24px 22px; margin-bottom: 16px;
+      box-shadow: 0 10px 34px rgba(11,30,51,0.08);
     }
-    .kaspi-card-bg {
-      position: absolute; inset: 0;
-      background: url('https://static.tildacdn.com/tild6564-6231-4664-a130-313163656638/Frame_45.png') center/cover no-repeat;
-      z-index: 0;
+    .kqr-title { font-family: var(--font-display); font-weight: 800; font-size: 1.1rem; color: var(--navy); margin-bottom: 4px; }
+    .kqr-sub { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 18px; line-height: 1.45; }
+    .kqr-canvas { display: flex; justify-content: center; }
+    .kqr-canvas img, .kqr-canvas canvas { border-radius: 10px; }
+    .kqr-amount { font-family: var(--font-display); font-size: 1.6rem; font-weight: 800; color: var(--navy); margin-top: 16px; }
+    .kqr-open-btn {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      width: 100%; min-height: 52px; margin-top: 16px;
+      border-radius: 14px; background: #F2B84B; color: #0B1E33;
+      font-weight: 800; font-size: 0.98rem; text-decoration: none;
+      transition: var(--transition);
     }
-    .kaspi-card-overlay {
-      position: absolute; inset: 0; z-index: 1;
-      background: linear-gradient(145deg, rgba(0,0,0,.08) 0%, rgba(0,0,0,.18) 100%);
-    }
-    .kaspi-card-body {
-      position: relative; z-index: 2;
-      padding: 22px 24px; display: flex; flex-direction: column; height: 100%; min-height: 210px; justify-content: space-between;
-    }
-    .kc-top { display: flex; justify-content: space-between; align-items: flex-start; }
-    .kc-chip {
-      width: 36px; height: 26px; border-radius: 4px;
-      background: linear-gradient(135deg, #e8d9b0, #c4a96a);
-      box-shadow: 0 1px 4px rgba(0,0,0,.25);
-    }
-    .kc-logo {
-      font-family: var(--font-display); font-weight: 800;
-      font-size: 0.9rem; letter-spacing: 0.04em;
-      color: rgba(50,30,10,.75); text-shadow: 0 1px 2px rgba(255,255,255,.3);
-    }
-    .kc-number {
-      font-size: 1.3rem; font-weight: 700; letter-spacing: 3px;
-      color: rgba(40,24,8,.82); text-shadow: 0 1px 3px rgba(255,255,255,.5);
-    }
-    .kc-footer { display: flex; justify-content: space-between; align-items: flex-end; }
-    .kc-holder { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: rgba(50,30,10,.7); }
-    .kc-amount {
-      font-family: var(--font-display); font-size: 1.2rem; font-weight: 800;
-      color: rgba(50,30,10,.82);
-    }
+    .kqr-open-btn:hover { background: var(--gold-deep); color: #fff; }
+    .pay-or-sep { text-align: center; color: var(--text-light); font-size: 0.8rem; margin: 14px 0 12px; }
 
     /* ── Buttons row ── */
     .pay-btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
@@ -209,7 +186,7 @@
         Kaspi арқылы төлем
       </div>
       <div class="pay-title">Shyraq <span id="planName">Premium</span> қосу</div>
-      <div class="pay-sub">Kaspi Gold картаңыздан аударым жасап, чекті жүктеңіз — админ растаған соң тариф іске қосылады.</div>
+      <div class="pay-sub">Kaspi QR-ды сканерлеп төлеңіз, сосын чекті жүктеңіз — админ растаған соң тариф іске қосылады.</div>
     </div>
 
     <!-- Plan strip -->
@@ -221,71 +198,31 @@
       <div class="plan-strip-amount" id="planAmount">990 ₸</div>
     </div>
 
-    <!-- Kaspi Gold Card -->
-    <div class="kaspi-card">
-      <div class="kaspi-card-bg"></div>
-      <div class="kaspi-card-overlay"></div>
-      <div class="kaspi-card-body">
-        <div class="kc-top">
-          <div class="kc-chip"></div>
-          <div class="kc-logo">KASPI GOLD</div>
-        </div>
-        <div class="kc-number">4400 4302 0724 6056</div>
-        <div class="kc-footer">
-          <div>
-            <div class="kc-holder" style="font-size:.6rem;opacity:.6;margin-bottom:2px">Алушы</div>
-            <div class="kc-holder">KUNANBAY YERZHAN</div>
-          </div>
-          <div class="kc-amount" id="cardAmount">990 ₸</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Action buttons -->
-    <div class="pay-btn-row">
-      <button class="pay-btn-outline" id="copyCardBtn">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-        Нөмірді көшіру
-      </button>
-      <a href="https://kaspi.kz/" target="_blank" rel="noopener" class="pay-btn-outline" style="text-decoration:none">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-        Kaspi ашу
+    <!-- Kaspi QR — негізгі төлем әдісі -->
+    <div class="kaspi-qr-pay">
+      <div class="kqr-title">Kaspi QR арқылы төлеңіз</div>
+      <div class="kqr-sub">Телефон камерасымен немесе Kaspi қолданбасымен QR-ды сканерлеңіз</div>
+      <div id="qrCanvas" class="kqr-canvas"></div>
+      <div class="kqr-amount" id="qrAmount">990 ₸</div>
+      <a id="kaspiPayLink" href="https://pay.kaspi.kz/pay/abp9nx0l" target="_blank" rel="noopener" class="kqr-open-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        Kaspi қолданбасында ашу
       </a>
     </div>
 
-    <!-- Info grid -->
+    <!-- Комментарий (админ растауды жеңілдетеді) -->
     <div class="pay-info-grid">
-      <div class="pay-info-box">
-        <div class="pay-info-label">Карта нөмірі</div>
-        <div class="pay-info-value">4400 4302 0724 6056</div>
-      </div>
-      <div class="pay-info-box">
-        <div class="pay-info-label">Төлем сомасы</div>
-        <div class="pay-info-value" id="infoAmount">990 ₸</div>
-      </div>
       <div class="pay-info-box gold-accent">
-        <div class="pay-info-label">⚠️ Комментарий жолына міндетті жазыңыз</div>
+        <div class="pay-info-label">⚠️ Төлем кезінде/чекте көрсетіңіз</div>
         <div class="pay-info-value" id="commentText">Жүктелуде...</div>
         <button class="pay-comment-copy" id="copyCommentBtn">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-          Комментарийді көшіру
+          Көшіру
         </button>
       </div>
     </div>
 
-    <!-- Kaspi QR — automatic payment (shown when a gateway is configured) -->
-    <button id="qrPayBtn" style="display:none;width:100%;min-height:54px;border:none;border-radius:14px;background:#F2B84B;color:#0B1E33;font-weight:800;font-size:0.98rem;cursor:pointer;margin-bottom:14px;display:none;align-items:center;justify-content:center;gap:8px;">
-      📲 Kaspi QR — автоматты төлеу
-    </button>
-    <div id="qrBox" style="display:none;text-align:center;border:1px solid var(--border);border-radius:16px;padding:22px;margin-bottom:14px;">
-      <div style="font-weight:800;color:var(--navy);margin-bottom:4px;">Kaspi QR-ды сканерлеңіз</div>
-      <div style="font-size:0.82rem;color:var(--text-muted);margin-bottom:14px;">Kaspi қолданбасымен оқыңыз — төлемнен кейін Premium автоматты қосылады.</div>
-      <div id="qrCanvas" style="display:flex;justify-content:center;"></div>
-      <a id="qrLink" href="#" target="_blank" rel="noopener" style="display:inline-block;margin-top:14px;color:var(--gold-deep);font-weight:700;">Kaspi қолданбасында ашу →</a>
-      <div id="qrStatus" style="margin-top:12px;font-size:0.88rem;color:var(--text-muted);">⏳ Төлемді күтудеміз...</div>
-    </div>
-
-    <div id="payOrSep" style="display:none;text-align:center;color:var(--text-light);font-size:0.8rem;margin-bottom:12px;">— немесе чек арқылы —</div>
+    <div class="pay-or-sep">— төлеген соң чекті жүктеңіз 👇 —</div>
 
     <!-- Upload zone -->
     <div class="pay-upload" id="uploadZone">
@@ -357,22 +294,30 @@
   document.getElementById('planName').textContent   = plan.name;
   document.getElementById('planDesc').textContent   = plan.desc;
   document.getElementById('planAmount').textContent = fmt(plan.amount);
-  document.getElementById('cardAmount').textContent = fmt(plan.amount);
-  document.getElementById('infoAmount').textContent = fmt(plan.amount);
+  document.getElementById('qrAmount').textContent = fmt(plan.amount);
   document.getElementById('commentText').textContent = commentText;
 
-  /* ── Карта нөмірін көшіру ── */
-  const copyCardBtn = document.getElementById('copyCardBtn');
-  copyCardBtn.addEventListener('click', function () {
-    navigator.clipboard.writeText('4400430207246056').then(() => {
-      copyCardBtn.textContent = '✓ Көшірілді!';
-      copyCardBtn.classList.add('copied');
-      setTimeout(() => {
-        copyCardBtn.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Нөмірді көшіру';
-        copyCardBtn.classList.remove('copied');
-      }, 2500);
-    });
-  });
+  /* ── Kaspi QR (статикалық төлем сілтемесі) ── */
+  var KASPI_PAY_URL = 'https://pay.kaspi.kz/pay/abp9nx0l';
+  var payLinkEl = document.getElementById('kaspiPayLink');
+  if (payLinkEl) payLinkEl.href = KASPI_PAY_URL;
+  (function renderKaspiQr() {
+    function draw() {
+      var holder = document.getElementById('qrCanvas');
+      if (!holder) return;
+      holder.innerHTML = '';
+      if (window.QRCode) {
+        new window.QRCode(holder, { text: KASPI_PAY_URL, width: 210, height: 210, colorDark: '#0B1E33', colorLight: '#ffffff' });
+      } else {
+        holder.innerHTML = '<a href="' + KASPI_PAY_URL + '" target="_blank" rel="noopener" style="color:var(--gold-deep);font-weight:700;">Kaspi-де ашу →</a>';
+      }
+    }
+    if (window.QRCode) return draw();
+    var s = document.createElement('script');
+    s.src = 'https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js';
+    s.onload = draw; s.onerror = draw;
+    document.head.appendChild(s);
+  })();
 
   /* ── Комментарийді көшіру ── */
   document.getElementById('copyCommentBtn').addEventListener('click', function () {
@@ -554,103 +499,6 @@
     });
   }
 
-  // ─── Kaspi QR — automatic payment (uses kaspi-pos-automation gateway) ───
-  var qrBtn = document.getElementById('qrPayBtn');
-  if (API && getUserId() && qrBtn) {
-    qrBtn.style.display = 'flex';
-    document.getElementById('payOrSep').style.display = 'block';
-
-    function loadQrLib() {
-      return new Promise(function (resolve) {
-        if (window.QRCode) return resolve();
-        var s = document.createElement('script');
-        s.src = 'https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js';
-        s.onload = resolve; s.onerror = resolve;
-        document.head.appendChild(s);
-      });
-    }
-
-    qrBtn.addEventListener('click', async function () {
-      qrBtn.disabled = true; qrBtn.textContent = '⏳ QR жасалуда...';
-      try {
-        const userId = getUserId();
-        const res = await fetch(API + '/api/payment/create-qr', {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ userId: userId, plan: params.get('plan') || 'premium_1m' })
-        });
-        const j = await res.json().catch(() => ({}));
-        if (!res.ok || !j.ok) { qrBtn.disabled = false; qrBtn.textContent = '📲 Kaspi QR — автоматты төлеу'; payError('QR жасалмады. Қайталап көріңіз.'); return; }
-
-        qrBtn.style.display = 'none';
-        document.getElementById('payOrSep').style.display = 'none';
-        document.getElementById('uploadZone').style.display = 'none';
-        submitBtn.style.display = 'none';
-        var box = document.getElementById('qrBox'); box.style.display = 'block';
-        document.getElementById('qrLink').href = j.qrToken;
-
-        await loadQrLib();
-        var holder = document.getElementById('qrCanvas'); holder.innerHTML = '';
-        if (window.QRCode) { new window.QRCode(holder, { text: j.qrToken, width: 200, height: 200 }); }
-        else { holder.innerHTML = '<a href="' + j.qrToken + '" target="_blank">Kaspi-де ашу</a>'; }
-
-        // poll status until paid / expired
-        var tries = 0;
-        var poll = setInterval(async function () {
-          tries++;
-          try {
-            const sRes = await fetch(API + '/api/payment/status?orderId=' + encodeURIComponent(j.orderId));
-            const sJson = await sRes.json().catch(() => ({}));
-            if (sJson.status === 'paid') {
-              clearInterval(poll);
-              document.getElementById('qrStatus').textContent = '✅ Төлем расталды!';
-              try { localStorage.setItem('shyraq_premium', '1'); } catch (e) {}
-              box.style.display = 'none';
-              paySuccess();
-            } else if (sJson.status === 'expired' || sJson.status === 'failed' || tries > 200) {
-              clearInterval(poll);
-              document.getElementById('qrStatus').textContent = '⌛ QR мерзімі бітті. Бетті жаңартып қайталаңыз.';
-            }
-          } catch (e) { /* keep polling */ }
-        }, 3000);
-      } catch (e) {
-        qrBtn.disabled = false; qrBtn.textContent = '📲 Kaspi QR — автоматты төлеу';
-        payError('Желі қатесі. Кейінірек қайталаңыз.');
-      }
-    });
-  }
-
-  // ─── Нақты Kaspi Gold QR (тек window.SHYRAQ_KASPI_QR орнатылғанда) ───
-  else if (window.SHYRAQ_KASPI_QR && qrBtn) {
-    var realQr = window.SHYRAQ_KASPI_QR;      // мыс: 'https://pay.kaspi.kz/pay/xxxxx' (Kaspi қолданбасынан)
-    qrBtn.style.display = 'flex';
-    document.getElementById('payOrSep').style.display = 'block';
-    function loadQrLibP() {
-      return new Promise(function (resolve) {
-        if (window.QRCode) return resolve();
-        var s = document.createElement('script');
-        s.src = 'https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js';
-        s.onload = resolve; s.onerror = resolve;
-        document.head.appendChild(s);
-      });
-    }
-    qrBtn.addEventListener('click', async function () {
-      qrBtn.style.display = 'none';
-      document.getElementById('payOrSep').style.display = 'none';
-      var box = document.getElementById('qrBox'); box.style.display = 'block';
-      document.getElementById('qrLink').href = realQr;
-      await loadQrLibP();
-      var holder = document.getElementById('qrCanvas'); holder.innerHTML = '';
-      if (window.QRCode) { new window.QRCode(holder, { text: realQr, width: 200, height: 200, colorDark: '#0B1E33' }); }
-      else { holder.innerHTML = '<div style="padding:40px;border:2px dashed #ccc;border-radius:12px">QR</div>'; }
-      // Төлеген соң чекті жүктеп растайды
-      document.getElementById('qrStatus').innerHTML =
-        'Kaspi қолданбасымен сканерлеп төлеңіз, сосын төмендегі чекті жүктеңіз 👇';
-      document.getElementById('uploadZone').style.display = '';
-      submitBtn.style.display = '';
-      document.getElementById('payOrSep').style.display = 'block';
-      document.getElementById('payOrSep').textContent = '— төлеген соң чекті жүктеңіз —';
-    });
-  }
 })();
 </script>
 </body>
