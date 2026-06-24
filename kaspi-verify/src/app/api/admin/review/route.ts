@@ -54,23 +54,50 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ ok: false, message: 'Чек файлы жоқ' }, { status: 409, headers: adminHeaders });
       }
 
-      const activation = await activateTariff(order.user_id, order.tariff_id || order.plan, order.amount);
-      await supabaseAdmin.from('payment_orders').update({
+      // Claim exactly this pending_review session before granting access. The conditional
+      // update prevents two admin clicks from granting Career Energy twice.
+      const { data: claimed, error: claimError } = await supabaseAdmin.from('payment_orders').update({
         status: 'approved', approved_at: now, admin_review_status: 'reviewed_approved',
         rejected_reason: null, updated_at: now,
-      }).eq('id', orderId);
+      }).eq('id', orderId).eq('status', 'pending_review').select('id').maybeSingle();
+      if (claimError) throw claimError;
+      if (!claimed) {
+        return NextResponse.json({ ok: false, message: 'Төлем статусы өзгеріп кетті. Тізімді жаңартыңыз.' }, { status: 409, headers: adminHeaders });
+      }
+
+      let activation;
+      try {
+        activation = await activateTariff(order.user_id, order.tariff_id || order.plan, order.amount);
+      } catch (activationError) {
+        await supabaseAdmin.from('payment_orders').update({
+          status: 'pending_review', approved_at: null, admin_review_status: 'pending_review', updated_at: new Date().toISOString(),
+        }).eq('id', orderId).eq('status', 'approved');
+        throw activationError;
+      }
       log('info', 'admin_approved', { orderId, energyGranted: activation.energyGranted, resultsUnlocked: activation.resultsUnlocked });
       return NextResponse.json({ ok: true, status: 'approved', ...activation }, { headers: adminHeaders });
     }
 
-    await supabaseAdmin.from('payment_orders').update({
+    if (order.status !== 'pending_review') {
+      return NextResponse.json({ ok: false, message: 'Тек admin review-дегі төлемді қабылдамауға болады' }, { status: 409, headers: adminHeaders });
+    }
+    if (!reason || !reason.trim()) {
+      return NextResponse.json({ ok: false, message: 'Қабылдамау себебін жазыңыз' }, { status: 400, headers: adminHeaders });
+    }
+    const { data: rejected, error: rejectError } = await supabaseAdmin.from('payment_orders').update({
       status: 'rejected', rejected_reason: reason || 'Админ қабылдамады',
       admin_review_status: 'reviewed_rejected', updated_at: now,
-    }).eq('id', orderId);
+    }).eq('id', orderId).eq('status', 'pending_review').select('id').maybeSingle();
+    if (rejectError) throw rejectError;
+    if (!rejected) {
+      return NextResponse.json({ ok: false, message: 'Төлем статусы өзгеріп кетті. Тізімді жаңартыңыз.' }, { status: 409, headers: adminHeaders });
+    }
     log('info', 'admin_rejected', { orderId });
     return NextResponse.json({ ok: true, status: 'rejected' }, { headers: adminHeaders });
   } catch (e) {
     log('error', 'admin_review_failed', e);
-    return NextResponse.json({ ok: false, message: 'bad request' }, { status: 400, headers: adminHeaders });
+    const isValidationError = e instanceof z.ZodError;
+    const message = isValidationError ? 'Сұрау деректері дұрыс емес' : (e instanceof Error ? e.message : 'admin_review_failed');
+    return NextResponse.json({ ok: false, message }, { status: isValidationError ? 400 : 500, headers: adminHeaders });
   }
 }
