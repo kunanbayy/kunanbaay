@@ -2,8 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '../../../../lib/supabase';
 import { config, corsHeaders } from '../../../../lib/config';
 import { log, logVerification } from '../../../../lib/logger';
-import { extractReceipt } from '../../../../services/ocr';
-import type { VerifyResult } from '../../../../types';
+import type { VerifyResult, ExtractedReceipt } from '../../../../types';
 
 export const runtime = 'nodejs';
 export const maxDuration = 30;
@@ -87,13 +86,16 @@ export async function POST(req: NextRequest) {
       payment_method: paymentMethod || undefined,
     };
 
-    let extracted: Awaited<ReturnType<typeof extractReceipt>> | null = null;
+    // OCR — толық ОПЦИЯЛЫҚ әрі қабылдауға әсер ЕТПЕЙДІ. Модульді динамикалық
+    // импорттаймыз: pdf-to-img/openai serverless-те жүктелмесе де route құламайды.
+    let extracted: ExtractedReceipt | null = null;
     try {
-      extracted = await extractReceipt(buffer, file.type);
+      const ocr = await import('../../../../services/ocr');
+      extracted = await ocr.extractReceipt(buffer, file.type);
     } catch (e) {
-      // OCR no longer decides payment acceptance. Admin still receives the receipt.
+      // OCR сәтсіз болса — елемейміз. Чек бәрібір админ кезегіне түседі.
       log('error', 'ocr_failed', e);
-      await logVerification({ userId, orderId, success: false, reason: 'ocr_error' });
+      try { await logVerification({ userId, orderId, success: false, reason: 'ocr_error' }); } catch (_) {}
     }
 
     // Чектен оқылған деректер тек admin көрінісі үшін сақталады.
