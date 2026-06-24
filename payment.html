@@ -164,86 +164,86 @@
     <!-- Back -->
     <a href="pricing.html" class="pay-back">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5m7-7-7 7 7 7"/></svg>
-      Назад к тарифам
+      Тарифтерге оралу
     </a>
 
     <!-- 6-минут төлем терезесі -->
     <div class="pay-timer" id="payTimer">
       <div class="pay-timer-row">
-        <span class="pay-timer-label">⏳ Время на оплату</span>
+        <span class="pay-timer-label">⏳ Төлеуге берілген уақыт</span>
         <span class="pay-timer-clock" id="payTimerClock">06:00</span>
       </div>
       <div class="pay-timer-bar"><div class="pay-timer-fill" id="payTimerFill"></div></div>
-      <div class="pay-timer-note" id="payTimerNote">Оплатите по QR и прикрепите чек до конца таймера</div>
+      <div class="pay-timer-note" id="payTimerNote">QR арқылы төлеп, чекті уақыт біткенше жүктеңіз</div>
     </div>
 
     <!-- Card 1: Kaspi QR -->
     <div class="pay-block">
-      <div class="pay-block-title">Оплата через Kaspi</div>
+      <div class="pay-block-title">Kaspi арқылы төлеу</div>
 
       <div class="kqr-frame">
         <div id="qrCanvas"></div>
       </div>
 
       <div class="kqr-amount"><span id="qrAmount">…</span> <span class="tg">₸</span></div>
-      <div class="kqr-cashback">Способ 1 — отсканируйте QR в Kaspi</div>
+      <div class="kqr-cashback">QR-ды Kaspi қолданбасымен сканерлеңіз</div>
 
-      <div class="kqr-or">или</div>
+      <div class="kqr-or">немесе</div>
 
       <a id="kaspiPayLink" href="https://pay.kaspi.kz/pay/abp9nx0l" target="_blank" rel="noopener" class="kqr-open-btn">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-        Способ 2 — открыть Kaspi
+        Kaspi-де ашып төлеу
       </a>
 
-      <div class="kqr-after">После оплаты — прикрепите чек ниже ↓</div>
+      <div class="kqr-after">Төлеген соң чекті төменге жүктеңіз ↓</div>
     </div>
 
     <!-- Card 2: attach receipt -->
     <div class="pay-block glow">
-      <div class="pay-block-title">Прикрепить чек</div>
-      <div class="pay-block-sub">Загрузи PDF-чек из Kaspi</div>
+      <div class="pay-block-title">Чекті жүктеу</div>
+      <div class="pay-block-sub">Kaspi-ден PDF немесе скриншот чегін жүктеңіз</div>
 
       <div class="pay-upload" id="uploadZone">
         <input type="file" id="receiptInput" accept=".jpg,.jpeg,.png,.pdf"/>
         <div class="pay-upload-icon">
           <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25"/><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/></svg>
         </div>
-        <div class="pay-upload-title">Нажми, чтобы загрузить файл</div>
+        <div class="pay-upload-title">Файлды жүктеу үшін басыңыз</div>
         <div class="pay-file-name" id="fileNameDisplay"></div>
       </div>
 
-      <!-- Комментарий (помогает админу сопоставить оплату) -->
+      <!-- Комментарий (админ төлемді сәйкестендіруге көмектеседі) -->
       <div class="pay-comment">
-        <div class="pay-comment-label">⚠️ Укажи при оплате / в чеке</div>
+        <div class="pay-comment-label">⚠️ Төлем кезінде / чекте көрсетіңіз</div>
         <div class="pay-comment-value" id="commentText">—</div>
         <button class="pay-comment-copy" id="copyCommentBtn">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-          Скопировать
+          Көшіру
         </button>
       </div>
 
       <!-- Submit (файл таңдалғанда көрінеді) -->
       <button class="pay-submit" id="submitBtn" style="display:none" disabled>
-        Отправить чек
+        Чекті жіберу
       </button>
 
       <a class="pay-support" href="https://t.me/shyraq_support" target="_blank" rel="noopener">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-        Написать в поддержку
+        Қолдау қызметіне жазу
       </a>
 
       <!-- Авто-тексеру күйі (backend бар болғанда) -->
       <div class="pay-status" id="payStatus">
         <div class="pay-status-icon" id="payStatusIcon"><div class="pay-spinner"></div></div>
-        <h2 id="payStatusTitle">Чек отправлена на проверку</h2>
-        <p id="payStatusText">Идёт автоматическая проверка чека…</p>
+        <h2 id="payStatusTitle">Чек тексеруге жіберілді</h2>
+        <p id="payStatusText">Чек автоматты тексерілуде…</p>
       </div>
 
       <!-- Success (hidden by default) — қолмен растау режимі -->
       <div class="pay-success" id="successScreen">
         <div class="pay-success-icon">✓</div>
-        <h2>Чек отправлен!</h2>
-        <p>Чек отправлен на проверку.<br>Тариф активируется после подтверждения.<br>Обычно в течение 1–24 часов.</p>
+        <h2>Чек жіберілді!</h2>
+        <p>Чек тексеруге жіберілді.<br>Тариф расталғаннан кейін белсенді болады.<br>Әдетте 1–24 сағат ішінде.</p>
       </div>
     </div>
 
@@ -317,7 +317,7 @@
       if (window.QRCode) {
         new window.QRCode(holder, { text: KASPI_PAY_URL, width: 202, height: 202, colorDark: '#0B0C0F', colorLight: '#ffffff', correctLevel: window.QRCode.CorrectLevel ? window.QRCode.CorrectLevel.M : undefined });
       } else {
-        holder.innerHTML = '<a href="' + KASPI_PAY_URL + '" target="_blank" rel="noopener" style="color:#0B0C0F;font-weight:700;">Открыть в Kaspi →</a>';
+        holder.innerHTML = '<a href="' + KASPI_PAY_URL + '" target="_blank" rel="noopener" style="color:#0B0C0F;font-weight:700;">Kaspi-де ашу →</a>';
       }
     }
     if (window.QRCode) return draw();
@@ -330,9 +330,9 @@
   /* ── Комментарийді көшіру ── */
   document.getElementById('copyCommentBtn').addEventListener('click', function () {
     navigator.clipboard.writeText(commentText).then(() => {
-      this.textContent = '✓ Скопировано!';
+      this.textContent = '✓ Көшірілді!';
       setTimeout(() => {
-        this.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Скопировать';
+        this.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Көшіру';
       }, 2500);
     });
   });
@@ -417,19 +417,19 @@
     // Чек қабылданды, бірақ Premium әлі ҚОСЫЛМАЙДЫ (админ растағанша)
     submitBtn.classList.add('sent');
     submitBtn.style.display = 'block';
-    submitBtn.textContent = '✓ Отправлено';
+    submitBtn.textContent = '✓ Жіберілді';
     submitBtn.disabled = true;
     var ss = document.getElementById('successScreen');
     ss.classList.add('visible');
-    var h = ss.querySelector('h2'); if (h) h.textContent = 'Чек отправлен на проверку!';
-    var p = ss.querySelector('p'); if (p) p.innerHTML = 'Чек отправлен админу.<br><b>Тариф активируется после подтверждения.</b><br>Обычно в течение 1–24 часов.';
+    var h = ss.querySelector('h2'); if (h) h.textContent = 'Чек тексеруге жіберілді!';
+    var p = ss.querySelector('p'); if (p) p.innerHTML = 'Чек әкімшіге жіберілді.<br><b>Тариф расталғаннан кейін белсенді болады.</b><br>Әдетте 1–24 сағат ішінде.';
     document.getElementById('uploadZone').style.display = 'none';
   }
   function payError(msg) {
     submitBtn.disabled = false;
     submitBtn.classList.remove('sent');
     submitBtn.style.display = 'block';
-    submitBtn.textContent = 'Отправить чек';
+    submitBtn.textContent = 'Чекті жіберу';
     var box = document.getElementById('payError');
     if (!box) {
       box = document.createElement('div');
@@ -452,18 +452,18 @@
     document.getElementById('payStatusTitle').textContent = title;
     document.getElementById('payStatusText').innerHTML = html;
   }
-  function showReview() { showStatus('review', 'Чек отправлена на проверку', 'Идёт автоматическая проверка чека…', '<div class="pay-spinner"></div>'); }
+  function showReview() { showStatus('review', 'Чек тексеруге жіберілді', 'Чек автоматты тексерілуде…', '<div class="pay-spinner"></div>'); }
   function showRejected(reason) {
-    showStatus('rejected', 'Чек не принят', '<b>' + (reason || 'Проверка не пройдена') + '</b><br>Закрытые разделы не открыты. Проверьте сумму, время и оригинал чека.', '✕');
+    showStatus('rejected', 'Чек қабылданбады', '<b>' + (reason || 'Тексеруден өтпеді') + '</b><br>Жабық бөлімдер ашылмады. Соманы, уақытты және түпнұсқа чекті тексеріңіз.', '✕');
   }
 
   submitBtn.addEventListener('click', async function () {
     const file = fileInput.files[0];
     if (!file) return;
-    if (window.__payExpired) { payError('Время вышло — заказ отменён. Нажмите «Начать заново».'); return; }
+    if (window.__payExpired) { payError('Уақыт бітті — тапсырыс отменен. «Қайта бастау» батырмасын басыңыз.'); return; }
     var pe = document.getElementById('payError'); if (pe) pe.remove();
     this.disabled = true;
-    this.textContent = API ? '⏳ Проверка чека...' : '⏳ Отправка...';
+    this.textContent = API ? '⏳ Чек тексерілуде...' : '⏳ Жіберілуде...';
 
     // Automated OCR verification when a backend (window.SHYRAQ_API) is configured
     if (API) {
@@ -498,7 +498,7 @@
         const vRes = await fetch(API + '/api/payment/verify-receipt', { method: 'POST', body: fd });
         const vJson = await vRes.json().catch(() => ({}));
         if (vRes.ok && vJson.ok) paySuccess();              // → «Төлем қабылданды» + ашу
-        else showRejected(vJson.message);                   // → «Чек не принят» + себеп
+        else showRejected(vJson.message);                   // → «Чек қабылданбады» + себеп
       } catch (e) {
         showRejected('Желі қатесі. Кейінірек қайталаңыз.');
       }
@@ -580,7 +580,7 @@
     timerEl.classList.add('expired');
     clockEl.textContent = '00:00';
     fillEl.style.width = '0%';
-    noteEl.innerHTML = '⛔ Заказ отменён — время вышло. <a href="#" id="payRestart">Начать заново</a>';
+    noteEl.innerHTML = '⛔ Тапсырыс отменен — уақыт бітті. <a href="#" id="payRestart">Қайта бастау</a>';
     blockPayment();
     document.getElementById('payRestart').addEventListener('click', function (e) {
       e.preventDefault();

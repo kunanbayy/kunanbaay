@@ -383,7 +383,10 @@
     <!-- ══ PAYMENTS ══ -->
     <section class="section" id="sec-payments">
       <div class="a-card">
-        <div class="a-card-hd"><h3>Төлемдер</h3><span class="pill paid" id="payTotal">0 ₸</span></div>
+        <div class="a-card-hd"><h3>Төлемдер</h3>
+          <span class="pill paid" id="payTotal">0 ₸</span>
+          <button onclick="clearAllPayments()" style="margin-left:auto;background:#FEE2E2;color:#B91C1C;border:1px solid #FCA5A5;border-radius:10px;padding:7px 14px;font-weight:700;font-size:.8rem;cursor:pointer">🗑 Барлығын тазалау</button>
+        </div>
         <table class="a-tbl">
           <thead><tr><th>Қолданушы</th><th>Жоспар</th><th>Сома</th><th>Статус</th><th>Чек</th><th>Күні</th><th></th></tr></thead>
           <tbody id="paymentsBody"></tbody>
@@ -1038,6 +1041,20 @@ async function delPay(i){
   if(p.src==='sb'){ await window.ShyraqDB.deletePayment(p.id); }
   else { const d=getPays(); d.splice(p.idx,1); setPays(d); }
   await loadPayments(); toast('Жойылды');
+}
+/* Барлық төлемдерді тазалау (Supabase payments + жергілікті тізім).
+   OCR тапсырыстары (payment_orders) бөлек — олар backend-те қалады. */
+async function clearAllPayments(){
+  if(!confirm('Барлық төлемдер мен жалпы түсім тазаланады. Жалғастырасыз ба?')) return;
+  try {
+    if (window.ShyraqDB && window.ShyraqDB.ready()){
+      var rows = await window.ShyraqDB.listPayments() || [];
+      for (var i=0;i<rows.length;i++){ try{ await window.ShyraqDB.deletePayment(rows[i].id); }catch(e){} }
+    }
+  } catch(e){}
+  try { localStorage.setItem('shyraq_admin_payments','[]'); } catch(e){}
+  await loadPayments();
+  toast('✓ Төлемдер тазаланды');
 }
 
 /* ════ UNIVERSITIES ════ */
