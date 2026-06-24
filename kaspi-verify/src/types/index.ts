@@ -1,26 +1,41 @@
 // Shared TypeScript types for the Kaspi verification flow.
 
-export type PaymentStatus = 'pending' | 'paid' | 'failed' | 'expired';
+export type PaymentMethod = 'qr' | 'kaspi_link';
+export type PaymentSessionStatus = 'pending' | 'receipt_uploaded' | 'verifying' | 'approved' | 'rejected' | 'expired';
+export type AdminReviewStatus = 'pending' | 'needs_review' | 'auto_approved' | 'manual_approved' | 'manual_rejected';
 
-export interface PaymentOrder {
+export interface Tariff {
   id: string;
-  user_id: string;
+  name: string;
   amount: number;
-  plan: string;
-  status: PaymentStatus;
-  created_at: string;
-  updated_at: string;
+  career_energy: number;
+  premium_days: number;
+  features: string[];
+  active: boolean;
 }
 
-export interface PaymentTransaction {
+export interface PaymentSession {
   id: string;
-  payment_order_id: string;
   user_id: string;
-  receipt_number: string;
+  tariff_id: string;
   amount: number;
-  receiver_name: string | null;
-  paid_at: string;
-  created_at: string;
+  payment_method: PaymentMethod;
+  payment_reference: string;
+  status: PaymentSessionStatus;
+  started_at: string;
+  expires_at: string;
+  receipt_url: string | null;
+  receipt_uploaded_at: string | null;
+  receipt_hash: string | null;
+  receipt_paid_at: string | null;
+  receipt_parsed: ExtractedReceipt | null;
+  approved_at: string | null;
+  rejected_reason: string | null;
+  admin_review_status: AdminReviewStatus;
+  qr_operation_id: string | null;
+  qr_token: string | null;
+  provider_payload?: unknown;
+  updated_at: string;
 }
 
 export interface Profile {
@@ -33,8 +48,12 @@ export interface Profile {
 export interface ExtractedReceipt {
   receiptNumber: string | null;
   amount: number | null;          // integer KZT
-  receiverName: string | null;
-  paymentDate: string | null;     // ISO 8601
+  receiverName: string | null;    // merchant/recipient, expected to normalize to BAYGROUP
+  payerName: string | null;
+  payerEmail: string | null;
+  paymentReference: string | null;
+  purpose: string | null;
+  paymentDate: string | null;     // Kaspi local time: DD.MM.YYYY HH:mm
   transferType: string | null;
   confidence: number;             // 0..1, model self-reported
   isReadable: boolean;            // false if blurry / cropped
@@ -45,6 +64,10 @@ export interface ExtractedReceipt {
 export type VerifyFailReason =
   | 'order_not_found'
   | 'order_not_pending'
+  | 'session_expired'
+  | 'receipt_outside_session'
+  | 'receipt_not_for_order'
+  | 'payer_mismatch'
   | 'unreadable'
   | 'looks_edited'
   | 'low_confidence'

@@ -18,13 +18,14 @@ export async function logVerification(input: {
   extracted?: ExtractedReceipt | null;
 }) {
   try {
-    await supabaseAdmin.from('verification_logs').insert({
+    await supabaseAdmin.from('receipt_audit_logs').insert({
       user_id: input.userId ?? null,
-      payment_order_id: input.orderId ?? null,
+      payment_session_id: input.orderId ?? null,
+      action: 'receipt_verification',
       success: input.success,
       reason: input.reason ?? null,
-      ocr_confidence: input.extracted?.confidence ?? null,
-      raw_ocr: input.extracted ?? null,
+      extracted: input.extracted ?? null,
+      metadata: input.extracted ? { confidence: input.extracted.confidence } : null,
     });
   } catch (e) {
     log('error', 'failed to write verification_log', e);

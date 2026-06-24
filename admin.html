@@ -111,6 +111,7 @@
     .pill{display:inline-flex;align-items:center;gap:6px;padding:4px 11px;border-radius:999px;font-size:.76rem;font-weight:700}
     .pill.free{background:#EEF2F7;color:#64748B}
     .pill.premium{background:#FEF6E2;color:var(--gold-deep)}
+    .pill.standard{background:#EAF0F8;color:var(--navy)}
     .pill.admin{background:#EAF0F8;color:var(--navy)}
     .pill.paid{background:#E7F8F1;color:var(--green)}
     .pill.pending{background:#FFF4E5;color:#C2410C}
@@ -166,6 +167,7 @@
     .bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;height:100%;justify-content:flex-end}
     .bar{width:100%;max-width:38px;border-radius:8px 8px 0 0;background:linear-gradient(180deg,var(--navy-2),var(--navy));animation:grow .6s ease both}
     @keyframes grow{from{height:0}}
+    .bar-n{font-size:.72rem;font-weight:800;color:var(--ink);min-height:16px}
     .bar-x{font-size:.74rem;color:var(--muted);font-weight:600}
 
     /* category chips */
@@ -246,8 +248,8 @@
     <!-- жүйе статусы -->
     <div class="a-status" id="aStatus">
       <div class="a-status-hd"><span class="live"></span> Жүйе статусы</div>
-      <div class="a-status-main">Demo admin active</div>
-      <div class="a-status-sub">Local data · <span id="todayDate"></span></div>
+      <div class="a-status-main">Әкімші панелі белсенді</div>
+      <div class="a-status-sub">Supabase · <span id="todayDate"></span></div>
     </div>
 
     <div class="a-sec-lbl">Басқару</div>
@@ -295,7 +297,7 @@
     <div class="a-side-foot">
       <div class="a-rights" id="aRights">
         <div class="a-rights-t">🔒 Admin құқықтары</div>
-        <div class="a-rights-p">Бұл demo admin аккаунт. Production үшін backend authentication қосу керек.</div>
+        <div class="a-rights-p">Әкімші аккаунты. Production үшін backend authentication қосу ұсынылады.</div>
       </div>
       <div class="a-link" id="logoutBtn">
         <span class="ic"><svg viewBox="0 0 24 24"><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/><path d="M21 4v16h-7"/></svg></span>
@@ -381,7 +383,7 @@
       <div class="a-card">
         <div class="a-card-hd"><h3>Төлемдер</h3><span class="pill paid" id="payTotal">0 ₸</span></div>
         <table class="a-tbl">
-          <thead><tr><th>Қолданушы</th><th>Жоспар</th><th>Сома</th><th>Статус</th><th>Чек</th><th>Күні</th><th></th></tr></thead>
+          <thead><tr><th>Қолданушы / тариф</th><th>Әдіс / сома</th><th>Статус</th><th>Чек</th><th>Сессия</th><th>Себеп / review</th><th></th></tr></thead>
           <tbody id="paymentsBody"></tbody>
         </table>
       </div>
@@ -444,10 +446,10 @@
       </div>
       <div class="a-card" style="max-width:560px">
         <div class="a-card-hd"><h3>Деректерді басқару</h3></div>
-        <p style="color:var(--muted);font-size:.85rem;margin-bottom:16px">Қолданушылар, төлемдер және пікірлер браузердің жадында (localStorage) сақталады.</p>
+        <p style="color:var(--muted);font-size:.85rem;margin-bottom:16px">Негізгі қолданушы және төлем деректері Supabase арқылы басқарылады.</p>
         <div style="display:flex;gap:10px;flex-wrap:wrap">
           <button class="btn btn-ghost" onclick="exportData()"><svg viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg> JSON жүктеу</button>
-          <button class="btn btn-ghost" onclick="resetData()" style="color:var(--red);border-color:#FECACA"><svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg> Демо деректерді қалпына келтіру</button>
+          <button class="btn btn-ghost" onclick="resetData()" style="color:var(--red);border-color:#FECACA"><svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg> Local уақытша деректерді тазалау</button>
         </div>
       </div>
     </section>
@@ -467,8 +469,20 @@
     <div class="ud-row"><span class="k">Жоспар</span><span class="v" id="udPlan">free</span></div>
     <div class="ud-row"><span class="k">Статус</span><span class="v" id="udStatus">Белсенді</span></div>
     <div class="ud-row"><span class="k">Premium мерзімі</span><span class="v" id="udUntil">—</span></div>
-    <div class="ud-row"><span class="k">⚡ Career Energy</span><span class="v" id="udEnergy">0</span></div>
+    <div class="ud-row"><span class="k">⚡ Career Energy</span><span class="v" id="udEnergy">0 / 0</span></div>
     <div class="ud-row"><span class="k">Қала</span><span class="v" id="udCity">—</span></div>
+
+    <div class="ud-sec-t">⚡ Career Energy басқару</div>
+    <div class="ud-acts">
+      <button class="btn btn-ghost" onclick="udSetEnergy(1)">＋1 Energy</button>
+      <button class="btn btn-ghost" onclick="udSetEnergy(3)">＋3 Energy</button>
+      <button class="btn btn-ghost" onclick="udSetEnergy(-1)">−1 Energy</button>
+      <button class="btn btn-ghost" onclick="udSetEnergy(null,0)" style="color:var(--red);border-color:#FECACA">↺ Reset 0</button>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <input type="number" id="udEnergyInput" min="0" placeholder="Нақты сан" style="flex:1;border:1px solid #E8EEF6;border-radius:10px;padding:9px 12px;font-size:.9rem" />
+      <button class="btn btn-primary" onclick="udSaveEnergy()">Сақтау</button>
+    </div>
 
     <div class="ud-sec-t">Қолжетімділікті басқару</div>
     <div class="ud-acts">
@@ -584,20 +598,8 @@ function nf(n){ return n.toLocaleString('ru-RU'); }
 
 /* ════ SEED DATA (localStorage) ════ */
 function seed(k,v){ if(!localStorage.getItem(k)) localStorage.setItem(k, JSON.stringify(v)); }
-seed('shyraq_admin_users', [
-  {name:'Аяулым Бекова', email:'ayaulym@gmail.com', city:'Алматы', plan:'premium', date:'2026-06-18'},
-  {name:'Дәурен Сатыбалдин', email:'dauren@gmail.com', city:'Астана', plan:'free', date:'2026-06-17'},
-  {name:'Зарина Нұрланова', email:'zarina@mail.ru', city:'Шымкент', plan:'premium', date:'2026-06-15'},
-  {name:'Нұрислам Қайрат', email:'nurislam@gmail.com', city:'Қарағанды', plan:'free', date:'2026-06-14'},
-  {name:'Мадина Әбен', email:'madina@gmail.com', city:'Атырау', plan:'premium', date:'2026-06-12'},
-  {name:'Ерасыл Тұрсын', email:'erasyl@gmail.com', city:'Тараз', plan:'free', date:'2026-06-10'}
-]);
-seed('shyraq_admin_payments', [
-  {name:'Аяулым Бекова', email:'ayaulym@gmail.com', plan:'Premium', amount:990, status:'paid', date:'2026-06-18', receipt:'assets/receipt-sample.jpg'},
-  {name:'Зарина Нұрланова', email:'zarina@mail.ru', plan:'AI Premium', amount:1990, status:'paid', date:'2026-06-15', receipt:''},
-  {name:'Мадина Әбен', email:'madina@gmail.com', plan:'Premium', amount:990, status:'paid', date:'2026-06-12', receipt:''},
-  {name:'Бекжан О.', plan:'Premium', amount:990, status:'pending', date:'2026-06-20', receipt:'assets/receipt-sample.jpg'}
-]);
+seed('shyraq_admin_users', []);
+seed('shyraq_admin_payments', []);
 seed('shyraq_admin_reviews', [
   {name:'Аяулым · SDU University', text:'Маркетинг мамандығына грант алдым!', stars:5},
   {name:'Дәурен · AITU', text:'IT-ға бағыт алдым, қазір AITU-да оқимын.', stars:5},
@@ -610,6 +612,8 @@ const getPays = () => JSON.parse(localStorage.getItem('shyraq_admin_payments')||
 const setPays = a => localStorage.setItem('shyraq_admin_payments', JSON.stringify(a));
 const getReviews = () => JSON.parse(localStorage.getItem('shyraq_admin_reviews')||'[]');
 const setReviews = a => localStorage.setItem('shyraq_admin_reviews', JSON.stringify(a));
+const SEED_USER_EMAILS = new Set(['ayaulym@gmail.com','dauren@gmail.com','zarina@mail.ru','nurislam@gmail.com','madina@gmail.com','erasyl@gmail.com']);
+const SEED_PAY_NAMES = new Set(['аяулым бекова','зарина нұрланова','мадина әбен','бекжан о.']);
 
 const UNIS = window.UNIVERSITIES_SEED || [];
 
@@ -658,7 +662,7 @@ $('logoutBtn2').addEventListener('click', logout);
 
 /* ════ OVERVIEW ════ */
 function renderOverview(){
-  const users=allUsers(), pays=(_pays&&_pays.length)?_pays:getPays();
+  const users=allUsers(), pays=_pays||[];
   const premium = users.filter(u=>u.plan!=='free').length;
   const revenue = pays.filter(p=>p.status==='paid').reduce((s,p)=>s+p.amount,0);
   $('stUsers').textContent = nf(users.length);
@@ -669,10 +673,10 @@ function renderOverview(){
   $('navPays').textContent = pays.length;
   $('navUniLbl').textContent = UNIS.length + ' ЖОО базасы';
 
-  // bars (mock growth)
-  const data=[{x:'Қаң',v:42},{x:'Ақп',v:58},{x:'Нау',v:71},{x:'Сәу',v:64},{x:'Мам',v:88},{x:'Мау',v:96},{x:'Шіл',v:74}];
-  const max=Math.max(...data.map(d=>d.v));
-  $('bars').innerHTML = data.map(d=>`<div class="bar-col"><div class="bar" style="height:${d.v/max*100}%"></div><div class="bar-x">${d.x}</div></div>`).join('');
+  // bars: соңғы 7 айдағы нақты тіркелулер
+  const data=registrationSeries(users);
+  const max=Math.max(1,...data.map(d=>d.v));
+  $('bars').innerHTML = data.map(d=>`<div class="bar-col" title="${d.full}: ${d.v} тіркелу"><div class="bar-n">${d.v}</div><div class="bar" style="height:${Math.max(8,d.v/max*100)}%"></div><div class="bar-x">${d.x}</div></div>`).join('');
 
   // categories
   const cats={};
@@ -685,30 +689,57 @@ function renderOverview(){
   $('recentUsers').innerHTML = users.slice(0,5).map(u=>`<tr><td><div class="u-cell"><span class="u-av" style="background:${avColor(u.name)}">${initial(u.name)}</span><div><div class="u-name">${u.name}</div><div class="u-mail">${u.email}</div></div></div></td><td><span class="pill ${u.plan}">${u.plan}</span></td></tr>`).join('');
 
   // activity
-  const acts=[
-    ['#10B981','Жаңа Premium төлем','Аяулым Бекова · 990 ₸ · бүгін'],
-    ['#3B82F6','Жаңа тіркелу','Ерасыл Тұрсын · Тараз · бүгін'],
-    ['#F2B84B','Грант есептелді','Нұрислам · 112 балл · кеше'],
-    ['#7C3AED','Тест тапсырылды','Мадина Әбен · Медицина · кеше']
-  ];
+  const acts=recentActivity(users,pays);
   $('activity').innerHTML = acts.map(a=>`<div class="act"><span class="dot" style="background:${a[0]}"></span><div><div class="t">${a[1]}</div><div class="m">${a[2]}</div></div></div>`).join('');
 }
 
 /* ════ USERS ════ */
-// Нақты тіркелген аккаунттар (login/register арқылы) + демо тізім
+// Нақты тіркелген аккаунттар (login/register/Supabase арқылы)
 const getAcc = () => { try { return JSON.parse(localStorage.getItem('shyraq_accounts')||'{}'); } catch(e){ return {}; } };
 const setAcc = o => localStorage.setItem('shyraq_accounts', JSON.stringify(o));
 function allUsers(){
-  // demo (массив) + real (объект) — біріктіреміз
-  const demo = getUsers().map((u,i)=>({ ...u, src:'demo', idx:i, blocked:!!u.blocked }));
   const acc = getAcc();
   const real = Object.keys(acc).map(k=>({ name:acc[k].name, email:acc[k].email||k, city:acc[k].city||'—',
-    plan:acc[k].plan||'free', blocked:!!acc[k].blocked, date:(acc[k].createdAt||'').slice(0,10)||'—', src:'real', key:k }));
-  return real.concat(demo);
+    plan:acc[k].plan||'free', blocked:!!acc[k].blocked, date:(acc[k].createdAt||'').slice(0,10)||'—', createdAt:acc[k].createdAt||'', lastLoginAt:acc[k].lastLoginAt||'', src:'real', key:k }));
+  return real.filter(u=>u.email && !SEED_USER_EMAILS.has(String(u.email).toLowerCase()));
+}
+function monthKey(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'); }
+function parseUserDate(u){ const raw=u.createdAt||u.date||u.lastLoginAt||''; const d=new Date(raw); return isNaN(d) ? null : d; }
+function registrationSeries(users){
+  const mon=['Қаң','Ақп','Нау','Сәу','Мам','Мау','Шіл','Там','Қыр','Қаз','Қар','Жел'];
+  const now=new Date(), series=[];
+  for(let i=6;i>=0;i--){
+    const d=new Date(now.getFullYear(), now.getMonth()-i, 1);
+    series.push({key:monthKey(d), x:mon[d.getMonth()], full:mon[d.getMonth()]+' '+d.getFullYear(), v:0});
+  }
+  users.forEach(u=>{ const d=parseUserDate(u); if(!d) return; const row=series.find(x=>x.key===monthKey(d)); if(row) row.v++; });
+  return series;
+}
+function recentActivity(users,pays){
+  const out=[];
+  pays.slice(0,3).forEach(p=>out.push(['#10B981', p.status==='paid'?'Төлем расталды':'Төлем күтуде', `${p.name||'Қолданушы'} · ${nf(p.amount||0)} ₸ · ${p.date||'—'}`]));
+  users.slice(0,3).forEach(u=>out.push(['#3B82F6','Жаңа тіркелу', `${u.name||'Қолданушы'} · ${u.city||'—'} · ${u.date||'—'}`]));
+  return out.slice(0,4);
 }
 function fmtDate(iso){ if(!iso) return '—'; try{ var d=new Date(iso); return String(d.getDate()).padStart(2,'0')+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+d.getFullYear(); }catch(e){ return '—'; } }
 function isActivePremium(u){ return u && u.premiumUntil && new Date(u.premiumUntil) > new Date(); }
-function planLabel(u){ if(isActivePremium(u)) return u.plan==='report'?'report':'premium'; return (u.plan==='premium'||u.plan==='report') && !u.premiumUntil ? u.plan : 'free'; }
+function planLabel(u){ if(isActivePremium(u)) return u.plan==='report'?'report':'premium'; return ['premium','report','standard'].includes(u.plan) && !u.premiumUntil ? u.plan : 'free'; }
+function energyRemaining(u){ return Math.max(0, parseInt((u && u.energy) || 0, 10) || 0); }
+function energyTotal(u){ return Math.max(energyRemaining(u), parseInt((u && (u.energyTotal != null ? u.energyTotal : u.energy_total)) || 0, 10) || 0); }
+function setUserEnergy(u, remaining, total){
+  var bal = Math.max(0, parseInt(remaining, 10) || 0);
+  var tot = Math.max(bal, parseInt(total, 10) || energyTotal(u) || bal);
+  u.energy = bal;
+  u.energyTotal = tot;
+  u.energy_total = tot;
+}
+function paymentPlan(p){
+  var s=String((p&&p.plan)||'').toLowerCase();
+  if(s.indexOf('standard')>-1) return 'standard';
+  if(s.indexOf('report')>-1) return 'report';
+  if(s.indexOf('premium')>-1 || (p&&p.status)==='paid') return 'premium';
+  return 'free';
+}
 var ROW='display:flex;align-items:center;gap:13px;border:1px solid #E8EEF6;border-radius:12px;padding:10px 14px;margin-bottom:8px;background:#fff;cursor:pointer';
 var AV='width:38px;height:38px;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;flex-shrink:0';
 var IB='width:32px;height:32px;border:1px solid #E8EEF6;background:#fff;border-radius:9px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;color:#7A8AA0;flex-shrink:0';
@@ -717,7 +748,7 @@ function renderUsers(){
     const users=allUsers();
     $('navUsers').textContent=users.length;
     $('usersGrid').innerHTML = users.map((u)=>{
-      const ref = u.src==='real' ? `'real','${(u.key||'').replace(/'/g,"")}'` : `'demo',${u.idx}`;
+      const ref = `'real','${(u.key||'').replace(/'/g,"")}'`;
       const pl = planLabel(u);
       return `<div style="${ROW}${u.blocked?';opacity:.6':''}" onclick="openUserDetail(${ref})">
         <span style="${AV};background:${avColor(u.name)}">${initial(u.name)}</span>
@@ -735,14 +766,10 @@ function renderUsers(){
     }).join('') || '<div class="empty">Қолданушылар жоқ</div>';
   } catch(e){ console.error(e); $('usersGrid').innerHTML='<div class="empty">Қате: '+e.message+'</div>'; }
 }
-function findUser(src, ref){
-  if(src==='real'){ return getAcc()[ref]||null; }
-  return getUsers()[ref]||null;
-}
+function findUser(src, ref){ return getAcc()[ref]||null; }
 function _mutate(src, ref, fn){
   let updated=null;
-  if(src==='real'){ const a=getAcc(); if(a[ref]){ fn(a[ref]); setAcc(a); updated=a[ref]; } }
-  else { const u=getUsers(); if(u[ref]){ fn(u[ref]); setUsers(u); updated=u[ref]; } }
+  const a=getAcc(); if(a[ref]){ fn(a[ref]); setAcc(a); updated=a[ref]; }
   if(updated) syncAccess(updated);
   renderUsers(); renderOverview();
 }
@@ -751,23 +778,30 @@ function _mutate(src, ref, fn){
 function syncAccess(u){
   if(!u || !u.email || !(window.ShyraqDB && window.ShyraqDB.ready())) return;
   const prem = isActivePremium(u) || ((u.plan==='premium'||u.plan==='report') && !u.premiumUntil);
-  window.ShyraqDB.setAccess(u.email, { premium: !!prem, premium_until: u.premiumUntil||null, blocked: !!u.blocked });
+  window.ShyraqDB.setAccess(u.email, {
+    premium: !!prem,
+    premium_until: u.premiumUntil||null,
+    blocked: !!u.blocked,
+    energy: energyRemaining(u),
+    energy_total: energyTotal(u)
+  });
 }
 function openUserModal(){ $('userModal').classList.add('open'); }
 function closeModal(id){ $(id).classList.remove('open'); }
 function addUser(){
   const name=$('umName').value.trim(), email=$('umEmail').value.trim();
   if(!name||!email){ toast('Аты мен email керек'); return; }
-  const users=getUsers();
-  users.unshift({name,email,city:$('umCity').value.trim()||'—',plan:$('umPlan').value,blocked:false,date:new Date().toISOString().slice(0,10)});
-  setUsers(users);
+  const acc=getAcc();
+  const key=email.toLowerCase();
+  acc[key]={name,email:key,city:$('umCity').value.trim()||'—',plan:$('umPlan').value,blocked:false,createdAt:new Date().toISOString(),energy:0,energyTotal:0,energy_total:0};
+  setAcc(acc);
+  syncAccess(acc[key]);
   $('umName').value=$('umEmail').value=$('umCity').value='';
   closeModal('userModal'); renderUsers(); renderOverview(); toast('Қолданушы қосылды ✓');
 }
 function delUser(src, ref){
   if(!confirm('Қолданушыны жою керек пе?')) return;
-  if(src==='real'){ const a=getAcc(); delete a[ref]; setAcc(a); }
-  else { const u=getUsers(); u.splice(ref,1); setUsers(u); }
+  const a=getAcc(); delete a[ref]; setAcc(a);
   renderUsers(); renderOverview(); toast('Жойылды');
 }
 function togglePlan(src, ref){ if(isActivePremium(findUser(src,ref))) udRevokeRef(src,ref); else udGrantRef(src,ref,30); }
@@ -777,7 +811,7 @@ function toggleBlock(src, ref){ _mutate(src, ref, u=>{ u.blocked = !u.blocked; }
 var _ud = null;
 function userPays(u){
   const nm=(u.name||'').toLowerCase(), em=(u.email||'').toLowerCase();
-  return getPays().filter(p=>{ const pn=(p.name||'').toLowerCase(); return pn && (pn===nm || (em && p.email && p.email.toLowerCase()===em) || nm.indexOf(pn)>-1 || pn.indexOf(nm.split(' ')[0])>-1); });
+  return (_pays||[]).filter(p=>{ const pn=(p.name||'').toLowerCase(); return pn && (pn===nm || (em && p.email && p.email.toLowerCase()===em) || nm.indexOf(pn)>-1 || pn.indexOf(nm.split(' ')[0])>-1); });
 }
 function openUserDetail(src, ref){
   const u=findUser(src,ref); if(!u){ toast('Табылмады'); return; }
@@ -788,7 +822,8 @@ function openUserDetail(src, ref){
   $('udPlan').innerHTML='<span class="pill '+_pl+'">'+_pl+'</span>';
   $('udStatus').innerHTML=u.blocked?'<span class="pill pending">🔒 Бұғатталған</span>':'<span class="pill paid">✅ Белсенді</span>';
   $('udUntil').textContent=isActivePremium(u)?fmtDate(u.premiumUntil):'—';
-  $('udEnergy').textContent='⚡ '+(u.energy||0);
+  $('udEnergy').textContent='⚡ '+energyRemaining(u)+' / '+energyTotal(u);
+  var _ei=$('udEnergyInput'); if(_ei) _ei.value=energyRemaining(u);
   $('udCity').textContent=u.city||'—';
   $('udBlockBtn').innerHTML=u.blocked?'🔓 Босату':'🔒 Бұғаттау';
   var pays=userPays(u);
@@ -815,16 +850,65 @@ function udExtend(days){
 function udRevoke(){ if(!_ud)return; udRevokeRef(_ud.src,_ud.ref); refreshDetail(); toast('Доступ алынды (free)'); }
 function udToggleBlock(){ if(!_ud)return; _mutate(_ud.src,_ud.ref,u=>{u.blocked=!u.blocked;}); refreshDetail(); toast('Қолжетімділік жаңартылды ✓'); }
 
-/* ════ PAYMENTS (Supabase + демо біріктірілген) ════ */
+/* ── Career Energy қолмен басқару (план мен access-тен бөлек) ──
+   delta: +1/-1/+3; absolute: нақты мән (Reset 0 = absolute 0).
+   Жаңа қалдықты Supabase access.energy-ге жазады → grant.html да, осы панель де
+   бір мәнді көреді. energy_total: +grant ұлғайтады, азайту/reset өзгертпейді. */
+async function udSetEnergy(delta, absolute){
+  if(!_ud) return;
+  var u = findUser(_ud.src,_ud.ref); if(!u){ toast('Табылмады'); return; }
+  var cur = energyRemaining(u);
+  var curTot = energyTotal(u);
+  var next = (absolute!=null) ? Math.max(0, parseInt(absolute,10)||0) : Math.max(0, cur + delta);
+  var nextTot = (absolute!=null) ? Math.max(curTot, next) : (delta>0 ? curTot + delta : curTot);
+  // 1) жергілікті айна
+  var a=getAcc(); if(a[_ud.ref]){ setUserEnergy(a[_ud.ref], next, nextTot); setAcc(a); }
+  // 2) Supabase (бірден-бір ақиқат көзі)
+  if(u.email && window.ShyraqDB && window.ShyraqDB.ready()){
+    try { await window.ShyraqDB.setAccess(u.email, { energy: next, energy_total: nextTot }); }
+    catch(e){ toast('Дерекқорға жазу қатесі'); }
+  }
+  renderUsers(); renderOverview(); refreshDetail();
+  toast('⚡ Career Energy: '+next);
+}
+function udSaveEnergy(){
+  var v = $('udEnergyInput').value;
+  if(v===''||isNaN(+v)){ toast('Нақты сан енгізіңіз'); return; }
+  udSetEnergy(null, +v);
+}
+
+/* ════ PAYMENTS (Supabase) ════ */
 var _pays = [];
+var PAYMENT_API = String(window.SHYRAQ_API || localStorage.getItem('shyraq_api_url') || '').replace(/\/$/, '');
+async function paymentApi(path, options){
+  if(!PAYMENT_API || !window.ShyraqAuth) throw new Error('payment_api_not_configured');
+  var token=await window.ShyraqAuth.getAccessToken();
+  if(!token) throw new Error('admin_auth_required');
+  options=options||{}; var headers=Object.assign({},options.headers||{},{Authorization:'Bearer '+token});
+  if(options.body) headers['Content-Type']='application/json';
+  var r=await fetch(PAYMENT_API+path,Object.assign({},options,{headers})); var j=await r.json().catch(()=>({}));
+  if(!r.ok) throw new Error(j.message||'payment_api_error'); return j;
+}
 async function loadPayments(){
-  var demo = getPays().map((p,idx)=>({ name:p.name, email:p.email, plan:p.plan, amount:p.amount, status:p.status, receipt:p.receipt, date:p.date, src:'demo', idx:idx }));
+  if(PAYMENT_API){
+    try{
+      var apiRows=(await paymentApi('/api/payment/admin')).sessions||[];
+      _pays=apiRows.map(r=>({
+        id:r.id, src:'session', name:(r.profile&&r.profile.name)||r.email||'Қолданушы', email:r.email||'',
+        plan:(r.tariff&&r.tariff.name)||r.tariff_id, amount:r.amount, method:r.payment_method,
+        status:r.status, review:r.admin_review_status, receipt:r.receiptSignedUrl||'',
+        uploadedAt:r.receipt_uploaded_at, paidAt:r.receipt_paid_at, startedAt:r.started_at,
+        expiresAt:r.expires_at, reason:r.rejected_reason||'', parsed:r.receipt_parsed||{}, reference:r.payment_reference||'', date:(r.started_at||'').slice(0,10)
+      }));
+      renderPayments(); renderOverview(); return;
+    }catch(e){ console.warn('payment admin API:',e.message); }
+  }
   var sbp = [];
   if (window.ShyraqDB && window.ShyraqDB.ready()){
     var rows = await window.ShyraqDB.listPayments();
     if (rows) sbp = rows.map(r=>({ id:r.id, name:r.name, email:r.email, plan:r.plan, amount:r.amount, status:r.status, receipt:r.receipt_url, date:(r.created_at||'').slice(0,10), src:'sb' }));
   }
-  _pays = sbp.concat(demo);
+  _pays = sbp;
   renderPayments(); renderOverview();
 }
 
@@ -834,6 +918,7 @@ async function loadUsers(){
   try {
     if (!(window.ShyraqDB && window.ShyraqDB.ready())) { renderUsers(); return; }
     var profiles = await window.ShyraqDB.listProfiles() || [];
+    var regs = await window.ShyraqDB.getSettings('registrations') || [];
     var access   = await window.ShyraqDB.listAccess()   || [];
     var accMap = {}; access.forEach(a=>{ accMap[(a.email||'').toLowerCase()] = a; });
     var local = getAcc();
@@ -842,17 +927,23 @@ async function loadUsers(){
       var a=accMap[k]||{}; var cur=local[k]||{};
       local[k] = Object.assign({}, cur, base, {
         email: base.email || cur.email || k,
-        plan: a.premium ? 'premium' : (cur.plan||'free'),
+        plan: a.premium ? (base.plan || 'premium') : (base.plan || cur.plan || 'free'),
         premiumUntil: a.premium_until || cur.premiumUntil || null,
         blocked: a.blocked!=null ? !!a.blocked : !!cur.blocked,
-        energy: a.energy!=null ? a.energy : (cur.energy||0)
+        energy: a.energy!=null ? a.energy : (cur.energy||0),
+        energyTotal: a.energy_total!=null ? a.energy_total : (cur.energyTotal||a.energy||cur.energy||0)
       });
     }
     profiles.forEach(pr=> merge(pr.email, {
       name: pr.name || (pr.email||'').split('@')[0], email: pr.email,
       city: pr.city || '—', classYear: pr.class_year || '', createdAt: pr.created_at || ''
     }));
-    (_pays||[]).forEach(p=>{ if(p.email && !local[(p.email||'').toLowerCase()]) merge(p.email, { name:p.name||p.email, email:p.email, city:'—' }); });
+    if(Array.isArray(regs)) regs.forEach(r=> merge(r.email, {
+      name: r.name || (r.email||'').split('@')[0], email: r.email,
+      city: r.city || '—', classYear: r.classYear || r.class_year || '',
+      createdAt: r.createdAt || r.created_at || '', lastLoginAt: r.lastLoginAt || ''
+    }));
+    (_pays||[]).forEach(p=>{ if(p.email) merge(p.email, { name:p.name||p.email, email:p.email, city:'—', plan: paymentPlan(p), createdAt:p.date||'' }); });
     access.forEach(a=>{ if(a.email && !local[(a.email||'').toLowerCase()]) merge(a.email, { name:a.email, email:a.email, city:'—' }); });
     setAcc(local);
   } catch(e){ console.error('loadUsers', e); }
@@ -866,44 +957,59 @@ function planEnergy(p){
   return 1;
 }
 function renderPayments(){
-  const pays=_pays.length?_pays:getPays();
-  const total=pays.filter(p=>p.status==='paid').reduce((s,p)=>s+(p.amount||0),0);
+  const pays=_pays||[];
+  const total=pays.filter(p=>p.status==='approved'||p.status==='paid').reduce((s,p)=>s+(p.amount||0),0);
   $('payTotal').textContent=nf(total)+' ₸';
   $('navPays').textContent=pays.length;
   const q=($('globalSearch').value||'').toLowerCase();
   var list = pays.map((p,i)=>({p,i})).filter(x=> !q || ((x.p.name||'')+' '+(x.p.plan||'')).toLowerCase().includes(q));
   $('paymentsBody').innerHTML = list.map(({p,i})=>`<tr>
-    <td><div class="u-cell"><span class="u-av" style="background:${avColor(p.name)}">${initial(p.name)}</span><div><div class="u-name">${esc(p.name||'—')}</div>${p.src==='sb'?'<div class="u-mail">☁️ дерекқор</div>':''}</div></div></td>
-    <td>${esc(p.plan||'—')}</td><td><b>${nf(p.amount||0)} ₸</b></td>
-    <td><span class="pill ${p.status}">${p.status==='paid'?'Төленді':'Күтілуде'}</span></td>
-    <td>${p.receipt?'<a class="lk" href="'+esc(p.receipt)+'" target="_blank" style="color:#3B82F6;font-weight:700">Чекті көру</a>':'<span style="color:var(--light);font-size:.8rem">чек жоқ</span>'}</td>
-    <td>${esc(p.date||'')}</td>
+    <td><div class="u-cell"><span class="u-av" style="background:${avColor(p.name)}">${initial(p.name)}</span><div><div class="u-name">${esc(p.name||'—')}</div><div class="u-mail">${esc(p.email||'')} · ${esc(p.plan||'—')}</div></div></div></td>
+    <td><b>${p.method==='qr'?'QR':'Kaspi link'}</b><div class="u-mail">${nf(p.amount||0)} ₸</div></td>
+    <td><span class="pill ${p.status==='approved'?'paid':p.status}">${p.status==='approved'?'Қабылданды':p.status==='rejected'?'Қабылданбады':p.status==='expired'?'Мерзімі өтті':'Тексерілуде'}</span></td>
+    <td>${p.receipt?'<a class="lk" href="'+esc(p.receipt)+'" target="_blank" style="color:#3B82F6;font-weight:700">Чекті көру</a>':'<span style="color:var(--light);font-size:.8rem">чек жоқ</span>'}<div class="u-mail">Parsed: ${p.parsed&&p.parsed.amount!=null?nf(p.parsed.amount)+' ₸':'—'}<br>Paid: ${fmtDateTime((p.parsed&&p.parsed.paymentDate)||p.paidAt)}<br>Payer: ${esc((p.parsed&&p.parsed.payerName)||'—')}<br>Ref: ${esc((p.parsed&&p.parsed.paymentReference)||p.reference||'—')}</div></td>
+    <td><div style="font-size:.76rem;line-height:1.5">${fmtDateTime(p.startedAt)}<br>→ ${fmtDateTime(p.expiresAt)}</div></td>
+    <td><div style="font-size:.76rem;line-height:1.45;max-width:180px">${esc(p.reason||'—')}<br><b>${esc(p.review||'pending')}</b></div></td>
     <td><div class="row-act">
-      ${p.status==='pending'?`<button class="ibtn ok" onclick="approvePay(${i})" title="Растау"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></button>`:''}
-      <button class="ibtn" onclick="delPay(${i})" title="Жою"><svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></button>
+      ${p.src==='session'&&!['approved','expired'].includes(p.status)?`<button class="ibtn ok" onclick="approvePay(${i})" title="Растау"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></button><button class="ibtn" onclick="rejectPay(${i})" title="Қабылдамау"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>`:''}
     </div></td></tr>`).join('') || '<tr><td colspan="7" class="empty">Төлемдер жоқ</td></tr>';
 }
+function fmtDateTime(v){if(!v)return '—';var d=new Date(v);return isNaN(d)?'—':d.toLocaleString('kk-KZ',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});}
 async function approvePay(i){
   var p=_pays[i]; if(!p) return;
+  if(p.src==='session'){
+    try{await paymentApi('/api/payment/admin',{method:'PATCH',body:JSON.stringify({sessionId:p.id,action:'approve'})});await loadPayments();await loadUsers();toast('Төлем қабылданды ✓');}
+    catch(e){toast(e.message||'Растау қатесі');} return;
+  }
   var wasPaid = p.status==='paid';
   if(p.src==='sb'){ await window.ShyraqDB.updatePayment(p.id,{status:'paid'}); p.status='paid'; }
   else { const d=getPays(); if(d[p.idx]){ d[p.idx].status='paid'; setPays(d); } }
-  // Растағанда — сол қолданушыға Premium доступ + Career Energy беру
+  // Растағанда — тек Career Energy беру (тариф = энергия; тұрақты premium емес).
+  // Energy ашылғанда қолданушыда доступ автоматты түрде қосылады (access-sync).
+  var addE = 0;
   if(p.email && window.ShyraqDB && window.ShyraqDB.ready()){
-    var until = new Date(Date.now()+30*86400000).toISOString();
-    var patch = { premium:true, premium_until:until, blocked:false };
+    var patch = { blocked:false };
     if(!wasPaid){
-      var addE = planEnergy(p);
+      addE = planEnergy(p);
       var existing = await window.ShyraqDB.getAccess(p.email);
-      patch.energy = ((existing && existing.energy)||0) + addE;
+      var curR = (existing && existing.energy)||0;
+      var curT = (existing && existing.energy_total!=null) ? existing.energy_total : curR;
+      patch.energy = curR + addE;            // қалдыққа қосамыз
+      patch.energy_total = curT + addE;      // жиынтыққа да қосамыз
     }
     await window.ShyraqDB.setAccess(p.email, patch);
     // егер жергілікті аккаунт болса — оны да жаңарту
     var acc=getAcc(), k=(p.email||'').toLowerCase();
-    if(acc[k]){ acc[k].plan='premium'; acc[k].premiumUntil=until; acc[k].blocked=false; if(patch.energy!=null) acc[k].energy=patch.energy; setAcc(acc); }
+    if(acc[k]){ acc[k].blocked=false; if(patch.energy!=null){ acc[k].energy=patch.energy; acc[k].energyTotal=patch.energy_total; } setAcc(acc); }
   }
   await loadPayments(); await loadUsers();
-  toast(wasPaid ? 'Төлем расталды ✓' : 'Төлем расталды ✓ Premium + ⚡ энергия берілді');
+  toast(wasPaid ? 'Төлем расталды ✓' : 'Төлем расталды ✓ ⚡ '+addE+' Career Energy берілді');
+}
+async function rejectPay(i){
+  var p=_pays[i];if(!p||p.src!=='session')return;
+  var reason=prompt('Қабылдамау себебі:','Чек талаптарға сәйкес емес');if(reason===null)return;
+  try{await paymentApi('/api/payment/admin',{method:'PATCH',body:JSON.stringify({sessionId:p.id,action:'reject',reason:reason})});await loadPayments();toast('Төлем қабылданбады');}
+  catch(e){toast(e.message||'Операция қатесі');}
 }
 async function delPay(i){
   var p=_pays[i]; if(!p) return;
@@ -1110,7 +1216,7 @@ function exportData(){
   toast('Деректер жүктелді ✓');
 }
 function resetData(){
-  if(!confirm('Демо деректерді қалпына келтіру керек пе? Барлық өзгерістер жойылады.')) return;
+  if(!confirm('Local уақытша деректерді тазалау керек пе?')) return;
   ['shyraq_admin_users','shyraq_admin_payments','shyraq_admin_reviews'].forEach(k=>localStorage.removeItem(k));
   location.reload();
 }

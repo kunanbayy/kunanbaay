@@ -1,31 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabaseAdmin } from '../../../../lib/supabase';
+import { requireUser, authStatus } from '../../../../lib/auth';
 import { corsHeaders } from '../../../../lib/config';
+import { getOwnedSession } from '../../../../services/sessions';
 
 export const runtime = 'nodejs';
+export function OPTIONS() { return new NextResponse(null, { status: 204, headers: corsHeaders }); }
 
-export function OPTIONS() {
-  return new NextResponse(null, { status: 204, headers: corsHeaders });
-}
-
-// Frontend polls this after showing the QR; returns 'paid' once the webhook lands.
 export async function GET(req: NextRequest) {
-  const orderId = req.nextUrl.searchParams.get('orderId');
-  if (!orderId) return NextResponse.json({ ok: false, message: 'orderId required' }, { status: 400, headers: corsHeaders });
-
-  const { data: order } = await supabaseAdmin
-    .from('payment_orders')
-    .select('id, user_id, status')
-    .eq('id', orderId)
-    .maybeSingle();
-
-  if (!order) return NextResponse.json({ ok: false, message: 'not found' }, { status: 404, headers: corsHeaders });
-
-  let premiumUntil: string | null = null;
-  if (order.status === 'paid') {
-    const { data: profile } = await supabaseAdmin
-      .from('profiles').select('premium_until').eq('id', order.user_id).maybeSingle();
-    premiumUntil = profile?.premium_until ?? null;
+  try {
+    const user = await requireUser(req);
+    const sessionId = req.nextUrl.searchParams.get('sessionId') || req.nextUrl.searchParams.get('orderId');
+    if (!sessionId) return NextResponse.json({ ok: false, message: 'sessionId required' }, { status: 400, headers: corsHeaders });
+    const session = await getOwnedSession(sessionId, user.id);
+    if (!session) return NextResponse.json({ ok: false, message: 'not found' }, { status: 404, headers: corsHeaders });
+    return NextResponse.json({ ok: true, status: session.status, session }, { headers: corsHeaders });
+  } catch (error) {
+    return NextResponse.json({ ok: false, message: 'Авторизация қажет.' }, { status: authStatus(error), headers: corsHeaders });
   }
-  return NextResponse.json({ ok: true, status: order.status, premiumUntil }, { headers: corsHeaders });
 }
+

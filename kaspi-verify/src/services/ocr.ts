@@ -1,6 +1,6 @@
 import OpenAI from 'openai';
 import { pdf } from 'pdf-to-img';
-import { config } from '../lib/config';
+import { assertServerConfig, config } from '../lib/config';
 import { log } from '../lib/logger';
 import type { ExtractedReceipt } from '../types';
 
@@ -9,20 +9,25 @@ const client = new OpenAI({ apiKey: config.openaiApiKey });
 const SYSTEM = `You are an OCR extraction engine for Kaspi Bank (Kazakhstan) money-transfer receipts.
 Return STRICT JSON only. Read the receipt carefully and extract the fields.
 Kaspi receipts contain: receipt/check number (Чек нөмірі / Квитанция), amount (Сома, in ₸/тенге),
-receiver name (Алушы / Получатель), transfer type (Аударым / Перевод), date & time.`;
+merchant/receiver name (Алушы / Получатель / Сатушы), transfer type (Аударым / Перевод), date & time.`;
 
 const PROMPT = `Extract these fields from the receipt image and return JSON with EXACTLY this shape:
 {
   "receiptNumber": string|null,   // the long transaction/check number, digits only
   "amount": number|null,          // integer tenge, no spaces or symbols (e.g. 990)
-  "receiverName": string|null,    // recipient as printed (e.g. "Мадина Е.")
-  "paymentDate": string|null,     // ISO 8601 with timezone if visible, else "YYYY-MM-DDTHH:mm:ss"
+  "receiverName": string|null,    // merchant/recipient as printed, e.g. "BAY GROUP"
+  "payerName": string|null,       // sender / payer name (Төлеуші / Отправитель)
+  "payerEmail": string|null,      // payer email if printed
+  "paymentReference": string|null,// order/reference, e.g. "SHY-A1B2C3D4"
+  "purpose": string|null,         // comment / purpose / message field
+  "paymentDate": string|null,     // strict Kaspi local time format "DD.MM.YYYY HH:mm", no seconds
   "transferType": string|null,
   "confidence": number,           // 0..1 — how sure you are the fields are correct
   "isReadable": boolean,          // false if blurry, cropped or not a Kaspi receipt
   "looksEdited": boolean          // true if fonts/alignment suggest tampering
 }
-Do not invent values. If a field is not clearly visible, use null and lower the confidence.`;
+Do not invent values. If a field is not clearly visible, use null and lower the confidence.
+If the receipt shows BAY GROUP with spaces, punctuation, Cyrillic/Latin lookalikes, preserve it as printed in receiverName.`;
 
 async function toPngDataUrl(buffer: Buffer, mime: string): Promise<string> {
   if (mime === 'application/pdf') {
@@ -37,6 +42,7 @@ async function toPngDataUrl(buffer: Buffer, mime: string): Promise<string> {
 }
 
 export async function extractReceipt(buffer: Buffer, mime: string): Promise<ExtractedReceipt> {
+  assertServerConfig(true);
   const dataUrl = await toPngDataUrl(buffer, mime);
 
   const res = await client.chat.completions.create({
@@ -75,6 +81,10 @@ export async function extractReceipt(buffer: Buffer, mime: string): Promise<Extr
     receiptNumber: digits(parsed.receiptNumber) || null,
     amount: num(parsed.amount),
     receiverName: (parsed.receiverName as string) ?? null,
+    payerName: (parsed.payerName as string) ?? null,
+    payerEmail: (parsed.payerEmail as string) ?? null,
+    paymentReference: (parsed.paymentReference as string) ?? null,
+    purpose: (parsed.purpose as string) ?? null,
     paymentDate: (parsed.paymentDate as string) ?? null,
     transferType: (parsed.transferType as string) ?? null,
     confidence: typeof parsed.confidence === 'number' ? parsed.confidence : 0,

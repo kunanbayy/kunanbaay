@@ -2,81 +2,49 @@ import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
 import { supabaseAdmin } from '../../../../lib/supabase';
 import { config } from '../../../../lib/config';
-import { log, logVerification } from '../../../../lib/logger';
-import { activatePremium } from '../../../../services/premium';
+import { approveSession, rejectSession } from '../../../../services/sessions';
 
 export const runtime = 'nodejs';
 
-// Verify the HMAC SHA-256 signature sent by kaspi-pos-automation:
-//   X-Webhook-Signature: sha256=<hex>
 function validSignature(raw: string, header: string | null): boolean {
-  if (!config.kaspiWebhookSecret) return true; // no secret configured → skip (not recommended)
-  if (!header) return false;
+  if (!config.kaspiWebhookSecret || !header) return false;
   const expected = 'sha256=' + crypto.createHmac('sha256', config.kaspiWebhookSecret).update(raw).digest('hex');
-  try {
-    return crypto.timingSafeEqual(Buffer.from(header), Buffer.from(expected));
-  } catch {
-    return false;
-  }
+  try { return crypto.timingSafeEqual(Buffer.from(header), Buffer.from(expected)); }
+  catch { return false; }
 }
 
 export async function POST(req: NextRequest) {
   const raw = await req.text();
   if (!validSignature(raw, req.headers.get('x-webhook-signature'))) {
-    log('warn', 'webhook_bad_signature');
     return NextResponse.json({ ok: false }, { status: 401 });
   }
+  let payload: Record<string, unknown>;
+  try { payload = JSON.parse(raw); } catch { return NextResponse.json({ ok: false }, { status: 400 }); }
+  const operationId = String(payload.paymentId || payload.qrOperationId || '');
+  const { data: session } = await supabaseAdmin.from('payment_sessions').select('*').eq('qr_operation_id', operationId).maybeSingle();
+  if (!session) return NextResponse.json({ ok: true, ignored: 'session_not_found' });
 
-  let p: any;
-  try { p = JSON.parse(raw); } catch { return NextResponse.json({ ok: false }, { status: 400 }); }
+  if (payload.event === 'payment.expired' || payload.event === 'payment.failed') {
+    await rejectSession(session.id, payload.event === 'payment.expired' ? 'Kaspi QR мерзімі аяқталды' : 'Kaspi төлемі сәтсіз аяқталды');
+    return NextResponse.json({ ok: true });
+  }
+  if (payload.event !== 'payment.success') return NextResponse.json({ ok: true, ignored: payload.event });
+  if (session.status === 'approved') return NextResponse.json({ ok: true, already: true });
 
-  // We only activate on success; other events are acknowledged & logged.
-  if (p.event !== 'payment.success') {
-    log('info', 'webhook_event', { event: p.event, paymentId: p.paymentId });
-    return NextResponse.json({ ok: true, ignored: p.event });
+  const paidAt = Date.parse(String(payload.timestamp || '')) || Date.now();
+  if (Date.now() > Date.parse(session.expires_at) || paidAt < Date.parse(session.started_at) || paidAt > Date.parse(session.expires_at)) {
+    await rejectSession(session.id, 'Төлем 6 минуттық сессиядан тыс жасалған');
+    return NextResponse.json({ ok: false, reason: 'receipt_outside_session' }, { status: 422 });
+  }
+  if (typeof payload.amount === 'number' && payload.amount !== session.amount) {
+    await rejectSession(session.id, `Сома сәйкес емес: ${payload.amount} ₸`);
+    return NextResponse.json({ ok: false, reason: 'amount_mismatch' }, { status: 422 });
   }
 
-  try {
-    const paymentId = String(p.paymentId);
-    // find the pending order this QR belongs to
-    const { data: order } = await supabaseAdmin
-      .from('payment_orders')
-      .select('id, user_id, amount, status')
-      .eq('qr_operation_id', paymentId)
-      .maybeSingle();
-
-    if (!order) { log('warn', 'webhook_order_not_found', { paymentId }); return NextResponse.json({ ok: true }); }
-    if (order.status === 'paid') return NextResponse.json({ ok: true, already: true });
-
-    if (typeof p.amount === 'number' && p.amount !== order.amount) {
-      await logVerification({ userId: order.user_id, orderId: order.id, success: false, reason: 'amount_mismatch' });
-      return NextResponse.json({ ok: false, reason: 'amount_mismatch' }, { status: 422 });
-    }
-
-    // record + activate (receipt_number = paymentId → unique, one activation per payment)
-    const { error: txErr } = await supabaseAdmin.from('payment_transactions').insert({
-      payment_order_id: order.id,
-      user_id: order.user_id,
-      receipt_number: paymentId,
-      amount: order.amount,
-      receiver_name: 'Kaspi Pay (QR)',
-      paid_at: p.timestamp || new Date().toISOString(),
-    });
-    if (txErr && (txErr as { code?: string }).code === '23505') {
-      return NextResponse.json({ ok: true, already: true }); // duplicate webhook
-    }
-    if (txErr) throw txErr;
-
-    const premiumUntil = await activatePremium(order.user_id);
-    await supabaseAdmin.from('payment_orders')
-      .update({ status: 'paid', updated_at: new Date().toISOString() })
-      .eq('id', order.id);
-
-    await logVerification({ userId: order.user_id, orderId: order.id, success: true });
-    log('info', 'premium_activated_via_qr', { orderId: order.id, paymentId, premiumUntil });
-    return NextResponse.json({ ok: true, premiumUntil });
-  } catch (e) {
-    log('error', 'webhook_process_failed', e);
-    return NextResponse.json({ ok: false }, { status: 500 });
-  }
+  await supabaseAdmin.from('payment_sessions').update({
+    receipt_paid_at: new Date(paidAt).toISOString(),
+    provider_payload: payload,
+  }).eq('id', session.id);
+  const approved = await approveSession(session.id, 'auto_approved');
+  return NextResponse.json({ ok: true, session: approved });
 }

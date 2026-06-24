@@ -20,6 +20,29 @@
   const accounts = () => { try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) { return {}; } };
   const saveAccounts = a => localStorage.setItem(KEY, JSON.stringify(a));
 
+  async function recordRegistration(user, action) {
+    if (!sb || !user || !user.email) return;
+    try {
+      const email = String(user.email).toLowerCase();
+      const { data } = await sb.from('settings').select('value').eq('key', 'registrations').maybeSingle();
+      const list = Array.isArray(data && data.value) ? data.value : [];
+      const idx = list.findIndex(x => String(x.email || '').toLowerCase() === email);
+      const now = new Date().toISOString();
+      const row = Object.assign({}, idx >= 0 ? list[idx] : {}, {
+        name: user.name || email.split('@')[0],
+        email,
+        classYear: user.classYear || user.class_year || '',
+        city: user.city || '',
+        plan: user.plan || 'free',
+        createdAt: (idx >= 0 && list[idx].createdAt) ? list[idx].createdAt : now,
+        lastLoginAt: action === 'login' ? now : ((idx >= 0 && list[idx].lastLoginAt) ? list[idx].lastLoginAt : now)
+      });
+      if (idx >= 0) list[idx] = row;
+      else list.unshift(row);
+      await sb.from('settings').upsert({ key: 'registrations', value: list, updated_at: now });
+    } catch (e) { /* admin статистикасы үшін жазу user flow-ды тоқтатпасын */ }
+  }
+
   function setSession(user) {
     localStorage.setItem('shyraq_user', JSON.stringify(user));
     // Жаңа сессия — премиумды тазалаймыз. Премиум тек DB access арқылы беріледі
@@ -51,6 +74,7 @@
     saveLocalAccount(p, name);
 
     // Supabase-қа тіркеу (бапталса)
+    let authId = '';
     if (sb) {
       try {
         const { data, error } = await sb.auth.signUp({
@@ -62,13 +86,15 @@
           console.warn('Supabase signUp:', error.message);
         }
         if (data && data.user) {
+          authId = data.user.id;
           try { await sb.from('profiles').upsert({ id: data.user.id, name, email: p.email, class_year: p.classYear || '', city: p.city || '' }); } catch (e) {}
         }
       } catch (e) { console.warn('Supabase signUp failed, using local:', e); }
     }
 
-    const user = { name, email: p.email, classYear: p.classYear || '', city: p.city || '', plan: 'free' };
+    const user = { id: authId || undefined, name, email: p.email, classYear: p.classYear || '', city: p.city || '', plan: 'free' };
     setSession(user);
+    await recordRegistration(user, 'register');
     return user;
   }
 
@@ -86,8 +112,9 @@
             const { data: pr } = await sb.from('profiles').select('*').eq('id', data.user.id).maybeSingle();
             if (pr) { name = pr.name || name; classYear = pr.class_year || ''; city = pr.city || ''; }
           } catch (e) {}
-          const user = { name, email, classYear, city, plan: 'free' };
+          const user = { id: data.user.id, name, email, classYear, city, plan: 'free' };
           setSession(user);
+          await recordRegistration(user, 'login');
           return user;
         }
       } catch (e) { /* fallback-қа өтеміз */ }
@@ -98,6 +125,7 @@
     if (u.blocked) throw new Error('Аккаунт бұғатталған. Әкімшіге хабарласыңыз.');
     const user = { name: u.name, email: u.email, classYear: u.classYear, city: u.city, plan: u.plan || 'free', blocked: false };
     setSession(user);
+    await recordRegistration(user, 'login');
     return user;
   }
 
@@ -108,5 +136,21 @@
     localStorage.removeItem('shyraq_admin');
   }
 
-  window.ShyraqAuth = { register, login, logout, configured, _client: () => sb };
+  async function getAccessToken() {
+    if (!sb) return '';
+    try {
+      const { data } = await sb.auth.getSession();
+      return (data && data.session && data.session.access_token) || '';
+    } catch (e) { return ''; }
+  }
+
+  async function getAuthUser() {
+    if (!sb) return null;
+    try {
+      const { data } = await sb.auth.getUser();
+      return data && data.user ? data.user : null;
+    } catch (e) { return null; }
+  }
+
+  window.ShyraqAuth = { register, login, logout, getAccessToken, getAuthUser, configured, _client: () => sb };
 })();

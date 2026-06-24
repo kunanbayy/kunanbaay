@@ -1,23 +1,14 @@
 // Central, env-driven configuration. Fail fast if required secrets are missing.
 
-function required(name: string): string {
-  const v = process.env[name];
-  if (!v) throw new Error(`Missing required env var: ${name}`);
-  return v;
-}
-
 export const config = {
-  supabaseUrl: required('SUPABASE_URL'),
-  supabaseServiceKey: required('SUPABASE_SERVICE_ROLE_KEY'),
+  supabaseUrl: process.env.SUPABASE_URL || 'https://invalid.supabase.co',
+  supabaseServiceKey: process.env.SUPABASE_SERVICE_ROLE_KEY || 'missing-service-role-key',
 
-  openaiApiKey: required('OPENAI_API_KEY'),
+  openaiApiKey: process.env.OPENAI_API_KEY || 'missing-openai-key',
   openaiModel: process.env.OPENAI_VISION_MODEL || 'gpt-4o',
 
-  premiumAmount: Number(process.env.PREMIUM_AMOUNT || 990),
   expectedReceiver: process.env.EXPECTED_RECEIVER || 'Мадина Е.',
-  receiptMaxAgeMinutes: Number(process.env.RECEIPT_MAX_AGE_MINUTES || 30),
   minOcrConfidence: Number(process.env.MIN_OCR_CONFIDENCE || 0.75),
-  premiumDays: Number(process.env.PREMIUM_DAYS || 30),
 
   // ── Kaspi Pay gateway (tapter-dev/kaspi-pos-automation) ──
   kaspiGatewayUrl: process.env.KASPI_GATEWAY_URL || '',
@@ -25,12 +16,20 @@ export const config = {
   kaspiVtokenSecret: process.env.KASPI_VTOKEN_SECRET || '',
   kaspiProfileId: process.env.KASPI_PROFILE_ID || '',
   kaspiWebhookSecret: process.env.KASPI_WEBHOOK_SECRET || '',
+  kaspiPaymentLink: process.env.KASPI_PAYMENT_LINK || 'https://kaspi.kz/',
 
   allowedOrigin: process.env.ALLOWED_ORIGIN || '*',
 } as const;
 
+export function assertServerConfig(requireOpenAI = false): void {
+  if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    throw new Error('server_not_configured');
+  }
+  if (requireOpenAI && !process.env.OPENAI_API_KEY) throw new Error('ocr_not_configured');
+}
+
 export const corsHeaders = {
   'Access-Control-Allow-Origin': config.allowedOrigin,
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Allow-Methods': 'GET, POST, PATCH, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type, Authorization',
 };
