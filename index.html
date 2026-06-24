@@ -484,7 +484,7 @@
       .steps-grid { grid-template-columns: 1fr 1fr; }
       .steps-line { display: none; }
       .adv-track, .step-flow { min-height: auto; flex-direction: column; overflow: visible; }
-      .adv-card, .adv-card.active, .flow-card, .flow-card.active { flex-basis: auto; min-height: 250px; }
+      .adv-card, .adv-card.active, .flow-card, .flow-card.active { flex-basis: auto; width: 100%; min-height: 250px; transform: none; }
       .adv-mini, .flow-mini { display: none; }
       .adv-content, .flow-content { position: relative; opacity: 1; transform: none; left: auto; right: auto; bottom: auto; padding: 104px 22px 24px; }
       .adv-card { cursor: default; }
@@ -533,6 +533,18 @@
       .hero-trust::-webkit-scrollbar { display: none; }
       .container, .testi-wrap, .compare-wrap, .footer-wrap, .platform-wrap, .unis-wrap { padding-left: 16px; padding-right: 16px; }
       .section, section { overflow: hidden; }
+      .adv-slider-section { padding: 54px 0; }
+      .adv-slider-wrap { padding: 0 16px; }
+      .adv-slider-head { margin-bottom: 22px; }
+      .adv-track { gap: 12px; }
+      .adv-card, .adv-card.active { min-height: auto; border-radius: 22px; }
+      .adv-card::after { width: 220px; height: 220px; right: -96px; bottom: -110px; }
+      .adv-icon { width: 58px; height: 58px; top: 20px; left: 20px; border-radius: 18px; }
+      .adv-content { padding: 96px 20px 22px; }
+      .adv-title { font-size: 1.35rem; line-height: 1.12; overflow-wrap: anywhere; }
+      .adv-text { font-size: .9rem; line-height: 1.58; }
+      .adv-pills { gap: 6px; }
+      .adv-pill { padding: 7px 10px; font-size: .72rem; }
       .cta-box { margin: 0 16px; padding: 32px 22px; flex-direction: column; align-items: flex-start; text-align: left; }
       .cta-right { justify-content: flex-start; width: 100%; }
       .cta-right .btn { width: 100%; justify-content: center; }
@@ -806,9 +818,51 @@
       .pf-btn:hover { background:var(--gold); color:var(--ink); border-color:var(--gold-deep); transform:translateY(-2px); box-shadow:0 8px 22px rgba(224,153,46,.32); }
       .pf-btn .ix { width:20px; height:20px; }
       @media (max-width:720px) {
-        .pf-slider { height:360px; }
-        .pf-item:nth-child(n+3) { opacity:0; pointer-events:none; }
-        .pf-content { left:24px; right:24px; bottom:28px; }
+        .platform { padding: 54px 0 42px; }
+        .platform-wrap { padding-top: 34px; overflow: visible; }
+        .platform-wrap::before, .platform-wrap::after { display: none; }
+        .platform-header { margin-bottom: 22px; }
+        .platform-chips { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+        .p-chip { min-width: 0; justify-content: center; text-align: center; padding: 9px 10px; font-size: .78rem; }
+        .pf-slider { height: auto; min-height: 0; margin-top: 22px; }
+        .pf-item,
+        .pf-item:nth-child(1),
+        .pf-item:nth-child(2),
+        .pf-item:nth-child(3),
+        .pf-item:nth-child(4),
+        .pf-item:nth-child(5),
+        .pf-item:nth-child(6) {
+          position: relative;
+          inset: auto;
+          top: auto;
+          left: auto;
+          width: 100%;
+          height: auto;
+          min-height: 340px;
+          transform: none;
+          border-radius: 22px;
+          opacity: 1;
+        }
+        .pf-item:nth-child(n+3) { display: none; }
+        .pf-item:nth-child(1) { display: none; }
+        .pf-item:nth-child(2) { display: block; }
+        .pf-item:nth-child(2)::after { width: 280px; height: 280px; right: -100px; top: -100px; }
+        .pf-emblem { width: 52px; height: 52px; border-radius: 16px; top: 20px; left: 20px; }
+        .pf-content {
+          position: relative;
+          left: auto;
+          right: auto;
+          bottom: auto;
+          max-width: none;
+          opacity: 1;
+          pointer-events: auto;
+          padding: 104px 22px 24px;
+        }
+        .pf-title { font-size: clamp(1.55rem, 8vw, 2rem); line-height: 1.08; overflow-wrap: anywhere; }
+        .pf-desc { font-size: .92rem; line-height: 1.58; margin-bottom: 18px; }
+        .pf-cta { width: 100%; justify-content: center; }
+        .pf-nav { margin-top: 16px; }
+        .pf-btn { width: 44px; height: 44px; }
       }
     </style>
     <ul class="pf-slider" id="pfSlider">
