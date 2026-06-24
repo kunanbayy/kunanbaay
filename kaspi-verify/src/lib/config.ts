@@ -22,7 +22,7 @@ export const config = {
     premium:   Number(process.env.AMOUNT_CAREER    || 4990),
     report990: Number(process.env.AMOUNT_REPORT990 || 990),
   } as Record<string, number>,
-  expectedReceiver: process.env.EXPECTED_RECEIVER || 'Мадина Е.',
+  expectedReceiver: process.env.EXPECTED_RECEIVER || '', // бос болса — алушы тексерілмейді
   // Төлем терезесі: чек тапсырыс жасалған сәттен бастап осы минут ішінде болуы керек.
   receiptMaxAgeMinutes: Number(process.env.RECEIPT_MAX_AGE_MINUTES || 6),
   minOcrConfidence: Number(process.env.MIN_OCR_CONFIDENCE || 0.75),

@@ -12,9 +12,11 @@
    URL қойылса — receipt upload → backend OCR → approved/rejected автоматты іске қосылады.
    ============================================================ */
 
-// ← Деплойдан кейінгі production URL осында (немесе localStorage арқылы):
-var PROD_API = '';            // мыс: 'https://shyraq-kaspi-verify.vercel.app'
-var PROD_ADMIN_TOKEN = '';    // backend ADMIN_TOKEN-мен бірдей (тек admin.html үшін)
+// ← Production backend (Vercel-ге деплой жасалған kaspi-verify):
+var PROD_API = 'https://kaspi-verify.vercel.app';
+// ⚠️ ADMIN_TOKEN-ді ашық репоға ЖАЗБАЙМЫЗ. Әкімші өз браузерінде бір рет қояды:
+//    localStorage.setItem('shyraq_admin_token', 'ea59add47dc52b3c669a22d3acfe3e31b597e87c1e0ce081')
+var PROD_ADMIN_TOKEN = '';
 
 window.SHYRAQ_API = (function () {
   try { var o = localStorage.getItem('shyraq_api_url'); if (o) return o.replace(/\/$/, ''); } catch (e) {}

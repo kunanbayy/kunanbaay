@@ -4,6 +4,9 @@
 --  payment_orders = payment_session ретінде кеңейтіледі.
 -- ============================================================
 
+-- 0) profiles бұрыннан бар болса — premium_until бағанын қамтамасыз ету
+alter table public.profiles add column if not exists premium_until timestamptz;
+
 -- 1) Жаңа статус: rejected
 alter type public.payment_status add value if not exists 'rejected';
 

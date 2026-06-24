@@ -48,7 +48,8 @@ export function validateReceipt(r: ExtractedReceipt, opts: ValidateOptions): Val
   if (r.amount !== opts.expectedAmount) {
     return { ok: false, reason: 'amount_mismatch', message: `Сома сәйкес емес. Қажет: ${opts.expectedAmount} ₸, чекте: ${r.amount ?? '—'} ₸.` };
   }
-  if (normName(r.receiverName) !== normName(config.expectedReceiver)) {
+  // Алушы тексеруі — тек EXPECTED_RECEIVER орнатылған болса ғана
+  if (config.expectedReceiver && normName(r.receiverName) !== normName(config.expectedReceiver)) {
     return { ok: false, reason: 'receiver_mismatch', message: `Алушы сәйкес емес. Аударым «${config.expectedReceiver}» атына жасалуы керек.` };
   }
   // Чектегі күн/уақыт — тапсырыстың 6-минут терезесінің ішінде болуы керек
