@@ -550,13 +550,13 @@
 <script src="js/main.js"></script>
   <script src="js/auth-guard.js"></script>
   <script>
-  document.addEventListener('click', function(event) {
-    const btn = event.target.closest && event.target.closest('.sidebar-toggle');
-    if (!btn) return;
-    const sidebar = document.getElementById('sidebar');
-    if (!sidebar) return;
-    event.preventDefault();
-    sidebar.classList.toggle('open');
+  // Sidebar ашу/жабу — js/main.js (initNav) .sidebar-toggle-ді басқарады.
+  // Мұнда тек сыртқа басқанда жабу (toggle ЕМЕС — қосарланбас үшін).
+  document.addEventListener('click', function(e){
+    var sb = document.getElementById('sidebar');
+    if (!sb || !sb.classList.contains('open')) return;
+    if (e.target.closest && (e.target.closest('.sidebar') || e.target.closest('.sidebar-toggle'))) return;
+    sb.classList.remove('open');
   });
 
   // ── Collapsible sidebar (burger toggle, persisted) ──

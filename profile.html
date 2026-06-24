@@ -28,6 +28,13 @@
 </head>
 <body>
 <div class="dashboard-page">
+  <!-- MOBILE TOP BAR -->
+  <div class="mobile-top-bar">
+    <a href="index.html" class="sidebar-logo" style="display:flex;align-items:center;gap:8px;font-weight:800;color:var(--navy)">
+      <span class="sidebar-logo-icon" style="width:32px;height:32px;border-radius:9px;background:#fff;padding:3px;display:inline-flex"><img src="assets/logo.svg" alt="Shyraq" style="width:100%;height:100%;object-fit:contain"></span>Shyraq
+    </a>
+    <button class="sidebar-toggle" type="button" aria-label="Меню">☰</button>
+  </div>
   <!-- SIDEBAR -->
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-head">
@@ -205,6 +212,15 @@
 <script src="js/main.js"></script>
 <script src="js/auth-guard.js"></script>
 <script>
+// Sidebar ашу/жабу — js/main.js (initNav) .sidebar-toggle-ді басқарады.
+// Мұнда тек сыртқа басқанда жабу (toggle ЕМЕС — қосарланбас үшін).
+document.addEventListener('click', function(e){
+  var sb = document.getElementById('sidebar');
+  if (!sb || !sb.classList.contains('open')) return;
+  if (e.target.closest && (e.target.closest('.sidebar') || e.target.closest('.sidebar-toggle'))) return;
+  sb.classList.remove('open');
+});
+
 // ── Collapsible sidebar (burger toggle, persisted) ──
 (function () {
   const page = document.querySelector('.dashboard-page');

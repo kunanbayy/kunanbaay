@@ -266,6 +266,9 @@
     .tip .tt { font-weight: 700; color: var(--ink); font-size: .96rem; margin-bottom: 3px; }
     .tip .td { color: var(--text-muted); font-size: .86rem; line-height: 1.5; }
 
+    .nav-inner { position: relative; }
+    .nav-burger { display:none; width:44px; height:44px; flex:0 0 44px; align-items:center; justify-content:center; border:1px solid rgba(226,232,240,.9); border-radius:12px; background:#fff; color:var(--navy); cursor:pointer; }
+    .nav-burger:active { background:#EEF2FF; }
     @media (max-width: 920px) {
       .results { grid-template-columns: 1fr; }
       .uni-grid { grid-template-columns: repeat(2, 1fr); }
@@ -286,6 +289,14 @@
       .nav-actions .btn { min-height: 38px; padding: 0 12px; font-size: .82rem; white-space: nowrap; }
       .nav-actions .btn i { display: none; }
       .nav-mobile-btn { display: none !important; }
+      .nav-burger { display: inline-flex; }
+      .nav.nav-open .nav-links {
+        display: flex !important; flex-direction: column; gap: 6px;
+        position: absolute; top: 100%; left: 12px; right: 12px; margin-top: 8px;
+        background: #fff; border: 1px solid rgba(226,232,240,.9); border-radius: 16px;
+        padding: 10px; box-shadow: 0 18px 44px rgba(31,41,55,.16); z-index: 60;
+      }
+      .nav.nav-open .nav-link { width: 100%; padding: 13px 16px; }
       .grant-wrap { width: 100%; padding: 22px 16px 56px; overflow: hidden; }
       .gp-title { font-size: clamp(1.85rem, 9vw, 2.45rem); line-height: 1.14; letter-spacing: -0.04em; }
       .gp-sub { font-size: .98rem; line-height: 1.65; }
@@ -317,26 +328,12 @@
     </div>
     <div class="nav-actions">
       <a href="dashboard.html" class="btn btn-primary btn-sm">Кабинет</a>
-      <button class="nav-mobile-btn" onclick="document.querySelector('.mobile-menu').classList.add('open')">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-      </button>
     </div>
+    <button class="nav-burger" id="navBurger" type="button" aria-label="Мәзір" aria-expanded="false">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
   </div>
 </nav>
-
-<div class="mobile-menu">
-  <div class="mm-header">
-    <a href="index.html" class="nav-logo"><div class="nav-logo-mark"><img src="assets/logo.svg" alt="Shyraq"></div>Shyraq</a>
-    <button class="modal-close" onclick="document.querySelector('.mobile-menu').classList.remove('open')">×</button>
-  </div>
-  <div class="mm-links">
-    <a href="index.html" class="mm-link">Басты бет</a>
-    <a href="specialties.html" class="mm-link">Мамандықтар</a>
-    <a href="universities.html" class="mm-link">Университеттер</a>
-    <a href="grant.html" class="mm-link">Грант</a>
-    <a href="pricing.html" class="mm-link">Тарифтер</a>
-  </div>
-</div>
 
 <div class="grant-wrap">
 
@@ -1271,6 +1268,19 @@
     const r = document.getElementById('results');
     if(r) setTimeout(()=>r.scrollIntoView({behavior:'smooth', block:'start'}), 200);
   }
+</script>
+<script>
+  /* Mobile burger navigation */
+  (function(){
+    var b=document.getElementById('navBurger'), nav=document.querySelector('.nav');
+    if(!b||!nav) return;
+    b.addEventListener('click', function(){
+      var open=nav.classList.toggle('nav-open');
+      b.setAttribute('aria-expanded', open?'true':'false');
+    });
+    nav.querySelectorAll('.nav-link').forEach(function(a){ a.addEventListener('click', function(){ nav.classList.remove('nav-open'); }); });
+    document.addEventListener('click', function(e){ if(nav.classList.contains('nav-open') && !nav.contains(e.target)) nav.classList.remove('nav-open'); });
+  })();
 </script>
 </body>
 </html>

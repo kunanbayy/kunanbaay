@@ -479,7 +479,7 @@
     @media (max-width: 768px) {
       .nav-links, .menu-wrap { display: none; }
       .nav-actions { display: flex; margin-left: auto; }
-      .nav-mobile-btn { display: none !important; }
+      .nav-mobile-btn { display: inline-flex !important; align-items: center; justify-content: center; }
       .bento-grid { grid-template-columns: 1fr; }
       .steps-grid { grid-template-columns: 1fr 1fr; }
       .steps-line { display: none; }
@@ -523,7 +523,7 @@
       .nav-links, .menu-wrap, .nav-actions.auth-hide { display: none !important; }
       .nav-actions.auth-show { margin-left: auto; min-width: 0; }
       .nav-actions.auth-show .btn { min-height: 38px; padding: 0 12px; font-size: .82rem; white-space: nowrap; }
-      .nav-mobile-btn { display: none !important; }
+      .nav-mobile-btn { display: inline-flex !important; align-items: center; justify-content: center; }
       .hero { padding: 44px 0 52px; min-height: auto; overflow: hidden; }
       .hero-wrap { padding: 0 16px; grid-template-columns: minmax(0, 1fr); gap: 24px; }
       .hero-title { font-size: clamp(2rem, 10vw, 2.85rem); line-height: 1.08; letter-spacing: -0.045em; }
@@ -1560,6 +1560,18 @@ function widgetGrant() {
 }
 </script>
   <script src="js/icons.js"></script>
+  <script>
+  /* Mobile menu: ашу/жабу — навигацияны бөгемейді */
+  (function(){
+    var menu=document.querySelector('.mobile-menu');
+    if(!menu) return;
+    function close(){ menu.classList.remove('open'); }
+    var x=menu.querySelector('.mm-close'); if(x) x.addEventListener('click', close);
+    menu.querySelectorAll('.mm-link, .mm-actions a').forEach(function(a){ a.addEventListener('click', close); });
+    menu.addEventListener('click', function(e){ if(e.target===menu) close(); });
+    document.addEventListener('keydown', function(e){ if(e.key==='Escape') close(); });
+  })();
+  </script>
 
 </body>
 </html>
