@@ -7,8 +7,9 @@
 -- 0) profiles бұрыннан бар болса — premium_until бағанын қамтамасыз ету
 alter table public.profiles add column if not exists premium_until timestamptz;
 
--- 1) Жаңа статус: rejected
+-- 1) Жаңа статустар: rejected + pending_review (қолмен админ растауы)
 alter type public.payment_status add value if not exists 'rejected';
+alter type public.payment_status add value if not exists 'pending_review';
 
 -- 2) Тарифтер кестесі (бағалар сервер жағында)
 create table if not exists public.tariffs (
