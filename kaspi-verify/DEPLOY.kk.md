@@ -9,6 +9,51 @@
 
 ---
 
+## 🚀 ОҢАЙ ЖОЛ — бір батырмамен деплой (~3 минут)
+
+1. Мына сілтемені ашыңыз (Vercel «Clone & Deploy», root = `kaspi-verify` автоматты):
+   👉 https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fkunanbayy%2Fshyraq.asia&root-directory=kaspi-verify&env=SUPABASE_URL,SUPABASE_SERVICE_ROLE_KEY,NEXT_PUBLIC_SUPABASE_URL,NEXT_PUBLIC_SUPABASE_ANON_KEY,OPENAI_API_KEY,AMOUNT_STANDARD,AMOUNT_CAREER,AMOUNT_REPORT990,EXPECTED_RECEIVER,RECEIPT_MAX_AGE_MINUTES,ADMIN_TOKEN,ALLOWED_ORIGIN
+
+2. Env өрістерін толтырыңыз. **Құпия емес — дайын мәндер** (көшіріп қойыңыз):
+
+   | Айнымалы | Мән |
+   |---|---|
+   | `SUPABASE_URL` | `https://ppohzbystcciueazupyj.supabase.co` |
+   | `NEXT_PUBLIC_SUPABASE_URL` | `https://ppohzbystcciueazupyj.supabase.co` |
+   | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | (js/supabase-config.js ішіндегі anon key) |
+   | `AMOUNT_STANDARD` | `2990` |
+   | `AMOUNT_CAREER` | `4990` |
+   | `AMOUNT_REPORT990` | `990` |
+   | `RECEIPT_MAX_AGE_MINUTES` | `6` |
+   | `ALLOWED_ORIGIN` | `https://shyraq.asia` |
+
+   **Тек сіз ғана бере алатын құпия 4 мән:**
+   | Айнымалы | Қайдан |
+   |---|---|
+   | `SUPABASE_SERVICE_ROLE_KEY` | Supabase → Settings → API → `service_role` (құпия!) |
+   | `OPENAI_API_KEY` | platform.openai.com → API keys |
+   | `EXPECTED_RECEIVER` | Kaspi чегінде көрінетін алушы аты (мыс. `Ержан К.`) |
+   | `ADMIN_TOKEN` | `openssl rand -hex 24` (кез келген ұзын жол) |
+
+3. **Deploy** → URL аласыз (мыс. `https://shyraq-kaspi-verify.vercel.app`).
+
+4. Сайтты қосу (қайта деплойсыз) — браузер консолінде:
+   ```js
+   localStorage.setItem('shyraq_api_url', 'https://СІЗДІҢ-URL.vercel.app')
+   // admin.html-де:
+   localStorage.setItem('shyraq_admin_token', 'ADMIN_TOKEN мәні')
+   ```
+   Немесе `js/shyraq-api.js`-тегі `PROD_API`-ге жазып, сайтты қайта деплой жасаңыз.
+
+5. URL мен ADMIN_TOKEN-ді **маған берсеңіз**, мен `js/shyraq-api.js`-ке жазып,
+   GitHub-қа push жасаймын — сонда барлық қолданушыға тұрақты қосылады.
+
+> Деплой URL-і пайда болғанда auto-verification бірден іске қосылады:
+> receipt upload → OCR (сома/уақыт/hash) → approved/rejected. `SHYRAQ_API` бос болса
+> сайт автоматты түрде manual режимде қалады.
+
+---
+
 ## 1. Supabase дайындау
 1. Supabase жобасында **SQL Editor** ашыңыз.
 2. Алдымен `supabase/schema.sql`, **сосын** `supabase/schema-v2.sql` іске қосыңыз
