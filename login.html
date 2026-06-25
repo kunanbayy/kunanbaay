@@ -202,6 +202,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/supabase-config.js"></script>
   <script src="js/supabase-auth.js"></script>
+  <script src="js/shyraq-api.js"></script>
   <script>
     function togglePw(){
       const inp = document.getElementById('loginPw');
@@ -224,7 +225,28 @@
 
       // ── Админ кіруі ──
       if (contact.toLowerCase() === 'admin@shyraq.edu.kz'){
-        if (pw !== 'admin123'){ toast('Админ паролі қате', 'error'); return; }
+        const api = String(window.SHYRAQ_API || '').replace(/\/$/, '');
+        if (api) {
+          try {
+            const response = await fetch(api + '/api/admin/login', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ email: contact, password: pw })
+            });
+            const result = await response.json().catch(() => ({}));
+            if (!response.ok || !result.ok || !result.token) {
+              toast(result.message || 'Admin backend-ке кіру мүмкін болмады', 'error');
+              return;
+            }
+            localStorage.setItem('shyraq_admin_session', result.token);
+          } catch (error) {
+            toast('Admin backend-пен байланыс жоқ', 'error');
+            return;
+          }
+        } else if (pw !== 'admin123') {
+          toast('Админ паролі қате', 'error');
+          return;
+        }
         const admin = { name: 'Админ', email: contact, role: 'admin', plan: 'admin' };
         localStorage.setItem('shyraq_admin', '1');
         localStorage.setItem('shyraq_user', JSON.stringify(admin));

@@ -39,6 +39,9 @@ export const config = {
 
   // Admin panel-дің барлық тапсырыстарды оқуы үшін құпия токен (x-admin-token).
   adminToken: process.env.ADMIN_TOKEN || '',
+  adminEmail: process.env.ADMIN_EMAIL || 'admin@shyraq.edu.kz',
+  // Existing installs keep working; production should override this in Vercel.
+  adminPassword: process.env.ADMIN_PASSWORD || 'admin123',
 } as const;
 
 /** Тарифке сай күтілетін сома (₸). Белгісіз тариф → premiumAmount. */

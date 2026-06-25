@@ -1,15 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { supabaseAdmin } from '../../../../lib/supabase';
-import { config, corsHeaders } from '../../../../lib/config';
+import { corsHeaders } from '../../../../lib/config';
 import { activateTariff } from '../../../../services/premium';
 import { log } from '../../../../lib/logger';
+import { authorizeAdmin } from '../../../../lib/admin-auth';
 
 export const runtime = 'nodejs';
 
 const adminHeaders = {
   ...corsHeaders,
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization, x-admin-token',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization, x-admin-token, x-admin-session',
 };
 
 const Body = z.object({
@@ -24,7 +25,7 @@ export function OPTIONS() {
 
 /** Admin қолмен растау/қабылдамау (x-admin-token арқылы қорғалған). */
 export async function POST(req: NextRequest) {
-  if (!config.adminToken || req.headers.get('x-admin-token') !== config.adminToken) {
+  if (!authorizeAdmin(req)) {
     return NextResponse.json({ ok: false, message: 'unauthorized' }, { status: 401, headers: adminHeaders });
   }
   try {

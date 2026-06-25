@@ -593,6 +593,10 @@
 if (localStorage.getItem('shyraq_admin') !== '1') {
   window.location.href = 'login.html';
 }
+if (window.SHYRAQ_API && !window.SHYRAQ_ADMIN_SESSION) {
+  localStorage.removeItem('shyraq_admin');
+  window.location.href = 'login.html';
+}
 
 /* ════ HELPERS ════ */
 const $ = id => document.getElementById(id);
@@ -663,7 +667,7 @@ if(localStorage.getItem('shyraq_admin_nav')==='collapsed') $('admin').classList.
 $('mOpen').addEventListener('click', ()=>$('admin').classList.toggle('nav-open'));
 
 /* logout */
-function logout(){ localStorage.removeItem('shyraq_admin'); localStorage.removeItem('shyraq_user'); window.location.href='login.html'; }
+function logout(){ localStorage.removeItem('shyraq_admin'); localStorage.removeItem('shyraq_admin_session'); localStorage.removeItem('shyraq_user'); window.location.href='login.html'; }
 $('logoutBtn').addEventListener('click', logout);
 $('logoutBtn2').addEventListener('click', logout);
 
@@ -888,15 +892,22 @@ function udSaveEnergy(){
 var _pays = [];
 var _approvedRevenue = 0;
 var _paymentLoadError = '';
+function adminApiHeaders(withJson){
+  var headers = { 'x-admin-session': window.SHYRAQ_ADMIN_SESSION || '' };
+  if(withJson) headers['Content-Type']='application/json';
+  return headers;
+}
 /* Kaspi OCR backend-тен барлық тапсырыстарды + статусын жүктеу */
 async function loadOcrOrders(){
   var api = (window.SHYRAQ_API||'').replace(/\/$/,'');
-  var tok = window.SHYRAQ_ADMIN_TOKEN||'';
+  var session = window.SHYRAQ_ADMIN_SESSION||'';
   _approvedRevenue=0;
-  if(!api || !tok){ _paymentLoadError='SHYRAQ_API немесе admin token бапталмаған'; return []; }
+  if(!api){ _paymentLoadError='Backend API бапталмаған'; return []; }
+  if(!session){ _paymentLoadError='Admin session аяқталды. Қайта кіріңіз.'; return []; }
   try{
-    var r = await fetch(api+'/api/admin/orders', { headers:{ 'x-admin-token': tok } });
+    var r = await fetch(api+'/api/admin/orders', { headers:adminApiHeaders(false) });
     var j = await r.json().catch(()=>({}));
+    if(r.status===401){ localStorage.removeItem('shyraq_admin_session'); _paymentLoadError='Admin session аяқталды. Қайта кіріңіз.'; return []; }
     if(!r.ok || !j.ok){ _paymentLoadError=j.message||('HTTP '+r.status); return []; }
     _paymentLoadError='';
     _approvedRevenue=Number(j.summary&&j.summary.approvedRevenue)||0;
@@ -1011,12 +1022,12 @@ function renderPayments(){
 }
 /* OCR тапсырысын қолмен растау/қабылдамау (backend) */
 async function reviewOcr(orderId, action){
-  var api=(window.SHYRAQ_API||'').replace(/\/$/,''); var tok=window.SHYRAQ_ADMIN_TOKEN||'';
-  if(!api||!tok){ toast('SHYRAQ_API/токен бапталмаған'); return; }
+  var api=(window.SHYRAQ_API||'').replace(/\/$/,'');
+  if(!api||!window.SHYRAQ_ADMIN_SESSION){ toast('Admin session жоқ. Қайта кіріңіз.'); return; }
   var reason='';
   if(action==='reject'){ reason = prompt('Қабылдамау себебі:','Чек сәйкес емес')||''; }
   try{
-    var r=await fetch(api+'/api/admin/review',{ method:'POST', headers:{'Content-Type':'application/json','x-admin-token':tok}, body:JSON.stringify({orderId:orderId,action:action,reason:reason}) });
+    var r=await fetch(api+'/api/admin/review',{ method:'POST', headers:adminApiHeaders(true), body:JSON.stringify({orderId:orderId,action:action,reason:reason}) });
     var j=await r.json().catch(()=>({}));
     if(r.ok&&j.ok){ toast(action==='approve'?'✓ Расталды':'Қабылданбады'); loadPayments(); }
     else toast('Қате: '+(j.message||r.status));
@@ -1051,9 +1062,9 @@ async function approvePay(i){
 async function delPay(i){
   var p=_pays[i]; if(!p) return;
   if(!confirm('Бұл төлемді жою керек пе?')) return;
-  var api=(window.SHYRAQ_API||'').replace(/\/$/,''); var tok=window.SHYRAQ_ADMIN_TOKEN||'';
+  var api=(window.SHYRAQ_API||'').replace(/\/$/,'');
   try{
-    var r=await fetch(api+'/api/admin/orders',{method:'DELETE',headers:{'Content-Type':'application/json','x-admin-token':tok},body:JSON.stringify({orderId:p.id})});
+    var r=await fetch(api+'/api/admin/orders',{method:'DELETE',headers:adminApiHeaders(true),body:JSON.stringify({orderId:p.id})});
     var j=await r.json().catch(()=>({}));
     if(!r.ok||!j.ok){ toast('Қате: '+(j.message||r.status)); return; }
     await loadPayments(); toast('Жойылды ✓');
@@ -1062,9 +1073,9 @@ async function delPay(i){
 /* Барлық payment_orders сессияларын және байланысты audit жазбаларын backend арқылы жою. */
 async function clearAllPayments(){
   if(!confirm('Барлық төлемдер мен жалпы түсім тазаланады. Жалғастырасыз ба?')) return;
-  var api=(window.SHYRAQ_API||'').replace(/\/$/,''); var tok=window.SHYRAQ_ADMIN_TOKEN||'';
+  var api=(window.SHYRAQ_API||'').replace(/\/$/,'');
   try{
-    var r=await fetch(api+'/api/admin/orders',{method:'DELETE',headers:{'Content-Type':'application/json','x-admin-token':tok},body:JSON.stringify({all:true})});
+    var r=await fetch(api+'/api/admin/orders',{method:'DELETE',headers:adminApiHeaders(true),body:JSON.stringify({all:true})});
     var j=await r.json().catch(()=>({}));
     if(!r.ok||!j.ok){ toast('Қате: '+(j.message||r.status)); return; }
     await loadPayments();

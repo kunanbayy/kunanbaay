@@ -392,6 +392,7 @@
     return '';
   }
   function paySuccess(backendApproved) {
+    try { localStorage.removeItem(orderKey); } catch (e) {}
     submitBtn.classList.add('sent');
     submitBtn.style.display = 'block';
     submitBtn.textContent = '✓ Подтверждено';
@@ -473,7 +474,8 @@
     document.getElementById('payStatusTitle').textContent = title;
     document.getElementById('payStatusText').innerHTML = html;
   }
-  function showReview() { showStatus('review', 'Чек жіберілді', 'Әкімші тексеріп жатыр. Расталғаннан кейін тариф белсенді болады.', '<div class="pay-spinner"></div>'); }
+  function showUploading() { showStatus('review', 'Чек жүктелуде', 'Файл қауіпсіз түрде жіберіліп жатыр...', '<div class="pay-spinner"></div>'); }
+  function showReview() { showStatus('review', 'Чек жіберілді', 'Әкімші тексеріп жатыр. Расталғаннан кейін тариф белсенді болады.', '✓'); }
   function showRejected(reason) {
     showStatus('rejected', 'Чек қабылданбады', '<b>' + (reason || 'Тексеруден өтпеді') + '</b><br>Жабық бөлімдер ашылмады. Соманы, уақытты және түпнұсқа чекті тексеріңіз.', '✕');
   }
@@ -501,14 +503,16 @@
           const oJson = await oRes.json().catch(() => ({}));
           if (!oRes.ok || !oJson.ok) { payError('Тапсырыс жасалмады. Қайталап көріңіз.'); return; }
           orderId = oJson.orderId;
+          currentOrderId = orderId;
+          try { localStorage.setItem(orderKey, orderId); } catch (e) {}
         }
 
         // Чекті алдымен Supabase Storage-қа жүктейміз (admin panel-де көрінуі үшін)
         var receiptUrl = '';
         try { if (window.ShyraqDB && window.ShyraqDB.ready()) receiptUrl = await window.ShyraqDB.uploadReceipt(file); } catch (e) {}
 
-        // UI: бірден review статусын көрсетеміз. Backend auto-approve жасамайды.
-        showReview();
+        // Spinner тек нақты upload жүріп жатқанда көрсетіледі.
+        showUploading();
 
         const fd = new FormData();
         fd.append('orderId', orderId);
@@ -526,7 +530,6 @@
           fillEl.style.width = '100%';
           noteEl.textContent = 'Чек жүктелді — әкімші тексеріп жатыр.';
           showReview();
-          pollPaymentStatus(orderId);
         } else {
           showRejected(vJson.message);
         }
@@ -579,7 +582,7 @@
   var PAY_WINDOW_MIN = 6;
   var currentOrderId = null;            // бэкенд тапсырысы (API болса)
   window.__payExpired = false;
-  var statusPollInt = null;
+  var expireRequest = null;
 
   var timerEl  = document.getElementById('payTimer');
   var clockEl  = document.getElementById('payTimerClock');
@@ -588,6 +591,7 @@
 
   // Терезе басы (сессияда сақталады — refresh ескі терезені жалғастырады)
   var winKey = 'shyraq_pay_window_' + planKey;
+  var orderKey = 'shyraq_payment_order_' + planKey;
   var startedAt = parseInt(sessionStorage.getItem(winKey) || '0', 10);
   if (!startedAt || Date.now() - startedAt > PAY_WINDOW_MIN * 60000 + 3600000) {
     startedAt = Date.now();
@@ -614,18 +618,33 @@
     fillEl.style.width = '0%';
     noteEl.innerHTML = '⛔ Тапсырыс отменен — уақыт бітті. <a href="#" id="payRestart">Қайта бастау</a>';
     blockPayment();
-    document.getElementById('payRestart').addEventListener('click', function (e) {
+    document.getElementById('payRestart').addEventListener('click', async function (e) {
       e.preventDefault();
+      if (this.dataset.loading === '1') return;
+      this.dataset.loading = '1';
+      this.textContent = 'Жаңа сессия ашылуда...';
+      clearInterval(timerInt);
+      try {
+        if (expireRequest) {
+          await Promise.race([
+            expireRequest,
+            new Promise(function (resolve) { setTimeout(resolve, 4000); })
+          ]);
+        }
+      } catch (err) {}
       sessionStorage.removeItem(winKey);
+      localStorage.removeItem(orderKey);
+      currentOrderId = null;
+      window.__payExpired = false;
       location.reload();
     });
     // Бэкендте тапсырысты «expired» етіп белгілейміз
     if (API && currentOrderId) {
       try {
-        fetch(API + '/api/payment/expire-order', {
+        expireRequest = fetch(API + '/api/payment/expire-order', {
           method: 'POST', headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ orderId: currentOrderId, userId: getUserId() })
-        });
+        }).catch(function () { return null; });
       } catch (e) {}
     }
   }
@@ -650,35 +669,6 @@
     tick();
   }
 
-  function pollPaymentStatus(orderId) {
-    if (!API || !orderId) return;
-    if (statusPollInt) clearInterval(statusPollInt);
-    async function check() {
-      try {
-        var r = await fetch(API + '/api/payment/status?orderId=' + encodeURIComponent(orderId));
-        var j = await r.json().catch(function () { return {}; });
-        if (!r.ok || !j.ok) return;
-        if (j.status === 'approved' || j.status === 'paid') {
-          clearInterval(statusPollInt);
-          statusPollInt = null;
-          paySuccess(true);
-        } else if (j.status === 'rejected') {
-          clearInterval(statusPollInt);
-          statusPollInt = null;
-          showRejected(j.rejectedReason || 'Админ қабылдамады');
-        } else if (j.status === 'expired') {
-          clearInterval(statusPollInt);
-          statusPollInt = null;
-          showRejected('Тапсырыс мерзімі бітті');
-        } else if (j.status === 'pending_review') {
-          showReview();
-        }
-      } catch (e) {}
-    }
-    check();
-    statusPollInt = setInterval(check, 8000);
-  }
-
   // Бэкенд бар болса: алдымен белсенді (expired емес) сессияны қалпына келтіреміз,
   // болмаса жаңа тапсырыс ашамыз. 6-мин терезе бэкендтен синхрондалады.
   (async function initSession() {
@@ -686,11 +676,38 @@
     var userId = await resolveUserId();
     if (!userId) return;                 // тіркелмеген болса — жіберу кезінде ескертіледі
     try {
+      // Соңғы order статусын бір рет тексереміз. Endless polling жоқ.
+      var savedOrderId = localStorage.getItem(orderKey) || '';
+      if (savedOrderId) {
+        var sr = await fetch(API + '/api/payment/status?orderId=' + encodeURIComponent(savedOrderId));
+        var sj = await sr.json().catch(function () { return {}; });
+        if (sr.ok && sj.ok) {
+          currentOrderId = savedOrderId;
+          if (sj.status === 'approved' || sj.status === 'paid') { paySuccess(true); return; }
+          if (sj.status === 'rejected') { showRejected(sj.rejectedReason || 'Админ қабылдамады'); return; }
+          if (sj.status === 'pending_review') {
+            clearInterval(timerInt);
+            timerEl.classList.remove('warn', 'expired');
+            clockEl.textContent = 'review';
+            fillEl.style.width = '100%';
+            noteEl.textContent = 'Чек жүктелді — әкімші тексеріп жатыр.';
+            showReview();
+            return;
+          }
+          if (sj.status === 'expired') {
+            localStorage.removeItem(orderKey);
+            currentOrderId = null;
+          }
+        } else if (sr.status === 404) {
+          localStorage.removeItem(orderKey);
+        }
+      }
       // 1) қайта кірсе — соңғы белсенді сессия
       var ar = await fetch(API + '/api/payment/active?userId=' + encodeURIComponent(userId) + '&plan=' + encodeURIComponent(planKey));
       var aj = await ar.json().catch(function () { return {}; });
       if (aj && aj.ok && aj.session) {
         currentOrderId = aj.session.orderId;
+        try { localStorage.setItem(orderKey, currentOrderId); } catch (e) {}
         if (aj.session.expiresAt) syncTimer(aj.session.expiresAt);
         if (aj.session.status === 'pending_review') {
           window.__payExpired = false;
@@ -700,7 +717,6 @@
           fillEl.style.width = '100%';
           noteEl.textContent = 'Чек жүктелді — әкімші тексеріп жатыр.';
           showReview();
-          pollPaymentStatus(currentOrderId);
         }
         return;
       }
@@ -712,6 +728,7 @@
       var j = await r.json().catch(function () { return {}; });
       if (r.ok && j.ok) {
         currentOrderId = j.orderId;
+        try { localStorage.setItem(orderKey, currentOrderId); } catch (e) {}
         if (j.expiresAt) syncTimer(j.expiresAt);
       }
     } catch (e) {}

@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '../../../../lib/supabase';
-import { config, corsHeaders } from '../../../../lib/config';
+import { corsHeaders } from '../../../../lib/config';
+import { authorizeAdmin } from '../../../../lib/admin-auth';
 
 export const runtime = 'nodejs';
 
 const adminHeaders = {
   ...corsHeaders,
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization, x-admin-token',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization, x-admin-token, x-admin-session',
 };
 
 const ORDER_COLUMNS = [
@@ -17,10 +18,6 @@ const ORDER_COLUMNS = [
 ].join(', ');
 
 type OrderRow = Record<string, any>;
-
-function isAdmin(req: NextRequest): boolean {
-  return Boolean(config.adminToken && req.headers.get('x-admin-token') === config.adminToken);
-}
 
 export function OPTIONS() {
   return new NextResponse(null, { status: 204, headers: adminHeaders });
@@ -84,7 +81,7 @@ async function deleteOrders(ids: string[], receiptUrls: Array<string | null>): P
 
 /** Admin payment list. payment_orders is the canonical payment-session source. */
 export async function GET(req: NextRequest) {
-  if (!isAdmin(req)) {
+  if (!authorizeAdmin(req)) {
     return NextResponse.json({ ok: false, message: 'unauthorized' }, { status: 401, headers: adminHeaders });
   }
 
@@ -153,7 +150,7 @@ export async function GET(req: NextRequest) {
 
 /** Delete one payment session or all sessions, including related audit data. */
 export async function DELETE(req: NextRequest) {
-  if (!isAdmin(req)) {
+  if (!authorizeAdmin(req)) {
     return NextResponse.json({ ok: false, message: 'unauthorized' }, { status: 401, headers: adminHeaders });
   }
 
