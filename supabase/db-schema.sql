@@ -69,6 +69,43 @@ create policy "access_insert_any" on public.access for insert with check (true);
 drop policy if exists "access_update_any" on public.access;
 create policy "access_update_any" on public.access for update using (true);
 
+-- ── ХАБАРЛАМАЛАР (admin → барлық тіркелген қолданушы) ──
+create table if not exists public.notifications (
+  id          uuid primary key default gen_random_uuid(),
+  title       text not null,
+  body        text not null,
+  audience    text not null default 'all',
+  created_by  text,
+  created_at  timestamptz default now()
+);
+alter table public.notifications enable row level security;
+grant select, insert, update, delete on public.notifications to anon, authenticated;
+
+drop policy if exists "notifications_select_any" on public.notifications;
+create policy "notifications_select_any" on public.notifications for select using (true);
+drop policy if exists "notifications_insert_any" on public.notifications;
+create policy "notifications_insert_any" on public.notifications for insert with check (true);
+
+create table if not exists public.notification_reads (
+  id              uuid primary key default gen_random_uuid(),
+  notification_id uuid not null references public.notifications(id) on delete cascade,
+  user_id         uuid references auth.users(id) on delete cascade,
+  email           text not null,
+  is_read         boolean default true,
+  read_at         timestamptz default now(),
+  created_at      timestamptz default now(),
+  unique(notification_id, email)
+);
+alter table public.notification_reads enable row level security;
+grant select, insert, update, delete on public.notification_reads to anon, authenticated;
+
+drop policy if exists "notification_reads_select_any" on public.notification_reads;
+create policy "notification_reads_select_any" on public.notification_reads for select using (true);
+drop policy if exists "notification_reads_insert_any" on public.notification_reads;
+create policy "notification_reads_insert_any" on public.notification_reads for insert with check (true);
+drop policy if exists "notification_reads_update_any" on public.notification_reads;
+create policy "notification_reads_update_any" on public.notification_reads for update using (true);
+
 -- ── ПРОФИЛЬДЕР: admin панелі барлық тіркелген қолданушыны көру үшін ──
 -- (демо деңгей: profiles тек аты/email/қала сақтайды, құпиясөз жоқ)
 drop policy if exists "profiles_select_any" on public.profiles;

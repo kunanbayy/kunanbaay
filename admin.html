@@ -197,7 +197,18 @@
     .field{margin-bottom:16px}
     .field label{display:block;font-size:.82rem;font-weight:600;color:var(--muted);margin-bottom:7px}
     .field input{width:100%;max-width:380px;padding:12px 14px;border:1px solid var(--border);border-radius:11px;font-family:inherit;font-size:.9rem;outline:none}
-    .field input:focus{border-color:var(--navy-2);box-shadow:0 0 0 3px rgba(45,84,145,.12)}
+    .field textarea{width:100%;min-height:140px;resize:vertical;padding:12px 14px;border:1px solid var(--border);border-radius:11px;font-family:inherit;font-size:.9rem;line-height:1.5;outline:none}
+    .field input:focus,.field textarea:focus{border-color:var(--navy-2);box-shadow:0 0 0 3px rgba(45,84,145,.12)}
+    .notify-form{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:18px;align-items:start}
+    .notify-preview{border:1px solid var(--border);border-radius:16px;padding:18px;background:linear-gradient(180deg,#fff,#FAFCFF);box-shadow:0 10px 24px rgba(30,58,95,.05)}
+    .notify-preview .bell{width:44px;height:44px;border-radius:14px;background:#EAF0F8;color:var(--navy);display:grid;place-items:center;margin-bottom:14px}
+    .notify-preview .bell svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+    .notify-list{display:flex;flex-direction:column;gap:10px}
+    .notify-row{border:1px solid var(--border);border-radius:14px;padding:14px 16px;background:#fff}
+    .notify-row h4{font-size:.95rem;color:var(--ink);margin-bottom:5px}
+    .notify-row p{font-size:.85rem;color:var(--muted);line-height:1.5}
+    .notify-row .dt{font-size:.72rem;color:var(--light);font-weight:800;margin-top:9px}
+    @media(max-width:760px){.notify-form{grid-template-columns:1fr}}
 
     /* modal */
     .ov{position:fixed;inset:0;background:rgba(15,27,45,.55);backdrop-filter:blur(3px);display:none;align-items:center;justify-content:center;z-index:200;padding:20px}
@@ -281,6 +292,10 @@
     <div class="a-link" data-sec="reviews">
       <span class="ic"><svg viewBox="0 0 24 24"><path d="M21 11.5a8 8 0 0 1-8 8H7l-4 2V11.5a8 8 0 0 1 8-8 8 8 0 0 1 10 8z"/></svg></span>
       <span class="lbl">Пікірлер</span><span class="tip">Пікірлер</span>
+    </div>
+    <div class="a-link" data-sec="notifications">
+      <span class="ic"><svg viewBox="0 0 24 24"><path d="M6 9a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6z"/><path d="M10 19a2 2 0 0 0 4 0"/></svg></span>
+      <span class="lbl">Хабарламалар</span><span class="tip">Хабарламалар</span>
     </div>
 
     <div class="a-sec-lbl">Сілтемелер</div>
@@ -430,6 +445,32 @@
           <thead><tr><th>Автор</th><th>Пікір</th><th>Баға</th><th></th></tr></thead>
           <tbody id="reviewsBody"></tbody>
         </table>
+      </div>
+    </section>
+
+    <!-- ══ NOTIFICATIONS ══ -->
+    <section class="section" id="sec-notifications">
+      <div class="a-card">
+        <div class="a-card-hd">
+          <h3>Барлық қолданушыға хабарлама</h3>
+          <span class="pill admin">notification broadcast</span>
+        </div>
+        <div class="notify-form">
+          <div>
+            <div class="field"><label>Хабарлама тақырыбы</label><input type="text" id="notifyTitle" placeholder="Мысалы: Жаңа мүмкіндік қосылды" maxlength="120" /></div>
+            <div class="field"><label>Хабарлама мәтіні</label><textarea id="notifyBody" placeholder="Қолданушыларға көрінетін хабарлама мәтінін жазыңыз..."></textarea></div>
+            <button class="btn btn-primary" id="sendNotifyBtn" onclick="sendAdminNotification()"><svg viewBox="0 0 24 24"><path d="M22 2 11 13"/><path d="m22 2-7 20-4-9-9-4 20-7z"/></svg> Барлығына жіберу</button>
+          </div>
+          <div class="notify-preview">
+            <div class="bell"><svg viewBox="0 0 24 24"><path d="M6 9a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6z"/><path d="M10 19a2 2 0 0 0 4 0"/></svg></div>
+            <h4 style="font-size:1rem;color:var(--ink);margin-bottom:8px">Қолданушыда қалай көрінеді</h4>
+            <p style="color:var(--muted);font-size:.86rem;line-height:1.55">Header-дегі қоңырау иконкасында оқылмаған саны шығады. Хабарламаны ашқанда оқылды деп белгіленеді.</p>
+          </div>
+        </div>
+      </div>
+      <div class="a-card">
+        <div class="a-card-hd"><h3>Соңғы жіберілген хабарламалар</h3></div>
+        <div class="notify-list" id="notifyHistory"></div>
       </div>
     </section>
 
@@ -636,6 +677,7 @@ const TITLES = {
   unis:['ЖОО базасы','Базадағы университеттер тізімі'],
   specs:['Мамандықтар','ҰБТ мамандық бағыттары'],
   reviews:['Пікірлер','Оқушылардың пікірлерін басқару'],
+  notifications:['Хабарламалар','Барлық тіркелген қолданушыға notification жіберу'],
   settings:['Параметрлер','Жүйе баптаулары']
 };
 // бүгінгі күн + динамикалық белгілер
@@ -654,6 +696,7 @@ function go(sec){
   if(sec==='unis') renderUnis(true);
   if(sec==='specs') renderSpecs();
   if(sec==='payments') loadPayments();
+  if(sec==='notifications') renderNotifications();
   window.scrollTo({top:0,behavior:'smooth'});
 }
 document.querySelectorAll('.a-link[data-sec]').forEach(l=> l.addEventListener('click', ()=>go(l.dataset.sec)));
@@ -1254,6 +1297,52 @@ function addReview(){
 }
 function delReview(i){ const rv=getReviews(); rv.splice(i,1); setReviews(rv); renderReviews(); toast('Жойылды'); }
 
+/* ════ NOTIFICATIONS ════ */
+function getLocalNotifications(){ return JSON.parse(localStorage.getItem('shyraq_notifications')||'[]'); }
+function setLocalNotifications(a){ localStorage.setItem('shyraq_notifications', JSON.stringify(a)); }
+async function fetchNotificationHistory(){
+  if(window.ShyraqDB && window.ShyraqDB.listNotifications && window.ShyraqDB.ready()){
+    var rows = await window.ShyraqDB.listNotifications('');
+    if(rows) return rows;
+  }
+  return getLocalNotifications();
+}
+async function renderNotifications(){
+  var list = await fetchNotificationHistory();
+  $('notifyHistory').innerHTML = (list||[]).slice(0,12).map(function(n){
+    return '<div class="notify-row"><h4>'+esc(n.title||'—')+'</h4><p>'+esc(n.body||'')+'</p><div class="dt">'+esc(fmtDate(n.created_at||n.createdAt))+'</div></div>';
+  }).join('') || '<div class="empty">Әзірге хабарлама жіберілмеді</div>';
+}
+async function sendAdminNotification(){
+  var title = $('notifyTitle').value.trim();
+  var body = $('notifyBody').value.trim();
+  if(!title || !body){ toast('Тақырып пен мәтін керек'); return; }
+  var btn = $('sendNotifyBtn');
+  btn.disabled = true;
+  btn.style.opacity = '.7';
+  try{
+    var saved = null;
+    if(window.ShyraqDB && window.ShyraqDB.sendNotification && window.ShyraqDB.ready()){
+      saved = await window.ShyraqDB.sendNotification({ title:title, body:body, audience:'all', created_by:'admin' });
+    }
+    if(!saved){
+      saved = { id:'local-'+Date.now(), title:title, body:body, audience:'all', created_by:'admin', created_at:new Date().toISOString() };
+      var local = getLocalNotifications();
+      local.unshift(saved);
+      setLocalNotifications(local);
+      toast('Supabase кестесі жоқ. Local хабарлама сақталды');
+    } else {
+      toast('Хабарлама барлығына жіберілді ✓');
+    }
+    $('notifyTitle').value = '';
+    $('notifyBody').value = '';
+    renderNotifications();
+  } finally {
+    btn.disabled = false;
+    btn.style.opacity = '';
+  }
+}
+
 /* ════ SETTINGS ════ */
 async function saveSettings(){
   const price=+$('setPrice').value||0, priceAi=+$('setPriceAi').value||0, priceReport=+$('setPriceReport').value||0;
@@ -1298,7 +1387,7 @@ $('globalSearch').addEventListener('input', ()=>{
 document.querySelectorAll('.ov').forEach(o=>o.addEventListener('click',e=>{ if(e.target===o) o.classList.remove('open'); }));
 
 /* ════ INIT ════ */
-renderOverview(); renderUsers(); renderReviews();
+renderOverview(); renderUsers(); renderReviews(); renderNotifications();
 loadPayments().then(loadUsers);
 </script>
 </body>

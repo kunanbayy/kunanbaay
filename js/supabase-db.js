@@ -96,11 +96,66 @@
     catch (e) { return null; }
   }
 
+  async function sendNotification(payload) {
+    const c = sb(); if (!c || !payload) return null;
+    try {
+      const row = {
+        title: String(payload.title || '').trim(),
+        body: String(payload.body || '').trim(),
+        audience: payload.audience || 'all',
+        created_by: payload.created_by || payload.createdBy || 'admin',
+        created_at: new Date().toISOString()
+      };
+      if (!row.title || !row.body) return null;
+      const { data, error } = await c.from('notifications').insert(row).select().maybeSingle();
+      if (error) return null;
+      return data || null;
+    } catch (e) { return null; }
+  }
+
+  async function listNotifications(email) {
+    const c = sb(); if (!c) return null;
+    const mail = String(email || '').toLowerCase();
+    try {
+      const notesReq = c.from('notifications').select('*').eq('audience', 'all').order('created_at', { ascending: false }).limit(100);
+      const readsReq = mail
+        ? c.from('notification_reads').select('notification_id,is_read,read_at').eq('email', mail)
+        : Promise.resolve({ data: [], error: null });
+      const [notesRes, readsRes] = await Promise.all([notesReq, readsReq]);
+      if (notesRes.error) return null;
+      const readMap = new Map((readsRes.data || []).map(row => [row.notification_id, row]));
+      return (notesRes.data || []).map(note => {
+        const read = readMap.get(note.id);
+        return Object.assign({}, note, {
+          is_read: !!(read && read.is_read),
+          read_at: read && read.read_at
+        });
+      });
+    } catch (e) { return null; }
+  }
+
+  async function markNotificationRead(notificationId, user) {
+    const c = sb(); if (!c || !notificationId) return false;
+    const mail = String((user && user.email) || '').toLowerCase();
+    if (!mail) return false;
+    try {
+      const row = {
+        notification_id: notificationId,
+        user_id: (user && user.id) || null,
+        email: mail,
+        is_read: true,
+        read_at: new Date().toISOString()
+      };
+      const { error } = await c.from('notification_reads').upsert(row, { onConflict: 'notification_id,email' });
+      return !error;
+    } catch (e) { return false; }
+  }
+
   async function deletePayment(id) {
     const c = sb(); if (!c) return false;
     try { const { error } = await c.from('payments').delete().eq('id', id); return !error; }
     catch (e) { return false; }
   }
 
-  window.ShyraqDB = { getSettings, saveSettings, uploadReceipt, createPayment, listPayments, updatePayment, deletePayment, getAccess, setAccess, listAccess, listProfiles, ready: () => !!sb() };
+  window.ShyraqDB = { getSettings, saveSettings, uploadReceipt, createPayment, listPayments, updatePayment, deletePayment, getAccess, setAccess, listAccess, listProfiles, sendNotification, listNotifications, markNotificationRead, ready: () => !!sb() };
 })();
