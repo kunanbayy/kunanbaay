@@ -265,12 +265,12 @@
   // kind: 'energy' → grant.html Career Energy; 'results' → results.html толық есеп (БӨЛЕК).
   const PLANS = {
     free:      { name: 'Free',          desc: 'Free — тегін',                     amount: 0,                       energy: 0, kind: 'energy' },
-    standard:  { name: 'Standard',      desc: 'Standard — 1 Career Energy',       amount: pp('standard', 2990),    energy: 1, kind: 'energy' },
-    career:    { name: 'Career Report', desc: 'Career Report — 3 Career Energy',  amount: pp('career', 4990),      energy: 3, kind: 'energy' },
-    once:      { name: 'Standard',      desc: 'Standard — 1 Career Energy',       amount: pp('standard', 2990),    energy: 1, kind: 'energy' },
-    premium:   { name: 'Career Report', desc: 'Career Report — 3 Career Energy',  amount: pp('career', 4990),      energy: 3, kind: 'energy' },
+    standard:  { name: 'Standard',      desc: 'Standard — 1 Career Energy',       amount: pp('standard', 1590),    energy: 1, kind: 'energy' },
+    career:    { name: 'Career Report', desc: 'Career Report — 3 Career Energy',  amount: pp('career', 2590),      energy: 3, kind: 'energy' },
+    once:      { name: 'Standard',      desc: 'Standard — 1 Career Energy',       amount: pp('standard', 1590),    energy: 1, kind: 'energy' },
+    premium:   { name: 'Career Report', desc: 'Career Report — 3 Career Energy',  amount: pp('career', 2590),      energy: 3, kind: 'energy' },
     // ── results.html: 990₸ Толық есеп (энергия ЕМЕС) ──
-    report990: { name: 'Толық есеп',    desc: 'Толық мамандықтар тізімі мен бағыттар', amount: pp('report990', 990), energy: 0, kind: 'results' },
+    report990: { name: 'Мамандық тесті', desc: 'Толық тест нәтижесі мен бағыт ұсыныстары', amount: pp('report990', 990), energy: 0, kind: 'results' },
   };
 
   /* ── URL-параметрлер ── */
@@ -295,10 +295,10 @@
      бөлек сілтеме жасап, төмендегі сәйкес жолға қойыңыз.
      Әзірге барлық тариф бір сілтемеге бағытталған. */
   var KASPI_LINKS = {
-    standard:  'https://pay.kaspi.kz/pay/abp9nx0l', // 2 990 ₸
-    once:      'https://pay.kaspi.kz/pay/abp9nx0l', // 2 990 ₸
-    career:    'https://pay.kaspi.kz/pay/abp9nx0l', // 4 990 ₸
-    premium:   'https://pay.kaspi.kz/pay/abp9nx0l', // 4 990 ₸
+    standard:  'https://pay.kaspi.kz/pay/abp9nx0l', // 1 590 ₸
+    once:      'https://pay.kaspi.kz/pay/abp9nx0l', // 1 590 ₸
+    career:    'https://pay.kaspi.kz/pay/abp9nx0l', // 2 590 ₸
+    premium:   'https://pay.kaspi.kz/pay/abp9nx0l', // 2 590 ₸
     report990: 'https://pay.kaspi.kz/pay/abp9nx0l'  //   990 ₸
   };
   var KASPI_PAY_URL = KASPI_LINKS[planKey] || 'https://pay.kaspi.kz/pay/abp9nx0l';

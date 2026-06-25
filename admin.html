@@ -438,9 +438,9 @@
       <div class="a-card" style="max-width:560px">
         <div class="a-card-hd"><h3>Тарифтер мен параметрлер</h3></div>
         <p style="color:var(--muted);font-size:.84rem;margin-bottom:16px">Бұл бағалар «Тарифтер» бетінде (pricing) бірден көрінеді.</p>
-        <div class="field"><label>Premium бағасы (₸/ай)</label><input type="number" id="setPrice" value="990" /></div>
-        <div class="field"><label>AI Premium бағасы (₸/ай)</label><input type="number" id="setPriceAi" value="1990" /></div>
-        <div class="field"><label>Бір реттік есеп (PDF) бағасы (₸)</label><input type="number" id="setPriceReport" value="1490" /></div>
+        <div class="field"><label>Standard бағасы (₸)</label><input type="number" id="setPrice" value="1590" /></div>
+        <div class="field"><label>Career Report бағасы (₸)</label><input type="number" id="setPriceAi" value="2590" /></div>
+        <div class="field"><label>Мамандық тесті бағасы (₸)</label><input type="number" id="setPriceReport" value="990" /></div>
         <div class="field"><label>Қаспи қабылдаушы (чек)</label><input type="text" id="setReceiver" value="Мадина Е." /></div>
         <button class="btn btn-primary" onclick="saveSettings()"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> Сақтау</button>
       </div>
@@ -978,7 +978,8 @@ async function loadUsers(){
 /* Тариф бойынша берілетін Career Energy саны */
 function planEnergy(p){
   var s = ((p && p.plan) || '').toLowerCase();
-  if (s.indexOf('career report') > -1 || s.indexOf('report') > -1 || (+(p && p.amount) >= 4990)) return 3;
+  if (s.indexOf('report990') > -1 || s.indexOf('мамандық тест') > -1 || (+(p && p.amount) === 990)) return 0;
+  if (s.indexOf('career report') > -1 || s.indexOf('report') > -1 || (+(p && p.amount) >= 2590)) return 3;
   return 1;
 }
 function renderPayments(){
@@ -1256,8 +1257,8 @@ function delReview(i){ const rv=getReviews(); rv.splice(i,1); setReviews(rv); re
 /* ════ SETTINGS ════ */
 async function saveSettings(){
   const price=+$('setPrice').value||0, priceAi=+$('setPriceAi').value||0, priceReport=+$('setPriceReport').value||0;
-  const pricing={ premium:price, ai:priceAi, report:priceReport };
-  localStorage.setItem('shyraq_settings', JSON.stringify({ price, priceAi, priceReport, receiver:$('setReceiver').value }));
+  const pricing={ standard:price, career:priceAi, report990:priceReport, premium:price, ai:priceAi, report:priceReport };
+  localStorage.setItem('shyraq_settings', JSON.stringify({ standard:price, career:priceAi, report990:priceReport, price, priceAi, priceReport, receiver:$('setReceiver').value }));
   localStorage.setItem('shyraq_pricing', JSON.stringify(pricing));
   // Supabase settings кестесіне де жазу (бапталса) — барлық құрылғыда көрінеді
   if(window.ShyraqDB && window.ShyraqDB.ready()){ await window.ShyraqDB.saveSettings('pricing', pricing); }
@@ -1268,8 +1269,8 @@ async function saveSettings(){
   let p=null;
   if(window.ShyraqDB && window.ShyraqDB.ready()){ p=await window.ShyraqDB.getSettings('pricing'); }
   const s=JSON.parse(localStorage.getItem('shyraq_settings')||'null');
-  if(p){ $('setPrice').value=p.premium; $('setPriceAi').value=p.ai; $('setPriceReport').value=p.report; localStorage.setItem('shyraq_pricing', JSON.stringify(p)); }
-  else if(s){ if(s.price!=null)$('setPrice').value=s.price; if(s.priceAi!=null)$('setPriceAi').value=s.priceAi; if(s.priceReport!=null)$('setPriceReport').value=s.priceReport; }
+  if(p){ $('setPrice').value=p.standard ?? 1590; $('setPriceAi').value=p.career ?? 2590; $('setPriceReport').value=p.report990 ?? 990; localStorage.setItem('shyraq_pricing', JSON.stringify(p)); }
+  else if(s && (s.standard!=null || s.career!=null || s.report990!=null)){ if(s.standard!=null)$('setPrice').value=s.standard; if(s.career!=null)$('setPriceAi').value=s.career; if(s.report990!=null)$('setPriceReport').value=s.report990; }
   if(s&&s.receiver)$('setReceiver').value=s.receiver;
 })();
 

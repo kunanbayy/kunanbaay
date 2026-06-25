@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { supabaseAdmin } from '../../../../lib/supabase';
-import { config, corsHeaders } from '../../../../lib/config';
+import { amountForPlan, corsHeaders } from '../../../../lib/config';
 import { log } from '../../../../lib/logger';
 import { createQr } from '../../../../services/kaspi';
 
@@ -16,17 +16,18 @@ export function OPTIONS() {
 export async function POST(req: NextRequest) {
   try {
     const { userId, plan } = Body.parse(await req.json());
+    const amount = amountForPlan(plan);
 
     // 1) pending order
     const { data: order, error } = await supabaseAdmin
       .from('payment_orders')
-      .insert({ user_id: userId, amount: config.premiumAmount, plan: plan || 'premium_1m', status: 'pending', provider: 'kaspi_qr' })
+      .insert({ user_id: userId, amount, plan: plan || 'premium_1m', status: 'pending', provider: 'kaspi_qr' })
       .select('id')
       .single();
     if (error) throw error;
 
     // 2) Kaspi QR
-    const qr = await createQr(config.premiumAmount);
+    const qr = await createQr(amount);
 
     // 3) attach QR to the order
     await supabaseAdmin.from('payment_orders')

@@ -16,10 +16,10 @@ export const config = {
   premiumAmount: Number(process.env.PREMIUM_AMOUNT || 990),
   // Әр тарифтің нақты сомасы (₸). Чектегі сома осы санға тең болуы керек.
   planAmounts: {
-    standard:  Number(process.env.AMOUNT_STANDARD  || 2990),
-    once:      Number(process.env.AMOUNT_STANDARD  || 2990),
-    career:    Number(process.env.AMOUNT_CAREER    || 4990),
-    premium:   Number(process.env.AMOUNT_CAREER    || 4990),
+    standard:  Number(process.env.AMOUNT_STANDARD  || 1590),
+    once:      Number(process.env.AMOUNT_STANDARD  || 1590),
+    career:    Number(process.env.AMOUNT_CAREER    || 2590),
+    premium:   Number(process.env.AMOUNT_CAREER    || 2590),
     report990: Number(process.env.AMOUNT_REPORT990 || 990),
   } as Record<string, number>,
   expectedReceiver: process.env.EXPECTED_RECEIVER || '', // бос болса — алушы тексерілмейді

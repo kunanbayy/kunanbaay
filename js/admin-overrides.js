@@ -62,11 +62,13 @@
   window.applyPricing = function (annual) {
     const p = read('shyraq_pricing', null);
     if (!p) return;
+    const val = k => p[k];
     const fmt = n => Number(n).toLocaleString('ru-RU').replace(/[ ,]/g, ' ') + ' ₸';
     document.querySelectorAll('.pamt[data-plan]').forEach(el => {
       const k = el.getAttribute('data-plan');
-      if (p[k] == null) return;
-      const m = Number(p[k]);
+      const raw = val(k);
+      if (raw == null) return;
+      const m = Number(raw);
       if (el.hasAttribute('data-m')) {
         el.dataset.m = fmt(m);
         el.dataset.a = fmt(Math.round(m * 0.8));

@@ -23,9 +23,9 @@ create table if not exists public.tariffs (
 );
 
 insert into public.tariffs (id, title, amount, energy, kind) values
-  ('standard',  'Standard',      2990, 1, 'energy'),
-  ('career',    'Career Report', 4990, 3, 'energy'),
-  ('report990', 'Толық есеп',     990, 0, 'results')
+  ('standard',  'Standard',       1590, 1, 'energy'),
+  ('career',    'Career Report',  2590, 3, 'energy'),
+  ('report990', 'Мамандық тесті',  990, 0, 'results')
 on conflict (id) do update
   set title = excluded.title, amount = excluded.amount,
       energy = excluded.energy, kind = excluded.kind, active = true;

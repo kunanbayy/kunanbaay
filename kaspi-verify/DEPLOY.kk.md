@@ -21,8 +21,8 @@
    | `SUPABASE_URL` | `https://ppohzbystcciueazupyj.supabase.co` |
    | `NEXT_PUBLIC_SUPABASE_URL` | `https://ppohzbystcciueazupyj.supabase.co` |
    | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | (js/supabase-config.js ішіндегі anon key) |
-   | `AMOUNT_STANDARD` | `2990` |
-   | `AMOUNT_CAREER` | `4990` |
+   | `AMOUNT_STANDARD` | `1590` |
+   | `AMOUNT_CAREER` | `2590` |
    | `AMOUNT_REPORT990` | `990` |
    | `RECEIPT_MAX_AGE_MINUTES` | `6` |
    | `ALLOWED_ORIGIN` | `https://shyraq.asia` |
@@ -71,8 +71,8 @@
 | `SUPABASE_URL` / `SUPABASE_SERVICE_ROLE_KEY` | Supabase API кілттері |
 | `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_ANON_KEY` | сол жоба |
 | `OPENAI_API_KEY` | OpenAI кілті (Vision OCR) |
-| `AMOUNT_STANDARD` | `2990` |
-| `AMOUNT_CAREER` | `4990` |
+| `AMOUNT_STANDARD` | `1590` |
+| `AMOUNT_CAREER` | `2590` |
 | `AMOUNT_REPORT990` | `990` |
 | `EXPECTED_RECEIVER` | Kaspi чегінде көрінетін алушы аты (мыс. `Ержан К.`) |
 | `RECEIPT_MAX_AGE_MINUTES` | `6` (6-минут терезе) |

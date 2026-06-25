@@ -71,7 +71,7 @@
     .save-pill { background: var(--emerald-light); color: #047857; font-weight: 700; font-size: 0.74rem; padding: 3px 9px; border-radius: 999px; }
 
     /* PRICING CARDS */
-    .price-grid { max-width: 1020px; margin: 0 auto; padding: 0 24px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; align-items: stretch; }
+    .price-grid { max-width: 1180px; margin: 0 auto; padding: 0 24px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; align-items: stretch; }
     .price-card {
       position: relative; border: 1.5px solid var(--border); border-radius: 22px; padding: 30px 28px;
       background: rgba(255,255,255,0.86); backdrop-filter: blur(8px); display: flex; flex-direction: column;
@@ -301,10 +301,25 @@
     <div class="pfeat"><span class="pf-ic">✓</span> Демо нәтиже</div>
   </div>
 
+  <!-- MAJOR TEST -->
+  <div class="price-card">
+    <span class="pbadge b-ai">🧭 Мамандық тесті</span>
+    <div class="pamt" data-plan="report990">990 ₸</div>
+    <div class="psub">Бір реттік бағыт анықтау</div>
+    <div class="energy-pill zero"><span class="ep-bolt">📋</span> Толық тест нәтижесі</div>
+    <button class="pcta pcta-outline" onclick="handlePremium('report990')">Тест нәтижесін ашу</button>
+    <p class="pinc">Бұл тарифке кіреді:</p>
+    <div class="pfeat"><span class="pf-ic">✓</span> Мамандық тестінің толық нәтижесі</div>
+    <div class="pfeat"><span class="pf-ic">✓</span> Саған сай бағыттар мен мамандықтар</div>
+    <div class="pfeat"><span class="pf-ic">✓</span> Күшті жақтарың бойынша қысқа түсіндірме</div>
+    <div class="pfeat"><span class="pf-ic">✓</span> Нәтижені қайта ашу мүмкіндігі</div>
+    <div class="pfeat"><span class="pf-ic">✓</span> 9-11 сынып оқушыларына және мамандық таңдауда қиналғандарға арналған</div>
+  </div>
+
   <!-- STANDARD -->
   <div class="price-card">
     <span class="pbadge b-prem">⭐ Standard</span>
-    <div class="pamt" data-plan="standard">2 990 ₸</div>
+    <div class="pamt" data-plan="standard">1 590 ₸</div>
     <div class="psub">Бір реттік төлем</div>
     <div class="energy-pill std"><span class="ep-bolt">⚡</span> 1 Career Energy</div>
     <button class="pcta pcta-gold" onclick="handlePremium('standard')">Сатып алу</button>
@@ -320,7 +335,7 @@
   <div class="price-card featured">
     <span class="ribbon">⭐ Ең танымал</span>
     <span class="pbadge b-report">🚀 Career Report</span>
-    <div class="pamt" data-plan="career">4 990 ₸</div>
+    <div class="pamt" data-plan="career">2 590 ₸</div>
     <div class="psub">Бір реттік төлем</div>
     <div class="energy-pill rep"><span class="ep-bolt">⚡</span> 3 Career Energy</div>
     <button class="pcta pcta-dark" onclick="handlePremium('career')">Сатып алу</button>
@@ -483,7 +498,7 @@ const CMP = [
   ['Жеке даму жоспары', false, false, true],
   ['Толық PDF Career Report', false, false, true],
   ['Басым (priority) ұсыныстар', false, false, true],
-  ['Баға', '0 ₸', '2 990 ₸', '4 990 ₸'],
+  ['Баға', '0 ₸', '1 590 ₸', '2 590 ₸'],
 ];
 (function () {
   const body = document.getElementById('cmpBody');
@@ -538,7 +553,7 @@ const FAQS = [
 
 /* ── CHECKOUT ── */
 function handlePremium(type) {
-  const planMap = { standard: 'standard', career: 'career' };
+  const planMap = { standard: 'standard', career: 'career', report990: 'report990' };
   const plan = planMap[type] || 'standard';
   const user = JSON.parse(localStorage.getItem('shyraq_user') || 'null');
   const email = user ? encodeURIComponent(user.email || '') : '';
