@@ -12,6 +12,15 @@ const adminHeaders = {
 
 type OrderRow = Record<string, any>;
 
+function errorMessage(error: unknown, fallback: string): string {
+  if (error instanceof Error && error.message) return error.message;
+  if (error && typeof error === 'object') {
+    const record = error as Record<string, unknown>;
+    return String(record.message || record.details || record.hint || record.code || fallback);
+  }
+  return fallback;
+}
+
 export function OPTIONS() {
   return new NextResponse(null, { status: 204, headers: adminHeaders });
 }
@@ -22,12 +31,15 @@ async function approvedRevenue(): Promise<number> {
   for (let from = 0; ; from += pageSize) {
     const { data, error } = await supabaseAdmin
       .from('payment_orders')
-      .select('amount')
-      .in('status', ['approved', 'paid'])
+      // Avoid SQL enum filters here: older DBs may not yet contain every new
+      // status value, and revenue must not break the whole admin payment list.
+      .select('amount, status')
       .range(from, from + pageSize - 1);
     if (error) throw error;
     const rows = data || [];
-    total += rows.reduce((sum, row) => sum + Number(row.amount || 0), 0);
+    total += rows
+      .filter((row) => row.status === 'approved' || row.status === 'paid')
+      .reduce((sum, row) => sum + Number(row.amount || 0), 0);
     if (rows.length < pageSize) return total;
   }
 }
@@ -79,17 +91,26 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const [{ data: orders, error }, revenue] = await Promise.all([
-      supabaseAdmin
-        .from('payment_orders')
-        // Use '*' so older Supabase schemas do not fail the whole admin page
-        // when a newly introduced optional column has not been migrated yet.
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(500),
-      approvedRevenue(),
-    ]);
-    if (error) throw error;
+    const { data: orders, error } = await supabaseAdmin
+      .from('payment_orders')
+      // Use '*' so older Supabase schemas do not fail the whole admin page
+      // when a newly introduced optional column has not been migrated yet.
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(500);
+    if (error) {
+      return NextResponse.json(
+        { ok: false, message: errorMessage(error, 'orders_load_failed') },
+        { status: 500, headers: adminHeaders }
+      );
+    }
+
+    let revenue = 0;
+    try {
+      revenue = await approvedRevenue();
+    } catch (revenueError) {
+      console.error('approved_revenue_failed', errorMessage(revenueError, 'revenue_failed'));
+    }
 
     const orderRows = (orders || []) as unknown as OrderRow[];
     const userIds = [...new Set(orderRows.map((order) => order.user_id).filter(Boolean))];
@@ -99,8 +120,11 @@ export async function GET(req: NextRequest) {
         .from('profiles')
         .select('id, email')
         .in('id', userIds);
-      if (profileError) throw profileError;
-      (profiles || []).forEach((profile) => profileById.set(profile.id, { email: profile.email ?? null }));
+      if (profileError) {
+        console.error('admin_profiles_load_failed', errorMessage(profileError, 'profiles_failed'));
+      } else {
+        (profiles || []).forEach((profile) => profileById.set(profile.id, { email: profile.email ?? null }));
+      }
     }
 
     const rows = orderRows.map((order) => {
@@ -138,7 +162,7 @@ export async function GET(req: NextRequest) {
       { headers: adminHeaders }
     );
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'orders_load_failed';
+    const message = errorMessage(error, 'orders_load_failed');
     return NextResponse.json({ ok: false, message }, { status: 500, headers: adminHeaders });
   }
 }
