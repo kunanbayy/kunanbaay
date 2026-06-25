@@ -10,13 +10,6 @@ const adminHeaders = {
   'Access-Control-Allow-Headers': 'Content-Type, Authorization, x-admin-token, x-admin-session',
 };
 
-const ORDER_COLUMNS = [
-  'id', 'user_id', 'plan', 'tariff_id', 'amount', 'status', 'payment_method',
-  'created_at', 'expires_at', 'updated_at', 'receipt_url', 'receipt_uploaded_at',
-  'receipt_paid_at', 'receipt_amount', 'payer_name', 'receipt_comment',
-  'receiver_name', 'approved_at', 'rejected_reason', 'admin_review_status',
-].join(', ');
-
 type OrderRow = Record<string, any>;
 
 export function OPTIONS() {
@@ -89,7 +82,9 @@ export async function GET(req: NextRequest) {
     const [{ data: orders, error }, revenue] = await Promise.all([
       supabaseAdmin
         .from('payment_orders')
-        .select(ORDER_COLUMNS)
+        // Use '*' so older Supabase schemas do not fail the whole admin page
+        // when a newly introduced optional column has not been migrated yet.
+        .select('*')
         .order('created_at', { ascending: false })
         .limit(500),
       approvedRevenue(),
@@ -166,7 +161,7 @@ export async function DELETE(req: NextRequest) {
       for (let from = 0; ; from += pageSize) {
         const { data, error } = await supabaseAdmin
           .from('payment_orders')
-          .select('id, receipt_url')
+          .select('*')
           .range(from, from + pageSize - 1);
         if (error) throw error;
         const page = data || [];
@@ -176,7 +171,7 @@ export async function DELETE(req: NextRequest) {
     } else {
       const { data, error } = await supabaseAdmin
         .from('payment_orders')
-        .select('id, receipt_url')
+        .select('*')
         .eq('id', body.orderId as string);
       if (error) throw error;
       orders = data || [];

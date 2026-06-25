@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
 
     const { data: order } = await supabaseAdmin
       .from('payment_orders')
-      .select('id, user_id, status, plan, tariff_id, amount, receipt_url, receipt_uploaded_at')
+      .select('*')
       .eq('id', orderId)
       .maybeSingle();
     if (!order) {
