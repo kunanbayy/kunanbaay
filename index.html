@@ -16,7 +16,7 @@
   <title>Shyraq — Мамандық таңдау және ҰБТ грант платформасы</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Unbounded:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700;800;900&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
     :root {
       --ink: #0F172A;
@@ -35,8 +35,8 @@
       --shadow: 0 18px 50px rgba(15, 35, 64, .10);
       --shadow-soft: 0 10px 30px rgba(15, 35, 64, .07);
       --radius: 18px;
-      --font: "Manrope", "Noto Sans", Arial, sans-serif;
-      --display: "Unbounded", "Manrope", sans-serif;
+      --font: "Noto Sans", "Manrope", Arial, sans-serif;
+      --display: "Noto Sans", "Manrope", Arial, sans-serif;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -81,7 +81,7 @@
       display: grid; place-items: center; border: 1px solid var(--line);
       box-shadow: var(--shadow-soft); flex: 0 0 auto; padding: 4px;
     }
-    .brand span { font-size: 1.2rem; letter-spacing: -.02em; }
+    .brand span { font-size: 1.2rem; letter-spacing: 0; }
     .nav-links { justify-self: center; display: flex; align-items: center; gap: 4px; }
     .nav-link {
       padding: 10px 13px; border-radius: 999px; color: #43526A; font-size: .9rem; font-weight: 800;
@@ -149,21 +149,33 @@
       gap: 56px; align-items: center;
     }
     .hero-copy { max-width: 680px; }
+    .hero-kicker {
+      display: inline-flex; align-items: center; gap: 7px; min-height: 36px; padding: 0 14px;
+      border-radius: 10px; background: #FFF3D2; color: #B86A00; font-weight: 900; font-size: .82rem;
+      margin-bottom: 18px; border: 1px solid #FFE3A3;
+    }
     .hero h1 {
-      font-family: var(--display); font-size: clamp(2.25rem, 5vw, 4.6rem); line-height: 1.04;
-      letter-spacing: -.055em; color: var(--navy-2); font-weight: 800;
+      font-family: var(--display); font-size: clamp(2.25rem, 5vw, 4.45rem); line-height: 1.08;
+      letter-spacing: -.025em; color: var(--navy-2); font-weight: 900;
     }
     .hero h1 .gold { color: var(--gold-2); }
     .hero-text { margin-top: 22px; max-width: 610px; color: #56657B; font-size: clamp(1rem, 1.5vw, 1.16rem); line-height: 1.8; font-weight: 600; }
     .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 30px; }
     .hero-actions .btn { min-height: 52px; padding: 0 24px; }
-    .trust-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 28px; }
-    .trust-chip {
-      display: inline-flex; align-items: center; gap: 8px; min-height: 38px; padding: 0 14px;
-      border: 1px solid var(--line); border-radius: 999px; background: #fff; color: #526175; font-weight: 800; font-size: .84rem;
-      box-shadow: 0 8px 22px rgba(15, 35, 64, .04);
+    .proof-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin-top: 34px; }
+    .proof-card {
+      min-height: 64px; display: flex; align-items: center; gap: 12px; padding: 12px 14px;
+      border: 1px solid var(--line); border-radius: 16px; background: rgba(255,255,255,.92); color: #526175;
+      font-weight: 800; font-size: .8rem; box-shadow: 0 10px 28px rgba(15, 35, 64, .06);
     }
-    .trust-dot { width: 9px; height: 9px; border-radius: 999px; background: var(--mint); box-shadow: 0 0 0 4px rgba(16,185,129,.12); }
+    .proof-card strong { display: block; color: var(--navy-2); font-size: .82rem; margin-bottom: 2px; }
+    .proof-icon {
+      width: 34px; height: 34px; flex: 0 0 34px; border-radius: 11px; display: grid; place-items: center;
+      background: #FFF8E8; color: var(--gold-2); border: 1px solid #FFE5A3;
+    }
+    .proof-card:nth-child(2) .proof-icon { background: #EEF6FF; color: var(--blue); border-color: #D8E9FF; }
+    .proof-card:nth-child(3) .proof-icon { background: #EBFFF8; color: #059669; border-color: #C9F7E6; }
+    .proof-card:nth-child(4) .proof-icon { background: #FFF7ED; color: #EA580C; border-color: #FED7AA; }
 
     .hero-card {
       background: rgba(255, 255, 255, .92); border: 1px solid var(--line); border-radius: 24px; padding: 24px;
@@ -196,7 +208,7 @@
     section { padding: 70px 0; }
     .section-head { max-width: 720px; margin-bottom: 30px; }
     .section-head.center { margin-left: auto; margin-right: auto; text-align: center; }
-    .section-title { font-family: var(--display); color: var(--navy-2); font-size: clamp(1.8rem, 3vw, 3rem); line-height: 1.12; letter-spacing: -.04em; }
+    .section-title { font-family: var(--display); color: var(--navy-2); font-size: clamp(1.8rem, 3vw, 3rem); line-height: 1.14; letter-spacing: -.015em; font-weight: 900; }
     .section-text { color: var(--muted); font-size: 1rem; line-height: 1.75; margin-top: 12px; font-weight: 600; }
 
     .features { background: #fff; }
@@ -219,7 +231,7 @@
     .universities { background: linear-gradient(180deg, #F7FBFF, #FFFFFF); }
     .uni-panel { border: 1px solid var(--line); border-radius: 26px; background: #fff; padding: 22px; box-shadow: var(--shadow-soft); }
     .uni-top { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 18px; }
-    .uni-top h2 { font-family: var(--display); color: var(--navy-2); font-size: clamp(1.35rem, 2.3vw, 2.2rem); letter-spacing: -.04em; }
+    .uni-top h2 { font-family: var(--display); color: var(--navy-2); font-size: clamp(1.35rem, 2.3vw, 2.2rem); letter-spacing: -.015em; font-weight: 900; }
     .uni-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
     .uni-card {
       min-height: 110px; border: 1px solid var(--line); border-radius: 18px; padding: 14px; background: #FBFDFF;
@@ -245,7 +257,7 @@
       padding: 34px; border-radius: 28px; background: linear-gradient(135deg, var(--navy-2), var(--navy)); color: #fff;
       box-shadow: 0 28px 70px rgba(15,35,64,.20);
     }
-    .cta h2 { font-family: var(--display); font-size: clamp(1.7rem, 3vw, 2.6rem); letter-spacing: -.04em; }
+    .cta h2 { font-family: var(--display); font-size: clamp(1.7rem, 3vw, 2.6rem); letter-spacing: -.015em; font-weight: 900; }
     .cta p { color: rgba(255,255,255,.78); line-height: 1.65; margin-top: 10px; font-weight: 600; }
     .cta-actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
 
@@ -268,6 +280,7 @@
       .nav-links { display: none; }
       .nav-actions { justify-self: end; }
       .nav-mobile-btn { display: inline-flex; }
+      .auth-show .menu-wrap { display: none !important; }
       .hero-grid { grid-template-columns: 1fr; gap: 30px; }
       .hero-card { max-width: 520px; }
       .signal-grid { grid-template-columns: repeat(2, 1fr); }
@@ -293,8 +306,8 @@
       .hero h1 { font-size: clamp(2rem, 10vw, 3.05rem); }
       .hero-text { font-size: .98rem; line-height: 1.68; }
       .hero-actions { display: grid; grid-template-columns: 1fr; }
-      .trust-row { overflow-x: auto; flex-wrap: nowrap; padding-bottom: 4px; scrollbar-width: none; }
-      .trust-chip { flex: 0 0 auto; }
+      .proof-grid { display: flex; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
+      .proof-card { min-width: 190px; }
       .hero-card { padding: 18px; border-radius: 22px; }
       .range-wrap { grid-template-columns: 62px 1fr; }
       .score { font-size: 1.65rem; }
@@ -369,6 +382,10 @@
       <div class="container">
         <div class="hero-grid">
           <div class="hero-copy">
+            <div class="hero-kicker">
+              <svg class="icon" style="width:16px;height:16px" viewBox="0 0 24 24"><path d="M22 10 12 5 2 10l10 5 10-5z"/><path d="M6 12v5c3 2 9 2 12 0v-5"/></svg>
+              9-11 сынып оқушыларына арналған
+            </div>
             <h1>ҰБТ-дан шекті балл жинап тұрып, <span class="gold">грантсыз қалып қоймаңыз!</span></h1>
             <p class="hero-text">Мамандықты дұрыс таңда. ҰБТ пәнін нақтыла. Грант мүмкіндігіңді бірден біл. 9-11 сынып оқушыларына арналған барлығы бір платформада.</p>
             <div class="hero-actions">
@@ -381,10 +398,23 @@
                 Тіркелу
               </a>
             </div>
-            <div class="trust-row">
-              <div class="trust-chip"><span class="trust-dot"></span>Тегін бастауға болады</div>
-              <div class="trust-chip"><span class="trust-dot"></span>Деректер қорғалған</div>
-              <div class="trust-chip"><span class="trust-dot"></span>Қазақстан үшін</div>
+            <div class="proof-grid">
+              <div class="proof-card">
+                <span class="proof-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
+                <span><strong>Сенімді деректер</strong>2026 жылғы ақпарат</span>
+              </div>
+              <div class="proof-card">
+                <span class="proof-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
+                <span><strong>100 000+ оқушы</strong>бізбен бағыт таңдады</span>
+              </div>
+              <div class="proof-card">
+                <span class="proof-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M4 19h16"/><path d="M7 19V9"/><path d="M12 19V5"/><path d="M17 19v-7"/></svg></span>
+                <span><strong>Нақты статистика</strong>грант және өту балдары</span>
+              </div>
+              <div class="proof-card">
+                <span class="proof-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M20 7h-9"/><path d="M14 17H5"/><circle cx="17" cy="17" r="3"/><circle cx="7" cy="7" r="3"/></svg></span>
+                <span><strong>Жеке қолдау</strong>эксперттерден кеңес</span>
+              </div>
             </div>
           </div>
 
